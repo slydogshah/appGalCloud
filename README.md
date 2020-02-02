@@ -26,3 +26,17 @@ Getting Started
 >babyboy@Babys-MacBook-Pro appgal-cloud % curl http://localhost:8080/microservice/
  {"oid":"93692874-268f-49ad-aaf3-c8f3884bce61","message":"HELLO_TO_HUMANITY"}%                                                                                                                                                                          babyboy@Babys-MacBook-Pro appgal-cloud %
 >
+
+Getting Started with Food Runner App based on Dart/Flutter
+----
+
+> cd appGalCloud/appgal-foodrunner-app
+>
+>Run the App
+>----
+> dart microserviceClient.dart
+>
+>Output
+>----
+> babyboy@Babys-MBP appgal-foodrunner-app % dart microserviceClient.dart 
+  {"oid":"89b9b5b4-4be0-42c1-848a-47282dc1fbfe","message":"HELLO_TO_HUMANITY"}
