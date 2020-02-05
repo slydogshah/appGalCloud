@@ -35,7 +35,7 @@ public class KafkaMessageConsumer {
         Properties config = new Properties();
         config.put("client.id", InetAddress.getLocalHost().getHostName());
         config.put("group.id", "foo");
-        config.put("bootstrap.servers", "host1:9092,host2:9092");
+        config.put("bootstrap.servers", "localhost:9092");
         config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
         config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
 
