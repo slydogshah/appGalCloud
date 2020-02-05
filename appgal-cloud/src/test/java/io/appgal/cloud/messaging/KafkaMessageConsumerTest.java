@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
+//TODO:Look at removing dependency on KafkaServer (@bugs.bunny.shah@gmail.com)
+
 @QuarkusTest
 public class KafkaMessageConsumerTest {
     private static Logger logger = LoggerFactory.getLogger(KafkaMessageConsumerTest.class);
