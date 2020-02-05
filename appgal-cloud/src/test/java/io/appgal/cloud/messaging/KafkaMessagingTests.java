@@ -10,8 +10,8 @@ import javax.inject.Inject;
 //TODO:Look at removing dependency on KafkaServer (@bugs.bunny.shah@gmail.com)
 
 @QuarkusTest
-public class KafkaMessageConsumerTest {
-    private static Logger logger = LoggerFactory.getLogger(KafkaMessageConsumerTest.class);
+public class KafkaMessagingTests {
+    private static Logger logger = LoggerFactory.getLogger(KafkaMessagingTests.class);
 
     @Inject
     private KafkaMessageConsumer kafkaMessageConsumer;
