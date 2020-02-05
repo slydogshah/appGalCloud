@@ -8,4 +8,9 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class KafkaMessageConsumer {
     private static Logger logger = LoggerFactory.getLogger(KafkaMessageConsumer.class);
+
+    public void consumeData()
+    {
+        logger.info("CONSUME_DATA");
+    }
 }
