@@ -60,7 +60,7 @@ public class KafkaMessageProducer {
                 }
                 else
                 {
-                    logger.debug("PRODUCE_DATA");
+                    logger.info("PRODUCE_DATA");
                 }
             }
         });

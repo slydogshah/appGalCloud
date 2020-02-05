@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @ApplicationScoped
 public class KafkaMessageConsumer {
@@ -24,6 +26,7 @@ public class KafkaMessageConsumer {
     private KafkaConsumer<String,String> kafkaConsumer;
     private CountDownLatch shutdownLatch;
     private List<String> topics;
+    private ExecutorService executorService;
 
     public KafkaMessageConsumer()
     {
@@ -42,11 +45,16 @@ public class KafkaMessageConsumer {
         this.topics = Arrays.asList(new String[]{"foodRunnerSyncProtocol_source_notification"});
         this.kafkaConsumer = new KafkaConsumer<String, String>(config);
         this.shutdownLatch = new CountDownLatch(1);
+
+        //Integrate into an ExecutorService
+        this.executorService = Executors.newCachedThreadPool();
+        this.executorService.submit(new SubscriptionLifecycle());
     }
 
     @PreDestroy
     public void stop()
     {
+        this.executorService.shutdown();
         this.kafkaConsumer.close();
     }
 
