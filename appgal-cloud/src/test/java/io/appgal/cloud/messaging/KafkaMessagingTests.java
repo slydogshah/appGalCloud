@@ -44,7 +44,9 @@ public class KafkaMessagingTests {
 
     @Test
     public void testReadNotifications() throws InterruptedException, UnknownHostException {
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        //this.kafkaMessageConsumer.consumeData();
+
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
 
         JsonArray sourceNotifications = this.sourceNotificationsSource.readNotifications(start, end);
@@ -52,5 +54,7 @@ public class KafkaMessagingTests {
         logger.info("****");
         logger.info(sourceNotifications.toString());
         logger.info("****");
+
+        Thread.sleep(1000);
     }
 }
