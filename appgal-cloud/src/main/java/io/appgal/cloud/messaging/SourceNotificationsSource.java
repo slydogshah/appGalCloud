@@ -13,13 +13,9 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @ApplicationScoped
 public class SourceNotificationsSource {
@@ -29,7 +25,7 @@ public class SourceNotificationsSource {
     private CountDownLatch shutdownLatch;
     private List<String> topics;
     private ExecutorService executorService;
-    private Set<TopicPartition> topicPartitions;
+    private List<TopicPartition> topicPartitions;
 
     public SourceNotificationsSource()
     {
@@ -63,31 +59,30 @@ public class SourceNotificationsSource {
 
     public JsonArray readNotifications(OffsetDateTime start, OffsetDateTime end)
     {
-        JsonArray jsonArray = new JsonArray();
+        try {
+            while (this.topicPartitions == null || this.topicPartitions.isEmpty()) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    logger.debug(e.getMessage(), e);
+                }
+            }
 
-        //Set<TopicPartition> topicPartitions = this.kafkaConsumer.assignment();
+            Future<JsonArray> future = this.executorService.submit(new SourceNotificationsReader(start, end));
+            JsonArray jsonArray = future.get();
 
-        //Construct the parameters to read the Kafka Log
-        //Map<TopicPartition, Long> partitionParameter = new HashMap<>();
-        //for(TopicPartition topicPartition:topicPartitions)
-        //{
-        //    partitionParameter.put(topicPartition, start.toEpochSecond());
-        //    partitionParameter.put(topicPartition, end.toEpochSecond());
-        //}
-
-        //
-        //Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = this.kafkaConsumer.offsetsForTimes(partitionParameter);
-        //Set<Map.Entry<TopicPartition, OffsetAndTimestamp>> entrySet = topicPartitionOffsetAndTimestampMap.entrySet();
-        //for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry:entrySet)
-        //{
-        //    TopicPartition partition = entry.getKey();
-        //    OffsetAndTimestamp offsetAndTimestamp = entry.getValue();
-
-        //    JsonObject jsonObject = JsonParser.parseString(offsetAndTimestamp.toString()).getAsJsonObject();
-        //    jsonArray.add(jsonObject);
-        //}
-
-        return jsonArray;
+            return jsonArray;
+        }
+        catch(InterruptedException ie)
+        {
+            logger.debug(ie.getMessage(), ie);
+            return new JsonArray();
+        }
+        catch(ExecutionException ie)
+        {
+            logger.debug(ie.getMessage(), ie);
+            return new JsonArray();
+        }
     }
 
     private class SourceNotificationsSubscriber implements Runnable
@@ -95,34 +90,17 @@ public class SourceNotificationsSource {
         @Override
         public void run() {
             try {
-                kafkaConsumer.subscribe(topics);
-                topicPartitions = kafkaConsumer.assignment();
-                logger.info("Number of Partitions: "+topicPartitions.size());
+                kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
+                    @Override
+                    public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                    }
 
-                //Construct the parameters to read the Kafka Log
-                OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
-                OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-                Map<TopicPartition, Long> partitionParameter = new HashMap<>();
-                for(TopicPartition topicPartition:topicPartitions)
-                {
-                    partitionParameter.put(topicPartition, start.toEpochSecond());
-                    partitionParameter.put(topicPartition, end.toEpochSecond());
-                }
-
-                //
-                JsonArray jsonArray = new JsonArray();
-                Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
-                Set<Map.Entry<TopicPartition, OffsetAndTimestamp>> entrySet = topicPartitionOffsetAndTimestampMap.entrySet();
-                for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry:entrySet)
-                {
-                    TopicPartition partition = entry.getKey();
-                    OffsetAndTimestamp offsetAndTimestamp = entry.getValue();
-
-                    JsonObject jsonObject = JsonParser.parseString(offsetAndTimestamp.toString()).getAsJsonObject();
-                    jsonArray.add(jsonObject);
-                }
-
-                logger.info(jsonArray.toString());
+                    @Override
+                    public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                        topicPartitions = Arrays.asList(partitions.toArray(new TopicPartition[0]));
+                        logger.info("Number of Partitions: "+topicPartitions.size());
+                    }
+                });
 
                 while (true) {
                     kafkaConsumer.poll(Long.MAX_VALUE);
@@ -131,6 +109,45 @@ public class SourceNotificationsSource {
             finally {
                 shutdownLatch.countDown();
             }
+        }
+    }
+
+    private class SourceNotificationsReader implements Callable<JsonArray>
+    {
+        private OffsetDateTime start;
+        private OffsetDateTime end;
+
+        private SourceNotificationsReader(OffsetDateTime start, OffsetDateTime end)
+        {
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public JsonArray call() throws Exception {
+            JsonArray jsonArray = new JsonArray();
+
+            //Construct the parameters to read the Kafka Log
+            Map<TopicPartition, Long> partitionParameter = new HashMap<>();
+            for(TopicPartition topicPartition:topicPartitions)
+            {
+                partitionParameter.put(topicPartition, start.toEpochSecond());
+                partitionParameter.put(topicPartition, end.toEpochSecond());
+            }
+
+            //
+            Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
+            Set<Map.Entry<TopicPartition, OffsetAndTimestamp>> entrySet = topicPartitionOffsetAndTimestampMap.entrySet();
+            for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry:entrySet)
+            {
+                TopicPartition partition = entry.getKey();
+                OffsetAndTimestamp offsetAndTimestamp = entry.getValue();
+
+                JsonObject jsonObject = JsonParser.parseString(offsetAndTimestamp.toString()).getAsJsonObject();
+                jsonArray.add(jsonObject);
+            }
+
+            return jsonArray;
         }
     }
 }

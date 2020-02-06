@@ -51,7 +51,7 @@ public class KafkaMessagingTests {
 
         JsonArray sourceNotifications = this.sourceNotificationsSource.readNotifications(start, end);
 
-        logger.info("****");
+        logger.info("**TIME_TO_ASSERT**");
         logger.info(sourceNotifications.toString());
         logger.info("****");
 

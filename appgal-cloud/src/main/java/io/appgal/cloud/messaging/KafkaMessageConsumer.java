@@ -97,7 +97,12 @@ public class KafkaMessageConsumer {
         }
 
         private void process(ConsumerRecord<String, String> record) {
+
             logger.info("CONSUME_DATA");
+            logger.info("RECORD_OFFSET: "+record.offset());
+            logger.info("RECORD_KEY: "+record.key());
+            logger.info("RECORD_VALUE: "+record.value());
+            logger.info("....");
         }
 
         private void doCommitSync() {
