@@ -1,5 +1,6 @@
 package io.appgal.cloud.messaging;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.net.UnknownHostException;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 //TODO:Look at removing dependency on KafkaServer (@bugs.bunny.shah@gmail.com)
@@ -22,8 +26,11 @@ public class KafkaMessagingTests {
     @Inject
     private KafkaMessageProducer kafkaMessageProducer;
 
+    @Inject
+    private SourceNotificationsSource sourceNotificationsSource;
+
     @Test
-    public void test() throws InterruptedException, UnknownHostException {
+    public void testProducer() throws InterruptedException, UnknownHostException {
         this.kafkaMessageConsumer.consumeData();
 
         JsonObject jsonObject = new JsonObject();
@@ -31,5 +38,19 @@ public class KafkaMessagingTests {
         this.kafkaMessageProducer.produceData(jsonObject);
 
         Thread.sleep(1000);
+
+
+    }
+
+    @Test
+    public void testReadNotifications() throws InterruptedException, UnknownHostException {
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+
+        JsonArray sourceNotifications = this.sourceNotificationsSource.readNotifications(start, end);
+
+        logger.info("****");
+        logger.info(sourceNotifications.toString());
+        logger.info("****");
     }
 }
