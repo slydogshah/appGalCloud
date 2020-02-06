@@ -29,7 +29,10 @@ public class KafkaMessagingTests {
     @Inject
     private SourceNotificationsSource sourceNotificationsSource;
 
-    @Test
+    @Inject
+    private KafkaDaemonClient kafkaDaemonClient;
+
+    /*@Test
     public void testProducer() throws InterruptedException, UnknownHostException {
         this.kafkaMessageConsumer.consumeData();
 
@@ -40,16 +43,14 @@ public class KafkaMessagingTests {
         Thread.sleep(1000);
 
 
-    }
+    }*/
 
     @Test
     public void testReadNotifications() throws InterruptedException, UnknownHostException {
-        //this.kafkaMessageConsumer.consumeData();
-
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
 
-        JsonArray sourceNotifications = this.sourceNotificationsSource.readNotifications(start, end);
+        JsonArray sourceNotifications = this.kafkaDaemonClient.readNotifications(start, end);
 
         logger.info("**TIME_TO_ASSERT**");
         logger.info(sourceNotifications.toString());
