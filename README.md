@@ -1,3 +1,11 @@
+
+<script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
+
+#Food Recovery Optimization Repository, by AppGal Labs
+----
+<div class="LI-profile-badge"  data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="catherine-balcom-667742187"><a class="LI-simple-link" href='https://www.linkedin.com/in/catherine-balcom-667742187?trk=profile-badge'>Catherine Balcom</a></div>
+
+
 # appGalCloud
 The Cloud App for the AppGal Food Recovery Optimization Network
 
