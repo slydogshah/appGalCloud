@@ -68,8 +68,8 @@ public class KafkaDaemonClient {
     public void stop()
     {
         this.executorService.shutdown();
-        this.kafkaConsumer.close();
         this.kafkaProducer.close();
+        this.kafkaConsumer.close();
     }
 
     public void produceData(JsonObject jsonObject)
@@ -95,9 +95,6 @@ public class KafkaDaemonClient {
 
     public JsonArray readNotifications(OffsetDateTime start, OffsetDateTime end)
     {
-        logger.info("********************");
-        logger.info("ReadNotifications...");
-        logger.info("********************");
         try {
             while (!this.active) {
                 try {
@@ -152,9 +149,6 @@ public class KafkaDaemonClient {
 
                 //Post and publish
                 while (true) {
-                    logger.info("******************************************");
-                    logger.info("WHILE_LOOP...");
-                    logger.info("******************************************");
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
                     records.forEach(record -> process(record));
                     kafkaConsumer.commitAsync();
@@ -214,6 +208,7 @@ public class KafkaDaemonClient {
             logger.info("SourceNotificationReader...");
             logger.info("********************");
 
+            kafkaConsumer.seekToBeginning(topicPartitions);
             JsonArray jsonArray = new JsonArray();
 
             //Construct the parameters to read the Kafka Log
