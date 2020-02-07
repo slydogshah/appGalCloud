@@ -21,40 +21,27 @@ public class KafkaMessagingTests {
     private static Logger logger = LoggerFactory.getLogger(KafkaMessagingTests.class);
 
     @Inject
-    private KafkaMessageConsumer kafkaMessageConsumer;
-
-    @Inject
-    private KafkaMessageProducer kafkaMessageProducer;
-
-    @Inject
     private SourceNotificationsSource sourceNotificationsSource;
 
     @Inject
     private KafkaDaemonClient kafkaDaemonClient;
 
-    /*@Test
-    public void testProducer() throws InterruptedException, UnknownHostException {
-        this.kafkaMessageConsumer.consumeData();
+    @Test
+    public void testReadNotifications() throws InterruptedException, UnknownHostException {
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("sourceNotificationId", UUID.randomUUID().toString()+"/sourceNotificationId");
-        this.kafkaMessageProducer.produceData(jsonObject);
+        this.kafkaDaemonClient.produceData(jsonObject);
+        Thread.sleep(10000);
 
-        Thread.sleep(1000);
-
-
-    }*/
-
-    @Test
-    public void testReadNotifications() throws InterruptedException, UnknownHostException {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-
         JsonArray sourceNotifications = this.kafkaDaemonClient.readNotifications(start, end);
 
+        logger.info("******************************************");
         logger.info("**TIME_TO_ASSERT**");
         logger.info(sourceNotifications.toString());
-        logger.info("****");
+        logger.info("******************************************");
 
         Thread.sleep(1000);
     }

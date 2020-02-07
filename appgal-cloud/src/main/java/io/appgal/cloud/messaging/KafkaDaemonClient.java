@@ -4,6 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
@@ -27,6 +31,9 @@ public class KafkaDaemonClient {
     private List<String> topics;
     private ExecutorService executorService;
     private List<TopicPartition> topicPartitions;
+    private boolean active = false;
+
+    private KafkaProducer<String,String> kafkaProducer;
 
     public KafkaDaemonClient()
     {
@@ -41,10 +48,16 @@ public class KafkaDaemonClient {
         config.put("bootstrap.servers", "localhost:9092");
         config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
         config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
+        config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
+        config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
+
+        this.kafkaConsumer = new KafkaConsumer<String, String>(config);
+        this.kafkaProducer = new KafkaProducer<>(config);
 
         this.topics = Arrays.asList(new String[]{"foodRunnerSyncProtocol_source_notification"});
-        this.kafkaConsumer = new KafkaConsumer<String, String>(config);
         this.shutdownLatch = new CountDownLatch(1);
+
+        this.active = true;
 
         //Integrate into an ExecutorService
         this.executorService = Executors.newCachedThreadPool();
@@ -56,12 +69,37 @@ public class KafkaDaemonClient {
     {
         this.executorService.shutdown();
         this.kafkaConsumer.close();
+        this.kafkaProducer.close();
+    }
+
+    public void produceData(JsonObject jsonObject)
+    {
+        final ProducerRecord<String, String> record = new ProducerRecord<>(this.topics.get(0),
+                "sourceNotification", jsonObject.toString());
+
+        this.kafkaProducer.send(record, new Callback() {
+            public void onCompletion(RecordMetadata metadata, Exception e) {
+                if (e != null) {
+                    logger.debug("Send failed for record {}", record, e);
+                }
+                else
+                {
+                    logger.info("******************************************");
+                    logger.info("PRODUCE_DATA");
+                    logger.info("RECORD_META_DATA: "+metadata.toString());
+                    logger.info("******************************************");
+                }
+            }
+        });
     }
 
     public JsonArray readNotifications(OffsetDateTime start, OffsetDateTime end)
     {
+        logger.info("********************");
+        logger.info("ReadNotifications...");
+        logger.info("********************");
         try {
-            while (this.topicPartitions == null || this.topicPartitions.isEmpty()) {
+            while (!this.active) {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -71,7 +109,7 @@ public class KafkaDaemonClient {
 
             Future<JsonArray> future = this.executorService.
                     submit(new SourceNotificationsReader(start, end));
-            JsonArray jsonArray = future.get();
+            JsonArray jsonArray = future.get(10000, TimeUnit.MILLISECONDS);
 
             return jsonArray;
         }
@@ -83,6 +121,11 @@ public class KafkaDaemonClient {
         catch(ExecutionException ie)
         {
             logger.debug(ie.getMessage(), ie);
+            return new JsonArray();
+        }
+        catch(TimeoutException te)
+        {
+            logger.debug(te.getMessage(), te);
             return new JsonArray();
         }
     }
@@ -100,11 +143,18 @@ public class KafkaDaemonClient {
                     @Override
                     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
                         topicPartitions = Arrays.asList(partitions.toArray(new TopicPartition[0]));
+                        active = true;
+                        logger.info("******************************************");
                         logger.info("Number of Partitions: "+topicPartitions.size());
+                        logger.info("******************************************");
                     }
                 });
 
+                //Post and publish
                 while (true) {
+                    logger.info("******************************************");
+                    logger.info("WHILE_LOOP...");
+                    logger.info("******************************************");
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
                     records.forEach(record -> process(record));
                     kafkaConsumer.commitAsync();
@@ -160,6 +210,10 @@ public class KafkaDaemonClient {
 
         @Override
         public JsonArray call() throws Exception {
+            logger.info("********************");
+            logger.info("SourceNotificationReader...");
+            logger.info("********************");
+
             JsonArray jsonArray = new JsonArray();
 
             //Construct the parameters to read the Kafka Log
