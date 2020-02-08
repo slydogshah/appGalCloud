@@ -29,12 +29,13 @@ public class KafkaMessagingTests {
     @Test
     public void testReadNotifications() throws InterruptedException, UnknownHostException {
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("sourceNotificationId", UUID.randomUUID().toString()+"/sourceNotificationId");
-        this.kafkaDaemonClient.produceData(jsonObject);
-        Thread.sleep(10000);
+        //JsonObject jsonObject = new JsonObject();
+        //jsonObject.addProperty("sourceNotificationId", UUID.randomUUID().toString()+"/sourceNotificationId");
+        //this.kafkaDaemonClient.produceData(jsonObject);
+        //Thread.sleep(10000);
 
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
+        //OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         JsonArray sourceNotifications = this.kafkaDaemonClient.readNotifications(start, end);
 
@@ -42,6 +43,6 @@ public class KafkaMessagingTests {
         logger.info(sourceNotifications.toString());
         logger.info("********************************************************");
 
-        Thread.sleep(1000);
+        Thread.sleep(120000);
     }
 }
