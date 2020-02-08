@@ -18,7 +18,9 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -34,6 +36,8 @@ public class KafkaDaemonClient {
     private boolean active = false;
 
     private KafkaProducer<String,String> kafkaProducer;
+
+    private Queue<MessageWindow> readNotificationsQueue;
 
     public KafkaDaemonClient()
     {
@@ -58,6 +62,8 @@ public class KafkaDaemonClient {
         this.shutdownLatch = new CountDownLatch(1);
 
         this.active = true;
+
+        this.readNotificationsQueue = new LinkedList<>();
 
         //Integrate into an ExecutorService
         this.executorService = Executors.newCachedThreadPool();
@@ -95,36 +101,26 @@ public class KafkaDaemonClient {
 
     public JsonArray readNotifications(OffsetDateTime start, OffsetDateTime end)
     {
-        try {
-            while (!this.active) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    logger.debug(e.getMessage(), e);
-                }
+        while (!this.active) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                logger.debug(e.getMessage(), e);
             }
+        }
 
-            Future<JsonArray> future = this.executorService.
-                    submit(new SourceNotificationsReader(start, end));
-            JsonArray jsonArray = future.get(10000, TimeUnit.MILLISECONDS);
+        //TODO: make this a synchronized write
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        this.readNotificationsQueue.add(messageWindow);
 
-            return jsonArray;
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        catch(InterruptedException ie)
-        {
-            logger.debug(ie.getMessage(), ie);
-            return new JsonArray();
-        }
-        catch(ExecutionException ie)
-        {
-            logger.debug(ie.getMessage(), ie);
-            return new JsonArray();
-        }
-        catch(TimeoutException te)
-        {
-            logger.debug(te.getMessage(), te);
-            return new JsonArray();
-        }
+
+        JsonArray jsonArray = new JsonArray();
+        return jsonArray;
     }
     //-----Runnables/Tasks that execute on the DaemonClientThreadPool-----------
     private class DaemonClientLauncher implements Runnable
@@ -152,7 +148,60 @@ public class KafkaDaemonClient {
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
                     records.forEach(record -> process(record));
                     kafkaConsumer.commitAsync();
+
+                    MessageWindow messageWindow = readNotificationsQueue.peek();
+                    if(messageWindow == null)
+                    {
+                        continue;
+                    }
+
+                    logger.info("********************");
+                    logger.info("BLAHKABLAH...");
+                    logger.info("********************");
+
+                    try {
+                        //kafkaConsumer.assign(topicPartitions);
+                        //kafkaConsumer.seekToBeginning(topicPartitions);
+                        OffsetDateTime start = messageWindow.getStart();
+                        OffsetDateTime end = messageWindow.getEnd();
+
+                        //Construct the parameters to read the Kafka Log
+                        Map<TopicPartition, Long> partitionParameter = new HashMap<>();
+                        for (TopicPartition topicPartition : topicPartitions) {
+                            partitionParameter.put(topicPartition, start.toEpochSecond());
+                            partitionParameter.put(topicPartition, end.toEpochSecond());
+                        }
+                        //partitionParameter = kafkaConsumer.beginningOffsets(topicPartitions);
+
+                        //
+                        Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
+                        Set<Map.Entry<TopicPartition, OffsetAndTimestamp>> entrySet = topicPartitionOffsetAndTimestampMap.entrySet();
+                        for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry : entrySet) {
+                            TopicPartition partition = entry.getKey();
+                            OffsetAndTimestamp offsetAndTimestamp = entry.getValue();
+
+                            logger.info("***********************************");
+                            logger.info("OFFSETDATETIME: " + offsetAndTimestamp.offset());
+                            logger.info("***********************************");
+
+                            kafkaConsumer.seek(partition, offsetAndTimestamp.offset());
+
+                            JsonObject jsonObject = JsonParser.parseString(offsetAndTimestamp.toString()).getAsJsonObject();
+                            //jsonArray.add(jsonObject);
+                        }
+
+                        //return jsonArray;
+                    }
+                    catch (Exception e)
+                    {
+                        logger.error(e.getMessage(), e);
+                        //return jsonArray;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
             }
             finally {
                 try {
@@ -187,51 +236,6 @@ public class KafkaDaemonClient {
                 // up here. otherwise it's reasonable to ignore the error and go on
                 logger.debug("Commit failed", e);
             }
-        }
-    }
-
-    //AppLevel component. TODO: move this higher up the stack (@bugs.bunny.shah@gmail.com)
-    private class SourceNotificationsReader implements Callable<JsonArray>
-    {
-        private OffsetDateTime start;
-        private OffsetDateTime end;
-
-        private SourceNotificationsReader(OffsetDateTime start, OffsetDateTime end)
-        {
-            this.start = start;
-            this.end = end;
-        }
-
-        @Override
-        public JsonArray call() throws Exception {
-            logger.info("********************");
-            logger.info("SourceNotificationReader...");
-            logger.info("********************");
-
-            kafkaConsumer.seekToBeginning(topicPartitions);
-            JsonArray jsonArray = new JsonArray();
-
-            //Construct the parameters to read the Kafka Log
-            Map<TopicPartition, Long> partitionParameter = new HashMap<>();
-            for(TopicPartition topicPartition:topicPartitions)
-            {
-                partitionParameter.put(topicPartition, start.toEpochSecond());
-                partitionParameter.put(topicPartition, end.toEpochSecond());
-            }
-
-            //
-            Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
-            Set<Map.Entry<TopicPartition, OffsetAndTimestamp>> entrySet = topicPartitionOffsetAndTimestampMap.entrySet();
-            for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry:entrySet)
-            {
-                TopicPartition partition = entry.getKey();
-                OffsetAndTimestamp offsetAndTimestamp = entry.getValue();
-
-                JsonObject jsonObject = JsonParser.parseString(offsetAndTimestamp.toString()).getAsJsonObject();
-                jsonArray.add(jsonObject);
-            }
-
-            return jsonArray;
         }
     }
 }

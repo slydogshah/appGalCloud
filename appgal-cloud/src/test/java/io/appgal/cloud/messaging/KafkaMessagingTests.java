@@ -34,9 +34,7 @@ public class KafkaMessagingTests {
         this.kafkaDaemonClient.produceData(jsonObject);
         Thread.sleep(10000);
 
-        //OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
-        //OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         JsonArray sourceNotifications = this.kafkaDaemonClient.readNotifications(start, end);
 
