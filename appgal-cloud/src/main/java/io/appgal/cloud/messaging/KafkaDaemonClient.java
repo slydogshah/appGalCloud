@@ -133,7 +133,7 @@ public class KafkaDaemonClient {
         @Override
         public void run() {
             try {
-                kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
+                /*kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
                     @Override
                     public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
                     }
@@ -146,10 +146,38 @@ public class KafkaDaemonClient {
                         logger.info("Number of Partitions: "+topicPartitions.size());
                         logger.info("******************************************");
                     }
-                });
+                });*/
+                //kafkaConsumer.subscribe(topics);
+                Set<TopicPartition> topicPartitions = kafkaConsumer.assignment();
+                logger.info("******************************************");
+                logger.info("Number of Partitions: "+topicPartitions.size());
+                logger.info("******************************************");
+                for(TopicPartition topicPartition:topicPartitions)
+                {
+                    active = true;
+                    logger.info("******************************************");
+                    logger.info("PARTITION_NAME: "+topicPartition.topic());
+                    logger.info("******************************************");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
+            }
+            finally {
+                try {
+                    doCommitSync();
+                } finally {
+                    kafkaConsumer.close();
+                    shutdownLatch.countDown();
+                }
+            }
+        }
 
-                //Post and publish
-                do {
+        private void findNotifications()
+        {
+            //Post and publish
+                /*do {
                     //ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
                     //records.forEach(record -> process(record));
                     //kafkaConsumer.commitAsync();
@@ -210,20 +238,7 @@ public class KafkaDaemonClient {
                     logger.info("***********************************");
                     logger.info("JSONArray: "+jsonArray.toString());
                     logger.info("***********************************");
-                }while (true);
-            }
-            catch (Exception e)
-            {
-                logger.error(e.getMessage(), e);
-            }
-            finally {
-                try {
-                    doCommitSync();
-                } finally {
-                    kafkaConsumer.close();
-                    shutdownLatch.countDown();
-                }
-            }
+                }while (true);*/
         }
 
         private void process(ConsumerRecord<String, String> record) {
