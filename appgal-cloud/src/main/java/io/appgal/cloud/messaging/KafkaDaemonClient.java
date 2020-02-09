@@ -155,7 +155,7 @@ public class KafkaDaemonClient {
             }
             finally {
                 try {
-                    doCommitSync();
+                    kafkaConsumer.commitSync();
                 } finally {
                     kafkaConsumer.close();
                     shutdownLatch.countDown();
@@ -168,7 +168,6 @@ public class KafkaDaemonClient {
                 do {
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
                     records.forEach(record -> process(record));
-                    kafkaConsumer.commitAsync();
 
                     //Thread.sleep(5000);
                     MessageWindow messageWindow = readNotificationsQueue.poll();
@@ -204,12 +203,14 @@ public class KafkaDaemonClient {
                         for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry : entrySet) {
                             TopicPartition partition = entry.getKey();
                             OffsetAndTimestamp offsetAndTimestamp = entry.getValue();
+                            OffsetAndMetadata offsetAndMetadata = new OffsetAndMetadata(offsetAndTimestamp.offset());
 
                             //kafkaConsumer.seek(partition, offsetAndTimestamp.offset());
-                            String jsonValue = offsetAndTimestamp.toString();
+                            String jsonValue = offsetAndMetadata.toString();
                             logger.info("***********************************");
-                            logger.info("OFFSETDATETIME: " + offsetAndTimestamp.offset());
+                            logger.info("OFFSET: " + offsetAndTimestamp.offset());
                             logger.info("JSON: " + jsonValue);
+                            logger.info("MetaData: " + offsetAndMetadata.metadata());
                             logger.info("***********************************");
 
                             JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
@@ -236,15 +237,24 @@ public class KafkaDaemonClient {
             logger.info("RECORD_KEY: "+record.key());
             logger.info("RECORD_VALUE: "+record.value());
             logger.info("....");
+
+            doCommitSync(record);
         }
 
-        private void doCommitSync() {
+        private void doCommitSync(ConsumerRecord<String,String> consumerRecord) {
             try {
-                kafkaConsumer.commitSync();
+
+                //Create the proper OffsetMetaData
+                OffsetAndMetadata offsetAndMetadata = new OffsetAndMetadata(consumerRecord.offset());
+                Map<TopicPartition,OffsetAndMetadata> metadataMap = new HashMap<>();
+
+                metadataMap.put(topicPartitions.get(0), offsetAndMetadata);
+
+                kafkaConsumer.commitSync(metadataMap);
             } catch (WakeupException e) {
                 // we're shutting down, but finish the commit first and then
                 // rethrow the exception so that the main loop can exit
-                doCommitSync();
+                //doCommitSync();
                 throw e;
             } catch (CommitFailedException e) {
                 // the commit failed with an unrecoverable error. if there is any
