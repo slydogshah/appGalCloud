@@ -145,7 +145,7 @@ public class KafkaDaemonClient {
                         logger.info("******************************************");
                     }
                 });
-                this.findNotifications();
+                JsonArray jsonArray = this.findNotifications();
             }
             catch (Exception e)
             {
@@ -161,8 +161,9 @@ public class KafkaDaemonClient {
             }
         }
 
-        private void findNotifications() throws InterruptedException
+        private JsonArray findNotifications() throws InterruptedException
         {
+            JsonArray jsonArray = new JsonArray();
                 do {
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
                     records.forEach(record -> process(record));
@@ -182,9 +183,8 @@ public class KafkaDaemonClient {
                     logger.info("START_READ_NOTIFICATIONS");
                     logger.info("********************");
 
-                    JsonArray jsonArray = new JsonArray();
                     try {
-                        /*OffsetDateTime start = messageWindow.getStart();
+                        OffsetDateTime start = messageWindow.getStart();
                         OffsetDateTime end = messageWindow.getEnd();
 
                         //Construct the parameters to read the Kafka Log
@@ -196,25 +196,10 @@ public class KafkaDaemonClient {
 
                         //
                         Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
-                        Set<Map.Entry<TopicPartition, OffsetAndTimestamp>> entrySet = topicPartitionOffsetAndTimestampMap.entrySet();
-                        for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry : entrySet) {
-                            TopicPartition partition = entry.getKey();
-                            OffsetAndTimestamp offsetAndTimestamp = entry.getValue();
-                            String jsonValue = offsetAndTimestamp.toString();
-
-                            logger.info("***********************************");
-                            logger.info("OFFSET: " + offsetAndTimestamp.offset());
-                            logger.info("JSON: " + jsonValue);
-                            logger.info("***********************************");
-
-                            JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
-                            jsonArray.add(jsonObject);
-                        }
-
-                        //return jsonArray;*/
 
                         kafkaConsumer.poll(0);
-                        kafkaConsumer.seek(topicPartitions.get(0), 10);
+                        OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
+                        kafkaConsumer.seek(topicPartitions.get(0), offsetAndTimestamp.offset());
 
                         while (true) {
                             ConsumerRecords<String, String> testRecords =
@@ -232,20 +217,13 @@ public class KafkaDaemonClient {
                                 jsonArray.add(jsonObject);
                             }
                             //commitDBTransaction();
-
-                            logger.info("****");
-                            logger.info(jsonArray.toString());
-                            logger.info("****");
                         }
                     }
                     catch (Exception e)
                     {
                         logger.error(e.getMessage(), e);
-                        //return jsonArray;
+                        return jsonArray;
                     }
-                    logger.info("***********************************");
-                    logger.info("JSONArray: "+jsonArray.toString());
-                    logger.info("***********************************");
                 }while (true);
         }
 
