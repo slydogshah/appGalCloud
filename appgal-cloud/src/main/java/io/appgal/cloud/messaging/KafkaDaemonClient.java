@@ -145,8 +145,7 @@ public class KafkaDaemonClient {
                         logger.info("******************************************");
                     }
                 });
-                JsonArray jsonArray = this.findNotifications();
-                logger.info(jsonArray.toString());
+                this.findNotifications();
             }
             catch (Exception e)
             {
@@ -162,7 +161,7 @@ public class KafkaDaemonClient {
             }
         }
 
-        private JsonArray findNotifications() throws InterruptedException
+        private void findNotifications() throws InterruptedException
         {
             JsonArray jsonArray = new JsonArray();
                 do {
@@ -218,12 +217,12 @@ public class KafkaDaemonClient {
                                 jsonArray.add(jsonObject);
                             }
                             //commitDBTransaction();
+                            messageWindow.setMessages(jsonArray);
                         }
                     }
                     catch (Exception e)
                     {
                         logger.error(e.getMessage(), e);
-                        return jsonArray;
                     }
                 }while (true);
         }
