@@ -18,9 +18,7 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -186,7 +184,7 @@ public class KafkaDaemonClient {
 
                     JsonArray jsonArray = new JsonArray();
                     try {
-                        OffsetDateTime start = messageWindow.getStart();
+                        /*OffsetDateTime start = messageWindow.getStart();
                         OffsetDateTime end = messageWindow.getEnd();
 
                         //Construct the parameters to read the Kafka Log
@@ -195,7 +193,6 @@ public class KafkaDaemonClient {
                             partitionParameter.put(topicPartition, start.toEpochSecond());
                             partitionParameter.put(topicPartition, end.toEpochSecond());
                         }
-                        partitionParameter = kafkaConsumer.endOffsets(topicPartitions);
 
                         //
                         Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
@@ -203,21 +200,43 @@ public class KafkaDaemonClient {
                         for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry : entrySet) {
                             TopicPartition partition = entry.getKey();
                             OffsetAndTimestamp offsetAndTimestamp = entry.getValue();
-                            OffsetAndMetadata offsetAndMetadata = new OffsetAndMetadata(offsetAndTimestamp.offset());
+                            String jsonValue = offsetAndTimestamp.toString();
 
-                            //kafkaConsumer.seek(partition, offsetAndTimestamp.offset());
-                            String jsonValue = offsetAndMetadata.toString();
                             logger.info("***********************************");
                             logger.info("OFFSET: " + offsetAndTimestamp.offset());
                             logger.info("JSON: " + jsonValue);
-                            logger.info("MetaData: " + offsetAndMetadata.metadata());
                             logger.info("***********************************");
 
                             JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
                             jsonArray.add(jsonObject);
                         }
 
-                        //return jsonArray;
+                        //return jsonArray;*/
+
+                        kafkaConsumer.poll(0);
+                        kafkaConsumer.seek(topicPartitions.get(0), 10);
+
+                        while (true) {
+                            ConsumerRecords<String, String> testRecords =
+                                    kafkaConsumer.poll(100);
+                            for (ConsumerRecord<String, String> record : testRecords) {
+                                logger.info("CONSUME_DATA_TEST_RECORD");
+                                logger.info("RECORD_OFFSET: "+record.offset());
+                                logger.info("RECORD_KEY: "+record.key());
+                                logger.info("RECORD_VALUE: "+record.value());
+                                logger.info("....");
+
+                                String jsonValue = record.value();
+
+                                JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
+                                jsonArray.add(jsonObject);
+                            }
+                            //commitDBTransaction();
+
+                            logger.info("****");
+                            logger.info(jsonArray.toString());
+                            logger.info("****");
+                        }
                     }
                     catch (Exception e)
                     {
