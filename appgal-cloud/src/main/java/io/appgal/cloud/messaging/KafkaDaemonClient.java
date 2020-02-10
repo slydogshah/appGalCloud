@@ -87,13 +87,13 @@ public class KafkaDaemonClient {
                 if (e != null) {
                     logger.debug("Send failed for record {}", record, e);
                 }
-                else
+                /*else
                 {
                     logger.info("******************************************");
                     logger.info("PRODUCE_DATA");
                     logger.info("RECORD_META_DATA: "+metadata.toString());
                     logger.info("******************************************");
-                }
+                }*/
             }
         });
     }
@@ -112,9 +112,9 @@ public class KafkaDaemonClient {
         MessageWindow messageWindow = new MessageWindow(start, end);
         this.readNotificationsQueue.add(messageWindow);
 
-        logger.info("*********READ_NOTIFICATIONS***********");
-        logger.info("JUST_FINISHED_WRITE");
-        logger.info("*******************************");
+        //logger.info("*********READ_NOTIFICATIONS***********");
+        //logger.info("JUST_FINISHED_WRITE");
+        //logger.info("*******************************");
 
         /*try {
             Thread.sleep(30000);
@@ -146,6 +146,7 @@ public class KafkaDaemonClient {
                     }
                 });
                 JsonArray jsonArray = this.findNotifications();
+                logger.info(jsonArray.toString());
             }
             catch (Exception e)
             {
@@ -172,16 +173,16 @@ public class KafkaDaemonClient {
                     MessageWindow messageWindow = readNotificationsQueue.poll();
                     if(messageWindow == null)
                     {
-                        logger.info("*********KAFKA_DAEMON***********");
-                        logger.info("SKIP_READ_NOTIFICATIONS");
-                        logger.info("********************");
+                        //logger.info("*********KAFKA_DAEMON***********");
+                        //logger.info("SKIP_READ_NOTIFICATIONS");
+                        //logger.info("********************");
                         //Thread.sleep(5000);
                         continue;
                     }
 
-                    logger.info("*********KAFKA_DAEMON***********");
-                    logger.info("START_READ_NOTIFICATIONS");
-                    logger.info("********************");
+                    //logger.info("*********KAFKA_DAEMON***********");
+                    //logger.info("START_READ_NOTIFICATIONS");
+                    //logger.info("********************");
 
                     try {
                         OffsetDateTime start = messageWindow.getStart();
@@ -205,11 +206,11 @@ public class KafkaDaemonClient {
                             ConsumerRecords<String, String> testRecords =
                                     kafkaConsumer.poll(100);
                             for (ConsumerRecord<String, String> record : testRecords) {
-                                logger.info("CONSUME_DATA_TEST_RECORD");
-                                logger.info("RECORD_OFFSET: "+record.offset());
-                                logger.info("RECORD_KEY: "+record.key());
-                                logger.info("RECORD_VALUE: "+record.value());
-                                logger.info("....");
+                                //logger.info("CONSUME_DATA_TEST_RECORD");
+                                //logger.info("RECORD_OFFSET: "+record.offset());
+                                //logger.info("RECORD_KEY: "+record.key());
+                                //logger.info("RECORD_VALUE: "+record.value());
+                                //logger.info("....");
 
                                 String jsonValue = record.value();
 
@@ -229,11 +230,11 @@ public class KafkaDaemonClient {
 
         private void process(ConsumerRecord<String, String> record) {
 
-            logger.info("CONSUME_DATA");
-            logger.info("RECORD_OFFSET: "+record.offset());
-            logger.info("RECORD_KEY: "+record.key());
-            logger.info("RECORD_VALUE: "+record.value());
-            logger.info("....");
+            //logger.info("CONSUME_DATA");
+            //logger.info("RECORD_OFFSET: "+record.offset());
+            //logger.info("RECORD_KEY: "+record.key());
+            //logger.info("RECORD_VALUE: "+record.value());
+            //logger.info("....");
 
             doCommitSync(record);
         }
