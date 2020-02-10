@@ -21,9 +21,6 @@ public class KafkaMessagingTests {
     private static Logger logger = LoggerFactory.getLogger(KafkaMessagingTests.class);
 
     @Inject
-    private SourceNotificationsSource sourceNotificationsSource;
-
-    @Inject
     private KafkaDaemonClient kafkaDaemonClient;
 
     @Test
