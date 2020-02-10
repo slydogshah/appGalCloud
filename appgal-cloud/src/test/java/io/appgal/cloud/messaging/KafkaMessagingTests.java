@@ -37,17 +37,19 @@ public class KafkaMessagingTests {
         //OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusHours(Duration.ofHours(6).toHours());
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-        JsonArray sourceNotifications = this.kafkaDaemonClient.readNotifications(start, end);
-
-        logger.info("***************TIME_TO_ASSERT***************************");
-        logger.info(sourceNotifications.toString());
-        logger.info("********************************************************");
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        this.kafkaDaemonClient.readNotifications(messageWindow);
 
         for(int i=0; i< 10; i++) {
             jsonObject = new JsonObject();
             jsonObject.addProperty("sourceNotificationId", UUID.randomUUID().toString()+"/sourceNotificationId");
             this.kafkaDaemonClient.produceData(jsonObject);
-            Thread.sleep(12000);
         }
+
+        Thread.sleep(30000);
+
+        logger.info("***************TIME_TO_ASSERT***************************");
+        logger.info(messageWindow.getMessages().toString());
+        logger.info("********************************************************");
     }
 }

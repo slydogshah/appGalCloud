@@ -98,7 +98,7 @@ public class KafkaDaemonClient {
         });
     }
 
-    public JsonArray readNotifications(OffsetDateTime start, OffsetDateTime end)
+    public JsonArray readNotifications(MessageWindow messageWindow)
     {
         while (!this.active) {
             try {
@@ -109,7 +109,6 @@ public class KafkaDaemonClient {
         }
 
         //TODO: make this a synchronized write
-        MessageWindow messageWindow = new MessageWindow(start, end);
         this.readNotificationsQueue.add(messageWindow);
 
         //logger.info("*********READ_NOTIFICATIONS***********");
