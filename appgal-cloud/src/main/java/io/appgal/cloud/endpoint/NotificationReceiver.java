@@ -7,12 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Path("/receive")
@@ -24,10 +23,10 @@ public class NotificationReceiver {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String receiveSourceNotification(String startTimestamp, String endTimestamp)
+    public String receiveSourceNotification(@QueryParam("startTimestamp") String startTimestamp,@QueryParam("endTimestamp") String endTimestamp)
     {
-        OffsetDateTime start = OffsetDateTime.parse(startTimestamp);
-        OffsetDateTime end = OffsetDateTime.parse(endTimestamp);
+        OffsetDateTime start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(startTimestamp)), ZoneOffset.UTC);
+        OffsetDateTime end = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTimestamp)), ZoneOffset.UTC);
         MessageWindow messageWindow = new MessageWindow(start, end);
 
         this.processIncomingPackets.processSourceNotification(messageWindow);

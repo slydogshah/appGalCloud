@@ -1,5 +1,6 @@
 package io.appgal.cloud.model;
 
+import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.MessageWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,5 +25,17 @@ public class SourceNotification {
 
     public void setMessageWindow(MessageWindow messageWindow) {
         this.messageWindow = messageWindow;
+    }
+
+    @Override
+    public String toString()
+    {
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.addProperty("sourceNotificationId", this.sourceNotificationId);
+        jsonObject.addProperty("startTimestamp", messageWindow.getStart().toEpochSecond());
+        jsonObject.addProperty("endTimestamp", messageWindow.getEnd().toEpochSecond());
+
+        return jsonObject.toString();
     }
 }
