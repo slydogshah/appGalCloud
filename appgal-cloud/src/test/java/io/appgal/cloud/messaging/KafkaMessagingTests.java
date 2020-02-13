@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import io.appgal.cloud.model.SourceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class KafkaMessagingTests {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         MessageWindow messageWindow = new MessageWindow(start, end);
-        this.kafkaDaemonClient.readNotifications(messageWindow);
+        this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
 
         JsonObject jsonObject = new JsonObject();
         List<String> ids = new ArrayList<>();

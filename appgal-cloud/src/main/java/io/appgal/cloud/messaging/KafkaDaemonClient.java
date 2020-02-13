@@ -3,6 +3,7 @@ package io.appgal.cloud.messaging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.model.SourceNotification;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -30,12 +31,12 @@ public class KafkaDaemonClient {
     private CountDownLatch shutdownLatch;
     private List<String> topics;
     private ExecutorService executorService;
-    private List<TopicPartition> topicPartitions;
+    private Map<String,List<TopicPartition>> topicPartitions;
     private boolean active = false;
 
     private KafkaProducer<String,String> kafkaProducer;
 
-    private Queue<MessageWindow> readNotificationsQueue;
+    private Queue<NotificationContext> readNotificationsQueue;
 
     public KafkaDaemonClient()
     {
@@ -56,9 +57,9 @@ public class KafkaDaemonClient {
         this.kafkaConsumer = new KafkaConsumer<String, String>(config);
         this.kafkaProducer = new KafkaProducer<>(config);
 
-        this.topics = Arrays.asList(new String[]{"foodRunnerSyncProtocol_source_notification"});
+        this.topics = Arrays.asList(new String[]{SourceNotification.TOPIC});
         this.shutdownLatch = new CountDownLatch(1);
-        this.topicPartitions = new ArrayList<>();
+        this.topicPartitions = new HashMap<>();
 
         this.active = true;
 
@@ -98,7 +99,7 @@ public class KafkaDaemonClient {
         });
     }
 
-    public JsonArray readNotifications(MessageWindow messageWindow)
+    public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
         while (!this.active) {
             try {
@@ -109,7 +110,8 @@ public class KafkaDaemonClient {
         }
 
         //TODO: make this a synchronized write
-        this.readNotificationsQueue.add(messageWindow);
+        NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
+        this.readNotificationsQueue.add(notificationContext);
 
         //logger.info("*********READ_NOTIFICATIONS***********");
         //logger.info("JUST_FINISHED_WRITE");
@@ -137,7 +139,8 @@ public class KafkaDaemonClient {
 
                     @Override
                     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-                        topicPartitions = Arrays.asList(partitions.toArray(new TopicPartition[0]));
+                        List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
+                        topicPartitions.put(partitions.iterator().next().topic(), partitionList);
                         active = true;
                         logger.info("******************************************");
                         logger.info("Number of Partitions: "+topicPartitions.size());
@@ -168,7 +171,8 @@ public class KafkaDaemonClient {
                     records.forEach(record -> process(record));
 
                     //Thread.sleep(5000);
-                    MessageWindow messageWindow = readNotificationsQueue.poll();
+                    NotificationContext notificationContext = readNotificationsQueue.poll();
+                    MessageWindow messageWindow = notificationContext.getMessageWindow();
                     if(messageWindow == null)
                     {
                         //logger.info("*********KAFKA_DAEMON***********");
@@ -182,13 +186,15 @@ public class KafkaDaemonClient {
                     //logger.info("START_READ_NOTIFICATIONS");
                     //logger.info("********************");
 
+                    String topic = notificationContext.getTopic();
                     try {
                         OffsetDateTime start = messageWindow.getStart();
                         OffsetDateTime end = messageWindow.getEnd();
 
                         //Construct the parameters to read the Kafka Log
                         Map<TopicPartition, Long> partitionParameter = new HashMap<>();
-                        for (TopicPartition topicPartition : topicPartitions) {
+                        List<TopicPartition> currentTopicPartitions = topicPartitions.get(topic);
+                        for (TopicPartition topicPartition : currentTopicPartitions) {
                             partitionParameter.put(topicPartition, start.toEpochSecond());
                             partitionParameter.put(topicPartition, end.toEpochSecond());
                         }
@@ -198,7 +204,7 @@ public class KafkaDaemonClient {
 
                         kafkaConsumer.poll(0);
                         OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
-                        kafkaConsumer.seek(topicPartitions.get(0), offsetAndTimestamp.offset());
+                        kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
 
                         while (true) {
                             ConsumerRecords<String, String> testRecords =
@@ -241,12 +247,11 @@ public class KafkaDaemonClient {
             try {
 
                 //Create the proper OffsetMetaData
-                OffsetAndMetadata offsetAndMetadata = new OffsetAndMetadata(consumerRecord.offset());
-                Map<TopicPartition,OffsetAndMetadata> metadataMap = new HashMap<>();
+                //OffsetAndMetadata offsetAndMetadata = new OffsetAndMetadata(consumerRecord.offset());
+                //Map<TopicPartition,OffsetAndMetadata> metadataMap = new HashMap<>();
+                //metadataMap.put(topicPartitions.get(0), offsetAndMetadata);
 
-                metadataMap.put(topicPartitions.get(0), offsetAndMetadata);
-
-                kafkaConsumer.commitSync(metadataMap);
+                kafkaConsumer.commitSync();
             } catch (WakeupException e) {
                 // we're shutting down, but finish the commit first and then
                 // rethrow the exception so that the main loop can exit

@@ -20,7 +20,7 @@ public class SourceNotificationEmitter {
         MessageWindow messageWindow = sourceNotification.getMessageWindow();
 
         //find the SourceNotifications with this time window
-        JsonArray jsonArray = this.kafkaDaemonClient.readNotifications(messageWindow);
+        JsonArray jsonArray = this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
 
         //Broadcast each SourceNotification to the FoodRunner Network
     }

@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 public class SourceNotification {
     private static Logger logger = LoggerFactory.getLogger(SourceNotification.class);
 
+    public static final String TOPIC = "foodRunnerSyncProtocol_source_notification";
+
     private String sourceNotificationId;
     private MessageWindow messageWindow;
 
