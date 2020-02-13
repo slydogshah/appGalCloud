@@ -1,5 +1,6 @@
 package io.appgal.cloud.messaging;
 
+import com.google.gson.JsonArray;
 import io.appgal.cloud.model.SourceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,11 @@ public class SourceNotificationEmitter {
 
     public void emit(SourceNotification sourceNotification)
     {
+        MessageWindow messageWindow = sourceNotification.getMessageWindow();
 
+        //find the SourceNotifications with this time window
+        JsonArray jsonArray = this.kafkaDaemonClient.readNotifications(messageWindow);
+
+        //Broadcast each SourceNotification to the FoodRunner Network
     }
 }
