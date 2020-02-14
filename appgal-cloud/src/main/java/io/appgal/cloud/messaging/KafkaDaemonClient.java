@@ -73,6 +73,7 @@ public class KafkaDaemonClient {
     @PreDestroy
     public void stop()
     {
+        this.readNotificationsQueue = null;
         this.executorService.shutdown();
         this.kafkaProducer.close();
         this.kafkaConsumer.close();
@@ -172,6 +173,10 @@ public class KafkaDaemonClient {
 
                     //Thread.sleep(5000);
                     NotificationContext notificationContext = readNotificationsQueue.poll();
+                    if(notificationContext == null)
+                    {
+                        continue;
+                    }
                     MessageWindow messageWindow = notificationContext.getMessageWindow();
                     if(messageWindow == null)
                     {

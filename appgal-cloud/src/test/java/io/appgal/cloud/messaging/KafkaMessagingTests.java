@@ -48,9 +48,10 @@ public class KafkaMessagingTests {
         MessageWindow messageWindow = new MessageWindow(start, end);
         this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
 
-        Thread.sleep(30000);
+        Thread.sleep(15000);
 
         JsonArray messages = messageWindow.getMessages();
+        assertNotNull(messages);
         logger.info("***************TIME_TO_ASSERT***************************");
         logger.info(messages.toString());
         logger.info("********************************************************");
