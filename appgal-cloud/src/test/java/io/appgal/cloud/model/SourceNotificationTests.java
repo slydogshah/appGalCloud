@@ -15,8 +15,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
-public class SourceNotificationsTest {
-    private static Logger logger = LoggerFactory.getLogger(SourceNotificationsTest.class);
+public class SourceNotificationTests {
+    private static Logger logger = LoggerFactory.getLogger(SourceNotificationTests.class);
 
     @Test
     public void testToString()

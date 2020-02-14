@@ -79,6 +79,10 @@ public class KafkaMessagingTests {
             String id = UUID.randomUUID().toString();
             ids.add(id);
             jsonObject.addProperty("sourceNotificationId", id);
+
+            String destinationNotificationId = UUID.randomUUID().toString();
+            jsonObject.addProperty("destinationNotificationId", destinationNotificationId);
+
             this.kafkaDaemonClient.produceData(jsonObject);
         }
 

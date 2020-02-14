@@ -11,7 +11,7 @@ import org.apache.spark.sql.Row;
 public class DeltaLakeTests {
     private static Logger logger = LoggerFactory.getLogger(DeltaLakeTests.class);
 
-    @Test
+    //@Test
     public void testHelloSpark()
     {
         SparkSession spark = SparkSession.builder().getOrCreate();
