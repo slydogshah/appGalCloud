@@ -104,7 +104,7 @@ public class KafkaDaemonClient {
     {
         while (!this.active) {
             try {
-                Thread.sleep(200);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 logger.debug(e.getMessage(), e);
             }
@@ -118,11 +118,11 @@ public class KafkaDaemonClient {
         //logger.info("JUST_FINISHED_WRITE");
         //logger.info("*******************************");
 
-        /*try {
-            Thread.sleep(30000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+        //try {
+        //    Thread.sleep(30000);
+        //} catch (InterruptedException e) {
+        //    e.printStackTrace();
+        //}
 
         JsonArray jsonArray = new JsonArray();
         return jsonArray;
@@ -226,7 +226,7 @@ public class KafkaDaemonClient {
                                 JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
                                 jsonArray.add(jsonObject);
                             }
-                            //commitDBTransaction();
+                            //logger.info("json_array_debug:"+jsonArray);
                             messageWindow.setMessages(jsonArray);
                         }
                     }

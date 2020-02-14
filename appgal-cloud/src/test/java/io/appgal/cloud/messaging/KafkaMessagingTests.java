@@ -48,13 +48,21 @@ public class KafkaMessagingTests {
         MessageWindow messageWindow = new MessageWindow(start, end);
         this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
 
-        Thread.sleep(15000);
+        //Thread.sleep(120000);
+        for(int i=0; i<100; i++)
+        {
+            if(messageWindow.getMessages() != null)
+            {
+                break;
+            }
+            Thread.sleep(1000);
+        }
 
         JsonArray messages = messageWindow.getMessages();
         assertNotNull(messages);
-        logger.info("***************TIME_TO_ASSERT***************************");
-        logger.info(messages.toString());
-        logger.info("********************************************************");
+        //logger.info("***************TIME_TO_ASSERT***************************");
+        //logger.info(messages.toString());
+        //logger.info("********************************************************");
 
         //assert the size
         int idMatchCount = 0;
@@ -71,7 +79,7 @@ public class KafkaMessagingTests {
         assertEquals(ids.size(), idMatchCount);
     }
 
-    @Test
+    //@Test
     public void testEmitNotifications() throws InterruptedException, UnknownHostException {
         JsonObject jsonObject = new JsonObject();
         List<String> ids = new ArrayList<>();
@@ -87,6 +95,6 @@ public class KafkaMessagingTests {
             this.kafkaDaemonClient.produceData(jsonObject);
         }
 
-        Thread.sleep(30000);
+        //Thread.sleep(30000);
     }
 }

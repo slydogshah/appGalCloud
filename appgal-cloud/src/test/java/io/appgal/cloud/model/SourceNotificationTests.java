@@ -33,9 +33,9 @@ public class SourceNotificationTests {
         sourceNotification.setMessageWindow(messageWindow);
 
         JsonObject json = JsonParser.parseString(sourceNotification.toString()).getAsJsonObject();
-        logger.info("****");
-        logger.info(sourceNotification.toString());
-        logger.info("****");
+        //logger.info("****");
+        //logger.info(sourceNotification.toString());
+        //logger.info("****");
 
         //assert the state
         assertEquals(sourceNotificationId, json.get("sourceNotificationId").getAsString());
