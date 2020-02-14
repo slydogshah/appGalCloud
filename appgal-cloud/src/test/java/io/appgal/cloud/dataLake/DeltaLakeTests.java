@@ -15,5 +15,8 @@ public class DeltaLakeTests {
     public void testHelloSpark()
     {
         SparkSession spark = SparkSession.builder().getOrCreate();
+
+        Dataset<Long> data = spark.range(0, 5);
+        data.write().format("delta").save("/tmp/delta-table");
     }
 }

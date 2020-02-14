@@ -69,4 +69,19 @@ public class KafkaMessagingTests {
         }
         assertEquals(ids.size(), idMatchCount);
     }
+
+    @Test
+    public void testEmitNotifications() throws InterruptedException, UnknownHostException {
+        JsonObject jsonObject = new JsonObject();
+        List<String> ids = new ArrayList<>();
+        for(int i=0; i< 10; i++) {
+            jsonObject = new JsonObject();
+            String id = UUID.randomUUID().toString();
+            ids.add(id);
+            jsonObject.addProperty("sourceNotificationId", id);
+            this.kafkaDaemonClient.produceData(jsonObject);
+        }
+
+        Thread.sleep(30000);
+    }
 }
