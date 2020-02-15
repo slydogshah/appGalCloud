@@ -150,13 +150,16 @@ public class KafkaDaemonClient {
         {
             JsonArray jsonArray = new JsonArray();
                 do {
-                    ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
+                    //ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
+                    System.out.println("Start Long Poll");
+                    ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
                     records.forEach(record -> process(record));
 
                     //TODO: Read multiple NotificationContexts during this run
                     NotificationContext notificationContext = readNotificationsQueue.poll();
                     if(notificationContext == null)
                     {
+                        logger.info("NO_ACTIVE_READS_IN_PROGRESS");
                         continue;
                     }
                     MessageWindow messageWindow = notificationContext.getMessageWindow();
@@ -187,12 +190,13 @@ public class KafkaDaemonClient {
 
                         //
                         Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
-
+                        System.out.println("Start whatever poll");
                         kafkaConsumer.poll(0);
+
+
                         OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
                         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
-
-                        while (true) {
+                        /*while (true) {
                             ConsumerRecords<String, String> testRecords =
                                     kafkaConsumer.poll(100);
                             for (ConsumerRecord<String, String> record : testRecords) {
@@ -207,10 +211,10 @@ public class KafkaDaemonClient {
                                 JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
                                 jsonArray.add(jsonObject);
                             }
-                            //logger.info("json_array_debug:"+jsonArray);
                             messageWindow.setMessages(jsonArray);
-                        }
-                        /*for(int i=0; i<30; i++) {
+                        }*/
+                        for(int i=0; i<30; i++) {
+                            System.out.println("Start ReeadNotifications Poll");
                             ConsumerRecords<String, String> notificationRecords =
                                     kafkaConsumer.poll(100);
                             if(notificationRecords == null || notificationRecords.isEmpty())
@@ -230,7 +234,7 @@ public class KafkaDaemonClient {
                                 jsonArray.add(jsonObject);
                             }
                             messageWindow.setMessages(jsonArray);
-                        }*/
+                        }
                     }
                     catch (Exception e)
                     {
@@ -241,11 +245,11 @@ public class KafkaDaemonClient {
 
         private void process(ConsumerRecord<String, String> record) {
 
-            //logger.info("CONSUME_DATA");
-            //logger.info("RECORD_OFFSET: "+record.offset());
-            //logger.info("RECORD_KEY: "+record.key());
-            //logger.info("RECORD_VALUE: "+record.value());
-            //logger.info("....");
+            logger.info("CONSUME_DATA");
+            logger.info("RECORD_OFFSET: "+record.offset());
+            logger.info("RECORD_KEY: "+record.key());
+            logger.info("RECORD_VALUE: "+record.value());
+            logger.info("....");
 
             doCommitSync(record);
         }

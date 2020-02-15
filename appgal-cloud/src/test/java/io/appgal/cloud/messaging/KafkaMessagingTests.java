@@ -43,8 +43,8 @@ public class KafkaMessagingTests {
             this.kafkaDaemonClient.produceData(jsonObject);
         }
 
-        for(int i=0; i<10; i++) {
-            System.out.println("***WAITING****("+i+")");
+        for(int i=0; i<1000; i++) {
+            //System.out.println("***WAITING****("+i+")");
             Thread.sleep(10);
         }
 
@@ -58,7 +58,7 @@ public class KafkaMessagingTests {
         System.out.println("****Waiting for results****");
         for(int i=0; i<30; i++)
         {
-            System.out.println("***WAITING_ON_RESULTS****("+i+")");
+            //System.out.println("***WAITING_ON_RESULTS****("+i+")");
             if(messageWindow.getMessages() != null)
             {
                 break;
