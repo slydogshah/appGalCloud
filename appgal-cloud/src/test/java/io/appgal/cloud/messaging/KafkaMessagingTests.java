@@ -44,21 +44,19 @@ public class KafkaMessagingTests {
         }
 
         for(int i=0; i<1000; i++) {
-            //System.out.println("***WAITING****("+i+")");
             Thread.sleep(10);
         }
 
-        System.out.println("****About to read the notifications back****");
+        logger.info("****About to read the notifications back****");
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         MessageWindow messageWindow = new MessageWindow(start, end);
         this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
 
-        System.out.println("****Waiting for results****");
+        logger.info("****Waiting for results****");
         for(int i=0; i<30; i++)
         {
-            //System.out.println("***WAITING_ON_RESULTS****("+i+")");
             if(messageWindow.getMessages() != null)
             {
                 break;
@@ -66,13 +64,10 @@ public class KafkaMessagingTests {
             Thread.sleep(1000);
         }
 
-        System.out.println("TIME_TO_ASSERT");
+        logger.info("TIME_TO_ASSERT");
 
         JsonArray messages = messageWindow.getMessages();
         assertNotNull(messages);
-        //logger.info("***************TIME_TO_ASSERT***************************");
-        //logger.info(messages.toString());
-        //logger.info("********************************************************");
 
         //assert the size
         int idMatchCount = 0;

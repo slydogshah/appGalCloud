@@ -19,9 +19,7 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -88,14 +86,14 @@ public class KafkaDaemonClient {
         this.kafkaProducer.send(record, new Callback() {
             public void onCompletion(RecordMetadata metadata, Exception e) {
                 if (e != null) {
-                    logger.debug("Send failed for record {}", record, e);
+                    logger.error("Send failed for record {}", record, e);
                 }
                 else
                 {
-                    logger.info("******************************************");
-                    logger.info("PRODUCE_DATA");
-                    logger.info("RECORD_META_DATA: "+metadata.toString());
-                    logger.info("******************************************");
+                    //logger.info("******************************************");
+                    //logger.info("PRODUCE_DATA");
+                    //logger.info("RECORD_META_DATA: "+metadata.toString());
+                    //logger.info("******************************************");
                 }
             }
         });
@@ -150,9 +148,9 @@ public class KafkaDaemonClient {
         {
             JsonArray jsonArray = new JsonArray();
                 do {
-                    //ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
-                    System.out.println("Start Long Poll");
-                    ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
+                    logger.info("Start Long Poll");
+                    ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
+                    //ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
                     records.forEach(record -> process(record));
 
                     //TODO: Read multiple NotificationContexts during this run
@@ -190,31 +188,12 @@ public class KafkaDaemonClient {
 
                         //
                         Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
-                        System.out.println("Start whatever poll");
                         kafkaConsumer.poll(0);
 
 
                         OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
                         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
-                        /*while (true) {
-                            ConsumerRecords<String, String> testRecords =
-                                    kafkaConsumer.poll(100);
-                            for (ConsumerRecord<String, String> record : testRecords) {
-                                //logger.info("CONSUME_DATA_TEST_RECORD");
-                                //logger.info("RECORD_OFFSET: "+record.offset());
-                                //logger.info("RECORD_KEY: "+record.key());
-                                //logger.info("RECORD_VALUE: "+record.value());
-                                //logger.info("....");
-
-                                String jsonValue = record.value();
-
-                                JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
-                                jsonArray.add(jsonObject);
-                            }
-                            messageWindow.setMessages(jsonArray);
-                        }*/
                         for(int i=0; i<30; i++) {
-                            System.out.println("Start ReeadNotifications Poll");
                             ConsumerRecords<String, String> notificationRecords =
                                     kafkaConsumer.poll(100);
                             if(notificationRecords == null || notificationRecords.isEmpty())
@@ -245,11 +224,11 @@ public class KafkaDaemonClient {
 
         private void process(ConsumerRecord<String, String> record) {
 
-            logger.info("CONSUME_DATA");
-            logger.info("RECORD_OFFSET: "+record.offset());
-            logger.info("RECORD_KEY: "+record.key());
-            logger.info("RECORD_VALUE: "+record.value());
-            logger.info("....");
+            //logger.info("CONSUME_DATA");
+            //logger.info("RECORD_OFFSET: "+record.offset());
+            //logger.info("RECORD_KEY: "+record.key());
+            //logger.info("RECORD_VALUE: "+record.value());
+            //logger.info("....");
 
             doCommitSync(record);
         }
