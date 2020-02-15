@@ -208,7 +208,6 @@ public class KafkaDaemonClient {
                     logger.info("START_READ_NOTIFICATIONS");
                     logger.info("********************");
 
-                    messageWindow.setMessages(new JsonArray());
                     String topic = notificationContext.getTopic();
                     try {
                         OffsetDateTime start = messageWindow.getStart();
