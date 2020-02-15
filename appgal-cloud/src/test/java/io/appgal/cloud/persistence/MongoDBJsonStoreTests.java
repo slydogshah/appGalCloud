@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
@@ -34,7 +37,8 @@ public class MongoDBJsonStoreTests {
     @Test
     public void testFindDestinationNotifications()
     {
-        JsonArray jsonArray = this.mongoDBJsonStore.findDestinationNotifications();
+        List<String> notificationIds = new ArrayList<>();
+        JsonArray jsonArray = this.mongoDBJsonStore.findDestinationNotifications(notificationIds);
 
         //assert
         assertNotNull(jsonArray);
