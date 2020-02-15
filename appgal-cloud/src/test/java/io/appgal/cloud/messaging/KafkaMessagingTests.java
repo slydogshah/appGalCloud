@@ -71,18 +71,18 @@ public class KafkaMessagingTests {
 
         //assert
         Iterator<JsonElement> iterator = jsonArray.iterator();
-        boolean idNotFound = false;
+        boolean searchSuccess = true;
         while(iterator.hasNext())
         {
             JsonObject local = iterator.next().getAsJsonObject();
             String localId = local.get("sourceNotificationId").getAsString();
             if(!ids.contains(localId))
             {
-                idNotFound = true;
+                searchSuccess = false;
                 break;
             }
         }
-        assertFalse(idNotFound);
+        assertTrue(searchSuccess);
     }
 
     //@Test
