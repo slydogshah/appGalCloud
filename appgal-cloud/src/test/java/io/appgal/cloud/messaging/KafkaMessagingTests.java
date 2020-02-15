@@ -33,6 +33,11 @@ public class KafkaMessagingTests {
 
     @Test
     public void testReadNotifications() throws InterruptedException, UnknownHostException {
+        while(!this.kafkaDaemonClient.isActive())
+        {
+            Thread.sleep(100);
+        }
+
         JsonObject jsonObject = new JsonObject();
         List<String> ids = new ArrayList<>();
         for(int i=0; i< 10; i++) {
@@ -43,7 +48,7 @@ public class KafkaMessagingTests {
             this.kafkaDaemonClient.produceData(jsonObject);
         }
 
-        Thread.sleep(5000);
+        //Thread.sleep(5000);
 
         logger.info("****About to read the notifications back****");
 

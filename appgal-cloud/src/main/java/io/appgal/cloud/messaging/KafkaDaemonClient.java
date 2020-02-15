@@ -39,6 +39,8 @@ public class KafkaDaemonClient {
 
     private Queue<NotificationContext> readNotificationsQueue;
 
+    private boolean active = false;
+
     public KafkaDaemonClient()
     {
 
@@ -78,8 +80,17 @@ public class KafkaDaemonClient {
         this.kafkaConsumer.close();
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     public void produceData(JsonObject jsonObject)
     {
+        if(!this.active)
+        {
+            throw new IllegalStateException("KAFKA_DAEMON_CLIENT_NOT_READY");
+        }
+
         final ProducerRecord<String, String> record = new ProducerRecord<>(this.topics.get(0),
                 "sourceNotification", jsonObject.toString());
 
@@ -111,7 +122,12 @@ public class KafkaDaemonClient {
 
                     while (messageWindow.getMessages() == null)
                     {
-                        //logger.info("waiting_on_results");
+                        logger.info(notificationContext.getMessageWindow().toString());
+                        logger.info(messageWindow.toString());
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                        }
                     }
                 }
             });
@@ -145,6 +161,7 @@ public class KafkaDaemonClient {
                         logger.info("******************************************");
                         logger.info("Number of Partitions: "+topicPartitions.size());
                         logger.info("******************************************");
+                        active = true;
                     }
                 });
                 this.findNotifications();
@@ -191,6 +208,7 @@ public class KafkaDaemonClient {
                     logger.info("START_READ_NOTIFICATIONS");
                     logger.info("********************");
 
+                    messageWindow.setMessages(new JsonArray());
                     String topic = notificationContext.getTopic();
                     try {
                         OffsetDateTime start = messageWindow.getStart();
