@@ -19,9 +19,13 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.concurrent.*;
+
+//TODO: Look into adding multiple KafkaConsumers per topic
 
 @ApplicationScoped
 public class KafkaDaemonClient {
@@ -32,7 +36,6 @@ public class KafkaDaemonClient {
     private List<String> topics;
     private ExecutorService executorService;
     private Map<String,List<TopicPartition>> topicPartitions;
-    private boolean active = false;
 
     private KafkaProducer<String,String> kafkaProducer;
 
@@ -61,8 +64,6 @@ public class KafkaDaemonClient {
         this.shutdownLatch = new CountDownLatch(1);
         this.topicPartitions = new HashMap<>();
 
-        this.active = true;
-
         this.readNotificationsQueue = new LinkedList<>();
 
         //Integrate into an ExecutorService
@@ -89,40 +90,22 @@ public class KafkaDaemonClient {
                 if (e != null) {
                     logger.debug("Send failed for record {}", record, e);
                 }
-                /*else
+                else
                 {
                     logger.info("******************************************");
                     logger.info("PRODUCE_DATA");
                     logger.info("RECORD_META_DATA: "+metadata.toString());
                     logger.info("******************************************");
-                }*/
+                }
             }
         });
     }
 
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
-        while (!this.active) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                logger.debug(e.getMessage(), e);
-            }
-        }
-
         //TODO: make this a synchronized write
         NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
         this.readNotificationsQueue.add(notificationContext);
-
-        //logger.info("*********READ_NOTIFICATIONS***********");
-        //logger.info("JUST_FINISHED_WRITE");
-        //logger.info("*******************************");
-
-        //try {
-        //    Thread.sleep(30000);
-        //} catch (InterruptedException e) {
-        //    e.printStackTrace();
-        //}
 
         JsonArray jsonArray = new JsonArray();
         return jsonArray;
@@ -142,7 +125,6 @@ public class KafkaDaemonClient {
                     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
                         List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
                         topicPartitions.put(partitions.iterator().next().topic(), partitionList);
-                        active = true;
                         logger.info("******************************************");
                         logger.info("Number of Partitions: "+topicPartitions.size());
                         logger.info("******************************************");
@@ -171,7 +153,7 @@ public class KafkaDaemonClient {
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
                     records.forEach(record -> process(record));
 
-                    //Thread.sleep(5000);
+                    //TODO: Read multiple NotificationContexts during this run
                     NotificationContext notificationContext = readNotificationsQueue.poll();
                     if(notificationContext == null)
                     {
@@ -180,16 +162,15 @@ public class KafkaDaemonClient {
                     MessageWindow messageWindow = notificationContext.getMessageWindow();
                     if(messageWindow == null)
                     {
-                        //logger.info("*********KAFKA_DAEMON***********");
-                        //logger.info("SKIP_READ_NOTIFICATIONS");
-                        //logger.info("********************");
-                        //Thread.sleep(5000);
+                        logger.info("*********KAFKA_DAEMON***********");
+                        logger.info("SKIP_READ_NOTIFICATIONS");
+                        logger.info("********************");
                         continue;
                     }
 
-                    //logger.info("*********KAFKA_DAEMON***********");
-                    //logger.info("START_READ_NOTIFICATIONS");
-                    //logger.info("********************");
+                    logger.info("*********KAFKA_DAEMON***********");
+                    logger.info("START_READ_NOTIFICATIONS");
+                    logger.info("********************");
 
                     String topic = notificationContext.getTopic();
                     try {
@@ -229,6 +210,27 @@ public class KafkaDaemonClient {
                             //logger.info("json_array_debug:"+jsonArray);
                             messageWindow.setMessages(jsonArray);
                         }
+                        /*for(int i=0; i<30; i++) {
+                            ConsumerRecords<String, String> notificationRecords =
+                                    kafkaConsumer.poll(100);
+                            if(notificationRecords == null || notificationRecords.isEmpty())
+                            {
+                                continue;
+                            }
+                            for (ConsumerRecord<String, String> record : notificationRecords) {
+                                //logger.info("CONSUME_DATA_TEST_RECORD");
+                                //logger.info("RECORD_OFFSET: "+record.offset());
+                                //logger.info("RECORD_KEY: "+record.key());
+                                //logger.info("RECORD_VALUE: "+record.value());
+                                //logger.info("....");
+
+                                String jsonValue = record.value();
+
+                                JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
+                                jsonArray.add(jsonObject);
+                            }
+                            messageWindow.setMessages(jsonArray);
+                        }*/
                     }
                     catch (Exception e)
                     {

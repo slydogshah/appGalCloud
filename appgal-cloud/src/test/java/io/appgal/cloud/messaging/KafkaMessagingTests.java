@@ -43,20 +43,30 @@ public class KafkaMessagingTests {
             this.kafkaDaemonClient.produceData(jsonObject);
         }
 
+        for(int i=0; i<10; i++) {
+            System.out.println("***WAITING****("+i+")");
+            Thread.sleep(10);
+        }
+
+        System.out.println("****About to read the notifications back****");
+
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         MessageWindow messageWindow = new MessageWindow(start, end);
         this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
 
-        //Thread.sleep(120000);
-        for(int i=0; i<100; i++)
+        System.out.println("****Waiting for results****");
+        for(int i=0; i<30; i++)
         {
+            System.out.println("***WAITING_ON_RESULTS****("+i+")");
             if(messageWindow.getMessages() != null)
             {
                 break;
             }
             Thread.sleep(1000);
         }
+
+        System.out.println("TIME_TO_ASSERT");
 
         JsonArray messages = messageWindow.getMessages();
         assertNotNull(messages);
