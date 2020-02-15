@@ -149,8 +149,7 @@ public class KafkaDaemonClient {
             JsonArray jsonArray = new JsonArray();
                 do {
                     logger.info("Start Long Poll");
-                    ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
-                    //ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
+                    ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
                     records.forEach(record -> process(record));
 
                     //TODO: Read multiple NotificationContexts during this run
@@ -194,6 +193,7 @@ public class KafkaDaemonClient {
                         OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
                         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
                         for(int i=0; i<30; i++) {
+                            logger.info("Start Short Poll");
                             ConsumerRecords<String, String> notificationRecords =
                                     kafkaConsumer.poll(100);
                             if(notificationRecords == null || notificationRecords.isEmpty())

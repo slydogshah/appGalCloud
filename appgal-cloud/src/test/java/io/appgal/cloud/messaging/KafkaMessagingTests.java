@@ -43,9 +43,7 @@ public class KafkaMessagingTests {
             this.kafkaDaemonClient.produceData(jsonObject);
         }
 
-        for(int i=0; i<1000; i++) {
-            Thread.sleep(10);
-        }
+        Thread.sleep(5000);
 
         logger.info("****About to read the notifications back****");
 
@@ -54,6 +52,8 @@ public class KafkaMessagingTests {
         MessageWindow messageWindow = new MessageWindow(start, end);
         this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
 
+        //TODO: Replace with a determistic wait that will be part
+        //TODO:of the actual call stack in the Product codebase
         logger.info("****Waiting for results****");
         for(int i=0; i<30; i++)
         {
