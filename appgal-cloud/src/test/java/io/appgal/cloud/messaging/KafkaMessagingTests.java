@@ -50,28 +50,14 @@ public class KafkaMessagingTests {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         MessageWindow messageWindow = new MessageWindow(start, end);
-        this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
-
-        //TODO: Replace with a determistic wait that will be part
-        //TODO:of the actual call stack in the Product codebase
-        logger.info("****Waiting for results****");
-        for(int i=0; i<30; i++)
-        {
-            if(messageWindow.getMessages() != null)
-            {
-                break;
-            }
-            Thread.sleep(1000);
-        }
+        JsonArray jsonArray = this.kafkaDaemonClient.readNotifications(SourceNotification.TOPIC, messageWindow);
 
         logger.info("TIME_TO_ASSERT");
-
-        JsonArray messages = messageWindow.getMessages();
-        assertNotNull(messages);
+        assertNotNull(jsonArray);
 
         //assert the size
         int idMatchCount = 0;
-        Iterator<JsonElement> iterator = messages.iterator();
+        Iterator<JsonElement> iterator = jsonArray.iterator();
         while(iterator.hasNext())
         {
             JsonObject local = iterator.next().getAsJsonObject();

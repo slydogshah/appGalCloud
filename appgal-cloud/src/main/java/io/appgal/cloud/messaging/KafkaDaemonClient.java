@@ -101,12 +101,31 @@ public class KafkaDaemonClient {
 
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
-        //TODO: make this a synchronized write
-        NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
-        this.readNotificationsQueue.add(notificationContext);
+        try {
+            Future future = this.executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    //TODO: make this a synchronized write
+                    NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
+                    readNotificationsQueue.add(notificationContext);
 
-        JsonArray jsonArray = new JsonArray();
-        return jsonArray;
+                    while (messageWindow.getMessages() == null)
+                    {
+                        //logger.info("waiting_on_results");
+                    }
+                }
+            });
+            future.get();
+
+            return messageWindow.getMessages();
+        }
+        catch (InterruptedException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
     //-----Runnables/Tasks that execute on the DaemonClientThreadPool-----------
     private class DaemonClientLauncher implements Runnable
@@ -148,7 +167,7 @@ public class KafkaDaemonClient {
         {
             JsonArray jsonArray = new JsonArray();
                 do {
-                    logger.info("Start Long Poll");
+                    //logger.info("Start Long Poll");
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
                     records.forEach(record -> process(record));
 
@@ -193,7 +212,7 @@ public class KafkaDaemonClient {
                         OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
                         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
                         for(int i=0; i<30; i++) {
-                            logger.info("Start Short Poll");
+                            logger.info("Start Short Poll: ("+i+")");
                             ConsumerRecords<String, String> notificationRecords =
                                     kafkaConsumer.poll(100);
                             if(notificationRecords == null || notificationRecords.isEmpty())
@@ -219,6 +238,14 @@ public class KafkaDaemonClient {
                     {
                         logger.error(e.getMessage(), e);
                     }
+
+                    if(messageWindow.getMessages() == null)
+                    {
+                        messageWindow.setMessages(new JsonArray());
+                    }
+                    logger.info("*********KAFKA_DAEMON***********");
+                    logger.info("END_READ_NOTIFICATIONS");
+                    logger.info("********************");
                 }while (true);
         }
 
