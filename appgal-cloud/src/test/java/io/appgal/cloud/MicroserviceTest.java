@@ -15,5 +15,4 @@ public class MicroserviceTest {
           .then()
              .statusCode(200);
     }
-
 }

@@ -5,6 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import io.appgal.cloud.model.SourceNotification;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,15 +33,17 @@ public class KafkaMessagingTests {
     @Inject
     private KafkaDaemonClient kafkaDaemonClient;
 
-    @Test
-    public void testReadNotifications() throws InterruptedException, UnknownHostException {
+    private List<String> ids = null;
+
+    @BeforeEach
+    public void setUp() throws InterruptedException {
         while(!this.kafkaDaemonClient.isActive())
         {
             Thread.sleep(100);
         }
 
+        ids = new ArrayList<>();
         JsonObject jsonObject = new JsonObject();
-        List<String> ids = new ArrayList<>();
         for(int i=0; i< 10; i++) {
             jsonObject = new JsonObject();
             String id = UUID.randomUUID().toString();
@@ -47,11 +51,16 @@ public class KafkaMessagingTests {
             jsonObject.addProperty("sourceNotificationId", id);
             this.kafkaDaemonClient.produceData(jsonObject);
         }
+    }
 
-        //Thread.sleep(5000);
+    @AfterEach
+    public void tearDown()
+    {
+        this.ids = null;
+    }
 
-        logger.info("****About to read the notifications back****");
-
+    @Test
+    public void testReadNotifications() throws InterruptedException, UnknownHostException {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         MessageWindow messageWindow = new MessageWindow(start, end);
@@ -60,19 +69,20 @@ public class KafkaMessagingTests {
         logger.info("TIME_TO_ASSERT");
         assertNotNull(jsonArray);
 
-        //assert the size
-        int idMatchCount = 0;
+        //assert
         Iterator<JsonElement> iterator = jsonArray.iterator();
+        boolean idNotFound = false;
         while(iterator.hasNext())
         {
             JsonObject local = iterator.next().getAsJsonObject();
             String localId = local.get("sourceNotificationId").getAsString();
-            if(ids.contains(localId))
+            if(!ids.contains(localId))
             {
-                idMatchCount++;
+                idNotFound = true;
+                break;
             }
         }
-        assertEquals(ids.size(), idMatchCount);
+        assertFalse(idNotFound);
     }
 
     //@Test
