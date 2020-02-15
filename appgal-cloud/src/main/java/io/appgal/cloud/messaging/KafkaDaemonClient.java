@@ -182,7 +182,6 @@ public class KafkaDaemonClient {
 
         private void findNotifications() throws InterruptedException
         {
-            JsonArray jsonArray = new JsonArray();
                 do {
                     //logger.info("Start Long Poll");
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
@@ -228,6 +227,7 @@ public class KafkaDaemonClient {
 
                         OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
                         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
+                        JsonArray jsonArray = new JsonArray();
                         for(int i=0; i<30; i++) {
                             logger.info("Start Short Poll: ("+i+")");
                             ConsumerRecords<String, String> notificationRecords =
