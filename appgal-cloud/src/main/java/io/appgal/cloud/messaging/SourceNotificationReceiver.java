@@ -20,6 +20,6 @@ public class SourceNotificationReceiver {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("sourceNotificationId", sourceNotification.getSourceNotificationId());
 
-        this.kafkaDaemonClient.produceData(jsonObject);
+        this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
     }
 }

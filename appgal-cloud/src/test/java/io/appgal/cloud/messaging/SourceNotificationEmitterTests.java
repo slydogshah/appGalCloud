@@ -40,7 +40,7 @@ public class SourceNotificationEmitterTests {
             String id = UUID.randomUUID().toString();
             ids.add(id);
             jsonObject.addProperty("sourceNotificationId", id);
-            this.kafkaDaemonClient.produceData(jsonObject);
+            this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
         }
     }
 

@@ -31,13 +31,13 @@ public class KafkaDaemonClient {
 
     private KafkaConsumer<String,String> kafkaConsumer;
     private CountDownLatch shutdownLatch;
-    private List<String> topics;
     private ExecutorService executorService;
     private Map<String,List<TopicPartition>> topicPartitions;
-
     private KafkaProducer<String,String> kafkaProducer;
 
     private Queue<NotificationContext> readNotificationsQueue;
+    private List<String> topics = new ArrayList<>();
+    private DaemonClientLauncher daemonClientLauncher;
 
     private boolean active = false;
 
@@ -60,7 +60,6 @@ public class KafkaDaemonClient {
         this.kafkaConsumer = new KafkaConsumer<String, String>(config);
         this.kafkaProducer = new KafkaProducer<>(config);
 
-        this.topics = Arrays.asList(new String[]{SourceNotification.TOPIC});
         this.shutdownLatch = new CountDownLatch(1);
         this.topicPartitions = new HashMap<>();
 
@@ -68,7 +67,8 @@ public class KafkaDaemonClient {
 
         //Integrate into an ExecutorService
         this.executorService = Executors.newCachedThreadPool();
-        this.executorService.submit(new DaemonClientLauncher());
+        this.daemonClientLauncher = new DaemonClientLauncher();
+        this.executorService.submit(this.daemonClientLauncher);
     }
 
     @PreDestroy
@@ -84,14 +84,20 @@ public class KafkaDaemonClient {
         return active;
     }
 
-    public void produceData(JsonObject jsonObject)
+    public void produceData(String topic, JsonObject jsonObject)
     {
         if(!this.active)
         {
             throw new IllegalStateException("KAFKA_DAEMON_CLIENT_NOT_READY");
         }
 
-        final ProducerRecord<String, String> record = new ProducerRecord<>(this.topics.get(0),
+        if(!this.topics.contains(topic))
+        {
+            this.topics.add(topic);
+            this.daemonClientLauncher.startSubscription(topic);
+        }
+
+        final ProducerRecord<String, String> record = new ProducerRecord<>(topic,
                 "sourceNotification", jsonObject.toString());
 
         this.kafkaProducer.send(record, new Callback() {
@@ -146,6 +152,32 @@ public class KafkaDaemonClient {
     //-----Runnables/Tasks that execute on the DaemonClientThreadPool-----------
     private class DaemonClientLauncher implements Runnable
     {
+        private void startSubscription(String topic)
+        {
+            try {
+                kafkaConsumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
+                    @Override
+                    public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                    }
+
+                    @Override
+                    public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                        List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
+                        String registeredTopic = partitions.iterator().next().topic();
+                        topicPartitions.put(registeredTopic, partitionList);
+                        logger.info("******************************************");
+                        logger.info("NUMBER_OF_PARTITIONS registered for :("+registeredTopic+") "+topicPartitions.size());
+                        logger.info("******************************************");
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
+        }
+
         @Override
         public void run() {
             try {
@@ -157,9 +189,10 @@ public class KafkaDaemonClient {
                     @Override
                     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
                         List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
-                        topicPartitions.put(partitions.iterator().next().topic(), partitionList);
+                        String registeredTopic = partitions.iterator().next().topic();
+                        topicPartitions.put(registeredTopic, partitionList);
                         logger.info("******************************************");
-                        logger.info("Number of Partitions: "+topicPartitions.size());
+                        logger.info("NUMBER_OF_PARTITIONS registered for :("+registeredTopic+") "+topicPartitions.size());
                         logger.info("******************************************");
                         active = true;
                     }

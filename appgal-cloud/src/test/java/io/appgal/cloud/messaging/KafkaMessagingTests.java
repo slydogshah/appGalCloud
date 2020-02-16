@@ -1,9 +1,10 @@
 package io.appgal.cloud.messaging;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import com.google.gson.JsonParser;
+import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,6 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,7 +49,7 @@ public class KafkaMessagingTests {
             String id = UUID.randomUUID().toString();
             ids.add(id);
             jsonObject.addProperty("sourceNotificationId", id);
-            this.kafkaDaemonClient.produceData(jsonObject);
+            this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
         }
     }
 
@@ -85,22 +85,35 @@ public class KafkaMessagingTests {
         assertTrue(searchSuccess);*/
     }
 
-    //@Test
+    @Test
     public void testEmitNotifications() throws InterruptedException, UnknownHostException {
-        JsonObject jsonObject = new JsonObject();
-        List<String> ids = new ArrayList<>();
-        for(int i=0; i< 10; i++) {
-            jsonObject = new JsonObject();
-            String id = UUID.randomUUID().toString();
-            ids.add(id);
-            jsonObject.addProperty("sourceNotificationId", id);
+        List<String> notificationIds = new ArrayList<>();
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        for(int i=0; i<10; i++)
+        {
+            String sourceNotificationId = UUID.randomUUID().toString();
+            SourceNotification sourceNotification = new SourceNotification();
+            sourceNotification.setSourceNotificationId(sourceNotificationId);
+            sourceNotification.setMessageWindow(messageWindow);
 
             String destinationNotificationId = UUID.randomUUID().toString();
-            jsonObject.addProperty("destinationNotificationId", destinationNotificationId);
+            DestinationNotification destinationNotification = new DestinationNotification();
+            destinationNotification.setDestinationNotificationId(destinationNotificationId);
+            destinationNotification.setSourceNotification(sourceNotification);
 
-            this.kafkaDaemonClient.produceData(jsonObject);
+            notificationIds.add(destinationNotificationId);
+
+            JsonObject jsonObject = JsonParser.parseString(destinationNotification.toString()).getAsJsonObject();
+
+            this.kafkaDaemonClient.produceData(DestinationNotification.TOPIC, jsonObject);
         }
 
-        //Thread.sleep(30000);
+        JsonArray jsonArray = this.kafkaDaemonClient.readNotifications(DestinationNotification.TOPIC, messageWindow);
+
+        logger.info("TIME_TO_ASSERT");
+        assertNotNull(jsonArray);
+        logger.info(jsonArray.toString());
     }
 }

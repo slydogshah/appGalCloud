@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.KafkaDaemonClient;
 import io.appgal.cloud.messaging.MessageWindow;
 
+import io.appgal.cloud.model.SourceNotification;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class ProcessIncomingPacketsTests {
             String id = UUID.randomUUID().toString();
             ids.add(id);
             jsonObject.addProperty("sourceNotificationId", id);
-            this.kafkaDaemonClient.produceData(jsonObject);
+            this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
         }
     }
 
