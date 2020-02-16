@@ -28,11 +28,6 @@ public class SourceNotificationEmitterTests {
 
     @BeforeEach
     public void setUp() throws InterruptedException {
-        while(!this.kafkaDaemonClient.isActive())
-        {
-            Thread.sleep(100);
-        }
-
         JsonObject jsonObject = new JsonObject();
         List<String> ids = new ArrayList<>();
         for(int i=0; i< 10; i++) {

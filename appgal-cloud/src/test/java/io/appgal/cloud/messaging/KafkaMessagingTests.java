@@ -37,12 +37,7 @@ public class KafkaMessagingTests {
 
     @BeforeEach
     public void setUp() throws InterruptedException {
-        while(!this.kafkaDaemonClient.isActive())
-        {
-            Thread.sleep(100);
-        }
-
-        ids = new ArrayList<>();
+        /*ids = new ArrayList<>();
         JsonObject jsonObject = new JsonObject();
         for(int i=0; i< 10; i++) {
             jsonObject = new JsonObject();
@@ -50,7 +45,7 @@ public class KafkaMessagingTests {
             ids.add(id);
             jsonObject.addProperty("sourceNotificationId", id);
             this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
-        }
+        }*/
     }
 
     @AfterEach
@@ -109,6 +104,7 @@ public class KafkaMessagingTests {
 
             this.kafkaDaemonClient.produceData(DestinationNotification.TOPIC, jsonObject);
         }
+        Thread.sleep(10000);
 
         JsonArray jsonArray = this.kafkaDaemonClient.readNotifications(DestinationNotification.TOPIC, messageWindow);
 

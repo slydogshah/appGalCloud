@@ -64,11 +64,6 @@ public class KafkaDaemonClient {
         this.topicPartitions = new HashMap<>();
 
         this.readNotificationsQueue = new LinkedList<>();
-
-        //Integrate into an ExecutorService
-        this.executorService = Executors.newCachedThreadPool();
-        this.daemonClientLauncher = new DaemonClientLauncher();
-        this.executorService.submit(this.daemonClientLauncher);
     }
 
     @PreDestroy
@@ -80,21 +75,31 @@ public class KafkaDaemonClient {
         this.kafkaConsumer.close();
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
     public void produceData(String topic, JsonObject jsonObject)
     {
-        if(!this.active)
-        {
-            throw new IllegalStateException("KAFKA_DAEMON_CLIENT_NOT_READY");
-        }
-
         if(!this.topics.contains(topic))
         {
+            if(this.topics.isEmpty()) {
+                //Integrate into an ExecutorService
+                this.executorService = Executors.newCachedThreadPool();
+                this.daemonClientLauncher = new DaemonClientLauncher();
+                this.executorService.submit(this.daemonClientLauncher);
+
+                /*while(!this.active)
+                {
+                    logger.info("****Starting KAFKA_SERVER_LAZILY****");
+                    try {
+                        Thread.sleep(10000);
+                    }
+                    catch (InterruptedException exception) {
+                    }
+                }*/
+            }
+            else
+            {
+                this.daemonClientLauncher.startSubscription(topic);
+            }
             this.topics.add(topic);
-            this.daemonClientLauncher.startSubscription(topic);
         }
 
         final ProducerRecord<String, String> record = new ProducerRecord<>(topic,
@@ -195,9 +200,9 @@ public class KafkaDaemonClient {
                         logger.info("NUMBER_OF_PARTITIONS registered for :("+registeredTopic+") "+topicPartitions.size());
                         logger.info("******************************************");
                         active = true;
+                        findNotifications();
                     }
                 });
-                this.findNotifications();
             }
             catch (Exception e)
             {
@@ -213,8 +218,9 @@ public class KafkaDaemonClient {
             }
         }
 
-        private void findNotifications() throws InterruptedException
+        private void findNotifications()
         {
+            try {
                 do {
                     //logger.info("Start Long Poll");
                     ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
@@ -222,14 +228,12 @@ public class KafkaDaemonClient {
 
                     //TODO: Read multiple NotificationContexts during this run
                     NotificationContext notificationContext = readNotificationsQueue.poll();
-                    if(notificationContext == null)
-                    {
+                    if (notificationContext == null) {
                         logger.info("NO_ACTIVE_READS_IN_PROGRESS");
                         continue;
                     }
                     MessageWindow messageWindow = notificationContext.getMessageWindow();
-                    if(messageWindow == null)
-                    {
+                    if (messageWindow == null) {
                         logger.info("*********KAFKA_DAEMON***********");
                         logger.info("SKIP_READ_NOTIFICATIONS");
                         logger.info("********************");
@@ -261,12 +265,11 @@ public class KafkaDaemonClient {
                         OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
                         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
                         JsonArray jsonArray = new JsonArray();
-                        for(int i=0; i<30; i++) {
-                            logger.info("Start Short Poll: ("+i+")");
+                        for (int i = 0; i < 30; i++) {
+                            logger.info("Start Short Poll: (" + i + ")");
                             ConsumerRecords<String, String> notificationRecords =
                                     kafkaConsumer.poll(100);
-                            if(notificationRecords == null || notificationRecords.isEmpty())
-                            {
+                            if (notificationRecords == null || notificationRecords.isEmpty()) {
                                 continue;
                             }
                             for (ConsumerRecord<String, String> record : notificationRecords) {
@@ -283,20 +286,23 @@ public class KafkaDaemonClient {
                             }
                             messageWindow.setMessages(jsonArray);
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                     }
 
-                    if(messageWindow.getMessages() == null)
-                    {
+                    if (messageWindow.getMessages() == null) {
                         messageWindow.setMessages(new JsonArray());
                     }
                     logger.info("*********KAFKA_DAEMON***********");
                     logger.info("END_READ_NOTIFICATIONS");
                     logger.info("********************");
-                }while (true);
+                } while (true);
+            }
+            catch(Exception ie)
+            {
+                logger.error(ie.getMessage(), ie);
+                throw new RuntimeException(ie);
+            }
         }
 
         private void process(ConsumerRecord<String, String> record) {
