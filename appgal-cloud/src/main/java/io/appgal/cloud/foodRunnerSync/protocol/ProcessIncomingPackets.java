@@ -1,5 +1,6 @@
 package io.appgal.cloud.foodRunnerSync.protocol;
 
+import com.google.gson.JsonArray;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.messaging.SourceNotificationEmitter;
 import io.appgal.cloud.messaging.SourceNotificationReceiver;
@@ -35,5 +36,16 @@ public class ProcessIncomingPackets {
 
         //Emit this instance of SourceNotification to the FoodRunner Network
         this.sourceNotificationEmitter.emit(sourceNotification);
+    }
+
+    public JsonArray readDestinationNotifications()
+    {
+        logger.info("....");
+        logger.info("READ_DESTINATION_NOTIFICATIONS");
+        logger.info("....");
+
+        JsonArray destinationNotifications = new JsonArray();
+
+        return destinationNotifications;
     }
 }

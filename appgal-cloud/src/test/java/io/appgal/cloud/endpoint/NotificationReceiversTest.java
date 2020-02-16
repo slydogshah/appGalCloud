@@ -1,5 +1,6 @@
 package io.appgal.cloud.endpoint;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -47,7 +48,7 @@ public class NotificationReceiversTest {
 
     @Test
     public void testReceiveSourceNotification() {
-        Response response = given().when().post("/receive/?startTimestamp=1581392859&endTimestamp=1581393459")
+        Response response = given().when().post("/notification/receive/?startTimestamp=1581392859&endTimestamp=1581393459")
                 .andReturn();
 
         String json = response.getBody().prettyPrint();
@@ -59,6 +60,25 @@ public class NotificationReceiversTest {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         String statusCode = jsonObject.get("statusCode").getAsString();
 
+        assertEquals("0", statusCode);
+    }
+
+    @Test
+    public void testReadDestinationNotifications() {
+        Response response = given().when().get("/notification/readDestinationNotifications/")
+                .andReturn();
+
+        String json = response.getBody().prettyPrint();
+        //logger.info("****");
+        //logger.info(json);
+        //logger.info("****");
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        JsonArray destinationNotifications = jsonObject.getAsJsonArray("destinationNotifications");
+
+        assertNotNull(destinationNotifications);
         assertEquals("0", statusCode);
     }
 }
