@@ -4,7 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
@@ -13,10 +16,11 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 
 @ApplicationScoped
 public class KafkaDaemon implements Runnable {
@@ -36,18 +40,77 @@ public class KafkaDaemon implements Runnable {
     @PostConstruct
     public void start()
     {
+        try {
+            Properties config = new Properties();
+            config.put("client.id", InetAddress.getLocalHost().getHostName());
+            config.put("group.id", "foo");
+            config.put("bootstrap.servers", "localhost:9092");
+            config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
+            config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
+            config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
+            config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
 
+            this.kafkaConsumer = new KafkaConsumer<String, String>(config);
+            this.kafkaProducer = new KafkaProducer<>(config);
+
+            this.shutdownLatch = new CountDownLatch(1);
+            this.topicPartitions = new HashMap<>();
+
+            this.readNotificationsQueue = new LinkedList<>();
+
+            //Integrate into an ExecutorService
+            this.executorService = Executors.newCachedThreadPool();
+            this.executorService.submit(this);
+        }
+        catch(UnknownHostException unknownHostException)
+        {
+            logger.error(unknownHostException.getMessage(), unknownHostException);
+            throw new RuntimeException(unknownHostException);
+        }
     }
 
     @PreDestroy
     public void stop()
     {
-
+        this.readNotificationsQueue = null;
+        this.executorService.shutdown();
+        this.kafkaProducer.close();
+        this.kafkaConsumer.close();
     }
 
     @Override
     public void run() {
+        try {
+            kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
+                @Override
+                public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                }
 
+                @Override
+                public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                    List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
+                    String registeredTopic = partitions.iterator().next().topic();
+                    topicPartitions.put(registeredTopic, partitionList);
+                    logger.info("******************************************");
+                    logger.info("NUMBER_OF_PARTITIONS registered for :("+registeredTopic+") "+topicPartitions.size());
+                    logger.info("******************************************");
+                    active = true;
+                    findNotifications();
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+        }
+        finally {
+            try {
+                kafkaConsumer.commitSync();
+            } finally {
+                kafkaConsumer.close();
+                shutdownLatch.countDown();
+            }
+        }
     }
 
     private void startSubscription(String topic)
@@ -193,6 +256,73 @@ public class KafkaDaemon implements Runnable {
             // internal state which depended on the commit, you can clean it
             // up here. otherwise it's reasonable to ignore the error and go on
             logger.debug("Commit failed", e);
+        }
+    }
+
+    //---public interface for KafkaDaemonInterface----
+    public void produceData(String topic, JsonObject jsonObject)
+    {
+        if(!this.topics.contains(topic))
+        {
+            this.topics.add(topic);
+        }
+
+        final ProducerRecord<String, String> record = new ProducerRecord<>(topic,
+                "sourceNotification", jsonObject.toString());
+
+        this.kafkaProducer.send(record, new Callback() {
+            public void onCompletion(RecordMetadata metadata, Exception e) {
+                if (e != null) {
+                    logger.error("Send failed for record {}", record, e);
+                }
+                else
+                {
+                    //logger.info("******************************************");
+                    //logger.info("PRODUCE_DATA");
+                    //logger.info("RECORD_META_DATA: "+metadata.toString());
+                    //logger.info("******************************************");
+                }
+            }
+        });
+    }
+
+    public JsonArray readNotifications(String topic, MessageWindow messageWindow)
+    {
+        try {
+            Future future = this.executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    //TODO: make this a synchronized write
+                    NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
+                    readNotificationsQueue.add(notificationContext);
+
+                    int waitCounter = 0;
+                    while (messageWindow.getMessages() == null)
+                    {
+                        waitCounter++;
+                        if(waitCounter == 1000)
+                        {
+                            break;
+                        }
+                    }
+                }
+            });
+            future.get();
+
+            JsonArray messages = new JsonArray();
+            if(messageWindow.getMessages() != null)
+            {
+                messages = messageWindow.getMessages();
+            }
+
+            return messages;
+        }
+        catch (InterruptedException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
     }
 }
