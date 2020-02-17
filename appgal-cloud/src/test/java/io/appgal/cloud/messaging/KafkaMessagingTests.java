@@ -104,7 +104,7 @@ public class KafkaMessagingTests {
 
             this.kafkaDaemonClient.produceData(DestinationNotification.TOPIC, jsonObject);
         }
-        Thread.sleep(10000);
+        //Thread.sleep(30000);
 
         JsonArray jsonArray = this.kafkaDaemonClient.readNotifications(DestinationNotification.TOPIC, messageWindow);
 

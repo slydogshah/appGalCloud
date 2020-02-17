@@ -133,8 +133,8 @@ public class KafkaDaemonClient {
 
                     while (messageWindow.getMessages() == null)
                     {
-                        logger.info(notificationContext.getMessageWindow().toString());
-                        logger.info(messageWindow.toString());
+                        //logger.info(notificationContext.getMessageWindow().toString());
+                        //logger.info(messageWindow.toString());
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
