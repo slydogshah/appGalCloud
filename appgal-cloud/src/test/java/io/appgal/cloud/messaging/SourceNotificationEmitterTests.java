@@ -24,7 +24,7 @@ public class SourceNotificationEmitterTests {
     private SourceNotificationEmitter sourceNotificationEmitter;
 
     @Inject
-    private KafkaDaemonClient kafkaDaemonClient;
+    private KafkaDaemon kafkaDaemon;
 
     @BeforeEach
     public void setUp() throws InterruptedException {
@@ -35,7 +35,7 @@ public class SourceNotificationEmitterTests {
             String id = UUID.randomUUID().toString();
             ids.add(id);
             jsonObject.addProperty("sourceNotificationId", id);
-            this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
+            this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
         }
     }
 

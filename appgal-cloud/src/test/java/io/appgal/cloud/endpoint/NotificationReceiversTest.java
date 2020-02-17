@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.appgal.cloud.messaging.KafkaDaemonClient;
+import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.model.SourceNotification;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class NotificationReceiversTest {
     private static Logger logger = LoggerFactory.getLogger(NotificationReceiversTest.class);
 
     @Inject
-    private KafkaDaemonClient kafkaDaemonClient;
+    private KafkaDaemon kafkaDaemon;
 
     @BeforeEach
     public void setUp() throws InterruptedException {
@@ -38,7 +38,7 @@ public class NotificationReceiversTest {
             String id = UUID.randomUUID().toString();
             ids.add(id);
             jsonObject.addProperty("sourceNotificationId", id);
-            this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
+            this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
         }
     }
 

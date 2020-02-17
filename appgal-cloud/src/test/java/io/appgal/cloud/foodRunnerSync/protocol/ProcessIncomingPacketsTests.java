@@ -2,7 +2,7 @@ package io.appgal.cloud.foodRunnerSync.protocol;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.appgal.cloud.messaging.KafkaDaemonClient;
+import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.messaging.MessageWindow;
 
 import io.appgal.cloud.model.SourceNotification;
@@ -30,7 +30,7 @@ public class ProcessIncomingPacketsTests {
     private ProcessIncomingPackets processIncomingPackets;
 
     @Inject
-    private KafkaDaemonClient kafkaDaemonClient;
+    private KafkaDaemon kafkaDaemon;
 
     @BeforeEach
     public void setUp() throws InterruptedException {
@@ -41,7 +41,7 @@ public class ProcessIncomingPacketsTests {
             String id = UUID.randomUUID().toString();
             ids.add(id);
             jsonObject.addProperty("sourceNotificationId", id);
-            this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
+            this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
         }
     }
 

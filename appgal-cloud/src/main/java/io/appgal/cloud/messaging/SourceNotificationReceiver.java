@@ -13,13 +13,13 @@ public class SourceNotificationReceiver {
     private static Logger logger = LoggerFactory.getLogger(SourceNotificationReceiver.class);
 
     @Inject
-    private KafkaDaemonClient kafkaDaemonClient;
+    private KafkaDaemon kafkaDaemon;
 
     public void receive(SourceNotification sourceNotification)
     {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("sourceNotificationId", sourceNotification.getSourceNotificationId());
 
-        this.kafkaDaemonClient.produceData(SourceNotification.TOPIC, jsonObject);
+        this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
     }
 }
