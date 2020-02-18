@@ -41,9 +41,12 @@ public class NotificationReceiver {
     @Path("readDestinationNotifications")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String readDestinationNotifications()
+    public String readDestinationNotifications(@QueryParam("startTimestamp") String startTimestamp,@QueryParam("endTimestamp") String endTimestamp)
     {
-        JsonArray destinationNotifications = this.processIncomingPackets.readDestinationNotifications();
+        OffsetDateTime start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(startTimestamp)), ZoneOffset.UTC);
+        OffsetDateTime end = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTimestamp)), ZoneOffset.UTC);
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        JsonArray destinationNotifications = this.processIncomingPackets.readDestinationNotifications(messageWindow);
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("statusCode", "0");

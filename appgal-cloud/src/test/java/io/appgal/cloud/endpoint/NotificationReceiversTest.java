@@ -61,7 +61,9 @@ public class NotificationReceiversTest {
 
     @Test
     public void testReadDestinationNotifications() {
-        Response response = given().when().get("/notification/readDestinationNotifications/")
+        given().when().post("/notification/receive/?startTimestamp=1581392859&endTimestamp=1581393459")
+                .andReturn();
+        Response response = given().when().get("/notification/readDestinationNotifications/?startTimestamp=1581392859&endTimestamp=1581393459")
                 .andReturn();
 
         String json = response.getBody().prettyPrint();

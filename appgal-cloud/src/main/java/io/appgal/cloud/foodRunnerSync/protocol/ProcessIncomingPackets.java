@@ -1,9 +1,11 @@
 package io.appgal.cloud.foodRunnerSync.protocol;
 
 import com.google.gson.JsonArray;
+import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.messaging.SourceNotificationEmitter;
 import io.appgal.cloud.messaging.SourceNotificationReceiver;
+import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,9 @@ public class ProcessIncomingPackets {
     @Inject
     private SourceNotificationEmitter sourceNotificationEmitter;
 
+    @Inject
+    private KafkaDaemon kafkaDaemon;
+
     public void processSourceNotification(MessageWindow messageWindow)
     {
         logger.info("....");
@@ -38,13 +43,13 @@ public class ProcessIncomingPackets {
         this.sourceNotificationEmitter.emit(sourceNotification);
     }
 
-    public JsonArray readDestinationNotifications()
+    public JsonArray readDestinationNotifications(MessageWindow messageWindow)
     {
         logger.info("....");
         logger.info("READ_DESTINATION_NOTIFICATIONS");
         logger.info("....");
 
-        JsonArray destinationNotifications = new JsonArray();
+        JsonArray destinationNotifications = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
 
         return destinationNotifications;
     }
