@@ -20,13 +20,14 @@ public class StartDaemonTask extends RecursiveAction {
     private KafkaConsumer<String,String> kafkaConsumer;
     private List<String> topics = new ArrayList<>();
 
-    private boolean active = false;
+    private Boolean active;
     private CountDownLatch shutdownLatch;
     private Map<String,List<TopicPartition>> topicPartitions;
     private Queue<NotificationContext> readNotificationsQueue;
 
-    public StartDaemonTask(List<String> topics, KafkaConsumer<String,String> kafkaConsumer)
+    public StartDaemonTask(Boolean active, List<String> topics, KafkaConsumer<String,String> kafkaConsumer)
     {
+        this.active = active;
         this.topics = topics;
         this.kafkaConsumer = kafkaConsumer;
     }
@@ -57,7 +58,7 @@ public class StartDaemonTask extends RecursiveAction {
                         }
                     }
 
-                    active = true;
+                    active = Boolean.TRUE;
                     findNotifications();
                 }
             });

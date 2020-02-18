@@ -31,7 +31,7 @@ public class KafkaDaemon {
     private Queue<NotificationContext> readNotificationsQueue;
     private List<String> topics = new ArrayList<>();
 
-    private boolean active = false;
+    private Boolean active = Boolean.FALSE;
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
@@ -68,7 +68,7 @@ public class KafkaDaemon {
             this.commonPool = ForkJoinPool.commonPool();
 
             //Start the KafakDaemon
-            StartDaemonTask startDaemonTask = new StartDaemonTask(this.topics, this.kafkaConsumer);
+            StartDaemonTask startDaemonTask = new StartDaemonTask(this.active, this.topics, this.kafkaConsumer);
             this.commonPool.execute(startDaemonTask);
         }
         catch(UnknownHostException unknownHostException)
@@ -85,6 +85,10 @@ public class KafkaDaemon {
         this.executorService.shutdown();
         this.kafkaProducer.close();
         this.kafkaConsumer.close();
+    }
+
+    public Boolean getActive() {
+        return active;
     }
 
     public void produceData(String topic, JsonObject jsonObject)

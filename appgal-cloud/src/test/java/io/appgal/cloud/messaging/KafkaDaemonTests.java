@@ -34,6 +34,14 @@ public class KafkaDaemonTests {
         logger.info("TEST_RUN");
         logger.info("****");
 
+        while(!this.kafkaDaemon.getActive()) {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
         List<String> notificationIds = new ArrayList<>();
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
