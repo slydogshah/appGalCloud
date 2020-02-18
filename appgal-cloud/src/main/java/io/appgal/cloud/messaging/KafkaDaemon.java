@@ -3,6 +3,7 @@ package io.appgal.cloud.messaging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.OffsetDateTime;
@@ -37,10 +39,18 @@ public class KafkaDaemon implements Runnable {
 
     private boolean active = false;
 
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
+
+
     @PostConstruct
     public void start()
     {
         try {
+
+            this.topics = this.mongoDBJsonStore.findKafakaDaemonBootstrapData();
+
             Properties config = new Properties();
             config.put("client.id", InetAddress.getLocalHost().getHostName());
             config.put("group.id", "foo");
@@ -61,6 +71,24 @@ public class KafkaDaemon implements Runnable {
             //Integrate into an ExecutorService
             this.executorService = Executors.newCachedThreadPool();
             this.executorService.submit(this);
+
+            //Wait for the TopicPartitions to be active
+            //int waitCounter = 0;
+            while (!this.active)
+            {
+                //logger.info("WAITING_FOR_CONSUMERS_TO_BECOME_ACTIVE: "+waitCounter);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage(), e);
+                }
+
+                /*waitCounter++;
+                if(waitCounter == 1000)
+                {
+                    break;
+                }*/
+            }
         }
         catch(UnknownHostException unknownHostException)
         {
@@ -81,23 +109,39 @@ public class KafkaDaemon implements Runnable {
     @Override
     public void run() {
         try {
-            kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
-                @Override
-                public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-                }
+            for(String topic:topics) {
+                /*kafkaConsumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
+                    @Override
+                    public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                    }
 
-                @Override
-                public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-                    List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
-                    String registeredTopic = partitions.iterator().next().topic();
-                    topicPartitions.put(registeredTopic, partitionList);
-                    logger.info("******************************************");
-                    logger.info("NUMBER_OF_PARTITIONS registered for :("+registeredTopic+") "+topicPartitions.size());
-                    logger.info("******************************************");
-                    active = true;
-                    findNotifications();
-                }
-            });
+                    @Override
+                    public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                        List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
+
+                        for (TopicPartition topicPartition : partitionList) {
+                            String registeredTopic = topicPartition.topic();
+
+                            List<TopicPartition> local = topicPartitions.get(registeredTopic);
+                            if (local != null) {
+                                local.add(topicPartition);
+                            } else {
+                                topicPartitions.put(registeredTopic, Arrays.asList(topicPartition));
+                            }
+
+                            logger.info("******************************************");
+                            logger.info("NUMBER_OF_PARTITIONS registered for :(" + registeredTopic + ") " + topicPartitions.size());
+                            logger.info("******************************************");
+                        }
+
+                        active = true;
+                        findNotifications();
+                    }
+                });*/
+                kafkaConsumer.subscribe(Arrays.asList(topic));
+            }
+            active = true;
+            findNotifications();
         }
         catch (Exception e)
         {
@@ -113,34 +157,12 @@ public class KafkaDaemon implements Runnable {
         }
     }
 
-    private void startSubscription(String topic)
-    {
-        try {
-            kafkaConsumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
-                @Override
-                public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-                }
-
-                @Override
-                public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-                    List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
-                    String registeredTopic = partitions.iterator().next().topic();
-                    topicPartitions.put(registeredTopic, partitionList);
-                    logger.info("******************************************");
-                    logger.info("NUMBER_OF_PARTITIONS registered for :("+registeredTopic+") "+topicPartitions.size());
-                    logger.info("******************************************");
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-    }
-
     private void findNotifications()
     {
+        if(active)
+        {
+            return;
+        }
         try {
             do {
                 //logger.info("Start Long Poll");
@@ -194,11 +216,11 @@ public class KafkaDaemon implements Runnable {
                             continue;
                         }
                         for (ConsumerRecord<String, String> record : notificationRecords) {
-                            //logger.info("CONSUME_DATA_TEST_RECORD");
-                            //logger.info("RECORD_OFFSET: "+record.offset());
-                            //logger.info("RECORD_KEY: "+record.key());
-                            //logger.info("RECORD_VALUE: "+record.value());
-                            //logger.info("....");
+                            logger.info("CONSUME_DATA_TEST_RECORD");
+                            logger.info("RECORD_OFFSET: "+record.offset());
+                            logger.info("RECORD_KEY: "+record.key());
+                            logger.info("RECORD_VALUE: "+record.value());
+                            logger.info("....");
 
                             String jsonValue = record.value();
 
@@ -228,11 +250,11 @@ public class KafkaDaemon implements Runnable {
 
     private void process(ConsumerRecord<String, String> record) {
 
-        //logger.info("CONSUME_DATA");
-        //logger.info("RECORD_OFFSET: "+record.offset());
-        //logger.info("RECORD_KEY: "+record.key());
-        //logger.info("RECORD_VALUE: "+record.value());
-        //logger.info("....");
+        logger.info("CONSUME_DATA");
+        logger.info("RECORD_OFFSET: "+record.offset());
+        logger.info("RECORD_KEY: "+record.key());
+        logger.info("RECORD_VALUE: "+record.value());
+        logger.info("....");
 
         doCommitSync(record);
     }
@@ -262,9 +284,9 @@ public class KafkaDaemon implements Runnable {
     //---public interface for KafkaDaemonInterface----
     public void produceData(String topic, JsonObject jsonObject)
     {
-        if(!this.topics.contains(topic))
+        if(!this.active)
         {
-            this.topics.add(topic);
+            throw new IllegalStateException("KAFKADAEMON_NOT_FOUND");
         }
 
         final ProducerRecord<String, String> record = new ProducerRecord<>(topic,
@@ -277,10 +299,10 @@ public class KafkaDaemon implements Runnable {
                 }
                 else
                 {
-                    //logger.info("******************************************");
-                    //logger.info("PRODUCE_DATA");
-                    //logger.info("RECORD_META_DATA: "+metadata.toString());
-                    //logger.info("******************************************");
+                    logger.info("******************************************");
+                    logger.info("PRODUCE_DATA");
+                    logger.info("RECORD_META_DATA: "+metadata.toString());
+                    logger.info("******************************************");
                 }
             }
         });
@@ -288,6 +310,10 @@ public class KafkaDaemon implements Runnable {
 
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
+        if(!this.active)
+        {
+            throw new IllegalStateException("KAFKADAEMON_NOT_FOUND");
+        }
         try {
             Future future = this.executorService.submit(new Runnable() {
                 @Override
@@ -296,15 +322,21 @@ public class KafkaDaemon implements Runnable {
                     NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
                     readNotificationsQueue.add(notificationContext);
 
-                    int waitCounter = 0;
+                    /*int waitCounter = 0;
                     while (messageWindow.getMessages() == null)
                     {
+                        //logger.info("WAITING_TO_READ_NOTIFICATION_FROM_THE_TOPIC: "+waitCounter);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            logger.error(e.getMessage(), e);
+                        }
                         waitCounter++;
                         if(waitCounter == 1000)
                         {
                             break;
                         }
-                    }
+                    }*/
                 }
             });
             future.get();

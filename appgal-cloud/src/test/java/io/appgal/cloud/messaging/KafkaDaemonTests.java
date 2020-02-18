@@ -56,11 +56,15 @@ public class KafkaDaemonTests {
             JsonObject jsonObject = JsonParser.parseString(destinationNotification.toString()).getAsJsonObject();
 
             this.kafkaDaemon.produceData(DestinationNotification.TOPIC, jsonObject);
-
-            jsonArray = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
         }
 
-        logger.info("TIME_TO_ASSERT");
+        jsonArray = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
+        logger.info("TIME_TO_ASSERT_DESTINATION_NOTIFICATION");
+        assertNotNull(jsonArray);
+        logger.info(jsonArray.toString());
+
+        jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
+        logger.info("TIME_TO_ASSERT_SOURCE_NOTIFICATION");
         assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
     }

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.client.*;
 import io.appgal.cloud.model.DestinationNotification;
+import io.appgal.cloud.model.SourceNotification;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,5 +81,21 @@ public class MongoDBJsonStore {
         Document doc = Document.parse(json);
 
         collection.insertOne(doc);
+    }
+
+    public List<String> findKafakaDaemonBootstrapData()
+    {
+        List<String> topics = Arrays.asList(SourceNotification.TOPIC, DestinationNotification.TOPIC);
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("kafkaDaemonBootstrapData");
+
+        Document document = new Document();
+        document.put("topics", topics);
+
+        collection.insertOne(document);
+
+        return topics;
     }
 }

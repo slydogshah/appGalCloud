@@ -92,4 +92,13 @@ public class MongoDBJsonStoreTests {
         }
         assertEquals(notificationIds.size(), searchSize);
     }
+
+    @Test
+    public void testFindKafakaDaemonBootstrapData()
+    {
+        List<String> topics = this.mongoDBJsonStore.findKafakaDaemonBootstrapData();
+
+        assertTrue(topics.contains(SourceNotification.TOPIC));
+        assertTrue(topics.contains(DestinationNotification.TOPIC));
+    }
 }
