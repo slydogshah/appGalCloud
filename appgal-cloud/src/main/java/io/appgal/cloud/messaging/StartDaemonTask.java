@@ -9,6 +9,7 @@ import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -25,19 +26,36 @@ public class StartDaemonTask extends RecursiveAction {
     private Map<String,List<TopicPartition>> topicPartitions;
     private Queue<NotificationContext> readNotificationsQueue;
 
-    public StartDaemonTask(Boolean active, List<String> topics, KafkaConsumer<String,String> kafkaConsumer)
+    public StartDaemonTask(Boolean active, List<String> topics,Queue<NotificationContext> readNotificationsQueue,
+                           Map<String,List<TopicPartition>> topicPartitions)
     {
         this.active = active;
         this.topics = topics;
-        this.kafkaConsumer = kafkaConsumer;
+        this.readNotificationsQueue = readNotificationsQueue;
+        this.topicPartitions = topicPartitions;
     }
     
     @Override
     protected void compute() {
         try {
-            kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
+            Properties config = new Properties();
+            config.put("client.id", InetAddress.getLocalHost().getHostName());
+            config.put("group.id", "foodRunnerSyncProtocol_notifications");
+            config.put("bootstrap.servers", "localhost:9092");
+            config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
+            config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
+            config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
+            config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
+            config.put("session.timeout.ms", 30000);
+            //config.put("rebalance.timeout.ms", 30000);
+
+            this.kafkaConsumer = new KafkaConsumer<String, String>(config);
+
+            /*kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
                 @Override
                 public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                    logger.info("********PARTITIONS_REVOKED**********");
+                    logger.info("************************************");
                 }
 
                 @Override
@@ -59,9 +77,32 @@ public class StartDaemonTask extends RecursiveAction {
                     }
 
                     active = Boolean.TRUE;
-                    findNotifications();
+                    //findNotifications();
                 }
-            });
+            });*/
+
+            KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener();
+            this.kafkaConsumer.subscribe(topics, rebalanceListener);
+
+
+            /*Set<TopicPartition> partitions = new HashSet<>();
+            kafkaConsumer.assign(partitions);
+            for(TopicPartition topicPartition:partitions)
+            {
+                String registeredTopic = topicPartition.topic();
+                List<TopicPartition> local = this.topicPartitions.get(registeredTopic);
+                if (local != null) {
+                    local.add(topicPartition);
+                    logger.info("******************************************");
+                    logger.info("NUMBER_OF_PARTITIONS registered for :(" + registeredTopic + ") " + topicPartitions.size());
+                    logger.info("******************************************");
+                } else {
+                    this.topicPartitions.put(registeredTopic, Arrays.asList(topicPartition));
+                }
+            }
+            kafkaConsumer.subscribe(topics);
+            active = Boolean.TRUE;
+            findNotifications();*/
         }
         catch (Exception e)
         {
@@ -81,7 +122,7 @@ public class StartDaemonTask extends RecursiveAction {
     {
         try {
             do {
-                //logger.info("Start Long Poll");
+                logger.info("Start Long Poll");
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
                 records.forEach(record -> process(record));
 

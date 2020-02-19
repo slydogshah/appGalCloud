@@ -22,7 +22,6 @@ import java.util.concurrent.*;
 public class KafkaDaemon {
     private static Logger logger = LoggerFactory.getLogger(KafkaDaemon.class);
 
-    private KafkaConsumer<String,String> kafkaConsumer;
     private CountDownLatch shutdownLatch;
     private ExecutorService executorService;
     private Map<String,List<TopicPartition>> topicPartitions;
@@ -47,15 +46,14 @@ public class KafkaDaemon {
 
             Properties config = new Properties();
             config.put("client.id", InetAddress.getLocalHost().getHostName());
-            config.put("group.id", "foo");
+            config.put("group.id", "foodRunnerSyncProtocol_notifications");
             config.put("bootstrap.servers", "localhost:9092");
             config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
             config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
             config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
             config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
 
-            this.kafkaConsumer = new KafkaConsumer<String, String>(config);
-            this.kafkaProducer = new KafkaProducer<>(config);
+            //this.kafkaProducer = new KafkaProducer<>(config);
 
             this.shutdownLatch = new CountDownLatch(1);
             this.topicPartitions = new HashMap<>();
@@ -68,7 +66,7 @@ public class KafkaDaemon {
             this.commonPool = ForkJoinPool.commonPool();
 
             //Start the KafakDaemon
-            StartDaemonTask startDaemonTask = new StartDaemonTask(this.active, this.topics, this.kafkaConsumer);
+            StartDaemonTask startDaemonTask = new StartDaemonTask(this.active, this.topics, this.readNotificationsQueue,topicPartitions);
             this.commonPool.execute(startDaemonTask);
         }
         catch(UnknownHostException unknownHostException)
@@ -84,11 +82,17 @@ public class KafkaDaemon {
         this.readNotificationsQueue = null;
         this.executorService.shutdown();
         this.kafkaProducer.close();
-        this.kafkaConsumer.close();
     }
 
     public Boolean getActive() {
         return active;
+    }
+
+    public void logStartUp()
+    {
+        logger.info("**********");
+        logger.info("STARTING_KAFKA_DAEMON");
+        logger.info("**********");
     }
 
     public void produceData(String topic, JsonObject jsonObject)
@@ -100,9 +104,8 @@ public class KafkaDaemon {
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
         ConsumerTask consumerTask = new ConsumerTask(topic, messageWindow,
-                this.kafkaConsumer,
                 this.executorService,
-                this.readNotificationsQueue);
+                this.readNotificationsQueue, this.commonPool);
         this.commonPool.execute(consumerTask);
         JsonArray jsonArray = consumerTask.join();
         return jsonArray;

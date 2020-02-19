@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Queue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.*;
 
 public class ConsumerTask extends RecursiveTask<JsonArray> {
     private static Logger logger = LoggerFactory.getLogger(ConsumerTask.class);
@@ -19,30 +16,34 @@ public class ConsumerTask extends RecursiveTask<JsonArray> {
     private KafkaConsumer<String,String> kafkaConsumer;
     private ExecutorService executorService;
     private Queue<NotificationContext> readNotificationsQueue;
+    private ForkJoinPool commonPool;
 
-    public ConsumerTask(String topic, MessageWindow messageWindow,KafkaConsumer<String,String> kafkaConsumer,
-                        ExecutorService executorService,Queue<NotificationContext> readNotificationsQueue) {
+    public ConsumerTask(String topic, MessageWindow messageWindow,
+                        ExecutorService executorService,Queue<NotificationContext> readNotificationsQueue,ForkJoinPool commonPool) {
         this.topic = topic;
         this.messageWindow = messageWindow;
-        this.kafkaConsumer = kafkaConsumer;
         this.executorService = executorService;
         this.readNotificationsQueue = readNotificationsQueue;
+        this.commonPool = commonPool;
     }
 
     @Override
     protected JsonArray compute() {
         try {
+            JsonArray messages = new JsonArray();
             Future future = this.executorService.submit(new Runnable() {
                 @Override
                 public void run() {
                     //TODO: make this a synchronized write
                     NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
                     readNotificationsQueue.add(notificationContext);
+
+                    ConsumerSubTask subTask = new ConsumerSubTask(messageWindow);
+                    subTask.join();
                 }
             });
             future.get();
 
-            JsonArray messages = new JsonArray();
             if (messageWindow.getMessages() != null) {
                 messages = messageWindow.getMessages();
             }
