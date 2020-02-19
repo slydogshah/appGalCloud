@@ -46,63 +46,15 @@ public class StartDaemonTask extends RecursiveAction {
             config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
             config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
             config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
-            config.put("session.timeout.ms", 30000);
-            //config.put("rebalance.timeout.ms", 30000);
+            //config.put("session.timeout.ms", 30000);
 
             this.kafkaConsumer = new KafkaConsumer<String, String>(config);
 
-            /*kafkaConsumer.subscribe(topics, new ConsumerRebalanceListener() {
-                @Override
-                public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-                    logger.info("********PARTITIONS_REVOKED**********");
-                    logger.info("************************************");
-                }
-
-                @Override
-                public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-                    List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
-
-                    for (TopicPartition topicPartition : partitionList) {
-                        String registeredTopic = topicPartition.topic();
-
-                        List<TopicPartition> local = topicPartitions.get(registeredTopic);
-                        if (local != null) {
-                            local.add(topicPartition);
-                            logger.info("******************************************");
-                            logger.info("NUMBER_OF_PARTITIONS registered for :(" + registeredTopic + ") " + topicPartitions.size());
-                            logger.info("******************************************");
-                        } else {
-                            topicPartitions.put(registeredTopic, Arrays.asList(topicPartition));
-                        }
-                    }
-
-                    active = Boolean.TRUE;
-                    //findNotifications();
-                }
-            });*/
-
-            KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener();
+            KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener(this.topicPartitions);
             this.kafkaConsumer.subscribe(topics, rebalanceListener);
 
-
-            /*Set<TopicPartition> partitions = new HashSet<>();
-            kafkaConsumer.assign(partitions);
-            for(TopicPartition topicPartition:partitions)
-            {
-                String registeredTopic = topicPartition.topic();
-                List<TopicPartition> local = this.topicPartitions.get(registeredTopic);
-                if (local != null) {
-                    local.add(topicPartition);
-                    logger.info("******************************************");
-                    logger.info("NUMBER_OF_PARTITIONS registered for :(" + registeredTopic + ") " + topicPartitions.size());
-                    logger.info("******************************************");
-                } else {
-                    this.topicPartitions.put(registeredTopic, Arrays.asList(topicPartition));
-                }
-            }
-            kafkaConsumer.subscribe(topics);
             active = Boolean.TRUE;
-            findNotifications();*/
+            findNotifications();
         }
         catch (Exception e)
         {
