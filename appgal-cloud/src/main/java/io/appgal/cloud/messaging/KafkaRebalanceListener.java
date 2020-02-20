@@ -5,29 +5,25 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.concurrent.RecursiveAction;
 
-public class KafkaRebalanceListener extends RecursiveAction implements ConsumerRebalanceListener {
+public class KafkaRebalanceListener implements ConsumerRebalanceListener {
     private static Logger logger = LoggerFactory.getLogger(KafkaRebalanceListener.class);
 
     private KafkaConsumer<String,String> kafkaConsumer;
     private Map<String,List<TopicPartition>> topicPartitions;
-    private Boolean active;
     private Queue<NotificationContext> readNotificationsQueue;
     private List<String> topics;
 
     public KafkaRebalanceListener(KafkaConsumer<String,String> kafkaConsumer,Queue<NotificationContext> readNotificationsQueue,
-            List<String> topics,Map<String, List<TopicPartition>> topicPartitions, Boolean active) {
+            List<String> topics,Map<String, List<TopicPartition>> topicPartitions) {
         this.kafkaConsumer = kafkaConsumer;
         this.readNotificationsQueue = readNotificationsQueue;
         this.topicPartitions = topicPartitions;
-        this.active = active;
         this.topics = topics;
     }
 
@@ -42,7 +38,6 @@ public class KafkaRebalanceListener extends RecursiveAction implements ConsumerR
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
         logger.info("********PARTITIONS_ASSIGNED**********");
         logger.info("************************************");
-        this.active = Boolean.TRUE;
 
         List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
         for (TopicPartition topicPartition : partitionList) {
@@ -158,10 +153,5 @@ public class KafkaRebalanceListener extends RecursiveAction implements ConsumerR
         logger.info("RECORD_KEY: "+record.key());
         logger.info("RECORD_VALUE: "+record.value());
         logger.info("....");
-    }
-
-    @Override
-    protected void compute() {
-        this.kafkaConsumer.subscribe(topics, this);
     }
 }

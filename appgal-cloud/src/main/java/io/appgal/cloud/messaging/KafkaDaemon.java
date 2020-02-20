@@ -30,37 +30,22 @@ public class KafkaDaemon {
     private Queue<NotificationContext> readNotificationsQueue;
     private List<String> topics = new ArrayList<>();
 
-    private Boolean active = Boolean.FALSE;
-
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
     private ForkJoinPool commonPool;
 
+    public KafkaDaemon()
+    {
+        this.topicPartitions = new HashMap<>();
+        this.readNotificationsQueue = new LinkedList<>();
+        this.commonPool = ForkJoinPool.commonPool();
+    }
+
     @PostConstruct
     public void start()
     {
         this.topics = this.mongoDBJsonStore.findKafakaDaemonBootstrapData();
-        this.topicPartitions = new HashMap<>();
-        this.readNotificationsQueue = new LinkedList<>();
-        this.commonPool = ForkJoinPool.commonPool();
-        if(this.kafkaProducer == null) {
-            try {
-                Properties config = new Properties();
-                config.put("client.id", InetAddress.getLocalHost().getHostName());
-                config.put("group.id", "foodRunnerSyncProtocol_notifications");
-                config.put("bootstrap.servers", "localhost:9092");
-                config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
-                config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
-                config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
-                config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
-                this.kafkaProducer = new KafkaProducer<>(config);
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-        }
-
         if(this.kafkaConsumer == null) {
             try {
                 Properties config = new Properties();
@@ -82,9 +67,26 @@ public class KafkaDaemon {
                 throw new RuntimeException(e);
             }
             //Start the KafakDaemon
-            StartDaemonTask startDaemonTask = new StartDaemonTask(this.kafkaConsumer, this.active, this.topics, this.readNotificationsQueue, topicPartitions);
+            StartDaemonTask startDaemonTask = new StartDaemonTask(this.kafkaConsumer, this.topics, this.readNotificationsQueue, topicPartitions);
             this.commonPool.execute(startDaemonTask);
             startDaemonTask.join();
+        }
+
+        if(this.kafkaProducer == null) {
+            try {
+                Properties config = new Properties();
+                config.put("client.id", InetAddress.getLocalHost().getHostName());
+                config.put("group.id", "foodRunnerSyncProtocol_notifications");
+                config.put("bootstrap.servers", "localhost:9092");
+                config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
+                config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
+                config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
+                config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
+                this.kafkaProducer = new KafkaProducer<>(config);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -92,6 +94,8 @@ public class KafkaDaemon {
     public void stop()
     {
         this.readNotificationsQueue = null;
+        this.kafkaProducer.close();
+        this.kafkaConsumer.close();
     }
 
     public Boolean getActive() {
