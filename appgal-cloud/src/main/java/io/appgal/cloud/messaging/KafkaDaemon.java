@@ -34,14 +34,13 @@ public class KafkaDaemon {
     private Map<String,List<TopicPartition>> topicPartitions;
 
     private Queue<NotificationContext> readNotificationsQueue;
+    private Map<String,Map<String, JsonArray>> lookupTable;
     private List<String> topics = new ArrayList<>();
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
     private ForkJoinPool commonPool;
-
-    private Map<String, JsonArray> lookupTable;
 
     public KafkaDaemon()
     {
@@ -147,7 +146,12 @@ public class KafkaDaemon {
         NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
         readNotificationsQueue.add(notificationContext);
 
-        return this.lookupTable.get(messageWindow.getLookupTableIndex());
+        Map<String, JsonArray> topicTable = this.lookupTable.get(topic);
+        if(topicTable == null)
+        {
+            return new JsonArray();
+        }
+        return topicTable.get(messageWindow.getLookupTableIndex());
     }
 
     private void findNotifications()
@@ -221,7 +225,15 @@ public class KafkaDaemon {
                     logger.error(e.getMessage(), e);
                 }
 
-                lookupTable.put(messageWindow.getLookupTableIndex(), messageWindow.getCopyOfMessages());
+                String lookupTableIndex = messageWindow.getLookupTableIndex();
+                JsonArray copyOfMessages = messageWindow.getCopyOfMessages();
+                Map<String, JsonArray> topicTable = lookupTable.get(topic);
+                if(topicTable == null)
+                {
+                    topicTable = new HashMap<>();
+                    topicTable.put(lookupTableIndex, copyOfMessages);
+                }
+                topicTable.put(lookupTableIndex, copyOfMessages);
 
                 logger.info("*********KAFKA_DAEMON***********");
                 logger.info("END_READ_NOTIFICATIONS");
