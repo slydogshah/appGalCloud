@@ -25,6 +25,7 @@ public class KafkaDaemon {
 
     private KafkaProducer<String,String> kafkaProducer;
     private KafkaConsumer<String,String> kafkaConsumer;
+    private CountDownLatch shutdownLatch;
     private Map<String,List<TopicPartition>> topicPartitions;
 
     private Queue<NotificationContext> readNotificationsQueue;
@@ -39,6 +40,7 @@ public class KafkaDaemon {
     {
         this.topicPartitions = new HashMap<>();
         this.readNotificationsQueue = new LinkedList<>();
+        this.shutdownLatch = new CountDownLatch(1);
         this.commonPool = ForkJoinPool.commonPool();
     }
 
@@ -66,10 +68,14 @@ public class KafkaDaemon {
                 logger.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }
+
             //Start the KafakDaemon
-            StartDaemonTask startDaemonTask = new StartDaemonTask(this.kafkaConsumer, this.topics, this.readNotificationsQueue, topicPartitions);
+            /*StartDaemonTask startDaemonTask = new StartDaemonTask(this.kafkaConsumer, this.topics, this.readNotificationsQueue, topicPartitions);
             this.commonPool.execute(startDaemonTask);
-            startDaemonTask.join();
+            startDaemonTask.join();*/
+            KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener(this.kafkaConsumer, this.readNotificationsQueue, this.topics,
+                    this.topicPartitions);
+            this.kafkaConsumer.subscribe(this.topics, rebalanceListener);
         }
 
         if(this.kafkaProducer == null) {
@@ -96,6 +102,7 @@ public class KafkaDaemon {
         this.readNotificationsQueue = null;
         this.kafkaProducer.close();
         this.kafkaConsumer.close();
+        this.shutdownLatch.countDown();
     }
 
     public Boolean getActive() {
