@@ -34,18 +34,17 @@ public class KafkaDaemonTests {
         logger.info("****");
 
         this.kafkaDaemon.logStartUp();
-        Thread.sleep(30000);
 
-        /*int counter=0;
+        int counter=0;
         while(!this.kafkaDaemon.getActive()) {
             Thread.sleep(5000);
             if(counter++ == 3)
             {
                 break;
             }
-        }*/
+        }
 
-        /*logger.info("****");
+        logger.info("****");
         logger.info("ABOUT_TO_PRODUCE_DATA");
         logger.info("****");
 
@@ -71,11 +70,14 @@ public class KafkaDaemonTests {
             JsonObject jsonObject = JsonParser.parseString(destinationNotification.toString()).getAsJsonObject();
 
             this.kafkaDaemon.produceData(DestinationNotification.TOPIC, jsonObject);
-        }*/
+        }
 
         //Thread.sleep(5000);
+        logger.info("****");
+        logger.info("ABOUT_TO_ASSERT_DATA");
+        logger.info("****");
 
-        /*jsonArray = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
+        jsonArray = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
         logger.info("TIME_TO_ASSERT_DESTINATION_NOTIFICATION");
         assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
@@ -83,6 +85,6 @@ public class KafkaDaemonTests {
         jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
         logger.info("TIME_TO_ASSERT_SOURCE_NOTIFICATION");
         assertNotNull(jsonArray);
-        logger.info(jsonArray.toString());*/
+        logger.info(jsonArray.toString());
     }
 }

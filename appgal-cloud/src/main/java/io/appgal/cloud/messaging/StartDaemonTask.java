@@ -50,10 +50,9 @@ public class StartDaemonTask extends RecursiveAction {
 
             this.kafkaConsumer = new KafkaConsumer<String, String>(config);
 
-            KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener(this.topicPartitions);
+            KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener(this.topicPartitions, this.active);
             this.kafkaConsumer.subscribe(topics, rebalanceListener);
 
-            active = Boolean.TRUE;
             findNotifications();
         }
         catch (Exception e)

@@ -14,9 +14,11 @@ public class KafkaRebalanceListener implements ConsumerRebalanceListener {
     private static Logger logger = LoggerFactory.getLogger(KafkaRebalanceListener.class);
 
     private Map<String,List<TopicPartition>> topicPartitions;
+    private Boolean active;
 
-    public KafkaRebalanceListener(Map<String, List<TopicPartition>> topicPartitions) {
+    public KafkaRebalanceListener(Map<String, List<TopicPartition>> topicPartitions, Boolean active) {
         this.topicPartitions = topicPartitions;
+        this.active = active;
     }
 
     @Override
@@ -28,8 +30,11 @@ public class KafkaRebalanceListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-        List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
+        logger.info("********PARTITIONS_ASSIGNED**********");
+        logger.info("************************************");
+        this.active = Boolean.TRUE;
 
+        List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
         for (TopicPartition topicPartition : partitionList) {
             String registeredTopic = topicPartition.topic();
 
