@@ -28,7 +28,7 @@ public class KafkaDaemonTests {
     private KafkaDaemon kafkaDaemon;
 
     @Test
-    public void testRun() throws InterruptedException {
+    public void testAddingDestinationNotifications() throws InterruptedException {
         logger.info("****");
         logger.info("TEST_RUN");
         logger.info("****");
@@ -81,6 +81,58 @@ public class KafkaDaemonTests {
         logger.info("TIME_TO_ASSERT_DESTINATION_NOTIFICATION");
         assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
+
+        jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
+        logger.info("TIME_TO_ASSERT_SOURCE_NOTIFICATION");
+        assertNotNull(jsonArray);
+        logger.info(jsonArray.toString());
+    }
+
+    @Test
+    public void testAddingSourceNotifications() throws InterruptedException {
+        logger.info("****");
+        logger.info("TEST_RUN");
+        logger.info("****");
+
+        this.kafkaDaemon.logStartUp();
+
+        int counter=0;
+        while(!this.kafkaDaemon.getActive()) {
+            Thread.sleep(5000);
+            if(counter++ == 3)
+            {
+                break;
+            }
+        }
+
+        logger.info("****");
+        logger.info("ABOUT_TO_PRODUCE_DATA");
+        logger.info("****");
+
+        List<String> notificationIds = new ArrayList<>();
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        JsonArray jsonArray = new JsonArray();
+        for(int i=0; i<10; i++)
+        {
+            String sourceNotificationId = UUID.randomUUID().toString();
+            SourceNotification sourceNotification = new SourceNotification();
+            sourceNotification.setSourceNotificationId(sourceNotificationId);
+            sourceNotification.setMessageWindow(messageWindow);
+
+            notificationIds.add(sourceNotificationId);
+
+            JsonObject jsonObject = JsonParser.parseString(sourceNotification.toString()).getAsJsonObject();
+
+            this.kafkaDaemon.produceData(DestinationNotification.TOPIC, jsonObject);
+        }
+
+        Thread.sleep(120000);
+
+        logger.info("****");
+        logger.info("ABOUT_TO_ASSERT_DATA");
+        logger.info("****");
 
         jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
         logger.info("TIME_TO_ASSERT_SOURCE_NOTIFICATION");
