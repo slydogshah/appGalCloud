@@ -17,6 +17,8 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -26,6 +28,8 @@ public class KafkaDaemonTests {
 
     @Inject
     private KafkaDaemon kafkaDaemon;
+
+    private ForkJoinPool commonPool = ForkJoinPool.commonPool();
 
     @Test
     public void testAddingDestinationNotifications() throws InterruptedException {
@@ -90,7 +94,7 @@ public class KafkaDaemonTests {
 
     @Test
     public void testAddingSourceNotifications() throws InterruptedException {
-        logger.info("****");
+        /*logger.info("****");
         logger.info("TEST_RUN");
         logger.info("****");
 
@@ -137,6 +141,19 @@ public class KafkaDaemonTests {
         jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
         logger.info("TIME_TO_ASSERT_SOURCE_NOTIFICATION");
         assertNotNull(jsonArray);
-        logger.info(jsonArray.toString());
+        logger.info(jsonArray.toString());*/
+
+        TestRunnerWithWait testRunnerWithWait = new TestRunnerWithWait();
+        this.commonPool.execute(testRunnerWithWait);
+        testRunnerWithWait.join();
+    }
+
+    private class TestRunnerWithWait extends RecursiveAction
+    {
+        @Override
+        protected void compute() {
+            kafkaDaemon.logStartUp();
+            kafkaDaemon.start();
+        }
     }
 }

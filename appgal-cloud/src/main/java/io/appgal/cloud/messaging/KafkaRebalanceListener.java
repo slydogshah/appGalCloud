@@ -11,20 +11,24 @@ import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.concurrent.RecursiveAction;
 
-public class KafkaRebalanceListener implements ConsumerRebalanceListener {
+public class KafkaRebalanceListener extends RecursiveAction implements ConsumerRebalanceListener {
     private static Logger logger = LoggerFactory.getLogger(KafkaRebalanceListener.class);
 
     private KafkaConsumer<String,String> kafkaConsumer;
     private Map<String,List<TopicPartition>> topicPartitions;
     private Boolean active;
     private Queue<NotificationContext> readNotificationsQueue;
+    private List<String> topics;
 
-    public KafkaRebalanceListener(KafkaConsumer<String,String> kafkaConsumer,Queue<NotificationContext> readNotificationsQueue,Map<String, List<TopicPartition>> topicPartitions, Boolean active) {
+    public KafkaRebalanceListener(KafkaConsumer<String,String> kafkaConsumer,Queue<NotificationContext> readNotificationsQueue,
+            List<String> topics,Map<String, List<TopicPartition>> topicPartitions, Boolean active) {
         this.kafkaConsumer = kafkaConsumer;
         this.readNotificationsQueue = readNotificationsQueue;
         this.topicPartitions = topicPartitions;
         this.active = active;
+        this.topics = topics;
     }
 
     @Override
@@ -154,5 +158,12 @@ public class KafkaRebalanceListener implements ConsumerRebalanceListener {
         logger.info("RECORD_KEY: "+record.key());
         logger.info("RECORD_VALUE: "+record.value());
         logger.info("....");
+    }
+
+    @Override
+    protected void compute() {
+        this.kafkaConsumer.subscribe(topics, this);
+
+        //while(true);
     }
 }

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
 public class StartDaemonTask extends RecursiveAction {
@@ -46,12 +47,15 @@ public class StartDaemonTask extends RecursiveAction {
             config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
             config.put("auto.commit.interval.ms", 1000);
             config.put("enable.auto.commit", true);
-            //config.put("session.timeout.ms", 30000);
 
             this.kafkaConsumer = new KafkaConsumer<String, String>(config);
 
-            KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener(this.kafkaConsumer, this.readNotificationsQueue, this.topicPartitions, this.active);
-            this.kafkaConsumer.subscribe(topics, rebalanceListener);
+            ForkJoinPool commonPool = ForkJoinPool.commonPool();
+            KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener(this.kafkaConsumer, this.readNotificationsQueue, this.topics,
+                    this.topicPartitions, this.active);
+            commonPool.execute(rebalanceListener);
+
+            rebalanceListener.join();
         }
         catch (Exception e)
         {
