@@ -2,6 +2,7 @@ package io.appgal.cloud.messaging;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -108,6 +109,7 @@ public class KafkaDaemon {
                 this.readNotificationsQueue, this.commonPool);
         this.commonPool.execute(consumerTask);
         JsonArray jsonArray = consumerTask.join();
-        return jsonArray;
+
+        return messageWindow.getCopyOfMessages();
     }
 }

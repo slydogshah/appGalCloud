@@ -1,6 +1,7 @@
 package io.appgal.cloud.messaging;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.time.OffsetDateTime;
 
@@ -13,6 +14,7 @@ public class MessageWindow {
     {
         this.start = start;
         this.end = end;
+        this.messages = new JsonArray();
     }
 
     public OffsetDateTime getStart() {
@@ -27,7 +29,19 @@ public class MessageWindow {
         return messages;
     }
 
-    public void setMessages(JsonArray messages) {
-        this.messages = messages;
+    public synchronized JsonArray getCopyOfMessages()
+    {
+        JsonArray copy = this.messages;
+        this.messages = null;
+        return copy;
+    }
+
+    public synchronized void addMessage(JsonObject jsonObject)
+    {
+        if(this.messages == null)
+        {
+            return;
+        }
+        this.messages.add(jsonObject);
     }
 }

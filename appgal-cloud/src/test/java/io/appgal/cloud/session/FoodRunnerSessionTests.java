@@ -13,10 +13,13 @@ import javax.inject.Inject;
 public class FoodRunnerSessionTests {
     private static Logger logger = LoggerFactory.getLogger(FoodRunnerSessionTests.class);
 
+    @Inject
+    private FoodRunnerSession foodRunnerSession;
+
     @BeforeEach
     private void setUp()
     {
-
+        this.foodRunnerSession.start();
     }
 
     @AfterEach
@@ -27,7 +30,5 @@ public class FoodRunnerSessionTests {
     @Test
     public void testStart()
     {
-        FoodRunnerSession session = new FoodRunnerSession();
-        session.start();
     }
 }

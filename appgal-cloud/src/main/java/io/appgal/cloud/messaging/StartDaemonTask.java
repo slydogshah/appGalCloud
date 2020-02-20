@@ -133,16 +133,11 @@ public class StartDaemonTask extends RecursiveAction {
                             String jsonValue = record.value();
 
                             JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
-                            jsonArray.add(jsonObject);
+                            messageWindow.addMessage(jsonObject);
                         }
-                        messageWindow.setMessages(jsonArray);
                     }
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
-                }
-
-                if (messageWindow.getMessages() == null) {
-                    messageWindow.setMessages(new JsonArray());
                 }
                 logger.info("*********KAFKA_DAEMON***********");
                 logger.info("END_READ_NOTIFICATIONS");
