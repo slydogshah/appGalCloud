@@ -41,12 +41,12 @@ public class KafkaRebalanceListener implements ConsumerRebalanceListener {
             List<TopicPartition> local = topicPartitions.get(registeredTopic);
             if (local != null) {
                 local.add(topicPartition);
-                logger.info("******************************************");
-                logger.info("NUMBER_OF_PARTITIONS registered for :(" + registeredTopic + ") " + topicPartitions.size());
-                logger.info("******************************************");
             } else {
                 topicPartitions.put(registeredTopic, Arrays.asList(topicPartition));
             }
+            logger.info("******************************************");
+            logger.info("NUMBER_OF_PARTITIONS registered for :(" + registeredTopic + ") " + topicPartitions.size());
+            logger.info("******************************************");
         }
     }
 

@@ -39,6 +39,7 @@ public class ConsumerTask extends RecursiveTask<JsonArray> {
                     readNotificationsQueue.add(notificationContext);
 
                     ConsumerSubTask subTask = new ConsumerSubTask(messageWindow);
+                    commonPool.execute(subTask);
                     subTask.join();
                 }
             });
