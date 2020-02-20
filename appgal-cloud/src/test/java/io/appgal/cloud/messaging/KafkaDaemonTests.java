@@ -108,7 +108,7 @@ public class KafkaDaemonTests {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         MessageWindow messageWindow = new MessageWindow(start, end);
-        JsonArray jsonArray = new JsonArray();
+        JsonArray jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
         for(int i=0; i<10; i++)
         {
             String sourceNotificationId = UUID.randomUUID().toString();
@@ -123,7 +123,7 @@ public class KafkaDaemonTests {
             this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
         }
 
-        Thread.sleep(30000);
+        Thread.sleep(120000);
 
         logger.info("****");
         logger.info("ABOUT_TO_ASSERT_DATA");

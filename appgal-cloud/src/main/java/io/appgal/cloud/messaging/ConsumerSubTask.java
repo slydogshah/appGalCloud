@@ -23,7 +23,7 @@ public class ConsumerSubTask extends RecursiveTask<JsonArray> {
     @Override
     protected JsonArray compute() {
 
-        while(messageWindow.getMessages() == null)
+        /*while(messageWindow.getMessages() == null)
         {
             logger.info("WAITING_ON_DATA");
             try {
@@ -31,7 +31,7 @@ public class ConsumerSubTask extends RecursiveTask<JsonArray> {
             } catch (InterruptedException e) {
                 logger.error(e.getMessage(), e);
             }
-        }
+        }*/
 
         return messageWindow.getMessages();
     }

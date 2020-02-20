@@ -44,4 +44,10 @@ public class MessageWindow {
         }
         this.messages.add(jsonObject);
     }
+
+    public String getLookupTableIndex()
+    {
+        String lookupTableIndex = (this.start.toEpochSecond() + this.end.toEpochSecond())+"";
+        return lookupTableIndex;
+    }
 }
