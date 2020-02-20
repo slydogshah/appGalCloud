@@ -68,7 +68,7 @@ public class KafkaDaemonTests {
             this.kafkaDaemon.produceData(DestinationNotification.TOPIC, jsonObject);
         }
 
-        Thread.sleep(120000);
+        Thread.sleep(30000);
 
         logger.info("****");
         logger.info("ABOUT_TO_ASSERT_DATA");
@@ -115,7 +115,7 @@ public class KafkaDaemonTests {
             this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
         }
 
-        Thread.sleep(120000);
+        Thread.sleep(30000);
 
         logger.info("****");
         logger.info("ABOUT_TO_ASSERT_DATA");

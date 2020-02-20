@@ -159,7 +159,7 @@ public class KafkaDaemon {
         try {
             do {
                 logger.info("Start Long Poll");
-                ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
+                ConsumerRecords<String, String> records = kafkaConsumer.poll(15000);
                 records.forEach(record -> process(record));
 
                 //TODO: Read multiple NotificationContexts during this run
