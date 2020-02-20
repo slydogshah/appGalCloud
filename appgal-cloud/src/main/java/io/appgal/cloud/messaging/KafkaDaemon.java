@@ -2,10 +2,8 @@ package io.appgal.cloud.messaging;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
 import io.appgal.cloud.persistence.MongoDBJsonStore;
-import org.apache.kafka.clients.consumer.*;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -23,10 +20,7 @@ import java.util.concurrent.*;
 public class KafkaDaemon {
     private static Logger logger = LoggerFactory.getLogger(KafkaDaemon.class);
 
-    private CountDownLatch shutdownLatch;
-    private ExecutorService executorService;
     private Map<String,List<TopicPartition>> topicPartitions;
-    private KafkaProducer<String,String> kafkaProducer;
 
     private Queue<NotificationContext> readNotificationsQueue;
     private List<String> topics = new ArrayList<>();
@@ -41,48 +35,25 @@ public class KafkaDaemon {
     @PostConstruct
     public void start()
     {
-        try {
+        this.topics = this.mongoDBJsonStore.findKafakaDaemonBootstrapData();
 
-            this.topics = this.mongoDBJsonStore.findKafakaDaemonBootstrapData();
+        this.topicPartitions = new HashMap<>();
 
-            Properties config = new Properties();
-            config.put("client.id", InetAddress.getLocalHost().getHostName());
-            config.put("group.id", "foodRunnerSyncProtocol_notifications");
-            config.put("bootstrap.servers", "localhost:9092");
-            config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
-            config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
-            config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
-            config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
+        this.readNotificationsQueue = new LinkedList<>();
 
-            //this.kafkaProducer = new KafkaProducer<>(config);
 
-            this.shutdownLatch = new CountDownLatch(1);
-            this.topicPartitions = new HashMap<>();
+        this.commonPool = ForkJoinPool.commonPool();
 
-            this.readNotificationsQueue = new LinkedList<>();
-
-            //Integrate into an ExecutorService
-            this.executorService = Executors.newCachedThreadPool();
-
-            this.commonPool = ForkJoinPool.commonPool();
-
-            //Start the KafakDaemon
-            StartDaemonTask startDaemonTask = new StartDaemonTask(this.active, this.topics, this.readNotificationsQueue,topicPartitions);
-            this.commonPool.execute(startDaemonTask);
-        }
-        catch(UnknownHostException unknownHostException)
-        {
-            logger.error(unknownHostException.getMessage(), unknownHostException);
-            throw new RuntimeException(unknownHostException);
-        }
+        //Start the KafakDaemon
+        StartDaemonTask startDaemonTask = new StartDaemonTask(this.active, this.topics, this.readNotificationsQueue,topicPartitions);
+        this.commonPool.execute(startDaemonTask);
+        startDaemonTask.join();
     }
 
     @PreDestroy
     public void stop()
     {
         this.readNotificationsQueue = null;
-        this.executorService.shutdown();
-        this.kafkaProducer.close();
     }
 
     public Boolean getActive() {
@@ -98,14 +69,13 @@ public class KafkaDaemon {
 
     public void produceData(String topic, JsonObject jsonObject)
     {
-        ProducerTask producerTask = new ProducerTask(topic, jsonObject, this.kafkaProducer);
+        ProducerTask producerTask = new ProducerTask(topic, jsonObject);
         this.commonPool.execute(producerTask);
     }
 
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
         ConsumerTask consumerTask = new ConsumerTask(topic, messageWindow,
-                this.executorService,
                 this.readNotificationsQueue, this.commonPool);
         this.commonPool.execute(consumerTask);
         JsonArray jsonArray = consumerTask.join();

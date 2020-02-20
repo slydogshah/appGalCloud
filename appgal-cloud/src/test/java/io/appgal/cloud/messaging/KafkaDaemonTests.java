@@ -99,7 +99,7 @@ public class KafkaDaemonTests {
         int counter=0;
         while(!this.kafkaDaemon.getActive()) {
             Thread.sleep(5000);
-            if(counter++ == 3)
+            if(counter++ == 15)
             {
                 break;
             }

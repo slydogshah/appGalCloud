@@ -154,29 +154,5 @@ public class KafkaRebalanceListener implements ConsumerRebalanceListener {
         logger.info("RECORD_KEY: "+record.key());
         logger.info("RECORD_VALUE: "+record.value());
         logger.info("....");
-
-        doCommitSync(record);
-    }
-
-    private void doCommitSync(ConsumerRecord<String,String> consumerRecord) {
-        try {
-
-            //Create the proper OffsetMetaData
-            //OffsetAndMetadata offsetAndMetadata = new OffsetAndMetadata(consumerRecord.offset());
-            //Map<TopicPartition,OffsetAndMetadata> metadataMap = new HashMap<>();
-            //metadataMap.put(topicPartitions.get(0), offsetAndMetadata);
-
-            kafkaConsumer.commitSync();
-        } catch (WakeupException e) {
-            // we're shutting down, but finish the commit first and then
-            // rethrow the exception so that the main loop can exit
-            //doCommitSync();
-            throw e;
-        } catch (CommitFailedException e) {
-            // the commit failed with an unrecoverable error. if there is any
-            // internal state which depended on the commit, you can clean it
-            // up here. otherwise it's reasonable to ignore the error and go on
-            logger.debug("Commit failed", e);
-        }
     }
 }

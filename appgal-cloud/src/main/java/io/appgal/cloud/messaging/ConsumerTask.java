@@ -19,10 +19,10 @@ public class ConsumerTask extends RecursiveTask<JsonArray> {
     private ForkJoinPool commonPool;
 
     public ConsumerTask(String topic, MessageWindow messageWindow,
-                        ExecutorService executorService,Queue<NotificationContext> readNotificationsQueue,ForkJoinPool commonPool) {
+                        Queue<NotificationContext> readNotificationsQueue,ForkJoinPool commonPool) {
         this.topic = topic;
         this.messageWindow = messageWindow;
-        this.executorService = executorService;
+        this.executorService = Executors.newCachedThreadPool();
         this.readNotificationsQueue = readNotificationsQueue;
         this.commonPool = commonPool;
     }

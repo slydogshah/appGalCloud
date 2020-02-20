@@ -1,16 +1,13 @@
 package io.appgal.cloud.messaging;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.WakeupException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
-import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RecursiveAction;
@@ -33,6 +30,7 @@ public class StartDaemonTask extends RecursiveAction {
         this.topics = topics;
         this.readNotificationsQueue = readNotificationsQueue;
         this.topicPartitions = topicPartitions;
+        this.shutdownLatch = new CountDownLatch(1);
     }
     
     @Override
@@ -60,12 +58,8 @@ public class StartDaemonTask extends RecursiveAction {
             logger.error(e.getMessage(), e);
         }
         finally {
-            try {
-                kafkaConsumer.commitSync();
-            } finally {
-                kafkaConsumer.close();
-                shutdownLatch.countDown();
-            }
+            kafkaConsumer.close();
+            shutdownLatch.countDown();
         }
     }
 }
