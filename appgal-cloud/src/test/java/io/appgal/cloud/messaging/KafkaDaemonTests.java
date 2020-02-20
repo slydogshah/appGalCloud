@@ -145,6 +145,39 @@ public class KafkaDaemonTests {
 
         TestRunnerWithWait testRunnerWithWait = new TestRunnerWithWait();
         this.commonPool.execute(testRunnerWithWait);
+
+        int counter=0;
+        while(!this.kafkaDaemon.getActive()) {
+            Thread.sleep(5000);
+            if(counter++ == 15)
+            {
+                break;
+            }
+        }
+
+        logger.info("****");
+        logger.info("ABOUT_TO_PRODUCE_DATA");
+        logger.info("****");
+
+        List<String> notificationIds = new ArrayList<>();
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        JsonArray jsonArray = new JsonArray();
+        for(int i=0; i<10; i++)
+        {
+            String sourceNotificationId = UUID.randomUUID().toString();
+            SourceNotification sourceNotification = new SourceNotification();
+            sourceNotification.setSourceNotificationId(sourceNotificationId);
+            sourceNotification.setMessageWindow(messageWindow);
+
+            notificationIds.add(sourceNotificationId);
+
+            JsonObject jsonObject = JsonParser.parseString(sourceNotification.toString()).getAsJsonObject();
+
+            this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
+        }
+
         testRunnerWithWait.join();
     }
 
@@ -154,6 +187,7 @@ public class KafkaDaemonTests {
         protected void compute() {
             kafkaDaemon.logStartUp();
             kafkaDaemon.start();
+            while(true);
         }
     }
 }

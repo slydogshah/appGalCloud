@@ -19,26 +19,11 @@ public class ProducerTask extends RecursiveAction {
     private String topic;
     private JsonObject jsonObject;
 
-    public ProducerTask(String topic, JsonObject jsonObject)
+    public ProducerTask(KafkaProducer<String,String> kafkaProducer, String topic, JsonObject jsonObject)
     {
+        this.kafkaProducer = kafkaProducer;
         this.topic = topic;
         this.jsonObject = jsonObject;
-        try {
-            Properties config = new Properties();
-            config.put("client.id", InetAddress.getLocalHost().getHostName());
-            config.put("group.id", "foodRunnerSyncProtocol_notifications");
-            config.put("bootstrap.servers", "localhost:9092");
-            config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
-            config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
-            config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
-            config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
-            this.kafkaProducer = new KafkaProducer<>(config);
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

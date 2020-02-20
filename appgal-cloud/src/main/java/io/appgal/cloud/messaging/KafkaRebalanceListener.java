@@ -163,7 +163,5 @@ public class KafkaRebalanceListener extends RecursiveAction implements ConsumerR
     @Override
     protected void compute() {
         this.kafkaConsumer.subscribe(topics, this);
-
-        //while(true);
     }
 }

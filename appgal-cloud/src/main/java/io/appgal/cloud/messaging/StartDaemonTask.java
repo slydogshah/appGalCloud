@@ -24,7 +24,7 @@ public class StartDaemonTask extends RecursiveAction {
     private Map<String,List<TopicPartition>> topicPartitions;
     private Queue<NotificationContext> readNotificationsQueue;
 
-    public StartDaemonTask(Boolean active, List<String> topics,Queue<NotificationContext> readNotificationsQueue,
+    public StartDaemonTask(KafkaConsumer<String,String> kafkaConsumer, Boolean active, List<String> topics,Queue<NotificationContext> readNotificationsQueue,
                            Map<String,List<TopicPartition>> topicPartitions)
     {
         this.active = active;
@@ -32,24 +32,12 @@ public class StartDaemonTask extends RecursiveAction {
         this.readNotificationsQueue = readNotificationsQueue;
         this.topicPartitions = topicPartitions;
         this.shutdownLatch = new CountDownLatch(1);
+        this.kafkaConsumer = kafkaConsumer;
     }
     
     @Override
     protected void compute() {
         try {
-            Properties config = new Properties();
-            config.put("client.id", InetAddress.getLocalHost().getHostName());
-            config.put("group.id", "foodRunnerSyncProtocol_notifications");
-            config.put("bootstrap.servers", "localhost:9092");
-            config.put("key.deserializer", org.apache.kafka.common.serialization.StringDeserializer.class);
-            config.put("value.deserializer", org.springframework.kafka.support.serializer.JsonDeserializer.class);
-            config.put("key.serializer", org.apache.kafka.common.serialization.StringSerializer.class);
-            config.put("value.serializer", org.springframework.kafka.support.serializer.JsonSerializer.class);
-            config.put("auto.commit.interval.ms", 1000);
-            config.put("enable.auto.commit", true);
-
-            this.kafkaConsumer = new KafkaConsumer<String, String>(config);
-
             ForkJoinPool commonPool = ForkJoinPool.commonPool();
             KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener(this.kafkaConsumer, this.readNotificationsQueue, this.topics,
                     this.topicPartitions, this.active);
