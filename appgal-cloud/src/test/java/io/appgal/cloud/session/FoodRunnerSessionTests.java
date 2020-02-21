@@ -18,9 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.time.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @QuarkusTest
 public class FoodRunnerSessionTests {
@@ -106,6 +104,24 @@ public class FoodRunnerSessionTests {
         MessageWindow messageWindow = new MessageWindow(startTime, endTime);
 
         JsonArray jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
+        logger.info("**************");
         logger.info(jsonArray.toString());
+        logger.info("**************");
+
+        Map<String, Map<String, JsonArray>> lookupTable = this.kafkaDaemon.getLookupTable();
+        Set<Map.Entry<String, Map<String, JsonArray>>> entrySet = lookupTable.entrySet();
+        for(Map.Entry<String, Map<String, JsonArray>> entry:entrySet)
+        {
+            Map<String, JsonArray> value = entry.getValue();
+            Set<Map.Entry<String, JsonArray>> valueSet = value.entrySet();
+            for(Map.Entry<String, JsonArray> local:valueSet)
+            {
+                String keyValue = local.getKey();
+                JsonArray localValue = local.getValue();
+                logger.info("Key: "+keyValue);
+                logger.info("Value: "+localValue.toString());
+                logger.info("***************");
+            }
+        }
     }
 }

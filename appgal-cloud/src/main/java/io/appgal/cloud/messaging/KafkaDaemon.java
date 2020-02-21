@@ -51,6 +51,10 @@ public class KafkaDaemon {
         this.lookupTable = new HashMap<>();
     }
 
+    public Map<String, Map<String, JsonArray>> getLookupTable() {
+        return lookupTable;
+    }
+
     @PostConstruct
     public void start()
     {
@@ -146,6 +150,10 @@ public class KafkaDaemon {
 
         Map<String, JsonArray> topicTable = this.lookupTable.get(topic);
         if(topicTable == null)
+        {
+            return new JsonArray();
+        }
+        else if(topicTable.get(messageWindow.getLookupTableIndex()) == null)
         {
             return new JsonArray();
         }
