@@ -39,6 +39,7 @@ public class KafkaRebalanceListener implements ConsumerRebalanceListener {
         logger.info("********PARTITIONS_ASSIGNED**********");
         logger.info("************************************");
 
+        //TODO: Change from Arrays.asList to manual population..@bugs.bunny.shah@gmail.com
         List<TopicPartition> partitionList = Arrays.asList(partitions.toArray(new TopicPartition[0]));
         for (TopicPartition topicPartition : partitionList) {
             String registeredTopic = topicPartition.topic();
