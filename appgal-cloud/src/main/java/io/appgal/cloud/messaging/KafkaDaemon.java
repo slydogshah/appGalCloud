@@ -143,21 +143,9 @@ public class KafkaDaemon {
     {
         NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
         readNotificationsQueue.add(notificationContext);
-        NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext);
+        NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext, this.lookupTable);
         this.commonPool.execute(notificationFinderTask);
-        notificationFinderTask.join();
-
-
-        Map<String, JsonArray> topicTable = this.lookupTable.get(topic);
-        if(topicTable == null)
-        {
-            return new JsonArray();
-        }
-        else if(topicTable.get(messageWindow.getLookupTableIndex()) == null)
-        {
-            return new JsonArray();
-        }
-        return topicTable.get(messageWindow.getLookupTableIndex());
+        return notificationFinderTask.join();
     }
 
     private void findNotifications()
