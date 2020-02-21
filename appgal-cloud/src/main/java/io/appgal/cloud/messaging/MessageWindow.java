@@ -48,6 +48,7 @@ public class MessageWindow {
     public String getLookupTableIndex()
     {
         String lookupTableIndex = (this.start.toEpochSecond() + this.end.toEpochSecond())+"";
+        lookupTableIndex = lookupTableIndex.substring(0, lookupTableIndex.length()-3);
         return lookupTableIndex;
     }
 }

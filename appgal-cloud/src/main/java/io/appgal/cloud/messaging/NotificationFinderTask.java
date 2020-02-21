@@ -22,15 +22,21 @@ public class NotificationFinderTask extends RecursiveTask<JsonArray> {
     protected JsonArray compute() {
         String topic = this.notificationContext.getTopic();
         MessageWindow messageWindow = this.notificationContext.getMessageWindow();
+        String lookupIndex = messageWindow.getLookupTableIndex();
+
+        logger.info("**************");
+        logger.info("LookupIndex: "+lookupIndex);
+        logger.info("**************");
+
         Map<String, JsonArray> topicTable = this.lookupTable.get(topic);
         if(topicTable == null)
         {
             return new JsonArray();
         }
-        else if(topicTable.get(messageWindow.getLookupTableIndex()) == null)
+        else if(topicTable.get(lookupIndex) == null)
         {
             return new JsonArray();
         }
-        return topicTable.get(messageWindow.getLookupTableIndex());
+        return topicTable.get(lookupIndex);
     }
 }
