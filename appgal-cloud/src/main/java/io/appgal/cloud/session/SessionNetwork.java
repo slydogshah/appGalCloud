@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,6 +15,9 @@ import java.util.TreeMap;
 @ApplicationScoped
 public class SessionNetwork {
     private static Logger logger = LoggerFactory.getLogger(SessionNetwork.class);
+
+    @Inject
+    private FoodRunnerSession foodRunnerSession;
 
     private TreeMap<String, FoodRunnerSession> foodRunnerSessions;
 

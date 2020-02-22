@@ -1,9 +1,15 @@
 package io.appgal.cloud.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.messaging.MessageWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.OffsetDateTime;
+import java.util.Iterator;
 
 public class SourceNotification {
     private static Logger logger = LoggerFactory.getLogger(SourceNotification.class);
@@ -39,5 +45,27 @@ public class SourceNotification {
         jsonObject.addProperty("endTimestamp", messageWindow.getEnd().toEpochSecond());
 
         return jsonObject.toString();
+    }
+
+    public static SourceNotification fromJson(JsonObject jsonObject)
+    {
+        SourceNotification sourceNotification = new SourceNotification();
+
+        sourceNotification.sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
+
+        JsonObject messageWindowJson = jsonObject.get("messageWindow").getAsJsonObject();
+        long start = jsonObject.get("start").getAsLong();
+        long end = jsonObject.get("end").getAsLong();
+        JsonArray messages = jsonObject.get("messages").getAsJsonArray();
+
+        MessageWindow messageWindow = new MessageWindow(OffsetDateTime.parse(""+start),OffsetDateTime.parse(""+end));
+        Iterator<JsonElement> iterator = messages.iterator();
+        while(iterator.hasNext())
+        {
+            messageWindow.addMessage((JsonObject) iterator.next());
+        }
+
+        sourceNotification.messageWindow = messageWindow;
+        return sourceNotification;
     }
 }

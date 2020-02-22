@@ -1,6 +1,8 @@
 package io.appgal.cloud.session;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.model.SourceNotification;
@@ -14,16 +16,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ApplicationScoped
 public class FoodRunnerSession {
     private static Logger logger = LoggerFactory.getLogger(FoodRunnerSession.class);
 
     private String foodRunnerId;
-    private Map<String, List<SourceNotification>> sourceNotifications;
+    private String foodRunnerSessionId;
+    private Map<String, List<SourceNotification>> sourceNotifications; //foodRunnerSessionId -> SourceNotications Map
 
     @Inject
     private KafkaDaemon kafkaDaemon;
@@ -42,7 +43,16 @@ public class FoodRunnerSession {
         OffsetDateTime endTime = OffsetDateTime.now(ZoneOffset.UTC);
         MessageWindow messageWindow = new MessageWindow(startTime, endTime);
 
+        List<SourceNotification> sourceNotifications = new ArrayList<>();
         JsonArray jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
-        logger.info(jsonArray.toString());
+        Iterator<JsonElement> iterator = jsonArray.iterator();
+        while(iterator.hasNext())
+        {
+            JsonObject jsonObject = (JsonObject) iterator.next();
+            sourceNotifications.add(SourceNotification.fromJson(jsonObject));
+        }
+
+        String foodRunnerSessionId = UUID.randomUUID().toString();
+        this.sourceNotifications.put(foodRunnerSessionId, sourceNotifications);
     }
 }
