@@ -27,7 +27,8 @@ public class Session {
     @Produces(MediaType.APPLICATION_JSON)
     public String listSessions()
     {
-        this.foodRunnerSession.start();
+        //TODO: Re-Implement this @bugs.bunny.shah@gmail.com
+        //this.foodRunnerSession.start();
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("statusCode", "0");

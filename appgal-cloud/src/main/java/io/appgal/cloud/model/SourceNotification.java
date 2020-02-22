@@ -53,19 +53,20 @@ public class SourceNotification {
 
         sourceNotification.sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
 
-        JsonObject messageWindowJson = jsonObject.get("messageWindow").getAsJsonObject();
-        long start = jsonObject.get("start").getAsLong();
-        long end = jsonObject.get("end").getAsLong();
-        JsonArray messages = jsonObject.get("messages").getAsJsonArray();
+        Object messageWindowJson = jsonObject.get("messageWindow");
+        if(messageWindowJson != null) {
+            long start = jsonObject.get("start").getAsLong();
+            long end = jsonObject.get("end").getAsLong();
+            JsonArray messages = jsonObject.get("messages").getAsJsonArray();
 
-        MessageWindow messageWindow = new MessageWindow(OffsetDateTime.parse(""+start),OffsetDateTime.parse(""+end));
-        Iterator<JsonElement> iterator = messages.iterator();
-        while(iterator.hasNext())
-        {
-            messageWindow.addMessage((JsonObject) iterator.next());
+            MessageWindow messageWindow = new MessageWindow(OffsetDateTime.parse("" + start), OffsetDateTime.parse("" + end));
+            Iterator<JsonElement> iterator = messages.iterator();
+            while (iterator.hasNext()) {
+                messageWindow.addMessage((JsonObject) iterator.next());
+            }
+            sourceNotification.messageWindow = messageWindow;
         }
 
-        sourceNotification.messageWindow = messageWindow;
         return sourceNotification;
     }
 }

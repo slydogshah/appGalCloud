@@ -26,33 +26,25 @@ public class FoodRunnerSession {
     private String foodRunnerSessionId;
     private Map<String, List<SourceNotification>> sourceNotifications; //foodRunnerSessionId -> SourceNotications Map
 
-    @Inject
-    private KafkaDaemon kafkaDaemon;
-
     public FoodRunnerSession()
     {
         this.sourceNotifications = new HashMap<>();
     }
 
-    @PostConstruct
-    public void start()
+    public void receiveNotifications(MessageWindow messageWindow)
     {
-        //Receive notifications from the SourceNotification Kafka Channel
-        LocalDateTime startOfLocalDateInUtc = LocalDate.now(ZoneOffset.UTC).atStartOfDay();
-        OffsetDateTime startTime = OffsetDateTime.of(startOfLocalDateInUtc, ZoneOffset.UTC);
-        OffsetDateTime endTime = OffsetDateTime.now(ZoneOffset.UTC);
-        MessageWindow messageWindow = new MessageWindow(startTime, endTime);
-
         List<SourceNotification> sourceNotifications = new ArrayList<>();
-        JsonArray jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
-        Iterator<JsonElement> iterator = jsonArray.iterator();
-        while(iterator.hasNext())
-        {
-            JsonObject jsonObject = (JsonObject) iterator.next();
-            sourceNotifications.add(SourceNotification.fromJson(jsonObject));
-        }
+        JsonArray jsonArray = messageWindow.getMessages();
 
-        String foodRunnerSessionId = UUID.randomUUID().toString();
-        this.sourceNotifications.put(foodRunnerSessionId, sourceNotifications);
+        if(jsonArray != null) {
+            Iterator<JsonElement> iterator = jsonArray.iterator();
+            while (iterator.hasNext()) {
+                JsonObject jsonObject = (JsonObject) iterator.next();
+                sourceNotifications.add(SourceNotification.fromJson(jsonObject));
+            }
+
+            String foodRunnerSessionId = UUID.randomUUID().toString();
+            this.sourceNotifications.put(foodRunnerSessionId, sourceNotifications);
+        }
     }
 }

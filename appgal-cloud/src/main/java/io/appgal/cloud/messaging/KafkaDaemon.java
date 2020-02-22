@@ -219,7 +219,7 @@ public class KafkaDaemon {
             for (int i = 0; i < 100; i++) {
                 //logger.info("Start Short Poll: (" + i + ")");
                 ConsumerRecords<String, String> notificationRecords =
-                        kafkaConsumer.poll(100);
+                        kafkaConsumer.poll(1000);
                 if (notificationRecords == null || notificationRecords.isEmpty()) {
                     logger.debug("****NOTIFICATION_RECORDS_NOT_READ_YET****");
                     continue;

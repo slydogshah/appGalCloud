@@ -60,5 +60,7 @@ public class SessionNetwork implements KafkaDaemonListener {
             logger.info(messageWindow.toString());
         }
         logger.info("**********************************");
+
+        this.foodRunnerSession.receiveNotifications(messageWindow);
     }
 }
