@@ -24,9 +24,9 @@ public class NotificationFinderTask extends RecursiveTask<JsonArray> {
         MessageWindow messageWindow = this.notificationContext.getMessageWindow();
         String lookupIndex = messageWindow.getLookupTableIndex();
 
-        logger.info("**************");
-        logger.info("LookupIndex: "+lookupIndex);
-        logger.info("**************");
+        //logger.info("**************");
+        //logger.info("LookupIndex: "+lookupIndex);
+        //logger.info("**************");
 
         Map<String, JsonArray> topicTable = this.lookupTable.get(topic);
         if(topicTable == null)

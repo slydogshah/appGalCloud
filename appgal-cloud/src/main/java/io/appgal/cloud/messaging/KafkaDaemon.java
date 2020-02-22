@@ -106,7 +106,6 @@ public class KafkaDaemon {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                logger.info("Start the FindNotifications Thread");
                 findNotifications();
             }
         });
@@ -152,14 +151,14 @@ public class KafkaDaemon {
     {
         try {
             do {
-                logger.info("Start Long Poll");
+                logger.debug("Start Long Poll");
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
                 records.forEach(record -> process(record));
 
                 //TODO: Read multiple NotificationContexts during this run
-                printNotificationsQueue();
+                //printNotificationsQueue();
                 if (readNotificationsQueue.isEmpty()) {
-                    logger.info("NO_ACTIVE_READS_IN_PROGRESS");
+                    logger.debug("NO_ACTIVE_READS_IN_PROGRESS");
                     continue;
                 }
                 this.processNotifications();
@@ -177,17 +176,17 @@ public class KafkaDaemon {
         NotificationContext notificationContext = readNotificationsQueue.poll();
         if(notificationContext == null)
         {
-            logger.info("*********KAFKA_DAEMON***********");
-            logger.info("SKIP_READ_NOTIFICATIONS");
-            logger.info("********************");
+            logger.debug("*********KAFKA_DAEMON***********");
+            logger.debug("SKIP_READ_NOTIFICATIONS");
+            logger.debug("********************");
             return;
         }
 
         MessageWindow messageWindow = notificationContext.getMessageWindow();
 
-        logger.info("*********KAFKA_DAEMON***********");
-        logger.info("START_READ_NOTIFICATIONS ("+notificationContext.getMessageWindow().getStart()+")");
-        logger.info("********************");
+        logger.debug("*********KAFKA_DAEMON***********");
+        logger.debug("START_READ_NOTIFICATIONS ("+notificationContext.getMessageWindow().getStart()+")");
+        logger.debug("********************");
 
         String topic = notificationContext.getTopic();
         try {
@@ -215,14 +214,14 @@ public class KafkaDaemon {
                 ConsumerRecords<String, String> notificationRecords =
                         kafkaConsumer.poll(100);
                 if (notificationRecords == null || notificationRecords.isEmpty()) {
-                    logger.info("****NOTIFICATION_RECORDS_NOT_READ_YET****");
+                    logger.debug("****NOTIFICATION_RECORDS_NOT_READ_YET****");
                     continue;
                 }
                 for (ConsumerRecord<String, String> record : notificationRecords) {
-                    logger.info("****CONSUME_DATA_TEST_RECORD****");
-                    //logger.info("RECORD_OFFSET: "+record.offset());
-                    //logger.info("RECORD_KEY: "+record.key());
-                    logger.info("RECORD_VALUE: "+record.value());
+                    logger.debug("****CONSUME_DATA_TEST_RECORD****");
+                    //logger.debug("RECORD_OFFSET: "+record.offset());
+                    //logger.debug("RECORD_KEY: "+record.key());
+                    logger.debug("RECORD_VALUE: "+record.value());
                     //logger.info("....");
 
                     String jsonValue = record.value();
@@ -247,9 +246,9 @@ public class KafkaDaemon {
         topicTable.put(lookupTableIndex, copyOfMessages);
         logger.info(copyOfMessages.toString());
 
-        logger.info("*********KAFKA_DAEMON***********");
-        logger.info("END_READ_NOTIFICATIONS");
-        logger.info("********************");
+        logger.debug("*********KAFKA_DAEMON***********");
+        logger.debug("END_READ_NOTIFICATIONS");
+        logger.debug("********************");
     }
 
     private void process(ConsumerRecord<String, String> record) {
