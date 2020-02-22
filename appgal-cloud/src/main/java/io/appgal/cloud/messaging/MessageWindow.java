@@ -51,4 +51,14 @@ public class MessageWindow {
         lookupTableIndex = lookupTableIndex.substring(0, lookupTableIndex.length()-3);
         return lookupTableIndex;
     }
+
+    @Override
+    public String toString() {
+        JsonObject json = new JsonObject();
+
+        json.addProperty("start", this.start.toEpochSecond());
+        json.addProperty("end", this.end.toEpochSecond());
+
+        return json.toString();
+    }
 }

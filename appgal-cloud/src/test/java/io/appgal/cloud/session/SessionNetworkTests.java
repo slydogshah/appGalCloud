@@ -1,6 +1,8 @@
 package io.appgal.cloud.session;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.foodRunnerSync.protocol.ProcessIncomingPackets;
 import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.messaging.MessageWindow;
@@ -17,8 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @QuarkusTest
 public class SessionNetworkTests {
@@ -58,17 +59,13 @@ public class SessionNetworkTests {
             }
         }
 
-        logger.info("****");
-        logger.info("ABOUT_TO_PRODUCE_DATA");
-        logger.info("****");
-
-        /*List<String> notificationIds = new ArrayList<>();
+        List<String> notificationIds = new ArrayList<>();
         LocalDateTime startOfLocalDateInUtc = LocalDate.now(ZoneOffset.UTC).atStartOfDay();
         OffsetDateTime startTime = OffsetDateTime.of(startOfLocalDateInUtc, ZoneOffset.UTC);
         OffsetDateTime endTime = OffsetDateTime.now(ZoneOffset.UTC);
         MessageWindow messageWindow = new MessageWindow(startTime, endTime);
         JsonArray jsonArray = new JsonArray();
-        for(int i=0; i<10; i++)
+        for(int i=0; i<1; i++)
         {
             String sourceNotificationId = UUID.randomUUID().toString();
             SourceNotification sourceNotification = new SourceNotification();
@@ -82,35 +79,22 @@ public class SessionNetworkTests {
             this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
         }
 
-        Thread.sleep(120000);
-
-        this.foodRunnerSession.start();*/
-
-        for(int i=0; i<100; i++)
+        for(int i=0; i<1; i++)
         {
             //Receive notifications from the SourceNotification Kafka Channel
-            LocalDateTime startOfLocalDateInUtc = LocalDate.now(ZoneOffset.UTC).atStartOfDay();
-            OffsetDateTime startTime = OffsetDateTime.of(startOfLocalDateInUtc, ZoneOffset.UTC);
-            OffsetDateTime endTime = OffsetDateTime.now(ZoneOffset.UTC);
-            MessageWindow messageWindow = new MessageWindow(startTime, endTime);
+            startOfLocalDateInUtc = LocalDate.now(ZoneOffset.UTC).atStartOfDay();
+            startTime = OffsetDateTime.of(startOfLocalDateInUtc, ZoneOffset.UTC);
+            endTime = OffsetDateTime.now(ZoneOffset.UTC);
+            messageWindow = new MessageWindow(startTime, endTime);
 
-            JsonArray jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
+            jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
             logger.info(jsonArray.toString());
         }
 
         Thread.sleep(120000);
 
-        LocalDateTime startOfLocalDateInUtc = LocalDate.now(ZoneOffset.UTC).atStartOfDay();
-        OffsetDateTime startTime = OffsetDateTime.of(startOfLocalDateInUtc, ZoneOffset.UTC);
-        OffsetDateTime endTime = OffsetDateTime.now(ZoneOffset.UTC);
-        MessageWindow messageWindow = new MessageWindow(startTime, endTime);
 
-        JsonArray jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
-        logger.info("**************");
-        logger.info(jsonArray.toString());
-        logger.info("**************");
-
-        Map<String, Map<String, JsonArray>> lookupTable = this.kafkaDaemon.getLookupTable();
+        /*Map<String, Map<String, JsonArray>> lookupTable = this.kafkaDaemon.getLookupTable();
         Set<Map.Entry<String, Map<String, JsonArray>>> entrySet = lookupTable.entrySet();
         for(Map.Entry<String, Map<String, JsonArray>> entry:entrySet)
         {
@@ -124,6 +108,6 @@ public class SessionNetworkTests {
                 logger.info("Value: "+localValue.toString());
                 logger.info("***************");
             }
-        }
+        }*/
     }
 }

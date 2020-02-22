@@ -42,6 +42,8 @@ public class KafkaDaemon {
 
     private ForkJoinPool commonPool;
 
+    private KafkaDaemonListener daemonListener;
+
     public KafkaDaemon()
     {
         this.topicPartitions = new HashMap<>();
@@ -53,6 +55,11 @@ public class KafkaDaemon {
 
     public Map<String, Map<String, JsonArray>> getLookupTable() {
         return lookupTable;
+    }
+
+    public void registerDaemonListener(KafkaDaemonListener daemonListener)
+    {
+        this.daemonListener = daemonListener;
     }
 
     @PostConstruct
@@ -245,6 +252,11 @@ public class KafkaDaemon {
         }
         topicTable.put(lookupTableIndex, copyOfMessages);
         logger.info(copyOfMessages.toString());
+
+        if(daemonListener != null)
+        {
+            daemonListener.receiveNotifications(messageWindow);
+        }
 
         logger.debug("*********KAFKA_DAEMON***********");
         logger.debug("END_READ_NOTIFICATIONS");
