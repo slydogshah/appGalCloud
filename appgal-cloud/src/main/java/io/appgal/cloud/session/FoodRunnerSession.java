@@ -31,6 +31,10 @@ public class FoodRunnerSession {
         this.sourceNotifications = new HashMap<>();
     }
 
+    public Map<String, List<SourceNotification>> getSourceNotifications() {
+        return sourceNotifications;
+    }
+
     public void receiveNotifications(MessageWindow messageWindow)
     {
         List<SourceNotification> sourceNotifications = new ArrayList<>();
@@ -40,7 +44,9 @@ public class FoodRunnerSession {
             Iterator<JsonElement> iterator = jsonArray.iterator();
             while (iterator.hasNext()) {
                 JsonObject jsonObject = (JsonObject) iterator.next();
-                sourceNotifications.add(SourceNotification.fromJson(jsonObject));
+                SourceNotification sourceNotification = SourceNotification.fromJson(jsonObject);
+                sourceNotification.setMessageWindow(messageWindow);
+                sourceNotifications.add(sourceNotification);
             }
 
             String foodRunnerSessionId = UUID.randomUUID().toString();
