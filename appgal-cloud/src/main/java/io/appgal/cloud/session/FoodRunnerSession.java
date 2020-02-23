@@ -35,6 +35,22 @@ public class FoodRunnerSession {
         return sourceNotifications;
     }
 
+    public String getFoodRunnerId() {
+        return foodRunnerId;
+    }
+
+    public void setFoodRunnerId(String foodRunnerId) {
+        this.foodRunnerId = foodRunnerId;
+    }
+
+    public String getFoodRunnerSessionId() {
+        return foodRunnerSessionId;
+    }
+
+    public void setFoodRunnerSessionId(String foodRunnerSessionId) {
+        this.foodRunnerSessionId = foodRunnerSessionId;
+    }
+
     public void receiveNotifications(MessageWindow messageWindow)
     {
         List<SourceNotification> sourceNotifications = new ArrayList<>();

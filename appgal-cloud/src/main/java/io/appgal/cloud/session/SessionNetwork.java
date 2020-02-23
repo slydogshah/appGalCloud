@@ -25,7 +25,7 @@ public class SessionNetwork implements KafkaDaemonListener {
     @Inject
     private KafkaDaemon kafkaDaemon;
 
-    private TreeMap<String, FoodRunnerSession> foodRunnerSessions;
+    private TreeMap<String, FoodRunnerSession> foodRunnerSessions; //foodRunnerSessionId -> foodRunnerSession
 
     public SessionNetwork()
     {
