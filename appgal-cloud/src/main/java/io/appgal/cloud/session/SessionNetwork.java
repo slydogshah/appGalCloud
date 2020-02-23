@@ -32,6 +32,10 @@ public class SessionNetwork implements KafkaDaemonListener {
         this.foodRunnerSessions = new TreeMap<>();
     }
 
+    TreeMap<String, FoodRunnerSession> getFoodRunnerSessions() {
+        return foodRunnerSessions;
+    }
+
     @PostConstruct
     public void start()
     {
