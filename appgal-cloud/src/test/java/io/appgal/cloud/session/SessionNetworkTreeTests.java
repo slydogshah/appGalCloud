@@ -3,6 +3,8 @@ package io.appgal.cloud.session;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.model.SourceNotification;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +15,11 @@ import java.util.*;
 public class SessionNetworkTreeTests {
     private static Logger logger = LoggerFactory.getLogger(SessionNetworkTreeTests.class);
 
-    @Test
-    public void testSessionNetworkLookup() throws Exception
-    {
-        SessionNetwork sessionNetwork = new SessionNetwork();
+    SessionNetwork sessionNetwork = new SessionNetwork();
 
+    @BeforeEach
+    public void setUp() throws Exception
+    {
         TreeMap<String, FoodRunnerSession> foodRunnerSessions = sessionNetwork.getFoodRunnerSessions();
 
         for(int x=0; x<5; x++) {
@@ -64,5 +66,17 @@ public class SessionNetworkTreeTests {
                 logger.info(notifications.iterator().next().getMessageWindow().toString());
             }
         }
+    }
+
+    @AfterEach
+    public void tearDown()
+    {
+        this.sessionNetwork = null;
+    }
+
+    @Test
+    public void testFindSessionsAroundSource() throws Exception
+    {
+
     }
 }
