@@ -41,9 +41,20 @@ public class SessionNetworkTreeTests {
                 SourceNotification sourceNotification = new SourceNotification();
                 sourceNotification.setSourceNotificationId(sourceNotificationId);
                 sourceNotification.setMessageWindow(messageWindow);
+                if(i % 2 == 0) {
+                    sourceNotification.setLatitude("lat:1234");
+                    sourceNotification.setLongitude("lon:5678");
+                }
+                else
+                {
+                    sourceNotification.setLatitude("lat:1234");
+                    sourceNotification.setLongitude("lon:7777");
+                }
 
                 JsonObject notification = new JsonObject();
                 notification.addProperty("sourceNotificationId", sourceNotificationId);
+                notification.addProperty("latitude", sourceNotification.getLatitude());
+                notification.addProperty("longitude", sourceNotification.getLongitude());
                 messageWindow.addMessage(notification);
 
                 foodRunnerSession.receiveNotifications(messageWindow);
@@ -77,6 +88,34 @@ public class SessionNetworkTreeTests {
     @Test
     public void testFindSessionsAroundSource() throws Exception
     {
+        String latitude = "lat:1234";
+        String longitude = "lon:5678";
 
+        TreeMap<String, FoodRunnerSession> foodRunnerSessions = this.sessionNetwork.getFoodRunnerSessions();
+
+        List<FoodRunnerSession> sessionsThatMeetCriteria = new ArrayList<>();
+
+        Set<Map.Entry<String, FoodRunnerSession>> entrySet = foodRunnerSessions.entrySet();
+        for(Map.Entry<String, FoodRunnerSession> entry: entrySet)
+        {
+            FoodRunnerSession foodRunnerSession = entry.getValue();
+
+            //Check the criteria and decide if this session qualifies
+            Collection<List<SourceNotification>> sourceNotifications = foodRunnerSession.getSourceNotifications().values();
+            for(List<SourceNotification> list:sourceNotifications)
+            {
+                for(SourceNotification sourceNotification:list)
+                {
+                    String sourceNotificationLat = sourceNotification.getLatitude();
+                    String sourceNotificationLon = sourceNotification.getLongitude();
+                    if(sourceNotificationLat.equals(latitude) && sourceNotificationLon.equals(longitude))
+                    {
+                        sessionsThatMeetCriteria.add(foodRunnerSession);
+                    }
+                }
+            }
+        }
+
+        logger.info("Result Size: "+sessionsThatMeetCriteria.size());
     }
 }
