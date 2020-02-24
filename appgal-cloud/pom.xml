@@ -19,6 +19,13 @@
     <surefire-plugin.version>2.22.1</surefire-plugin.version>
   </properties>
   <repositories>
+    <!--
+    <repository>
+      <id>maven-central</id>
+      <name>maven-central</name>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    -->
     <repository>
       <id>maven2-repository.dev.java.net</id>
       <name>Java.net repository</name>
@@ -118,6 +125,24 @@
       <groupId>org.geotools</groupId>
       <artifactId>gt-epsg-hsql</artifactId>
       <version>21.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-swing</artifactId>
+      <version>21.5</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.media</groupId>
+          <artifactId>jai_imageio</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_imageio</artifactId>
+      <version>1.1</version>
+      <systemPath>${project.basedir}/third-party-libs/jai_imageio-1.1.jar</systemPath>
+      <scope>system</scope>
     </dependency>
   </dependencies>
   <build>
