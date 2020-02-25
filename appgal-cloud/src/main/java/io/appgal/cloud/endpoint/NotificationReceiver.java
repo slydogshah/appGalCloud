@@ -53,4 +53,15 @@ public class NotificationReceiver {
         jsonObject.add("destinationNotifications", destinationNotifications);
         return jsonObject.toString();
     }
+
+    @Path("receiveNotificationForPickup/{sourceNotificationId}")
+    @PathParam("sourceNotificationId")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String receiveNotificationForPickup(String sourceNotificationId)
+    {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("statusCode", "0");
+        return jsonObject.toString();
+    }
 }
