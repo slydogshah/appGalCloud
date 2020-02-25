@@ -1,4 +1,4 @@
-#Food Recovery Optimization Repository, by AppGal Labs
+#FutureGeniuses: Food Recovery Optimization Repository, by AppGal Labs
 ----
 <div class="LI-profile-badge"  data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="sohil-shah-28052659"><a class="LI-simple-link" href='https://www.linkedin.com/in/sohil-shah-28052659' target="_blank">Sohil Shah</a></div>
 
