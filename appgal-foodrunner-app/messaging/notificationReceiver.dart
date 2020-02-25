@@ -1,17 +1,14 @@
-import 'package:test/test.dart';
-
-void main(List<String> args) {
-  test('String.split() splits the string on the delimiter', () {
-    var string = 'foo,bar,baz';
-    expect(string.split(','), equals(['foo', 'bar', 'baz']));
-  });
-
-  test('String.trim() removes surrounding whitespace', () {
-    var string = '  foo ';
-    expect(string.trim(), equals('foo'));
-  });
-}
+import 'dart:collection';
+import 'dart:convert';
 
 class NotificationReceiver
 {
+  Map<String, String> getSourceNotifications()
+  {
+      Map<String, String> sourceNotifications = new HashMap<String, String>(); 
+
+      sourceNotifications.putIfAbsent("sourceNotificationId", () => "blah");
+
+      return sourceNotifications;
+  }
 }
