@@ -152,7 +152,7 @@ public class SessionNetworkTreeTests {
         double sourceLongitude = 11.116667d;
 
         // Set cross-platform look & feel for compatability
-        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
         final SimpleFeatureType TYPE =
                 DataUtilities.createType(
@@ -199,7 +199,7 @@ public class SessionNetworkTreeTests {
         }
 
         //Plot the FoodRunnerSessions
-        this.renderFeatures(TYPE, features);
+        //this.renderFeatures(TYPE, features);
     }
 
     private void renderFeatures(SimpleFeatureType type, List<SimpleFeature> features) throws Exception
