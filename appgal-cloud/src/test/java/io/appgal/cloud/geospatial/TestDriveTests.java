@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.spatial4j.distance.DistanceUtils;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -53,13 +54,13 @@ public class TestDriveTests {
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
 
-        //double endLatitude = 46.066667d;
-        //double endLongitude = 11.116667d;
+        double endLatitude = 30.26068878173828d;
+        double endLongitude = -97.7466812133789d;
 
-        double endLatitude = 30.234689712524414d;
-        double endLongitude = -97.71511840820312d;
+        //double endLatitude = 44.9441d;
+        //double endLongitude = -93.0852d;
 
-        Coordinate start = new Coordinate();
+        /*Coordinate start = new Coordinate();
         start.setX(startLatitude);
         start.setY(startLongitude);
 
@@ -89,6 +90,14 @@ public class TestDriveTests {
         remaining_cm = Math.round(remaining_cm);
         float cm = remaining_cm / 100;
 
-        logger.info("Distance = " + km + "km " + meters + "m " + cm + "cm");
+        logger.info("Distance = " + km + "km " + meters + "m " + cm + "cm");*/
+
+        double distance = DistanceUtils.distLawOfCosinesRAD(
+                DistanceUtils.toRadians(startLatitude),
+                DistanceUtils.toRadians(startLongitude),
+                DistanceUtils.toRadians(endLatitude),
+                DistanceUtils.toRadians(endLongitude));
+        distance = DistanceUtils.radians2Dist(distance, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+        logger.info("Distance = "+distance);
     }
 }
