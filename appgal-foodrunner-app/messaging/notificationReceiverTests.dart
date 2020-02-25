@@ -32,5 +32,9 @@ void main(List<String> args) {
 
       Map<String,dynamic> sourceNotification = sourceNotifications.first;
       expect(sourceNotification["sourceNotificationId"], "92ed655a-99a2-438b-8eeb-05d12a2d8a1b");
+      expect(sourceNotification["startTimestamp"], 1582660041);
+      expect(sourceNotification["endTimestamp"], 1582660641);
+      expect(sourceNotification["latitude"], "44.9441");
+      expect(sourceNotification["longitude"], "-93.0852");
     });
 }
