@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.spatial4j.distance.DistanceUtils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
@@ -147,10 +148,13 @@ public class SessionNetworkTreeTests {
 
     private void plotSessions(List<FoodRunnerSession> sessionsThatMeetCriteria) throws Exception
     {
-        // Set cross-platform look & feel for compatability
-        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        double sourceLatitude = 46.066667d;
+        double sourceLongitude = 11.116667d;
 
-        final SimpleFeatureType TYPE =
+        // Set cross-platform look & feel for compatability
+        //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+
+        /*final SimpleFeatureType TYPE =
                 DataUtilities.createType(
                         "Location",
                         "the_geom:Point:"
@@ -158,14 +162,14 @@ public class SessionNetworkTreeTests {
                                 "name:String,"
                                 + // <- a String attribute
                                 "number:Integer" // a number attribute
-                );
+                );*/
 
         /*
          * A list to collect features as we create them.
          */
-        List<SimpleFeature> features = new ArrayList<>();
-        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(TYPE);
+        //List<SimpleFeature> features = new ArrayList<>();
+        //GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+        //SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(TYPE);
         for(FoodRunnerSession foodRunnerSession:sessionsThatMeetCriteria)
         {
             Map<String, List<SourceNotification>> sourceNotifications = foodRunnerSession.getSourceNotifications();
@@ -179,21 +183,37 @@ public class SessionNetworkTreeTests {
                     String name = notification.getSourceNotificationId();
 
                     /* Longitude (= x coord) first ! */
-                    Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+                    //Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
 
-                    featureBuilder.add(point);
-                    featureBuilder.add(name);
-                    SimpleFeature feature = featureBuilder.buildFeature(null);
-                    features.add(feature);
+                    //featureBuilder.add(point);
+                    //featureBuilder.add(name);
+                    //SimpleFeature feature = featureBuilder.buildFeature(null);
+                    //features.add(feature);
+
+                    double distanceToSource = this.calculateDistance(sourceLatitude,sourceLongitude,latitude,longitude);
+                    logger.info("****");
+                    logger.info("DistanceToSource: "+distanceToSource);
+                    logger.info("****");
                 }
             }
         }
 
         //Plot the FoodRunnerSessions
-        this.renderFeatures(TYPE, features);
+        //this.renderFeatures(TYPE, features);
     }
 
-    private void renderFeatures(SimpleFeatureType type, List<SimpleFeature> features) throws Exception
+    private double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
+    {
+        double distance = DistanceUtils.distLawOfCosinesRAD(
+                DistanceUtils.toRadians(startLatitude),
+                DistanceUtils.toRadians(startLongitude),
+                DistanceUtils.toRadians(endLatitude),
+                DistanceUtils.toRadians(endLongitude));
+        distance = DistanceUtils.radians2Dist(distance, DistanceUtils.EARTH_MEAN_RADIUS_MI);
+        return distance;
+    }
+
+    /*private void renderFeatures(SimpleFeatureType type, List<SimpleFeature> features) throws Exception
     {
         //Get the Feature Collection
         SimpleFeatureCollection featureCollection = new BaseSimpleFeatureCollection(type) {
@@ -265,5 +285,5 @@ public class SessionNetworkTreeTests {
 
             return numberValid;
         }
-    }
+    }*/
 }
