@@ -154,7 +154,7 @@ public class SessionNetworkTreeTests {
         // Set cross-platform look & feel for compatability
         //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
-        final SimpleFeatureType TYPE =
+        /*final SimpleFeatureType TYPE =
                 DataUtilities.createType(
                         "Location",
                         "the_geom:Point:"
@@ -162,14 +162,14 @@ public class SessionNetworkTreeTests {
                                 "name:String,"
                                 + // <- a String attribute
                                 "number:Integer" // a number attribute
-                );
+                );*/
 
         /*
          * A list to collect features as we create them.
          */
-        List<SimpleFeature> features = new ArrayList<>();
-        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(TYPE);
+        //List<SimpleFeature> features = new ArrayList<>();
+        //GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+        //SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(TYPE);
         for(FoodRunnerSession foodRunnerSession:sessionsThatMeetCriteria)
         {
             Map<String, List<SourceNotification>> sourceNotifications = foodRunnerSession.getSourceNotifications();
@@ -183,12 +183,12 @@ public class SessionNetworkTreeTests {
                     String name = notification.getSourceNotificationId();
 
                     /* Longitude (= x coord) first ! */
-                    Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+                    //Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
 
-                    featureBuilder.add(point);
-                    featureBuilder.add(name);
-                    SimpleFeature feature = featureBuilder.buildFeature(null);
-                    features.add(feature);
+                    //featureBuilder.add(point);
+                    //featureBuilder.add(name);
+                    //SimpleFeature feature = featureBuilder.buildFeature(null);
+                    //features.add(feature);
 
                     double distanceToSource = this.calculateDistance(sourceLatitude,sourceLongitude,latitude,longitude);
                     logger.info("****");
@@ -202,7 +202,18 @@ public class SessionNetworkTreeTests {
         //this.renderFeatures(TYPE, features);
     }
 
-    private void renderFeatures(SimpleFeatureType type, List<SimpleFeature> features) throws Exception
+    private double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
+    {
+        double distance = DistanceUtils.distLawOfCosinesRAD(
+                DistanceUtils.toRadians(startLatitude),
+                DistanceUtils.toRadians(startLongitude),
+                DistanceUtils.toRadians(endLatitude),
+                DistanceUtils.toRadians(endLongitude));
+        distance = DistanceUtils.radians2Dist(distance, DistanceUtils.EARTH_MEAN_RADIUS_MI);
+        return distance;
+    }
+
+    /*private void renderFeatures(SimpleFeatureType type, List<SimpleFeature> features) throws Exception
     {
         //Get the Feature Collection
         SimpleFeatureCollection featureCollection = new BaseSimpleFeatureCollection(type) {
@@ -274,16 +285,5 @@ public class SessionNetworkTreeTests {
 
             return numberValid;
         }
-    }
-
-    private double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
-    {
-        double distance = DistanceUtils.distLawOfCosinesRAD(
-                DistanceUtils.toRadians(startLatitude),
-                DistanceUtils.toRadians(startLongitude),
-                DistanceUtils.toRadians(endLatitude),
-                DistanceUtils.toRadians(endLongitude));
-        distance = DistanceUtils.radians2Dist(distance, DistanceUtils.EARTH_MEAN_RADIUS_MI);
-        return distance;
-    }
+    }*/
 }
