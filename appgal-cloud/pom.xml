@@ -144,6 +144,11 @@
       <systemPath>${project.basedir}/third-party-libs/jai_imageio-1.1.jar</systemPath>
       <scope>system</scope>
     </dependency>
+    <dependency>
+      <groupId>org.locationtech.spatial4j</groupId>
+      <artifactId>spatial4j</artifactId>
+      <version>0.7</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
