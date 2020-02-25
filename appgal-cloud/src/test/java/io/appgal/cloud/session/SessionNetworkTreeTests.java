@@ -3,14 +3,39 @@ package io.appgal.cloud.session;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.model.SourceNotification;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataUtilities;
+import org.geotools.data.memory.MemoryDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.collection.BaseSimpleFeatureCollection;
+import org.geotools.feature.collection.SimpleFeatureIteratorImpl;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
+import org.geotools.styling.SLD;
+import org.geotools.styling.Style;
+import org.geotools.swing.JMapFrame;
+import org.geotools.swing.action.SafeAction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.time.*;
 import java.util.*;
+import java.util.List;
 
 public class SessionNetworkTreeTests {
     private static Logger logger = LoggerFactory.getLogger(SessionNetworkTreeTests.class);
@@ -42,13 +67,13 @@ public class SessionNetworkTreeTests {
                 sourceNotification.setSourceNotificationId(sourceNotificationId);
                 sourceNotification.setMessageWindow(messageWindow);
                 if(i % 2 == 0) {
-                    sourceNotification.setLatitude("lat:1234");
-                    sourceNotification.setLongitude("lon:5678");
+                    sourceNotification.setLatitude("46.066667");
+                    sourceNotification.setLongitude("11.116667");
                 }
                 else
                 {
-                    sourceNotification.setLatitude("lat:1234");
-                    sourceNotification.setLongitude("lon:7777");
+                    sourceNotification.setLatitude("44.9441");
+                    sourceNotification.setLongitude("-93.0852");
                 }
 
                 JsonObject notification = new JsonObject();
@@ -88,8 +113,8 @@ public class SessionNetworkTreeTests {
     @Test
     public void testFindSessionsAroundSource() throws Exception
     {
-        String latitude = "lat:1234";
-        String longitude = "lon:5678";
+        String latitude = "46.066667";
+        String longitude = "11.116667";
 
         TreeMap<String, FoodRunnerSession> foodRunnerSessions = this.sessionNetwork.getFoodRunnerSessions();
 
@@ -117,5 +142,128 @@ public class SessionNetworkTreeTests {
         }
 
         logger.info("Result Size: "+sessionsThatMeetCriteria.size());
+        this.plotSessions(sessionsThatMeetCriteria);
+    }
+
+    private void plotSessions(List<FoodRunnerSession> sessionsThatMeetCriteria) throws Exception
+    {
+        // Set cross-platform look & feel for compatability
+        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+
+        final SimpleFeatureType TYPE =
+                DataUtilities.createType(
+                        "Location",
+                        "the_geom:Point:"
+                                + // <- the geometry attribute: Point type
+                                "name:String,"
+                                + // <- a String attribute
+                                "number:Integer" // a number attribute
+                );
+
+        /*
+         * A list to collect features as we create them.
+         */
+        List<SimpleFeature> features = new ArrayList<>();
+        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(TYPE);
+        for(FoodRunnerSession foodRunnerSession:sessionsThatMeetCriteria)
+        {
+            Map<String, List<SourceNotification>> sourceNotifications = foodRunnerSession.getSourceNotifications();
+            Set<Map.Entry<String, List<SourceNotification>>> entrySet = sourceNotifications.entrySet();
+            for(Map.Entry<String, List<SourceNotification>> entry:entrySet)
+            {
+                List<SourceNotification> notifications = entry.getValue();
+                for(SourceNotification notification:notifications) {
+                    double latitude = Double.parseDouble(notification.getLatitude());
+                    double longitude = Double.parseDouble(notification.getLongitude());
+                    String name = notification.getSourceNotificationId();
+
+                    /* Longitude (= x coord) first ! */
+                    Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+
+                    featureBuilder.add(point);
+                    featureBuilder.add(name);
+                    SimpleFeature feature = featureBuilder.buildFeature(null);
+                    features.add(feature);
+                }
+            }
+        }
+
+        //Plot the FoodRunnerSessions
+        this.renderFeatures(TYPE, features);
+    }
+
+    private void renderFeatures(SimpleFeatureType type, List<SimpleFeature> features) throws Exception
+    {
+        //Get the Feature Collection
+        SimpleFeatureCollection featureCollection = new BaseSimpleFeatureCollection(type) {
+            @Override
+            public SimpleFeatureIterator features() {
+                return new SimpleFeatureIteratorImpl(features);
+            }
+        };
+
+        // Create a map context and add our shapefile to it
+        DataStore memoryDataStore = new MemoryDataStore(featureCollection);
+        String typeName = memoryDataStore.getTypeNames()[0];
+        MapContent map = new MapContent();
+        final Style style = SLD.createSimpleStyle(memoryDataStore, typeName, Color.BLACK);
+        Layer layer = new FeatureLayer(featureCollection, style);
+        map.layers().add(layer);
+
+        // Create a JMapFrame with custom toolbar buttons
+        JMapFrame mapFrame = new JMapFrame(map);
+        mapFrame.enableToolBar(true);
+        mapFrame.enableStatusBar(true);
+
+        JToolBar toolbar = mapFrame.getToolBar();
+        toolbar.addSeparator();
+        toolbar.add(new JButton(new SessionNetworkTreeTests.ValidateGeometryAction(featureCollection)));
+        //toolbar.add(new JButton(new ExportShapefileAction()));
+
+        // Display the map frame. When it is closed the application will exit
+        mapFrame.setSize(800, 600);
+        mapFrame.setVisible(true);
+
+        while(true);
+    }
+
+    class ValidateGeometryAction extends SafeAction {
+        private SimpleFeatureCollection simpleFeatureCollection;
+
+        ValidateGeometryAction(SimpleFeatureCollection simpleFeatureCollection) {
+            super("Validate geometry");
+            this.simpleFeatureCollection = simpleFeatureCollection;
+            putValue(Action.SHORT_DESCRIPTION, "Check each geometry");
+        }
+
+        public void action(ActionEvent e) throws Throwable {
+            int numInvalid = validateFeatureGeometry(simpleFeatureCollection);
+            String msg;
+            if (numInvalid == 0) {
+                msg = "All feature geometries are valid";
+            } else {
+                msg = "Invalid geometries: " + numInvalid;
+            }
+            JOptionPane.showMessageDialog(
+                    null, msg, "Geometry results", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        private int validateFeatureGeometry(SimpleFeatureCollection simpleFeatureCollection) {
+
+            int numberValid = 0;
+
+            SimpleFeatureIterator iterator = simpleFeatureCollection.features();
+            while(iterator.hasNext())
+            {
+                SimpleFeature feature = iterator.next();
+
+                logger.info(feature.toString());
+
+                numberValid ++;
+            }
+
+            return numberValid;
+        }
     }
 }
