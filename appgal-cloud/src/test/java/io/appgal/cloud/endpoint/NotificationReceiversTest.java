@@ -93,6 +93,8 @@ public class NotificationReceiversTest {
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         String statusCode = jsonObject.get("statusCode").getAsString();
+        String sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
         assertEquals("0", statusCode);
+        assertEquals("92ed655a-99a2-438b-8eeb-05d12a2d8a1b", sourceNotificationId);
     }
 }
