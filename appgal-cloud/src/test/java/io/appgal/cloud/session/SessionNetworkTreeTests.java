@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.spatial4j.distance.DistanceUtils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
@@ -147,6 +148,9 @@ public class SessionNetworkTreeTests {
 
     private void plotSessions(List<FoodRunnerSession> sessionsThatMeetCriteria) throws Exception
     {
+        double sourceLatitude = 46.066667d;
+        double sourceLongitude = 11.116667d;
+
         // Set cross-platform look & feel for compatability
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
@@ -185,6 +189,11 @@ public class SessionNetworkTreeTests {
                     featureBuilder.add(name);
                     SimpleFeature feature = featureBuilder.buildFeature(null);
                     features.add(feature);
+
+                    double distanceToSource = this.calculateDistance(sourceLatitude,sourceLongitude,latitude,longitude);
+                    logger.info("****");
+                    logger.info("DistanceToSource: "+distanceToSource);
+                    logger.info("****");
                 }
             }
         }
@@ -265,5 +274,16 @@ public class SessionNetworkTreeTests {
 
             return numberValid;
         }
+    }
+
+    private double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
+    {
+        double distance = DistanceUtils.distLawOfCosinesRAD(
+                DistanceUtils.toRadians(startLatitude),
+                DistanceUtils.toRadians(startLongitude),
+                DistanceUtils.toRadians(endLatitude),
+                DistanceUtils.toRadians(endLongitude));
+        distance = DistanceUtils.radians2Dist(distance, DistanceUtils.EARTH_MEAN_RADIUS_MI);
+        return distance;
     }
 }
