@@ -79,4 +79,22 @@ public class NotificationReceiversTest {
         assertNotNull(destinationNotifications);
         assertEquals("0", statusCode);
     }
+
+    @Test
+    public void testReceiveNotificationForPickup() {
+        Response response = given().when().post("/notification/receiveNotificationForPickup/92ed655a-99a2-438b-8eeb-05d12a2d8a1b")
+                .andReturn();
+
+        String json = response.getBody().prettyPrint();
+        //logger.info("****");
+        //logger.info(json);
+        //logger.info("****");
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        String sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
+        assertEquals("0", statusCode);
+        assertEquals("92ed655a-99a2-438b-8eeb-05d12a2d8a1b", sourceNotificationId);
+    }
 }
