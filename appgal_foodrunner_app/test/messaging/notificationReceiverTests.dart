@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import 'notificationReceiver.dart';
+import '../../messaging/notificationReceiver.dart';
 
 void main(List<String> args) {
   test("receive_source_notifications", () {
