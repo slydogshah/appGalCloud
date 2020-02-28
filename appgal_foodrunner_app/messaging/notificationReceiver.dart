@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 class NotificationReceiver
 {
@@ -16,6 +16,7 @@ class NotificationReceiver
 
   String receivePushSourceNotification()
   {
-    return json;
+    FirebaseOptions firebaseOptions = new FirebaseOptions(googleAppID: "googleAppId");
+    return firebaseOptions.toString();
   }
 }

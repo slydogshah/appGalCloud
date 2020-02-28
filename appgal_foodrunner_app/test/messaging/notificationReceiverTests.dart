@@ -19,6 +19,7 @@ void main(List<String> args) {
     test("receivePushSourceNotification", () {
       NotificationReceiver notificationReceiver = new NotificationReceiver();
       String sourcePushNotification = notificationReceiver.receivePushSourceNotification();
+      print(sourcePushNotification);
     });
 }
 
