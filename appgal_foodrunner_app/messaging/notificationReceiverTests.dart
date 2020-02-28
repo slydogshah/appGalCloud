@@ -15,6 +15,11 @@ void main(List<String> args) {
       expect(sourceNotification["latitude"], "44.9441");
       expect(sourceNotification["longitude"], "-93.0852");
     });
+
+    test("receivePushSourceNotification", () {
+      NotificationReceiver notificationReceiver = new NotificationReceiver();
+      String sourcePushNotification = notificationReceiver.receivePushSourceNotification();
+    });
 }
 
 
