@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+
 import 'package:meta/meta.dart' show visibleForTesting;
 
 import 'firebase_core_platform_interface.dart';

@@ -4,8 +4,7 @@
 
 import 'dart:async';
 
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
+import 'plugin_platform_interface.dart';
 import 'firebase_options.dart';
 import 'method_channel_firebase_core.dart';
 import 'platform_firebase_app.dart';
