@@ -100,8 +100,14 @@ class _PasswordFieldState extends State<PasswordField> {
   }
 }
 
-class TextFormFieldDemoState extends State<TextFormFieldDemo> {
+class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  @override
+  void initState() { 
+    super.initState();
+  }
 
   PersonData person = PersonData();
 
@@ -121,7 +127,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
       _UsNumberTextInputFormatter();
 
   void _handleSubmitted() {
-    final form = _formKey.currentState;
+    /*final form = _formKey.currentState;
     if (!form.validate()) {
       _autoValidate = true; // Start validating on every change.
       showInSnackBar(
@@ -131,7 +137,11 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
       form.save();
       showInSnackBar(GalleryLocalizations.of(context)
           .demoTextFieldNameHasPhoneNumber(person.name, person.phoneNumber));
-    }
+    }*/
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => FirstRoute()),
+    );
   }
 
   String _validateName(String value) {
@@ -284,75 +294,23 @@ class _UsNumberTextInputFormatter extends TextInputFormatter {
   }
 }
 
+class FirstRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('First Route'),
+      ),
+      body: Center(
+        child: RaisedButton(
+          child: Text('Open route'),
+          onPressed: () {
+            // Navigate to second route when tapped.
+          },
+        ),
+      ),
+    );
+  }
+}
+
 // END
-/*
-TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.person),
-                    hintText: GalleryLocalizations.of(context)
-                        .demoTextFieldWhatDoPeopleCallYou,
-                    labelText:
-                        GalleryLocalizations.of(context).demoTextFieldNameField,
-                  ),
-                  onSaved: (value) {
-                    person.name = value;
-                  },
-                  validator: _validateName,
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.phone),
-                    hintText: GalleryLocalizations.of(context)
-                        .demoTextFieldWhereCanWeReachYou,
-                    labelText: GalleryLocalizations.of(context)
-                        .demoTextFieldPhoneNumber,
-                    prefixText: '+1 ',
-                  ),
-                  keyboardType: TextInputType.phone,
-                  onSaved: (value) {
-                    person.phoneNumber = value;
-                  },
-                  maxLength: 14,
-                  maxLengthEnforced: false,
-                  validator: _validatePhoneNumber,
-                  // TextInputFormatters are applied in sequence.
-                  inputFormatters: <TextInputFormatter>[
-                    WhitelistingTextInputFormatter.digitsOnly,
-                    // Fit the validating format.
-                    _phoneNumberFormatter,
-                  ],
-                ),
-                TextFormField(
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: GalleryLocalizations.of(context)
-                        .demoTextFieldTellUsAboutYourself,
-                    helperText: GalleryLocalizations.of(context)
-                        .demoTextFieldKeepItShort,
-                    labelText:
-                        GalleryLocalizations.of(context).demoTextFieldLifeStory,
-                  ),
-                  maxLines: 3,
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  cursorColor: cursorColor,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText:
-                        GalleryLocalizations.of(context).demoTextFieldSalary,
-                    suffixText:
-                        GalleryLocalizations.of(context).demoTextFieldUSD,
-                  ),
-                  maxLines: 1,
-                ),
-                sizedBoxSpace,
-*/
