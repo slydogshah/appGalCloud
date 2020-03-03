@@ -1,235 +1,357 @@
+// Copyright 2019 The Flutter team. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart' show DragStartBehavior;
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+import 'gallery/l10n/gallery_localizations.dart';
+
+// BEGIN textFieldDemo
+
+class TextFieldDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Food Runner App, AppGal Labs',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Layout Training'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  MyHomePageState createState() => MyHomePageState();
-}
-
-class MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    //return this._buildImageRow(0);
-    //return this._buildGrid();
-    //return this._buildList();
-    //return this._buildStack();
-    //return this._buildCard();
-    return this._buildScaffold();
-  }
-
-
-  Widget _buildImageRow(int imageIndex) => Row(
-      children: [
-        _buildDecoratedImage(imageIndex),
-        _buildDecoratedImage(imageIndex + 1),
-      ],
-    );
-
-  Widget _buildDecoratedImage(int imageIndex) => Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(width: 10, color: Colors.black38),
-          borderRadius: const BorderRadius.all(const Radius.circular(8)),
-        ),
-        margin: const EdgeInsets.all(4),
-        child: Image.asset('ui/assets/images/pic$imageIndex.jpg'),
-      ),
-    );
-
-    Widget _buildGrid() => GridView.extent(
-    maxCrossAxisExtent: 150,
-    padding: const EdgeInsets.all(4),
-    mainAxisSpacing: 4,
-    crossAxisSpacing: 4,
-    children: _buildGridTileList(2));
-
-    List<Container> _buildGridTileList(int count) => List.generate(
-    count, (i) => Container(child: Image.asset('ui/assets/images/pic$i.jpg')));
-
-    Widget _buildList() => ListView(
-      children: [
-        _tile('CineArts at the Empire', '85 W Portal Ave', Icons.theaters),
-        _tile('The Castro Theater', '429 Castro St', Icons.theaters),
-        _tile('Alamo Drafthouse Cinema', '2550 Mission St', Icons.theaters),
-        _tile('Roxie Theater', '3117 16th St', Icons.theaters),
-        _tile('United Artists Stonestown Twin', '501 Buckingham Way',
-            Icons.theaters),
-        _tile('AMC Metreon 16', '135 4th St #3000', Icons.theaters),
-        Divider(),
-        _tile('Kescaped_code#39;s Kitchen', '757 Monterey Blvd', Icons.restaurant),
-        _tile('Emmyescaped_code#39;s Restaurant', '1923 Ocean Ave', Icons.restaurant),
-        _tile(
-            'Chaiya Thai Restaurant', '272 Claremont Blvd', Icons.restaurant),
-        _tile('La Ciccia', '291 30th St', Icons.restaurant),
-      ],
-    );
-
-ListTile _tile(String title, String subtitle, IconData icon) => ListTile(
-      title: Text(title,
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 20,
-          )),
-      subtitle: Text(subtitle),
-      leading: Icon(
-        icon,
-        color: Colors.blue[500],
-      ),
-    );
-
-    Widget _buildStack() => Stack(
-    alignment: const Alignment(0.6, 0.6),
-    children: [
-      CircleAvatar(
-        backgroundImage: AssetImage('ui/assets/images/pic0.jpg'),
-        radius: 100,
-      ),
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.black45,
-        ),
-        child: Text(
-          'Mia B',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ],
-  );
-
-  Widget _buildCard() => SizedBox(
-    height: 210,
-    child: Card(
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('1625 Main Street',
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            subtitle: Text('My City, CA 99984'),
-            leading: Icon(
-              Icons.restaurant_menu,
-              color: Colors.blue[500],
-            ),
-          ),
-          Divider(),
-          ListTile(
-            title: Text('(408) 555-1212',
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            leading: Icon(
-              Icons.contact_phone,
-              color: Colors.blue[500],
-            ),
-          ),
-          ListTile(
-            title: Text('costa@example.com'),
-            leading: Icon(
-              Icons.contact_mail,
-              color: Colors.blue[500],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-
-  Widget _buildScaffold() => Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        title: Text(GalleryLocalizations.of(context).demoTextFieldTitle),
       ),
-      body: _buildImageColumn(0),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-  );
-
-  Widget _buildImageColumn(int imageIndex) => Column(
-      children: [
-        buildText("Username"),
-        buildText("Password")
-      ],
+      body: TextFormFieldDemo(),
     );
-  Widget buildText(String textLabel) => Text(
-            '$textLabel : ',
-             textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.bold),
-      );
-  
+  }
 }
 
-/*
-Text(
-            'Username: ',
-             textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.bold),
-      )
-      */
+class TextFormFieldDemo extends StatefulWidget {
+  const TextFormFieldDemo({Key key}) : super(key: key);
 
-/*Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.star, color: Colors.green[500]),
-          Icon(Icons.star, color: Colors.green[500]),
-          Icon(Icons.star, color: Colors.green[500]),
-          Icon(Icons.star, color: Colors.black),
-          Icon(Icons.star, color: Colors.black),
-        ],
-      )*/
+  @override
+  TextFormFieldDemoState createState() => TextFormFieldDemoState();
+}
+
+class PersonData {
+  String name = '';
+  String phoneNumber = '';
+  String email = '';
+  String password = '';
+}
+
+class PasswordField extends StatefulWidget {
+  const PasswordField({
+    this.fieldKey,
+    this.hintText,
+    this.labelText,
+    this.helperText,
+    this.onSaved,
+    this.validator,
+    this.onFieldSubmitted,
+  });
+
+  final Key fieldKey;
+  final String hintText;
+  final String labelText;
+  final String helperText;
+  final FormFieldSetter<String> onSaved;
+  final FormFieldValidator<String> validator;
+  final ValueChanged<String> onFieldSubmitted;
+
+  @override
+  _PasswordFieldState createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      key: widget.fieldKey,
+      obscureText: _obscureText,
+      cursorColor: Theme.of(context).cursorColor,
+      maxLength: 8,
+      onSaved: widget.onSaved,
+      validator: widget.validator,
+      onFieldSubmitted: widget.onFieldSubmitted,
+      decoration: InputDecoration(
+        filled: true,
+        hintText: widget.hintText,
+        labelText: widget.labelText,
+        helperText: widget.helperText,
+        suffixIcon: GestureDetector(
+          dragStartBehavior: DragStartBehavior.down,
+          onTap: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+          child: Icon(
+            _obscureText ? Icons.visibility : Icons.visibility_off,
+            semanticLabel: _obscureText
+                ? GalleryLocalizations.of(context)
+                    .demoTextFieldShowPasswordLabel
+                : GalleryLocalizations.of(context)
+                    .demoTextFieldHidePasswordLabel,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TextFormFieldDemoState extends State<TextFormFieldDemo> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  PersonData person = PersonData();
+
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.hideCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(value),
+    ));
+  }
+
+  bool _autoValidate = false;
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormFieldState<String>> _passwordFieldKey =
+      GlobalKey<FormFieldState<String>>();
+  final _UsNumberTextInputFormatter _phoneNumberFormatter =
+      _UsNumberTextInputFormatter();
+
+  void _handleSubmitted() {
+    final form = _formKey.currentState;
+    if (!form.validate()) {
+      _autoValidate = true; // Start validating on every change.
+      showInSnackBar(
+        GalleryLocalizations.of(context).demoTextFieldFormErrors,
+      );
+    } else {
+      form.save();
+      showInSnackBar(GalleryLocalizations.of(context)
+          .demoTextFieldNameHasPhoneNumber(person.name, person.phoneNumber));
+    }
+  }
+
+  String _validateName(String value) {
+    if (value.isEmpty) {
+      return GalleryLocalizations.of(context).demoTextFieldNameRequired;
+    }
+    final nameExp = RegExp(r'^[A-Za-z ]+$');
+    if (!nameExp.hasMatch(value)) {
+      return GalleryLocalizations.of(context)
+          .demoTextFieldOnlyAlphabeticalChars;
+    }
+    return null;
+  }
+
+  String _validatePhoneNumber(String value) {
+    final phoneExp = RegExp(r'^\(\d\d\d\) \d\d\d\-\d\d\d\d$');
+    if (!phoneExp.hasMatch(value)) {
+      return GalleryLocalizations.of(context).demoTextFieldEnterUSPhoneNumber;
+    }
+    return null;
+  }
+
+  String _validatePassword(String value) {
+    final passwordField = _passwordFieldKey.currentState;
+    if (passwordField.value == null || passwordField.value.isEmpty) {
+      return GalleryLocalizations.of(context).demoTextFieldEnterPassword;
+    }
+    if (passwordField.value != value) {
+      return GalleryLocalizations.of(context).demoTextFieldPasswordsDoNotMatch;
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cursorColor = Theme.of(context).cursorColor;
+    const sizedBoxSpace = SizedBox(height: 24);
+
+    return Scaffold(
+      key: _scaffoldKey,
+      body: Form(
+        key: _formKey,
+        autovalidate: _autoValidate,
+        child: Scrollbar(
+          child: SingleChildScrollView(
+            dragStartBehavior: DragStartBehavior.down,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                sizedBoxSpace,
+                TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.person),
+                    hintText: GalleryLocalizations.of(context)
+                        .demoTextFieldWhatDoPeopleCallYou,
+                    labelText:
+                        GalleryLocalizations.of(context).demoTextFieldNameField,
+                  ),
+                  onSaved: (value) {
+                    person.name = value;
+                  },
+                  validator: _validateName,
+                ),
+                sizedBoxSpace,
+                TextFormField(
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.phone),
+                    hintText: GalleryLocalizations.of(context)
+                        .demoTextFieldWhereCanWeReachYou,
+                    labelText: GalleryLocalizations.of(context)
+                        .demoTextFieldPhoneNumber,
+                    prefixText: '+1 ',
+                  ),
+                  keyboardType: TextInputType.phone,
+                  onSaved: (value) {
+                    person.phoneNumber = value;
+                  },
+                  maxLength: 14,
+                  maxLengthEnforced: false,
+                  validator: _validatePhoneNumber,
+                  // TextInputFormatters are applied in sequence.
+                  inputFormatters: <TextInputFormatter>[
+                    WhitelistingTextInputFormatter.digitsOnly,
+                    // Fit the validating format.
+                    _phoneNumberFormatter,
+                  ],
+                ),
+                sizedBoxSpace,
+                TextFormField(
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.email),
+                    hintText: GalleryLocalizations.of(context)
+                        .demoTextFieldYourEmailAddress,
+                    labelText:
+                        GalleryLocalizations.of(context).demoTextFieldEmail,
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  onSaved: (value) {
+                    person.email = value;
+                  },
+                ),
+                sizedBoxSpace,
+                TextFormField(
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: GalleryLocalizations.of(context)
+                        .demoTextFieldTellUsAboutYourself,
+                    helperText: GalleryLocalizations.of(context)
+                        .demoTextFieldKeepItShort,
+                    labelText:
+                        GalleryLocalizations.of(context).demoTextFieldLifeStory,
+                  ),
+                  maxLines: 3,
+                ),
+                sizedBoxSpace,
+                TextFormField(
+                  cursorColor: cursorColor,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText:
+                        GalleryLocalizations.of(context).demoTextFieldSalary,
+                    suffixText:
+                        GalleryLocalizations.of(context).demoTextFieldUSD,
+                  ),
+                  maxLines: 1,
+                ),
+                sizedBoxSpace,
+                PasswordField(
+                  fieldKey: _passwordFieldKey,
+                  helperText:
+                      GalleryLocalizations.of(context).demoTextFieldNoMoreThan,
+                  labelText:
+                      GalleryLocalizations.of(context).demoTextFieldPassword,
+                  onFieldSubmitted: (value) {
+                    setState(() {
+                      person.password = value;
+                    });
+                  },
+                ),
+                sizedBoxSpace,
+                TextFormField(
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    labelText: GalleryLocalizations.of(context)
+                        .demoTextFieldRetypePassword,
+                  ),
+                  maxLength: 8,
+                  obscureText: true,
+                  validator: _validatePassword,
+                ),
+                sizedBoxSpace,
+                Center(
+                  child: RaisedButton(
+                    child: Text(
+                        GalleryLocalizations.of(context).demoTextFieldSubmit),
+                    onPressed: _handleSubmitted,
+                  ),
+                ),
+                sizedBoxSpace,
+                Text(
+                  GalleryLocalizations.of(context).demoTextFieldRequiredField,
+                  style: Theme.of(context).textTheme.caption,
+                ),
+                sizedBoxSpace,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Format incoming numeric text to fit the format of (###) ###-#### ##
+class _UsNumberTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final newTextLength = newValue.text.length;
+    final newText = StringBuffer();
+    int selectionIndex = newValue.selection.end;
+    int usedSubstringIndex = 0;
+    if (newTextLength >= 1) {
+      newText.write('(');
+      if (newValue.selection.end >= 1) selectionIndex++;
+    }
+    if (newTextLength >= 4) {
+      newText.write(newValue.text.substring(0, usedSubstringIndex = 3) + ') ');
+      if (newValue.selection.end >= 3) selectionIndex += 2;
+    }
+    if (newTextLength >= 7) {
+      newText.write(newValue.text.substring(3, usedSubstringIndex = 6) + '-');
+      if (newValue.selection.end >= 6) selectionIndex++;
+    }
+    if (newTextLength >= 11) {
+      newText.write(newValue.text.substring(6, usedSubstringIndex = 10) + ' ');
+      if (newValue.selection.end >= 10) selectionIndex++;
+    }
+    // Dump the rest.
+    if (newTextLength >= usedSubstringIndex) {
+      newText.write(newValue.text.substring(usedSubstringIndex));
+    }
+    return TextEditingValue(
+      text: newText.toString(),
+      selection: TextSelection.collapsed(offset: selectionIndex),
+    );
+  }
+}
+
+// END
