@@ -184,53 +184,10 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
               children: [
                 sizedBoxSpace,
                 TextFormField(
-                  textCapitalization: TextCapitalization.words,
                   cursorColor: cursorColor,
                   decoration: InputDecoration(
                     filled: true,
-                    icon: Icon(Icons.person),
-                    hintText: GalleryLocalizations.of(context)
-                        .demoTextFieldWhatDoPeopleCallYou,
-                    labelText:
-                        GalleryLocalizations.of(context).demoTextFieldNameField,
-                  ),
-                  onSaved: (value) {
-                    person.name = value;
-                  },
-                  validator: _validateName,
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.phone),
-                    hintText: GalleryLocalizations.of(context)
-                        .demoTextFieldWhereCanWeReachYou,
-                    labelText: GalleryLocalizations.of(context)
-                        .demoTextFieldPhoneNumber,
-                    prefixText: '+1 ',
-                  ),
-                  keyboardType: TextInputType.phone,
-                  onSaved: (value) {
-                    person.phoneNumber = value;
-                  },
-                  maxLength: 14,
-                  maxLengthEnforced: false,
-                  validator: _validatePhoneNumber,
-                  // TextInputFormatters are applied in sequence.
-                  inputFormatters: <TextInputFormatter>[
-                    WhitelistingTextInputFormatter.digitsOnly,
-                    // Fit the validating format.
-                    _phoneNumberFormatter,
-                  ],
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.email),
+                    //icon: Icon(Icons.email),
                     hintText: GalleryLocalizations.of(context)
                         .demoTextFieldYourEmailAddress,
                     labelText:
@@ -240,33 +197,6 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> {
                   onSaved: (value) {
                     person.email = value;
                   },
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: GalleryLocalizations.of(context)
-                        .demoTextFieldTellUsAboutYourself,
-                    helperText: GalleryLocalizations.of(context)
-                        .demoTextFieldKeepItShort,
-                    labelText:
-                        GalleryLocalizations.of(context).demoTextFieldLifeStory,
-                  ),
-                  maxLines: 3,
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  cursorColor: cursorColor,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText:
-                        GalleryLocalizations.of(context).demoTextFieldSalary,
-                    suffixText:
-                        GalleryLocalizations.of(context).demoTextFieldUSD,
-                  ),
-                  maxLines: 1,
                 ),
                 sizedBoxSpace,
                 PasswordField(
@@ -355,3 +285,74 @@ class _UsNumberTextInputFormatter extends TextInputFormatter {
 }
 
 // END
+/*
+TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.person),
+                    hintText: GalleryLocalizations.of(context)
+                        .demoTextFieldWhatDoPeopleCallYou,
+                    labelText:
+                        GalleryLocalizations.of(context).demoTextFieldNameField,
+                  ),
+                  onSaved: (value) {
+                    person.name = value;
+                  },
+                  validator: _validateName,
+                ),
+                sizedBoxSpace,
+                TextFormField(
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.phone),
+                    hintText: GalleryLocalizations.of(context)
+                        .demoTextFieldWhereCanWeReachYou,
+                    labelText: GalleryLocalizations.of(context)
+                        .demoTextFieldPhoneNumber,
+                    prefixText: '+1 ',
+                  ),
+                  keyboardType: TextInputType.phone,
+                  onSaved: (value) {
+                    person.phoneNumber = value;
+                  },
+                  maxLength: 14,
+                  maxLengthEnforced: false,
+                  validator: _validatePhoneNumber,
+                  // TextInputFormatters are applied in sequence.
+                  inputFormatters: <TextInputFormatter>[
+                    WhitelistingTextInputFormatter.digitsOnly,
+                    // Fit the validating format.
+                    _phoneNumberFormatter,
+                  ],
+                ),
+                TextFormField(
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: GalleryLocalizations.of(context)
+                        .demoTextFieldTellUsAboutYourself,
+                    helperText: GalleryLocalizations.of(context)
+                        .demoTextFieldKeepItShort,
+                    labelText:
+                        GalleryLocalizations.of(context).demoTextFieldLifeStory,
+                  ),
+                  maxLines: 3,
+                ),
+                sizedBoxSpace,
+                TextFormField(
+                  cursorColor: cursorColor,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText:
+                        GalleryLocalizations.of(context).demoTextFieldSalary,
+                    suffixText:
+                        GalleryLocalizations.of(context).demoTextFieldUSD,
+                  ),
+                  maxLines: 1,
+                ),
+                sizedBoxSpace,
+*/

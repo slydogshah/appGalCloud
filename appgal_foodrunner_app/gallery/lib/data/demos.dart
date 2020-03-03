@@ -215,6 +215,20 @@ List<GalleryDemo> materialDemos(BuildContext context) {
       ],
     ),
     GalleryDemo(
+      title: localizations.demoTextFieldTitle,
+      icon: GalleryIcons.textFieldsAlt,
+      subtitle: localizations.demoTextFieldSubtitle,
+      configurations: [
+        GalleryDemoConfiguration(
+          title: localizations.demoTextFieldTitle,
+          description: localizations.demoTextFieldDescription,
+          documentationUrl: '$_docsBaseUrl/material/TextField-class.html',
+          buildRoute: (_) => TextFieldDemo(),
+          code: CodeSegments.textFieldDemo,
+        ),
+      ],
+    ),
+    GalleryDemo(
       title: localizations.demoChipTitle,
       icon: GalleryIcons.chips,
       subtitle: localizations.demoChipSubtitle,
