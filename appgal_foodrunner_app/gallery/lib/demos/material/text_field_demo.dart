@@ -10,6 +10,7 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:gallery/l10n/gallery_localizations.dart';
 
 import 'landingScene.dart';
+import 'landingScene.dart';
 
 // BEGIN textFieldDemo
 
@@ -142,7 +143,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
     }*/
     Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => FirstRoute()),
+    MaterialPageRoute(builder: (context) => MyApp()),
     );
   }
 
