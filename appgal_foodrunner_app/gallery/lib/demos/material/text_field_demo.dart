@@ -10,7 +10,6 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:gallery/l10n/gallery_localizations.dart';
 
 import 'landingScene.dart';
-import 'landingScene.dart';
 
 // BEGIN textFieldDemo
 
