@@ -2,6 +2,7 @@ package io.appgal.cloud.foodRunnerSync.protocol;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.messaging.MessageWindow;
 
@@ -56,5 +57,23 @@ public class ProcessIncomingPacketsTests {
         JsonArray jsonArray = messageWindow.getMessages();
         //assertNotNull(jsonArray);
         //logger.info("NUMBER_OF_NOTIFICATIONS: "+jsonArray.size());
+    }
+
+    @Test
+    public void testProcessSourceNotificationForPickup()
+    {
+        SourceNotification sourceNotification = new SourceNotification();
+        sourceNotification.setSourceNotificationId("92ed655a-99a2-438b-8eeb-05d12a2d8a1b");
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        sourceNotification.setMessageWindow(messageWindow);
+        JsonArray json = this.processIncomingPackets.processNotificationForPickup(sourceNotification);
+
+        //assert the body
+        JsonArray jsonArray = JsonParser.parseString(json.toString()).getAsJsonArray();
+        JsonObject jsonObject = jsonArray.get(0).getAsJsonObject();
+        String sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
+        assertEquals("92ed655a-99a2-438b-8eeb-05d12a2d8a1b", sourceNotificationId);
     }
 }
