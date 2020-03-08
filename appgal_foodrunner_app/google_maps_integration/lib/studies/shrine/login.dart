@@ -5,12 +5,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/layout/text_scale.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/studies/shrine/colors.dart';
-import 'package:gallery/studies/shrine/theme.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/layout/text_scale.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/studies/shrine/colors.dart';
+import 'package:google_maps_integration/studies/shrine/theme.dart';
 
 const _horizontalPadding = 24.0;
 

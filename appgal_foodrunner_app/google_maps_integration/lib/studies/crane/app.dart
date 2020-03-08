@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/studies/crane/backdrop.dart';
-import 'package:gallery/studies/crane/eat_form.dart';
-import 'package:gallery/studies/crane/fly_form.dart';
-import 'package:gallery/studies/crane/sleep_form.dart';
-import 'package:gallery/studies/crane/theme.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/studies/crane/backdrop.dart';
+import 'package:google_maps_integration/studies/crane/eat_form.dart';
+import 'package:google_maps_integration/studies/crane/fly_form.dart';
+import 'package:google_maps_integration/studies/crane/sleep_form.dart';
+import 'package:google_maps_integration/studies/crane/theme.dart';
 
 class CraneApp extends StatefulWidget {
   const CraneApp({Key key, this.navigatorKey}) : super(key: key);

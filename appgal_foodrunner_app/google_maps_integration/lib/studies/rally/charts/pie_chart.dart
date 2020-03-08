@@ -6,11 +6,11 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/layout/text_scale.dart';
-import 'package:gallery/studies/rally/colors.dart';
-import 'package:gallery/studies/rally/data.dart';
-import 'package:gallery/studies/rally/formatters.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/layout/text_scale.dart';
+import 'package:google_maps_integration/studies/rally/colors.dart';
+import 'package:google_maps_integration/studies/rally/data.dart';
+import 'package:google_maps_integration/studies/rally/formatters.dart';
 
 /// A colored piece of the [RallyPieChart].
 class RallyPieChartSegment {

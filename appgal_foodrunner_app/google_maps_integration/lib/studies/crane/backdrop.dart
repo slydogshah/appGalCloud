@@ -9,14 +9,14 @@ import 'package:flutter/rendering.dart';
 
 import 'package:meta/meta.dart';
 
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/studies/crane/border_tab_indicator.dart';
-import 'package:gallery/studies/crane/backlayer.dart';
-import 'package:gallery/studies/crane/colors.dart';
-import 'package:gallery/studies/crane/header_form.dart';
-import 'package:gallery/studies/crane/item_cards.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/studies/crane/border_tab_indicator.dart';
+import 'package:google_maps_integration/studies/crane/backlayer.dart';
+import 'package:google_maps_integration/studies/crane/colors.dart';
+import 'package:google_maps_integration/studies/crane/header_form.dart';
+import 'package:google_maps_integration/studies/crane/item_cards.dart';
 
 class _FrontLayer extends StatelessWidget {
   const _FrontLayer({

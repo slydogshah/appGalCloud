@@ -4,11 +4,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/studies/shrine/expanding_bottom_sheet.dart';
-import 'package:gallery/studies/shrine/model/app_state_model.dart';
-import 'package:gallery/studies/shrine/supplemental/asymmetric_view.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/studies/shrine/expanding_bottom_sheet.dart';
+import 'package:google_maps_integration/studies/shrine/model/app_state_model.dart';
+import 'package:google_maps_integration/studies/shrine/supplemental/asymmetric_view.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 const _ordinalSortKeyName = 'home';

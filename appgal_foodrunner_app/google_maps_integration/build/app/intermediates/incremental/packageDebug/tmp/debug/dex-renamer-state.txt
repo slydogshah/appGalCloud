@@ -1,4 +1,0 @@
-#Fri Mar 06 16:53:30 CST 2020
-base.0=/Users/babyboy/mamasboy/appgallabs/appGalCloud-master/appGalCloud/appgal_foodrunner_app/google_maps_integration/build/app/intermediates/dex/debug/mergeDexDebug/out/classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/layout/adaptive.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
 
 class PageStatus extends InheritedWidget {
   const PageStatus({

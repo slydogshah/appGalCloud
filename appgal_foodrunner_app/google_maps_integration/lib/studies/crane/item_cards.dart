@@ -4,10 +4,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/layout/highlight_focus.dart';
-import 'package:gallery/studies/crane/model/data.dart';
-import 'package:gallery/studies/crane/model/destination.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/layout/highlight_focus.dart';
+import 'package:google_maps_integration/studies/crane/model/data.dart';
+import 'package:google_maps_integration/studies/crane/model/destination.dart';
 
 class ItemCards extends StatefulWidget {
   final int index;

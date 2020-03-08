@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/studies/rally/colors.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/studies/rally/colors.dart';
 
 class TabWithSidebar extends StatelessWidget {
   const TabWithSidebar({

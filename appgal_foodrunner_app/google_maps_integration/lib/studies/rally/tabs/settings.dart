@@ -4,10 +4,10 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/studies/rally/colors.dart';
-import 'package:gallery/studies/rally/data.dart';
-import 'package:gallery/studies/rally/login.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/studies/rally/colors.dart';
+import 'package:google_maps_integration/studies/rally/data.dart';
+import 'package:google_maps_integration/studies/rally/login.dart';
 
 class SettingsView extends StatefulWidget {
   @override

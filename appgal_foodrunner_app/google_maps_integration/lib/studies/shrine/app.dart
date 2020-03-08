@@ -3,19 +3,19 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/studies/shrine/backdrop.dart';
-import 'package:gallery/studies/shrine/category_menu_page.dart';
-import 'package:gallery/studies/shrine/expanding_bottom_sheet.dart';
-import 'package:gallery/studies/shrine/home.dart';
-import 'package:gallery/studies/shrine/login.dart';
-import 'package:gallery/studies/shrine/model/app_state_model.dart';
-import 'package:gallery/studies/shrine/page_status.dart';
-import 'package:gallery/studies/shrine/scrim.dart';
-import 'package:gallery/studies/shrine/supplemental/layout_cache.dart';
-import 'package:gallery/studies/shrine/theme.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/studies/shrine/backdrop.dart';
+import 'package:google_maps_integration/studies/shrine/category_menu_page.dart';
+import 'package:google_maps_integration/studies/shrine/expanding_bottom_sheet.dart';
+import 'package:google_maps_integration/studies/shrine/home.dart';
+import 'package:google_maps_integration/studies/shrine/login.dart';
+import 'package:google_maps_integration/studies/shrine/model/app_state_model.dart';
+import 'package:google_maps_integration/studies/shrine/page_status.dart';
+import 'package:google_maps_integration/studies/shrine/scrim.dart';
+import 'package:google_maps_integration/studies/shrine/supplemental/layout_cache.dart';
+import 'package:google_maps_integration/studies/shrine/theme.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ShrineApp extends StatefulWidget {

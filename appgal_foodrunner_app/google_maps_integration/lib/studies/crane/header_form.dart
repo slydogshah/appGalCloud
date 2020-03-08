@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/studies/crane/colors.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/studies/crane/colors.dart';
 
 const textFieldHeight = 60.0;
 const appPaddingLarge = 120.0;

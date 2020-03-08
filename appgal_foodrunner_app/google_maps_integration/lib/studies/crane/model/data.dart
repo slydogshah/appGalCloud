@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/studies/crane/model/destination.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/studies/crane/model/destination.dart';
 
 // TODO: localize durations
 

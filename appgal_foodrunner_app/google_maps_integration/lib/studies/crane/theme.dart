@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:gallery/studies/crane/colors.dart';
+import 'package:google_maps_integration/studies/crane/colors.dart';
 
 final ThemeData craneTheme = _buildCraneTheme();
 

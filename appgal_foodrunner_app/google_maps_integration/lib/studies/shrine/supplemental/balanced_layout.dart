@@ -4,9 +4,9 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/studies/shrine/model/product.dart';
-import 'package:gallery/studies/shrine/supplemental/desktop_product_columns.dart';
-import 'package:gallery/studies/shrine/supplemental/layout_cache.dart';
+import 'package:google_maps_integration/studies/shrine/model/product.dart';
+import 'package:google_maps_integration/studies/shrine/supplemental/desktop_product_columns.dart';
+import 'package:google_maps_integration/studies/shrine/supplemental/layout_cache.dart';
 
 /// A placeholder id for an empty element. See [_iterateUntilBalanced]
 /// for more information.

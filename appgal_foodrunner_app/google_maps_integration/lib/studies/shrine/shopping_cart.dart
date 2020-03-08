@@ -7,12 +7,12 @@ import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import 'package:gallery/studies/shrine/colors.dart';
-import 'package:gallery/studies/shrine/expanding_bottom_sheet.dart';
-import 'package:gallery/studies/shrine/model/app_state_model.dart';
-import 'package:gallery/studies/shrine/model/product.dart';
-import 'package:gallery/studies/shrine/theme.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/studies/shrine/colors.dart';
+import 'package:google_maps_integration/studies/shrine/expanding_bottom_sheet.dart';
+import 'package:google_maps_integration/studies/shrine/model/app_state_model.dart';
+import 'package:google_maps_integration/studies/shrine/model/product.dart';
+import 'package:google_maps_integration/studies/shrine/theme.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
 
 const _startColumnWidth = 60.0;
 const _ordinalSortKeyName = 'shopping_cart';

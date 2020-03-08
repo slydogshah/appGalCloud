@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/studies/shrine/model/product.dart';
-import 'package:gallery/studies/shrine/supplemental/product_card.dart';
+import 'package:google_maps_integration/studies/shrine/model/product.dart';
+import 'package:google_maps_integration/studies/shrine/supplemental/product_card.dart';
 
 class TwoProductCardColumn extends StatelessWidget {
   const TwoProductCardColumn({

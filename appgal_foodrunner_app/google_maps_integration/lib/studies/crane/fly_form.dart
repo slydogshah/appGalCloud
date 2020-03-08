@@ -4,9 +4,9 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/studies/crane/backlayer.dart';
-import 'package:gallery/studies/crane/header_form.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/studies/crane/backlayer.dart';
+import 'package:google_maps_integration/studies/crane/header_form.dart';
 
 class FlyForm extends BackLayerItem {
   FlyForm({int index}) : super(index: index);

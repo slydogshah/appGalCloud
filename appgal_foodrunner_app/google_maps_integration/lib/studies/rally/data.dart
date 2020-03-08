@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/studies/rally/formatters.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/studies/rally/formatters.dart';
 
 /// Calculates the sum of the primary amounts of a list of [AccountData].
 double sumAccountDataPrimaryAmount(List<AccountData> items) =>

@@ -4,8 +4,8 @@
 
 import 'package:flutter/cupertino.dart';
 
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
 
 // BEGIN cupertinoAlertDemo
 

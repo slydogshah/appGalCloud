@@ -5,8 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/layout/adaptive.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
 
 const appBarDesktopHeight = 128.0;
 

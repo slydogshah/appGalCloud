@@ -4,9 +4,9 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gallery/data/gallery_options.dart';
 
-import 'package:gallery/studies/crane/model/formatters.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/studies/crane/model/formatters.dart';
 
 import '../../../l10n/gallery_localizations.dart';
 

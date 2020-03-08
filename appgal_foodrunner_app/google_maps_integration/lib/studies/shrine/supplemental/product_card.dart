@@ -4,13 +4,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import 'package:gallery/studies/shrine/model/app_state_model.dart';
-import 'package:gallery/studies/shrine/model/product.dart';
-import 'package:gallery/layout/adaptive.dart';
+import 'package:google_maps_integration/studies/shrine/model/app_state_model.dart';
+import 'package:google_maps_integration/studies/shrine/model/product.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
 
 class MobileProductCard extends StatelessWidget {
   const MobileProductCard({this.imageAspectRatio = 33 / 49, this.product})

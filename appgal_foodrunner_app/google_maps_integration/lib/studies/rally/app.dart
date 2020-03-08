@@ -4,12 +4,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
 
-import 'package:gallery/studies/rally/colors.dart';
-import 'package:gallery/studies/rally/home.dart';
-import 'package:gallery/studies/rally/login.dart';
+import 'package:google_maps_integration/studies/rally/colors.dart';
+import 'package:google_maps_integration/studies/rally/home.dart';
+import 'package:google_maps_integration/studies/rally/login.dart';
 
 /// The RallyApp is a MaterialApp with a theme and 2 routes.
 ///

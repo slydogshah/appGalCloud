@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/layout/focus_traversal_policy.dart';
-import 'package:gallery/pages/home.dart' as home;
-import 'package:gallery/studies/starter/home.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/layout/focus_traversal_policy.dart';
+import 'package:google_maps_integration/pages/home.dart' as home;
+import 'package:google_maps_integration/studies/starter/home.dart';
 
 const _primaryColor = Color(0xFF6200EE);
 

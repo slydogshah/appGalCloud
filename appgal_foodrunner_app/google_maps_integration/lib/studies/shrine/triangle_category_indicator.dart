@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:gallery/studies/shrine/colors.dart';
+import 'package:google_maps_integration/studies/shrine/colors.dart';
 
 const List<Offset> _vertices = [
   Offset(0, -14),

@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gallery/studies/shrine/colors.dart';
-import 'package:gallery/studies/shrine/supplemental/cut_corners_border.dart';
+import 'package:google_maps_integration/studies/shrine/colors.dart';
+import 'package:google_maps_integration/studies/shrine/supplemental/cut_corners_border.dart';
 
 const defaultLetterSpacing = 0.03;
 const mediumLetterSpacing = 0.04;

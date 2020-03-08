@@ -4,13 +4,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gallery/data/gallery_options.dart';
-import 'package:gallery/l10n/gallery_localizations.dart';
-import 'package:gallery/layout/adaptive.dart';
-import 'package:gallery/layout/text_scale.dart';
-import 'package:gallery/pages/home.dart';
-import 'package:gallery/studies/rally/colors.dart';
-import 'package:gallery/layout/focus_traversal_policy.dart';
+import 'package:google_maps_integration/data/gallery_options.dart';
+import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/layout/adaptive.dart';
+import 'package:google_maps_integration/layout/text_scale.dart';
+import 'package:google_maps_integration/pages/home.dart';
+import 'package:google_maps_integration/studies/rally/colors.dart';
+import 'package:google_maps_integration/layout/focus_traversal_policy.dart';
 
 class LoginPage extends StatefulWidget {
   @override
