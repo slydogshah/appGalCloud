@@ -1,6 +1,7 @@
 package io.appgal.cloud.foodRunnerSync.protocol;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.messaging.SourceNotificationEmitter;
@@ -12,6 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -52,5 +56,23 @@ public class ProcessIncomingPackets {
         JsonArray destinationNotifications = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
 
         return destinationNotifications;
+    }
+
+    public JsonArray processNotificationForPickup(SourceNotification sourceNotification)
+    {
+        logger.info("....");
+        logger.info("PROCES_NOTIFICATION_FOR_PICKUP");
+        logger.info("....");
+
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        sourceNotification.setMessageWindow(messageWindow);
+        JsonObject json = sourceNotification.toJson();
+        this.kafkaDaemon.produceData(SourceNotification.TOPIC, json);
+
+        JsonArray response = new JsonArray();
+        response.add(json);
+        return response;
     }
 }

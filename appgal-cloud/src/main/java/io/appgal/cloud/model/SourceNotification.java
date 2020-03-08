@@ -67,6 +67,19 @@ public class SourceNotification {
         return jsonObject.toString();
     }
 
+    public JsonObject toJson()
+    {
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.addProperty("sourceNotificationId", this.sourceNotificationId);
+        jsonObject.addProperty("startTimestamp", messageWindow.getStart().toEpochSecond());
+        jsonObject.addProperty("endTimestamp", messageWindow.getEnd().toEpochSecond());
+        jsonObject.addProperty("latitude", this.latitude);
+        jsonObject.addProperty("longitude", this.longitude);
+
+        return jsonObject;
+    }
+
     public static SourceNotification fromJson(JsonObject jsonObject)
     {
         SourceNotification sourceNotification = new SourceNotification();

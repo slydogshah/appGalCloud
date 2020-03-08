@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.foodRunnerSync.protocol.ProcessIncomingPackets;
 import io.appgal.cloud.messaging.MessageWindow;
+import io.appgal.cloud.model.SourceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,9 +60,9 @@ public class NotificationReceiver {
     @Produces(MediaType.APPLICATION_JSON)
     public String receiveNotificationForPickup(@PathParam("sourceNotificationId") String sourceNotificationId)
     {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("sourceNotificationId", sourceNotificationId);
-        jsonObject.addProperty("statusCode", "0");
-        return jsonObject.toString();
+        SourceNotification sourceNotification = new SourceNotification();
+        sourceNotification.setSourceNotificationId(sourceNotificationId);
+        JsonArray response = this.processIncomingPackets.processNotificationForPickup(sourceNotification);
+        return response.toString();
     }
 }
