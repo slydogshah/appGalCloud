@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.google.gson.JsonParser;
+import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -20,7 +21,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import java.net.InetAddress;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -145,6 +148,14 @@ public class KafkaDaemon {
         this.commonPool.execute(producerTask);
     }
 
+    public void produceActiveFoodRunnerData(String topic, List<ActiveFoodRunnerData> activeFoodRunnerData)
+    {
+        for(ActiveFoodRunnerData local:activeFoodRunnerData) {
+            ProducerTask producerTask = new ProducerTask(this.kafkaProducer, topic, local.toJson());
+            this.commonPool.execute(producerTask);
+        }
+    }
+
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
         NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
@@ -152,6 +163,24 @@ public class KafkaDaemon {
         NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext, this.lookupTable);
         this.commonPool.execute(notificationFinderTask);
         return notificationFinderTask.join();
+    }
+
+    public JsonArray readActiveFoodRunnerData(String topic, List<ActiveFoodRunnerData> activeFoodRunnerData)
+    {
+        JsonArray jsonArray = new JsonArray();
+        int size = activeFoodRunnerData.size();
+        for(int i=0; i<size; i++) {
+            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+            OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+            MessageWindow messageWindow = new MessageWindow(start,end);
+            NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
+            readNotificationsQueue.add(notificationContext);
+            NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext, this.lookupTable);
+            this.commonPool.execute(notificationFinderTask);
+            JsonArray result = notificationFinderTask.join();
+            jsonArray.add(result);
+        }
+        return jsonArray;
     }
 
     private void findNotifications()

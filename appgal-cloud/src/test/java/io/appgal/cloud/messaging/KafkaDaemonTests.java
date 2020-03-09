@@ -3,6 +3,7 @@ package io.appgal.cloud.messaging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import io.quarkus.test.junit.QuarkusTest;
@@ -123,6 +124,39 @@ public class KafkaDaemonTests {
 
         jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
         logger.info("TIME_TO_ASSERT_SOURCE_NOTIFICATION");
+        assertNotNull(jsonArray);
+        logger.info(jsonArray.toString());
+    }
+
+    @Test
+    public void testProduceActiveFoodRunnerData() throws InterruptedException {
+        this.kafkaDaemon.logStartUp();
+        int counter=0;
+        while(!this.kafkaDaemon.getActive()) {
+            Thread.sleep(5000);
+            if(counter++ == 15)
+            {
+                break;
+            }
+        }
+
+        logger.info("****");
+        logger.info("ABOUT_TO_PRODUCE_DATA");
+        logger.info("****");
+
+        ActiveFoodRunnerData activeFoodRunnerData = new ActiveFoodRunnerData(UUID.randomUUID().toString(), "latitude", "longitude");
+        List<ActiveFoodRunnerData> list = new ArrayList<>();
+        list.add(activeFoodRunnerData);
+        this.kafkaDaemon.produceActiveFoodRunnerData(ActiveFoodRunnerData.TOPIC, list);
+
+        Thread.sleep(30000);
+
+        logger.info("****");
+        logger.info("ABOUT_TO_ASSERT_DATA");
+        logger.info("****");
+
+        JsonArray jsonArray = this.kafkaDaemon.readActiveFoodRunnerData(ActiveFoodRunnerData.TOPIC, list);
+        logger.info("TIME_TO_ASSERT_ACTIVE_FOOD_RUNNER_DATA");
         assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
     }
