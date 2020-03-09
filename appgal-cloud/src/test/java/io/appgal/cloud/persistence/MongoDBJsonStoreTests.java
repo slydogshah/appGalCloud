@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.MessageWindow;
+import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import io.quarkus.test.junit.QuarkusTest;
@@ -100,5 +101,18 @@ public class MongoDBJsonStoreTests {
 
         assertTrue(topics.contains(SourceNotification.TOPIC));
         assertTrue(topics.contains(DestinationNotification.TOPIC));
+    }
+
+    @Test
+    public void testStoreActiveFoodRunnerData()
+    {
+        for(int i=0; i<5; i++) {
+            ActiveFoodRunnerData activeFoodRunnerData = new ActiveFoodRunnerData(UUID.randomUUID().toString(), "latitude", "longitude");
+            List<ActiveFoodRunnerData> list = new ArrayList<>();
+            list.add(activeFoodRunnerData);
+            this.mongoDBJsonStore.storeActiveFoodRunnerData(list);
+        }
+
+        //assert
     }
 }

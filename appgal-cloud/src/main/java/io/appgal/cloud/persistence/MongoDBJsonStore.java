@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.client.*;
+import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import org.bson.conversions.Bson;
@@ -97,5 +98,20 @@ public class MongoDBJsonStore {
         collection.insertOne(document);
 
         return topics;
+    }
+
+    public void storeActiveFoodRunnerData(List<ActiveFoodRunnerData> activeFoodRunnerData)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+
+        List<Document> activeFoodRunners = new ArrayList<>();
+        for(ActiveFoodRunnerData local:activeFoodRunnerData)
+        {
+            Document doc = Document.parse(local.toString());
+            activeFoodRunners.add(doc);
+        }
+        collection.insertMany(activeFoodRunners);
     }
 }
