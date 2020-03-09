@@ -153,14 +153,6 @@ public class KafkaDaemon {
         this.commonPool.execute(producerTask);
     }
 
-    public void produceActiveFoodRunnerData(String topic, List<ActiveFoodRunnerData> activeFoodRunnerData)
-    {
-        for(ActiveFoodRunnerData local:activeFoodRunnerData) {
-            ProducerTask producerTask = new ProducerTask(this.kafkaProducer, topic, local.toJson());
-            this.commonPool.execute(producerTask);
-        }
-    }
-
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
         NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
@@ -168,6 +160,19 @@ public class KafkaDaemon {
         NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext, this.lookupTable);
         this.commonPool.execute(notificationFinderTask);
         return notificationFinderTask.join();
+    }
+
+    public void produceActiveFoodRunnerData(String topic, List<ActiveFoodRunnerData> activeFoodRunnerData)
+    {
+        for(ActiveFoodRunnerData local:activeFoodRunnerData) {
+            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+            OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+            MessageWindow messageWindow = new MessageWindow(start,end);
+            NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
+            readNotificationsQueue.add(notificationContext);
+            ProducerTask producerTask = new ProducerTask(this.kafkaProducer, topic, local.toJson());
+            this.commonPool.execute(producerTask);
+        }
     }
 
     public JsonArray readActiveFoodRunnerData(String topic, List<ActiveFoodRunnerData> activeFoodRunnerData)
@@ -179,7 +184,6 @@ public class KafkaDaemon {
             OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
             MessageWindow messageWindow = new MessageWindow(start,end);
             NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
-            readNotificationsQueue.add(notificationContext);
             NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext, this.lookupTable);
             this.commonPool.execute(notificationFinderTask);
             JsonArray result = notificationFinderTask.join();
