@@ -206,7 +206,7 @@ public class KafkaDaemon {
                     logger.debug("NO_ACTIVE_READS_IN_PROGRESS");
                     continue;
                 }
-                this.processNotifications();
+                this.processNotifications(records);
             } while (true);
         }
         catch(Exception ie)
@@ -216,10 +216,12 @@ public class KafkaDaemon {
         }
     }
 
-    private void processNotifications()
+    private void processNotifications(ConsumerRecords<String, String> records)
     {
         NotificationContext notificationContext = readNotificationsQueue.poll();
-        if(notificationContext == null)
+        MessageWindow messageWindow = notificationContext.getMessageWindow();
+
+        /*if(notificationContext == null)
         {
             logger.debug("*********KAFKA_DAEMON***********");
             logger.debug("SKIP_READ_NOTIFICATIONS");
@@ -231,7 +233,7 @@ public class KafkaDaemon {
 
         logger.debug("*********KAFKA_DAEMON***********");
         logger.debug("START_READ_NOTIFICATIONS ("+notificationContext.getMessageWindow().getStart()+")");
-        logger.debug("********************");
+        logger.debug("********************");*/
 
         String topic = notificationContext.getTopic();
         try {
@@ -247,33 +249,31 @@ public class KafkaDaemon {
             }
 
             //
-            Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
-            kafkaConsumer.poll(0);
+            //Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
+            //kafkaConsumer.poll(0);
 
 
-            OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
-            kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
+            //OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
+            //kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
             JsonArray jsonArray = new JsonArray();
-            for (int i = 0; i < 100; i++) {
+            for (ConsumerRecord<String, String> record : records) {
                 //logger.info("Start Short Poll: (" + i + ")");
-                ConsumerRecords<String, String> notificationRecords =
+                //ConsumerRecords<String, String> notificationRecords =
                         kafkaConsumer.poll(1000);
-                if (notificationRecords == null || notificationRecords.isEmpty()) {
-                    logger.debug("****NOTIFICATION_RECORDS_NOT_READ_YET****");
-                    continue;
-                }
-                for (ConsumerRecord<String, String> record : notificationRecords) {
-                    logger.debug("****CONSUME_DATA_TEST_RECORD****");
-                    //logger.debug("RECORD_OFFSET: "+record.offset());
-                    //logger.debug("RECORD_KEY: "+record.key());
-                    logger.debug("RECORD_VALUE: "+record.value());
-                    //logger.info("....");
+                //if (notificationRecords == null || notificationRecords.isEmpty()) {
+                //    logger.debug("****NOTIFICATION_RECORDS_NOT_READ_YET****");
+                //    continue;
+                //}
+                logger.debug("****CONSUME_DATA_TEST_RECORD****");
+                //logger.debug("RECORD_OFFSET: "+record.offset());
+                //logger.debug("RECORD_KEY: "+record.key());
+                logger.debug("RECORD_VALUE: "+record.value());
+                //logger.info("....");
 
-                    String jsonValue = record.value();
+                String jsonValue = record.value();
 
-                    JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
-                    messageWindow.addMessage(jsonObject);
-                }
+                JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
+                messageWindow.addMessage(jsonObject);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -303,11 +303,11 @@ public class KafkaDaemon {
 
     private void process(ConsumerRecord<String, String> record) {
 
-        //logger.info("CONSUME_DATA");
-        //logger.info("RECORD_OFFSET: "+record.offset());
-        //logger.info("RECORD_KEY: "+record.key());
-        //logger.info("RECORD_VALUE: "+record.value());
-        //logger.info("....");
+        logger.info("CONSUME_DATA");
+        logger.info("RECORD_OFFSET: "+record.offset());
+        logger.info("RECORD_KEY: "+record.key());
+        logger.info("RECORD_VALUE: "+record.value());
+        logger.info("....");
     }
 
     private synchronized void printNotificationsQueue()
