@@ -131,6 +131,11 @@ public class KafkaDaemon {
         this.shutdownLatch.countDown();
     }
 
+    public void addTopic(String topic)
+    {
+        this.topics.add(topic);
+    }
+
     public Boolean getActive() {
         return (this.kafkaProducer != null && this.kafkaConsumer != null);
     }

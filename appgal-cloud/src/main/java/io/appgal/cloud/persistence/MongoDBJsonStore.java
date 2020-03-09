@@ -86,7 +86,10 @@ public class MongoDBJsonStore {
 
     public List<String> findKafakaDaemonBootstrapData()
     {
-        List<String> topics = Arrays.asList(SourceNotification.TOPIC, DestinationNotification.TOPIC);
+        List<String> topics = new ArrayList<>();
+        topics.add(SourceNotification.TOPIC);
+        topics.add(DestinationNotification.TOPIC);
+        topics.add(ActiveFoodRunnerData.TOPIC);
 
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 

@@ -144,6 +144,8 @@ public class KafkaDaemonTests {
         logger.info("ABOUT_TO_PRODUCE_DATA");
         logger.info("****");
 
+        this.kafkaDaemon.addTopic(ActiveFoodRunnerData.TOPIC);
+
         ActiveFoodRunnerData activeFoodRunnerData = new ActiveFoodRunnerData(UUID.randomUUID().toString(), "latitude", "longitude");
         List<ActiveFoodRunnerData> list = new ArrayList<>();
         list.add(activeFoodRunnerData);
