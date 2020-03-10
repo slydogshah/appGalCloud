@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.ActiveFoodRunnerData;
+import io.appgal.cloud.model.DataSetFromBegginningOffset;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -41,6 +42,8 @@ public class KafkaDaemon {
     private Map<String,Map<String, JsonArray>> lookupTable;
     private List<String> topics = new ArrayList<>();
 
+    private Queue<DataSetFromBegginningOffset> dataSetFromQueue;
+
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
@@ -55,6 +58,7 @@ public class KafkaDaemon {
         this.shutdownLatch = new CountDownLatch(1);
         this.commonPool = ForkJoinPool.commonPool();
         this.lookupTable = new HashMap<>();
+        this.dataSetFromQueue = new LinkedTransferQueue<>();
     }
 
     public Map<String, Map<String, JsonArray>> getLookupTable() {
@@ -139,6 +143,10 @@ public class KafkaDaemon {
 
     public Boolean getActive() {
         return (this.kafkaProducer != null && this.kafkaConsumer != null);
+    }
+
+    public Queue<DataSetFromBegginningOffset> getDataSetFromQueue() {
+        return dataSetFromQueue;
     }
 
     public void logStartUp()
@@ -288,11 +296,15 @@ public class KafkaDaemon {
 
     private void process(ConsumerRecord<String, String> record) {
 
-        logger.info("CONSUME_DATA");
-        logger.info("RECORD_OFFSET: "+record.offset());
-        logger.info("RECORD_KEY: "+record.key());
-        logger.info("RECORD_VALUE: "+record.value());
-        logger.info("....");
+        //logger.info("CONSUME_DATA");
+        //logger.info("RECORD_OFFSET: "+record.offset());
+        //logger.info("RECORD_KEY: "+record.key());
+        //logger.info("RECORD_VALUE: "+record.value());
+        //logger.info("....");
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(record.value());
+        DataSetFromBegginningOffset dataSetFromBegginningOffset = new DataSetFromBegginningOffset(jsonArray);
+        this.dataSetFromQueue.add(dataSetFromBegginningOffset);
     }
 
     private synchronized void printNotificationsQueue()

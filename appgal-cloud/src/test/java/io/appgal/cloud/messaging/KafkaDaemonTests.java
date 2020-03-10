@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.ActiveFoodRunnerData;
+import io.appgal.cloud.model.DataSetFromBegginningOffset;
 import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import io.quarkus.test.junit.QuarkusTest;
@@ -15,9 +16,7 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -162,6 +161,15 @@ public class KafkaDaemonTests {
         assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
 
-        Thread.sleep(30000);
+        Queue<DataSetFromBegginningOffset> dataSetQueue = this.kafkaDaemon.getDataSetFromQueue();
+
+        Iterator<DataSetFromBegginningOffset> iterator = dataSetQueue.iterator();
+        while(iterator.hasNext())
+        {
+            DataSetFromBegginningOffset local = iterator.next();
+            logger.info("*****RESULTS****");
+            logger.info(local.getJsonArray().toString());
+            logger.info("*********");
+        }
     }
 }
