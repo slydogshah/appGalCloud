@@ -161,5 +161,7 @@ public class KafkaDaemonTests {
         logger.info("TIME_TO_ASSERT_ACTIVE_FOOD_RUNNER_DATA");
         assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
+
+        Thread.sleep(30000);
     }
 }
