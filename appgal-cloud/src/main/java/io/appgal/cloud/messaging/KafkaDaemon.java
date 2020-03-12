@@ -1,6 +1,7 @@
 package io.appgal.cloud.messaging;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.google.gson.JsonParser;
@@ -8,6 +9,7 @@ import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DataSetFromBegginningOffset;
 import io.appgal.cloud.model.SourceNotification;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
+import io.appgal.cloud.util.MapUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -189,12 +191,44 @@ public class KafkaDaemon {
     {
         JsonArray jsonArray = new JsonArray();
 
+        double sourceLatitude = Double.parseDouble(sourceNotification.getLatitude());
+        double sourceLongitude = Double.parseDouble(sourceNotification.getLongitude());
         Iterator<DataSetFromBegginningOffset> iterator = this.dataSetFromQueue.iterator();
         while(iterator.hasNext())
         {
             DataSetFromBegginningOffset local = iterator.next();
             JsonArray activeFoodRunnerData = local.getJsonArray();
-            jsonArray.add(activeFoodRunnerData);
+            JsonElement jsonElement = activeFoodRunnerData.iterator().next();
+            //logger.info(jsonElement.isJsonArray()+"");
+            //logger.info(jsonElement.isJsonObject()+"");
+            //logger.info(jsonElement.isJsonPrimitive()+"");
+            String jsonString = jsonElement.getAsString();
+            JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+
+            String latitude = jsonObject.get("latitude").getAsString();
+            String longitude = jsonObject.get("longitude").getAsString();
+            double foodRunnerLatitude = 0.0d;
+            double foodRunnerLongitude = 0.0d;
+            try
+            {
+                foodRunnerLatitude = Double.parseDouble(latitude);
+                foodRunnerLongitude = Double.parseDouble(longitude);
+            }
+            catch (Exception e)
+            {
+                continue;
+            }
+
+            //Match the coordinates with the FoodRunner
+            double distance = MapUtils.calculateDistance(sourceLatitude,sourceLongitude,foodRunnerLatitude,foodRunnerLongitude);
+            //if(distance < 5d)
+            //{
+            //    jsonArray.add(jsonObject);
+            //}
+            logger.info("....");
+            logger.info("Distance: "+distance);
+            logger.info("....");
+            jsonArray.add(jsonObject);
         }
         return jsonArray;
     }

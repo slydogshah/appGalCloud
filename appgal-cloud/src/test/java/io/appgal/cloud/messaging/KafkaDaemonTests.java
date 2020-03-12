@@ -145,7 +145,8 @@ public class KafkaDaemonTests {
 
         this.kafkaDaemon.addTopic(ActiveFoodRunnerData.TOPIC);
 
-        ActiveFoodRunnerData activeFoodRunnerData = new ActiveFoodRunnerData(UUID.randomUUID().toString(), "latitude", "longitude");
+        ActiveFoodRunnerData activeFoodRunnerData = new ActiveFoodRunnerData(UUID.randomUUID().toString(),
+                "44.9441", "-93.0852");
         List<ActiveFoodRunnerData> list = new ArrayList<>();
         list.add(activeFoodRunnerData);
         this.kafkaDaemon.produceActiveFoodRunnerData(ActiveFoodRunnerData.TOPIC, list);
@@ -163,7 +164,13 @@ public class KafkaDaemonTests {
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(sourceNotificationId);
         sourceNotification.setMessageWindow(messageWindow);
+        String latitude = "46.066667";
+        String longitude = "11.116667";
+        sourceNotification.setLatitude(latitude);
+        sourceNotification.setLongitude(longitude);
         JsonArray foodRunners = this.kafkaDaemon.findTheClosestFoodRunner(sourceNotification);
+        logger.info("....");
         logger.info(foodRunners.toString());
+        logger.info("....");
     }
 }
