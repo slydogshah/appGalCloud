@@ -156,20 +156,14 @@ public class KafkaDaemonTests {
         logger.info("ABOUT_TO_ASSERT_DATA");
         logger.info("****");
 
-        JsonArray jsonArray = this.kafkaDaemon.readActiveFoodRunnerData(ActiveFoodRunnerData.TOPIC, list);
-        logger.info("TIME_TO_ASSERT_ACTIVE_FOOD_RUNNER_DATA");
-        assertNotNull(jsonArray);
-        logger.info(jsonArray.toString());
-
-        Queue<DataSetFromBegginningOffset> dataSetQueue = this.kafkaDaemon.getDataSetFromQueue();
-
-        Iterator<DataSetFromBegginningOffset> iterator = dataSetQueue.iterator();
-        while(iterator.hasNext())
-        {
-            DataSetFromBegginningOffset local = iterator.next();
-            logger.info("*****RESULTS****");
-            logger.info(local.getJsonArray().toString());
-            logger.info("*********");
-        }
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC);
+        MessageWindow messageWindow = new MessageWindow(start, end);
+        String sourceNotificationId = UUID.randomUUID().toString();
+        SourceNotification sourceNotification = new SourceNotification();
+        sourceNotification.setSourceNotificationId(sourceNotificationId);
+        sourceNotification.setMessageWindow(messageWindow);
+        JsonArray foodRunners = this.kafkaDaemon.findTheClosestFoodRunner(sourceNotification);
+        logger.info(foodRunners.toString());
     }
 }

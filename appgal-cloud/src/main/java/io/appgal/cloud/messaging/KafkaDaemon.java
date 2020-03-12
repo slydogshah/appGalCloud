@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DataSetFromBegginningOffset;
+import io.appgal.cloud.model.SourceNotification;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -184,19 +185,16 @@ public class KafkaDaemon {
         }
     }
 
-    public JsonArray readActiveFoodRunnerData(String topic, List<ActiveFoodRunnerData> activeFoodRunnerData)
+    public JsonArray findTheClosestFoodRunner(SourceNotification sourceNotification)
     {
         JsonArray jsonArray = new JsonArray();
-        int size = activeFoodRunnerData.size();
-        for(int i=0; i<size; i++) {
-            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-            OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-            MessageWindow messageWindow = new MessageWindow(start,end);
-            NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
-            NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext, this.lookupTable);
-            this.commonPool.execute(notificationFinderTask);
-            JsonArray result = notificationFinderTask.join();
-            jsonArray.add(result);
+
+        Iterator<DataSetFromBegginningOffset> iterator = this.dataSetFromQueue.iterator();
+        while(iterator.hasNext())
+        {
+            DataSetFromBegginningOffset local = iterator.next();
+            JsonArray activeFoodRunnerData = local.getJsonArray();
+            jsonArray.add(activeFoodRunnerData);
         }
         return jsonArray;
     }
