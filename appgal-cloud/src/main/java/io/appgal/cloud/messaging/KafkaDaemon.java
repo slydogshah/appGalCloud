@@ -134,6 +134,7 @@ public class KafkaDaemon {
     public void stop()
     {
         this.readNotificationsQueue = null;
+        this.dataSetFromQueue = null;
         this.kafkaProducer.close();
         this.kafkaConsumer.close();
         this.shutdownLatch.countDown();
@@ -198,43 +199,42 @@ public class KafkaDaemon {
         {
             DataSetFromBegginningOffset local = iterator.next();
             JsonArray activeFoodRunnerData = local.getJsonArray();
-            JsonElement jsonElement = activeFoodRunnerData.iterator().next();
-            //logger.info(jsonElement.isJsonArray()+"");
-            //logger.info(jsonElement.isJsonObject()+"");
-            //logger.info(jsonElement.isJsonPrimitive()+"");
-            String jsonString = jsonElement.getAsString();
+            String jsonString = activeFoodRunnerData.iterator().next().getAsString();
             JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-            if(!jsonObject.has("latitude") || !jsonObject.has("longitude"))
+            try {
+                if (!jsonObject.has("latitude") || !jsonObject.has("longitude")) {
+                    logger.info("IGNORING_INVALID_DATA: " + jsonString);
+                    continue;
+                }
+
+                String latitude = jsonObject.get("latitude").getAsString();
+                String longitude = jsonObject.get("longitude").getAsString();
+                double foodRunnerLatitude = 0.0d;
+                double foodRunnerLongitude = 0.0d;
+                try {
+                    foodRunnerLatitude = Double.parseDouble(latitude);
+                    foodRunnerLongitude = Double.parseDouble(longitude);
+                } catch (Exception e) {
+                    logger.info("IGNORING_INVALID_DATA: " + jsonString);
+                    continue;
+                }
+
+                //Match the coordinates with the FoodRunner
+                double distance = MapUtils.calculateDistance(sourceLatitude, sourceLongitude, foodRunnerLatitude, foodRunnerLongitude);
+                //if(distance < 5d)
+                //{
+                //    jsonArray.add(jsonObject);
+                //}
+                //logger.info("....");
+                //logger.info("Distance: "+distance);
+                //logger.info("....");
+                jsonArray.add(jsonObject);
+            }
+            catch(Exception e)
             {
-                logger.info("IGNORING_INVALID_DATA: "+jsonString);
+                logger.info("IGNORING_INVALID_DATA: " + jsonString);
                 continue;
             }
-
-            String latitude = jsonObject.get("latitude").getAsString();
-            String longitude = jsonObject.get("longitude").getAsString();
-            double foodRunnerLatitude = 0.0d;
-            double foodRunnerLongitude = 0.0d;
-            try
-            {
-                foodRunnerLatitude = Double.parseDouble(latitude);
-                foodRunnerLongitude = Double.parseDouble(longitude);
-            }
-            catch (Exception e)
-            {
-                logger.info("IGNORING_INVALID_DATA: "+jsonString);
-                continue;
-            }
-
-            //Match the coordinates with the FoodRunner
-            double distance = MapUtils.calculateDistance(sourceLatitude,sourceLongitude,foodRunnerLatitude,foodRunnerLongitude);
-            //if(distance < 5d)
-            //{
-            //    jsonArray.add(jsonObject);
-            //}
-            //logger.info("....");
-            //logger.info("Distance: "+distance);
-            //logger.info("....");
-            jsonArray.add(jsonObject);
         }
         return jsonArray;
     }
