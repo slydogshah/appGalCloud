@@ -3,19 +3,21 @@ package io.appgal.cloud.messaging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.google.gson.JsonParser;
+
 import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DataSetFromBegginningOffset;
 import io.appgal.cloud.model.SourceNotification;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import io.appgal.cloud.util.MapUtils;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.TopicPartition;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +27,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import java.net.InetAddress;
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.*;
@@ -178,7 +178,7 @@ public class KafkaDaemon {
     {
         for(ActiveFoodRunnerData local:activeFoodRunnerData) {
             OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-            OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
+            OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC);
             MessageWindow messageWindow = new MessageWindow(start,end);
             NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
             readNotificationsQueue.add(notificationContext);
@@ -204,6 +204,11 @@ public class KafkaDaemon {
             //logger.info(jsonElement.isJsonPrimitive()+"");
             String jsonString = jsonElement.getAsString();
             JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+            if(!jsonObject.has("latitude") || !jsonObject.has("longitude"))
+            {
+                logger.info("IGNORING_INVALID_DATA: "+jsonString);
+                continue;
+            }
 
             String latitude = jsonObject.get("latitude").getAsString();
             String longitude = jsonObject.get("longitude").getAsString();
@@ -216,6 +221,7 @@ public class KafkaDaemon {
             }
             catch (Exception e)
             {
+                logger.info("IGNORING_INVALID_DATA: "+jsonString);
                 continue;
             }
 
@@ -225,9 +231,9 @@ public class KafkaDaemon {
             //{
             //    jsonArray.add(jsonObject);
             //}
-            logger.info("....");
-            logger.info("Distance: "+distance);
-            logger.info("....");
+            //logger.info("....");
+            //logger.info("Distance: "+distance);
+            //logger.info("....");
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -314,15 +320,16 @@ public class KafkaDaemon {
         Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
         kafkaConsumer.poll(100);
 
-
+        //Make sure only unique data gets put in the Queue
         OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
         ConsumerRecords<String,String> records = kafkaConsumer.poll(100);
-        for(ConsumerRecord local:records)
+        for(ConsumerRecord<String, String> record:records)
         {
-            logger.info("**********");
-            logger.info("Log Data: "+local.value());
-            logger.info("**********");
+            JsonArray jsonArray = new JsonArray();
+            jsonArray.add(record.value());
+            DataSetFromBegginningOffset dataSetFromBegginningOffset = new DataSetFromBegginningOffset(jsonArray);
+            this.dataSetFromQueue.add(dataSetFromBegginningOffset);
         }
     }
 
