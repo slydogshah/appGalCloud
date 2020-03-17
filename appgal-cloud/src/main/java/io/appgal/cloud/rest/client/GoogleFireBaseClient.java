@@ -23,6 +23,11 @@ public class GoogleFireBaseClient {
             jsonObject.addProperty("registration_id",
                     "AIzaSyAF5tpmmfkXGleTewkzy1ji7MTlCciOnfY");
             jsonObject.addProperty("to", "cL9pKU-1ikU:APA91bHz3-Gqjkuqu-vXCk7Za7_IRcRxAZl6zwes5-gqS1xnHG4dqggnJRUa0wJOx3x_rC2jKBWh7ka9XJvVKN38yN8t1T5gvYSdYwvUBKcRm3Hsfa8uJo6ntjdDpdDGCDloYkjraCsV");
+
+            jsonObject.addProperty("title", "testTitle");
+            jsonObject.addProperty("body", "testBody");
+            jsonObject.addProperty("message_id", "weather");
+
             String body = jsonObject.toString();
             logger.info("....");
             logger.info(body);
