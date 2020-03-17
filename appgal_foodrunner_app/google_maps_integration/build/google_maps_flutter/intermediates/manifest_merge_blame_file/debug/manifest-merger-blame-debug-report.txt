@@ -3,6 +3,6 @@
 3    package="io.flutter.plugins.googlemaps" >
 4
 5    <uses-sdk android:minSdkVersion="16" />
-5-->/Users/babyboy/devtools/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.24+1/android/src/main/AndroidManifest.xml
+5-->/Users/babyboy/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.24+1/android/src/main/AndroidManifest.xml
 6
 7</manifest>
