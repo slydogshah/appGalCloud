@@ -26,7 +26,8 @@ dependencies:
   flutter_gallery_assets: ^0.1.9+2
   package_info: ^0.4.0+13
   google_fonts: ^0.3.5
-  google_maps_flutter: ^0.5.11
+  #google_maps_flutter: ^0.5.11
+  google_maps_flutter: 0.5.24+1
 
 dev_dependencies:
   flutter_test:

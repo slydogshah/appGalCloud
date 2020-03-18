@@ -8,7 +8,9 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="FutureGeniuses"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.AppCompat.Light"
+    >
 
         <!-- Add the following entry, with your API key -->
         <meta-data android:name="com.google.android.geo.API_KEY"
@@ -17,7 +19,6 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
