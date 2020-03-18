@@ -1,5 +1,6 @@
 package io.appgal.cloud.rest.client;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +21,13 @@ public class GoogleFireBaseClient {
     {
         try {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("registration_id",
-                    "AIzaSyAF5tpmmfkXGleTewkzy1ji7MTlCciOnfY");
-            jsonObject.addProperty("to", "f21wRZI7lDQ:APA91bGWYODRf8vuJIq73cA5E7O5n5rZ8V4HSCsmrhU2iabKoEt_K4bSNYGwHaGVGMdjZllxmI7Qwvar_tnE2c9-b7lWsZRPQxMDuMSFeuKQhaNkRMC8k6ygBefyAJ4xApYwwZWaqnR0");
+            JsonArray jsonArray = new JsonArray();
+            jsonArray.add("f21wRZI7lDQ:APA91bGWYODRf8vuJIq73cA5E7O5n5rZ8V4HSCsmrhU2iabKoEt_K4bSNYGwHaGVGMdjZllxmI7Qwvar_tnE2c9-b7lWsZRPQxMDuMSFeuKQhaNkRMC8k6ygBefyAJ4xApYwwZWaqnR0");
+            jsonObject.add("registration_ids", jsonArray);
 
             jsonObject.addProperty("title", "testTitle");
             jsonObject.addProperty("body", "testBody");
-            jsonObject.addProperty("message_id", "weather");
+            jsonObject.addProperty("topic", "weather");
 
             String body = jsonObject.toString();
             logger.info("....");
@@ -52,8 +53,12 @@ public class GoogleFireBaseClient {
         }
         catch(HttpClientErrorException e)
         {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            //logger.error(e.getMessage(), e);
+            //throw new RuntimeException(e);
+
+            logger.info("....");
+            logger.info(e.getResponseBodyAsString());
+            logger.info("....");
         }
         catch(URISyntaxException e)
         {
