@@ -76,6 +76,8 @@ configurations.all {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    compile 'com.android.support:appcompat-v7:22.2.0'
+
     implementation 'com.google.firebase:firebase-iid:20.0.2'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
