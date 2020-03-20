@@ -17,7 +17,8 @@ public class FirebaseComponentTests {
         // 10.0.2.2 is the special IP address to connect to the 'localhost' of
         // the host computer from an Android emulator.
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setHost("10.0.2.2:8080")
+                //.setHost("10.0.2.2:8080")
+                .setHost("127.0.0.1:8080")
                 .setSslEnabled(false)
                 .setPersistenceEnabled(false)
                 .build();
