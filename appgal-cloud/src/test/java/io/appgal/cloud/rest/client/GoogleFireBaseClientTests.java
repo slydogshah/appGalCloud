@@ -21,8 +21,32 @@ public class GoogleFireBaseClientTests {
     }
 
     @Test
-    public void testCheckNimbusOAuth2Flow() throws Exception
+    public void testCheckNimbusOAuthCredentialsGrant() throws Exception
     {
-        googleFireBaseClient.checkNimbusOAuth2Flow();
+        googleFireBaseClient.checkNimbusOAuthCredentialsGrant();
+    }
+
+    @Test
+    public void testCheckNimbusOAuthCodeGrant() throws Exception
+    {
+        googleFireBaseClient.checkNimbusOAuthCodeGrant();
+    }
+
+    @Test
+    public void testCheckGoogleOAuthCodeGrant() throws Exception
+    {
+        googleFireBaseClient.checkGoogleOAuthCodeGrant();
+    }
+
+    @Test
+    public void testNimbusImpliciFlow() throws Exception
+    {
+        googleFireBaseClient.nimbusImpliciFlow();
+    }
+
+    @Test
+    public void testGetOAuthToken() throws Exception
+    {
+        googleFireBaseClient.getOAuthToken();
     }
 }
