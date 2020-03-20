@@ -44,8 +44,10 @@ import org.springframework.web.client.RestTemplate;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.client.Client;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.SecureRandom;
 import java.util.*;
 
 import com.nimbusds.oauth2.sdk.*;
@@ -53,6 +55,7 @@ import com.nimbusds.oauth2.sdk.auth.*;
 import com.nimbusds.oauth2.sdk.http.*;
 import com.nimbusds.oauth2.sdk.id.*;
 import com.nimbusds.oauth2.sdk.token.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @ApplicationScoped
 public class GoogleFireBaseClient {
@@ -322,7 +325,36 @@ public class GoogleFireBaseClient {
 
     public void getOAuthToken() throws Exception
     {
+        try {
+            String authenticationUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+            //String redirectUri = "https://accounts.google.com/o/oauth2/auth";
+            String redirectUri = "https://appgalfoodrunnerapp.firebaseapp.com/__/auth/handler";
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(authenticationUrl)
+                    .queryParam("response_type", "code")
+                    .queryParam("client_id", "107945977384061736446")
+                    .queryParam("scope", "openid")
+                    .queryParam("redirect_uri", redirectUri)
+                    .queryParam("state", new BigInteger(130, new SecureRandom()).toString(32))
+                    .queryParam("nonce", UUID.randomUUID().toString());
 
+            RestTemplate restTemplate = new RestTemplate();
+            RequestEntity<Void> get = RequestEntity.get(new URI(builder.toUriString())).build();
+            final ResponseEntity<String> responseEntity = restTemplate.exchange(get, String.class);
+
+            logger.info("*******");
+            logger.info(responseEntity.getBody());
+            logger.info("*******");
+        }
+        catch(HttpClientErrorException e)
+        {
+            logger.error(e.getMessage(), e);
+
+            logger.info("*************");
+            logger.info(e.getResponseBodyAsString());
+            logger.info("*************");
+
+            throw new RuntimeException(e);
+        }
     }
 }
 
