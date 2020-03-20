@@ -19,4 +19,10 @@ public class GoogleFireBaseClientTests {
     {
         googleFireBaseClient.registerToken("blahToken");
     }
+
+    @Test
+    public void testCheckNimbusOAuth2Flow() throws Exception
+    {
+        googleFireBaseClient.checkNimbusOAuth2Flow();
+    }
 }
