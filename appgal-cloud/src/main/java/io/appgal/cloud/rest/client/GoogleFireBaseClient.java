@@ -327,11 +327,10 @@ public class GoogleFireBaseClient {
     {
         try {
             String authenticationUrl = "https://accounts.google.com/o/oauth2/v2/auth";
-            //String redirectUri = "https://accounts.google.com/o/oauth2/auth";
-            String redirectUri = "https://appgalfoodrunnerapp.firebaseapp.com/__/auth/handler";
+            String redirectUri = "https://appgallabs.firebaseapp.com/__/auth/handler";
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(authenticationUrl)
                     .queryParam("response_type", "code")
-                    .queryParam("client_id", "107945977384061736446")
+                    .queryParam("client_id", "117563022584763902984")
                     .queryParam("scope", "openid")
                     .queryParam("redirect_uri", redirectUri)
                     .queryParam("state", new BigInteger(130, new SecureRandom()).toString(32))
