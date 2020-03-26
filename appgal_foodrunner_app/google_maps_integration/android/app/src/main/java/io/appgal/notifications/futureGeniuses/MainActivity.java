@@ -58,35 +58,6 @@ public class MainActivity extends AppCompatActivity {
         mainActivity = this;
 
         //Setup the UI Components
-        Button subscribeButton = findViewById(R.id.subscribeButton);
-        subscribeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Subscribing to weather topic");
-                Log.i("0", "ABOUT_TO_INIT");
-                //FirebaseApp.initializeApp(MainActivity.this);
-                FirebaseMessaging.getInstance().subscribeToTopic("weather")
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                try
-                                {
-                                    String msg = getString(R.string.msg_subscribed);
-                                    if (!task.isSuccessful()) {
-                                        msg = getString(R.string.msg_subscribe_failed);
-                                    }
-                                    Log.d(TAG, msg);
-                                    Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                                }
-                                catch(Exception e){
-                                    Log.e("tag",e.getMessage(),e);
-                                }
-                            }
-                        });
-                // [END subscribe_topics]
-            }
-        });
-
         Button logTokenButton = findViewById(R.id.logTokenButton);
         logTokenButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
 
-            Intent intent2 = new Intent(this, appgal.notifications.futureGeniuses.FirebaseBackgroundService.class);
+            Intent intent2 = new Intent(this, FirebaseBackgroundService.class);
             startService(intent2);
         }
     }
