@@ -1,4 +1,4 @@
-package appgal.notifications.futureGeniuses;
+package io.appgal.notifications.futureGeniuses;
 
 import android.content.Context;
 import android.content.Intent;

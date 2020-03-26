@@ -46,11 +46,6 @@ public class FirebaseService extends FirebaseMessagingService
             nhMessage = remoteMessage.getData().values().iterator().next();
         }
 
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
-        if (MainActivity.isVisible) {
-            MainActivity.mainActivity.ToastNotify(nhMessage);
-        }
         sendNotification(nhMessage);
     }
 

@@ -88,10 +88,5 @@ public class RegistrationIntentService extends IntentService {
             // If an exception happens while fetching the new token or updating registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
         }
-
-        // Notify UI that registration has completed.
-        if (MainActivity.isVisible) {
-            MainActivity.mainActivity.ToastNotify(resultString);
-        }
     }
 }
