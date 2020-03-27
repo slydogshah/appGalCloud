@@ -73,8 +73,8 @@ List<TravelDestination> destinations(BuildContext context) => [
         title:
             //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
             "FoodRunner Identification: Thank You (for being closeby)",
-        description: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationDescription3,
+        //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
+        description : "Dennis The Menace",
         city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
         location: GalleryLocalizations.of(context)
             .cardsDemoTravelDestinationLocation1,
