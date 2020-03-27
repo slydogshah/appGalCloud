@@ -42,7 +42,6 @@ class TravelDestination {
 }
 
 List<TravelDestination> destinations(BuildContext context) => [
-      /*
       TravelDestination(
         assetName: 'places/india_thanjavur_market.png',
         assetPackage: _kGalleryAssetsPackage,
@@ -66,13 +65,11 @@ List<TravelDestination> destinations(BuildContext context) => [
             .cardsDemoTravelDestinationLocation2,
         type: CardDemoType.tappable,
       ),
-      */
       TravelDestination(
         assetName: 'places/india_tanjore_thanjavur_temple.png',
         assetPackage: _kGalleryAssetsPackage,
         title:
-            //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
-            "FoodRunner Identification: Thank You (for being closeby)",
+            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
         description: GalleryLocalizations.of(context)
             .cardsDemoTravelDestinationDescription3,
         city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
