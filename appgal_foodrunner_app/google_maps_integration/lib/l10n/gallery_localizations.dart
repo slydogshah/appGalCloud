@@ -4988,6 +4988,13 @@ class GalleryLocalizations {
         name: 'starterAppTooltipShare',
         desc: 'Tooltip on share icon.');
   }
+
+  String get appGalCloseByFoodRunnersTitle {
+    return Intl.message('AppGal CloseBy FoodRunners',
+        locale: _localeName,
+        name: 'appGalCloseByFoodRunnersTitle',
+        desc: 'Title for the AppGal CloseBy FoodRunners Scene');
+  }
 }
 
 class _GalleryLocalizationsDelegate

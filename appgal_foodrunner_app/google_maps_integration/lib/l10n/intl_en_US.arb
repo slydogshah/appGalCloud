@@ -2852,5 +2852,9 @@
   "fortnightlyHeadlineBees": "Farmland Bees In Short Supply",
   "@fortnightlyHeadlineBees": {
     "description": "Headline for a news article about bees."
+  },
+  "appGalCloseByFoodRunnersTitle": "AppGal CloseBy FoodRunners",
+  "@appGalCloseByFoodRunnersTitle": {
+    "description": "Title for the AppGal CloseBy FoodRunners Scene"
   }
 }

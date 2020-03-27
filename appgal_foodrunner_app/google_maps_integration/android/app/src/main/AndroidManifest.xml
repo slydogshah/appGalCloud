@@ -17,7 +17,7 @@
                android:value="AIzaSyAAGiFi2Vm2__zWssAL6sgghY5UEPTdlDs"/>
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.flutter_app_maps_0.MainActivity"
             android:launchMode="singleTop"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"

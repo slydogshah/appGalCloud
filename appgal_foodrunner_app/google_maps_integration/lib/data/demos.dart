@@ -28,7 +28,7 @@ import 'package:google_maps_integration/demos/material/cards_demo.dart';
 import 'package:google_maps_integration/demos/material/chip_demo.dart';
 import 'package:google_maps_integration/demos/material/data_table_demo.dart';
 import 'package:google_maps_integration/demos/material/dialog_demo.dart';
-import 'package:google_maps_integration/demos/material/grid_list_demo.dart';
+import 'package:google_maps_integration/demos/material/appGalCloseByFoodRunnersScene.dart';
 import 'package:google_maps_integration/demos/material/list_demo.dart';
 import 'package:google_maps_integration/demos/material/menu_demo.dart';
 import 'package:google_maps_integration/demos/material/picker_demo.dart';
