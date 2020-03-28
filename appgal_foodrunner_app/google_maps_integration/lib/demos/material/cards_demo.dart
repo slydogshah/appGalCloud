@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_integration/l10n/gallery_localizations.dart';
 
+import './../../src/model/profile.dart';
+import './../../src/rest/profileRestClient.dart';
+
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
 // BEGIN cardsDemo
@@ -25,12 +28,15 @@ class TravelDestination {
     @required this.city,
     @required this.location,
     this.type = CardDemoType.standard,
+    this.profile,
   })  : assert(assetName != null),
         assert(assetPackage != null),
         assert(title != null),
         assert(description != null),
         assert(city != null),
-        assert(location != null);
+        assert(location != null),
+        assert(profile != null)
+        ;
 
   final String assetName;
   final String assetPackage;
@@ -39,10 +45,10 @@ class TravelDestination {
   final String city;
   final String location;
   final CardDemoType type;
+  final Profile profile;
 }
 
-List<TravelDestination> destinations(BuildContext context) => [
-      /*
+/*List<TravelDestination> destinations(BuildContext context) => [
       TravelDestination(
         assetName: 'places/india_thanjavur_market.png',
         assetPackage: _kGalleryAssetsPackage,
@@ -66,7 +72,8 @@ List<TravelDestination> destinations(BuildContext context) => [
             .cardsDemoTravelDestinationLocation2,
         type: CardDemoType.tappable,
       ),
-      */
+      ProfileRestClient restClient = new ProfileRestClient();
+      Profile profile = restClient.getProfile();
       TravelDestination(
         assetName: 'places/india_tanjore_thanjavur_temple.png',
         assetPackage: _kGalleryAssetsPackage,
@@ -80,7 +87,53 @@ List<TravelDestination> destinations(BuildContext context) => [
             .cardsDemoTravelDestinationLocation1,
         type: CardDemoType.selectable,
       ),
-    ];
+    ];*/
+
+    List<TravelDestination> destinations(BuildContext context)
+    {
+        /*TravelDestination(
+        assetName: 'places/india_thanjavur_market.png',
+        assetPackage: _kGalleryAssetsPackage,
+        title:
+            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle1,
+        description: GalleryLocalizations.of(context)
+            .cardsDemoTravelDestinationDescription1,
+        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
+        location: GalleryLocalizations.of(context)
+            .cardsDemoTravelDestinationLocation1,
+      ),
+      TravelDestination(
+        assetName: 'places/india_chettinad_silk_maker.png',
+        assetPackage: _kGalleryAssetsPackage,
+        title:
+            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle2,
+        description: GalleryLocalizations.of(context)
+            .cardsDemoTravelDestinationDescription2,
+        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity2,
+        location: GalleryLocalizations.of(context)
+            .cardsDemoTravelDestinationLocation2,
+        type: CardDemoType.tappable,
+      ),*/
+      ProfileRestClient restClient = new ProfileRestClient();
+      Profile profile = restClient.getProfile();
+      TravelDestination tirth = TravelDestination(
+        assetName: 'places/india_tanjore_thanjavur_temple.png',
+        assetPackage: _kGalleryAssetsPackage,
+        title:
+            //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
+            profile.id,
+        //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
+        description : profile.email,
+        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
+        location: GalleryLocalizations.of(context)
+            .cardsDemoTravelDestinationLocation1,
+        type: CardDemoType.selectable,
+        profile: profile,
+      );
+      List<TravelDestination> tirths = new List();
+      tirths.add(tirth);
+      return tirths;
+    }
 
 class TravelDestinationItem extends StatelessWidget {
   const TravelDestinationItem({Key key, @required this.destination, this.shape})

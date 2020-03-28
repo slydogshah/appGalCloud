@@ -1,11 +1,14 @@
 import 'package:test/test.dart';
 
 import '../../rest/profileRestClient.dart';
+//import '../../model/profile.dart';
+import 'package:AppGal/model/profile.dart';
 
 void main(List<String> args) {
-  test("getNotification", () {
+  test("getProfile", () {
       ProfileRestClient restClient = new ProfileRestClient();
-      restClient.getNotification();
+      Profile profile = restClient.getProfile();
+      print(profile.toString());
     });
 }
 
