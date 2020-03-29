@@ -47,75 +47,23 @@ class TravelDestination {
   final CardDemoType type;
   final Profile profile;
 }
-
-/*List<TravelDestination> destinations(BuildContext context) => [
-      TravelDestination(
-        assetName: 'places/india_thanjavur_market.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle1,
-        description: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationDescription1,
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation1,
-      ),
-      TravelDestination(
-        assetName: 'places/india_chettinad_silk_maker.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle2,
-        description: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationDescription2,
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity2,
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation2,
-        type: CardDemoType.tappable,
-      ),
+    
+List<TravelDestination> destinations(BuildContext context)
+{
+      List<TravelDestination> tirths = new List();
       ProfileRestClient restClient = new ProfileRestClient();
-      Profile profile = restClient.getProfile();
-      TravelDestination(
-        assetName: 'places/india_tanjore_thanjavur_temple.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
-            "FoodRunner Identification: Thank You (for being closeby)",
-        //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
-        description : "Dennis The Menace",
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation1,
-        type: CardDemoType.selectable,
-      ),
-    ];*/
+      
+      /*Future<Profile> profileFuture = restClient.getProfile();
+      profileFuture.then((profile){
+        processProfile(context, profile, tirths);
+      });
+      profileFuture.whenComplete(()=>{});*/
 
-    List<TravelDestination> destinations(BuildContext context)
-    {
-        /*TravelDestination(
-        assetName: 'places/india_thanjavur_market.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle1,
-        description: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationDescription1,
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation1,
-      ),
-      TravelDestination(
-        assetName: 'places/india_chettinad_silk_maker.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle2,
-        description: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationDescription2,
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity2,
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation2,
-        type: CardDemoType.tappable,
-      ),*/
-      ProfileRestClient restClient = new ProfileRestClient();
-      Profile profile = restClient.getProfile();
+      return tirths;
+}
+
+void processProfile(BuildContext context, Profile profile, List<TravelDestination> tirths)
+{
       TravelDestination tirth = TravelDestination(
         assetName: 'places/india_tanjore_thanjavur_temple.png',
         assetPackage: _kGalleryAssetsPackage,
@@ -124,16 +72,14 @@ class TravelDestination {
             profile.id,
         //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
         description : profile.email,
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
+        city : profile.mobile,
         location: GalleryLocalizations.of(context)
             .cardsDemoTravelDestinationLocation1,
         type: CardDemoType.selectable,
         profile: profile,
       );
-      List<TravelDestination> tirths = new List();
       tirths.add(tirth);
-      return tirths;
-    }
+}
 
 class TravelDestinationItem extends StatelessWidget {
   const TravelDestinationItem({Key key, @required this.destination, this.shape})

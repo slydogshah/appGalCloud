@@ -1,17 +1,16 @@
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import '../model/profile.dart';
 
 class ProfileRestClient
 {
-  Profile getProfile()
+  Future<Profile> getProfile() async
   {
-    /*String remoteUrl = "http://localhost:8080/notification/getOutstandingFoodRunnerNotification/";
-    http.post(remoteUrl).then((response) {
-      print(response.body);
-    });*/
-
-    Profile profile = new Profile("BLAHBLAHBLAH","email","mobile","photo");
+    String remoteUrl = "http://localhost:8080/registration/profile/";
+    String profileJson = await http.read(remoteUrl);
+    Map<String, dynamic> map = jsonDecode(profileJson);
+    Profile profile = Profile.fromJson(map);
     return profile;
   }
 }
