@@ -1,8 +1,8 @@
 class Profile {
-  final String id;
-  final String email;
-  final String mobile;
-  final String photo;
+  String id;
+  String email;
+  String mobile;
+  String photo;
 
   Profile(this.id, this.email, this.mobile, this.photo);
 
