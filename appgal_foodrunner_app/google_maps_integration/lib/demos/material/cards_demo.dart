@@ -11,7 +11,40 @@ import './../../src/rest/profileRestClient.dart';
 
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
-// BEGIN cardsDemo
+class CardsDemo extends StatefulWidget {
+  @override
+  _CardsDemoState createState() => _CardsDemoState();
+}
+
+class _CardsDemoState extends State<CardsDemo> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(GalleryLocalizations.of(context).demoCardTitle),
+      ),
+      body: Scrollbar(
+        child: ListView(
+          padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+          children: [
+            for (final destination in destinations(context))
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: (destination.type == CardDemoType.standard)
+                    ? TravelDestinationItem(destination: destination)
+                    : destination.type == CardDemoType.tappable
+                        ? TappableTravelDestinationItem(
+                            destination: destination)
+                        : SelectableTravelDestinationItem(
+                            destination: destination),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 enum CardDemoType {
   standard,
@@ -52,12 +85,21 @@ List<TravelDestination> destinations(BuildContext context)
 {
       List<TravelDestination> tirths = new List();
       ProfileRestClient restClient = new ProfileRestClient();
-      
-      /*Future<Profile> profileFuture = restClient.getProfile();
-      profileFuture.then((profile){
-        processProfile(context, profile, tirths);
-      });
-      profileFuture.whenComplete(()=>{});*/
+      Future<Profile> profileFuture = restClient.getProfile();
+
+      print("*******");
+      print("SUCCESS");
+      print("*******");
+
+      FutureBuilder<Profile> futureBuilder = new FutureBuilder(future: profileFuture,
+        builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
+          if(snapshot.hasData)
+          {
+            Profile profile = snapshot.data;
+            processProfile(context, profile, tirths);
+          }
+        }
+      );
 
       return tirths;
 }
@@ -79,6 +121,133 @@ void processProfile(BuildContext context, Profile profile, List<TravelDestinatio
         profile: profile,
       );
       tirths.add(tirth);
+}
+
+
+
+
+class SectionTitle extends StatelessWidget {
+  const SectionTitle({
+    Key key,
+    this.title,
+  }) : super(key: key);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 4, 4, 12),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(title, style: Theme.of(context).textTheme.subhead),
+      ),
+    );
+  }
+}
+
+class TravelDestinationContent extends StatelessWidget {
+  const TravelDestinationContent({Key key, @required this.destination})
+      : assert(destination != null),
+        super(key: key);
+
+  final TravelDestination destination;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextStyle titleStyle =
+        theme.textTheme.headline.copyWith(color: Colors.white);
+    final TextStyle descriptionStyle = theme.textTheme.subhead;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 184,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                // In order to have the ink splash appear above the image, you
+                // must use Ink.image. This allows the image to be painted as
+                // part of the Material and display ink effects above it. Using
+                // a standard Image will obscure the ink splash.
+                child: Ink.image(
+                  image: AssetImage(destination.assetName,
+                      package: destination.assetPackage),
+                  fit: BoxFit.cover,
+                  child: Container(),
+                ),
+              ),
+              Positioned(
+                bottom: 16,
+                left: 16,
+                right: 16,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    destination.title,
+                    style: titleStyle,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Description and share/explore buttons.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: DefaultTextStyle(
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            style: descriptionStyle,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // This array contains the three line description on each card
+                // demo.
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    destination.description,
+                    style: descriptionStyle.copyWith(color: Colors.black54),
+                  ),
+                ),
+                Text(destination.city),
+                Text(destination.location),
+              ],
+            ),
+          ),
+        ),
+        if (destination.type == CardDemoType.standard)
+          // share, explore buttons
+          ButtonBar(
+            alignment: MainAxisAlignment.start,
+            children: [
+              FlatButton(
+                child: Text(GalleryLocalizations.of(context).demoMenuShare,
+                    semanticsLabel: GalleryLocalizations.of(context)
+                        .cardsDemoShareSemantics(destination.title)),
+                textColor: Colors.amber.shade500,
+                onPressed: () {
+                  print('pressed');
+                },
+              ),
+              FlatButton(
+                child: Text(GalleryLocalizations.of(context).cardsDemoExplore,
+                    semanticsLabel: GalleryLocalizations.of(context)
+                        .cardsDemoExploreSemantics(destination.title)),
+                textColor: Colors.amber.shade500,
+                onPressed: () {
+                  print('pressed');
+                },
+              ),
+            ],
+          ),
+      ],
+    );
+  }
 }
 
 class TravelDestinationItem extends StatelessWidget {
@@ -250,164 +419,4 @@ class _SelectableTravelDestinationItemState
     );
   }
 }
-
-class SectionTitle extends StatelessWidget {
-  const SectionTitle({
-    Key key,
-    this.title,
-  }) : super(key: key);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 4, 4, 12),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(title, style: Theme.of(context).textTheme.subhead),
-      ),
-    );
-  }
-}
-
-class TravelDestinationContent extends StatelessWidget {
-  const TravelDestinationContent({Key key, @required this.destination})
-      : assert(destination != null),
-        super(key: key);
-
-  final TravelDestination destination;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextStyle titleStyle =
-        theme.textTheme.headline.copyWith(color: Colors.white);
-    final TextStyle descriptionStyle = theme.textTheme.subhead;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: 184,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                // In order to have the ink splash appear above the image, you
-                // must use Ink.image. This allows the image to be painted as
-                // part of the Material and display ink effects above it. Using
-                // a standard Image will obscure the ink splash.
-                child: Ink.image(
-                  image: AssetImage(destination.assetName,
-                      package: destination.assetPackage),
-                  fit: BoxFit.cover,
-                  child: Container(),
-                ),
-              ),
-              Positioned(
-                bottom: 16,
-                left: 16,
-                right: 16,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    destination.title,
-                    style: titleStyle,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        // Description and share/explore buttons.
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: DefaultTextStyle(
-            softWrap: false,
-            overflow: TextOverflow.ellipsis,
-            style: descriptionStyle,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // This array contains the three line description on each card
-                // demo.
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    destination.description,
-                    style: descriptionStyle.copyWith(color: Colors.black54),
-                  ),
-                ),
-                Text(destination.city),
-                Text(destination.location),
-              ],
-            ),
-          ),
-        ),
-        if (destination.type == CardDemoType.standard)
-          // share, explore buttons
-          ButtonBar(
-            alignment: MainAxisAlignment.start,
-            children: [
-              FlatButton(
-                child: Text(GalleryLocalizations.of(context).demoMenuShare,
-                    semanticsLabel: GalleryLocalizations.of(context)
-                        .cardsDemoShareSemantics(destination.title)),
-                textColor: Colors.amber.shade500,
-                onPressed: () {
-                  print('pressed');
-                },
-              ),
-              FlatButton(
-                child: Text(GalleryLocalizations.of(context).cardsDemoExplore,
-                    semanticsLabel: GalleryLocalizations.of(context)
-                        .cardsDemoExploreSemantics(destination.title)),
-                textColor: Colors.amber.shade500,
-                onPressed: () {
-                  print('pressed');
-                },
-              ),
-            ],
-          ),
-      ],
-    );
-  }
-}
-
-class CardsDemo extends StatefulWidget {
-  @override
-  _CardsDemoState createState() => _CardsDemoState();
-}
-
-class _CardsDemoState extends State<CardsDemo> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(GalleryLocalizations.of(context).demoCardTitle),
-      ),
-      body: Scrollbar(
-        child: ListView(
-          padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-          children: [
-            for (final destination in destinations(context))
-              Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: (destination.type == CardDemoType.standard)
-                    ? TravelDestinationItem(destination: destination)
-                    : destination.type == CardDemoType.tappable
-                        ? TappableTravelDestinationItem(
-                            destination: destination)
-                        : SelectableTravelDestinationItem(
-                            destination: destination),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 // END
