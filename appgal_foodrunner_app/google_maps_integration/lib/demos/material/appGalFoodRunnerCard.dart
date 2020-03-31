@@ -23,42 +23,23 @@ class CardsDemo extends StatefulWidget {
 class _CardsDemoState extends State<CardsDemo> {
   @override
   Widget build(BuildContext context) {
-      /*ProfileRestClient restClient = new ProfileRestClient();
-      Future<Profile> profileFuture = restClient.getProfile();
-      List<TravelDestination> tirths = new List();
-      FutureBuilder<Profile> futureBuilder = new FutureBuilder(future: profileFuture,
-        builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) 
-          {
-            print("*******");
-            print("ACTIVE");
-            print("*******");
-          }
-          else if (snapshot.connectionState == ConnectionState.waiting) 
-          {
-            print("*******");
-            print("WAITING");
-            print("*******");
-          }
-          else if (snapshot.connectionState == ConnectionState.none) 
-          {
-            print("*******");
-            print("NONE");
-            print("*******");
-          }
-          else if (snapshot.connectionState == ConnectionState.done) 
-          {
-            print("*******");
-            print("DONE");
-            print("*******");
-            Profile profile = snapshot.data;
-            print(profile.toString());
-            processProfile(context, profile, tirths);
-          }
-        }
-      );*/
+    List<TravelDestination> tirths = new List();
+    FutureBuilder<String> futureBuilder = FutureBuilder<String>(
+      future: callAsyncFetch(),
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData) {
+          String profileStr = snapshot.data;
+          Profile profile = new Profile("id", "", "", "");
+          print(profileStr);
+          processProfile(context, profile, tirths);
+        } 
+        //else {
+        //  return CircularProgressIndicator();
+        //}
+      }
+    );
 
-    /*Scaffold scaffold = Scaffold(
+    Scaffold scaffold = Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(GalleryLocalizations.of(context).demoCardTitle),
@@ -67,7 +48,7 @@ class _CardsDemoState extends State<CardsDemo> {
         child: ListView(
           padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
           children: [
-            for (final destination in destinations(context, tirths))
+            for (final destination in tirths)
               Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 child: (destination.type == CardDemoType.standard)
@@ -81,32 +62,42 @@ class _CardsDemoState extends State<CardsDemo> {
           ],
         ),
       ),
-    );*/
-
-    //return futureBuilder; 
-
-    return FutureBuilder<String>(
-      future: callAsyncFetch(),
-      builder: (context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data);
-        } else {
-          return CircularProgressIndicator();
-        }
-      }
     );
+    return scaffold;
   }
-}
 
-Future<String> callAsyncFetch() async
+  void processProfile(BuildContext context, Profile profile, List<TravelDestination> tirths)
+  {
+      print("*******");
+      print("PROCESS_PROFILE");
+      print("*******");
+
+      TravelDestination tirth = TravelDestination(
+        assetName: 'places/india_tanjore_thanjavur_temple.png',
+        assetPackage: _kGalleryAssetsPackage,
+        title:
+            //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
+            "id",
+        //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
+        description : "email",
+        city : "PHOTU",
+        location: GalleryLocalizations.of(context)
+            .cardsDemoTravelDestinationLocation1,
+        type: CardDemoType.selectable,
+        profile: profile,
+      );
+      tirths.add(tirth);
+  }
+
+  Future<String> callAsyncFetch() async
   {
     //String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
     String remoteUrl = "http://localhost:8080/registration/profile/";
     String profileJson = await http.read(remoteUrl);
-    Map<String, dynamic> map = jsonDecode(profileJson);
-    Profile profile = Profile.fromJson(map);
-    print(profile.toString());
-    return profile.toString();
+    //Map<String, dynamic> map = jsonDecode(profileJson);
+    //Profile profile = Profile.fromJson(map);
+    print(profileJson);
+    return profileJson;
 
     //Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
 
@@ -115,6 +106,7 @@ Future<String> callAsyncFetch() async
     //print("*******");
     //return profile.toString();
   }
+}
 
 enum CardDemoType {
   standard,
@@ -122,7 +114,7 @@ enum CardDemoType {
   selectable,
 }
 
-class TravelDestination {
+class TravelDestination extends StatefulWidget {
   const TravelDestination({
     @required this.assetName,
     @required this.assetPackage,
@@ -149,51 +141,19 @@ class TravelDestination {
   final String location;
   final CardDemoType type;
   final Profile profile;
+
+  @override
+  ProfileState createState() => ProfileState();
 }
+
+class ProfileState extends State<TravelDestination>
+{
+  @override
+  Widget build(BuildContext context) {
+    return new Text("blah");
+  }
+} 
     
-List<TravelDestination> destinations(BuildContext context, List<TravelDestination> tirths)
-{
-      
-
-      print("*******");
-      print("SUCCESS");
-      print("*******");
-
-      
-
-      print("*******");
-      print("LEAVING");
-      print("*******");
-
-      return tirths;
-}
-
-void processProfile(BuildContext context, Profile profile, List<TravelDestination> tirths)
-{
-      print("*******");
-      print("PROCESS_PROFILE");
-      print("*******");
-
-      TravelDestination tirth = TravelDestination(
-        assetName: 'places/india_tanjore_thanjavur_temple.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
-            "id",
-        //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
-        description : "email",
-        city : "PHOTU",
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation1,
-        type: CardDemoType.selectable,
-        profile: profile,
-      );
-      tirths.add(tirth);
-}
-
-
-
-
 class SectionTitle extends StatelessWidget {
   const SectionTitle({
     Key key,
