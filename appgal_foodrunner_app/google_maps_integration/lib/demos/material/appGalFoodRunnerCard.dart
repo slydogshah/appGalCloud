@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ class CardsDemo extends StatefulWidget {
 class _CardsDemoState extends State<CardsDemo> {
   @override
   Widget build(BuildContext context) {
-      ProfileRestClient restClient = new ProfileRestClient();
+      /*ProfileRestClient restClient = new ProfileRestClient();
       Future<Profile> profileFuture = restClient.getProfile();
       List<TravelDestination> tirths = new List();
       FutureBuilder<Profile> futureBuilder = new FutureBuilder(future: profileFuture,
@@ -54,7 +56,7 @@ class _CardsDemoState extends State<CardsDemo> {
             processProfile(context, profile, tirths);
           }
         }
-      );
+      );*/
 
     /*Scaffold scaffold = Scaffold(
       appBar: AppBar(
@@ -81,9 +83,38 @@ class _CardsDemoState extends State<CardsDemo> {
       ),
     );*/
 
-    return futureBuilder; 
+    //return futureBuilder; 
+
+    return FutureBuilder<String>(
+      future: callAsyncFetch(),
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data);
+        } else {
+          return CircularProgressIndicator();
+        }
+      }
+    );
   }
 }
+
+Future<String> callAsyncFetch() async
+  {
+    //String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
+    String remoteUrl = "http://localhost:8080/registration/profile/";
+    String profileJson = await http.read(remoteUrl);
+    Map<String, dynamic> map = jsonDecode(profileJson);
+    Profile profile = Profile.fromJson(map);
+    print(profile.toString());
+    return profile.toString();
+
+    //Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
+
+    //print("*******");
+    //print(profile);
+    //print("*******");
+    //return profile.toString();
+  }
 
 enum CardDemoType {
   standard,
