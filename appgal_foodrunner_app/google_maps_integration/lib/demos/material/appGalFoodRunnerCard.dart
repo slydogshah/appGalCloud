@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_integration/l10n/gallery_localizations.dart';
@@ -19,7 +21,42 @@ class CardsDemo extends StatefulWidget {
 class _CardsDemoState extends State<CardsDemo> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+      ProfileRestClient restClient = new ProfileRestClient();
+      Future<Profile> profileFuture = restClient.getProfile();
+      List<TravelDestination> tirths = new List();
+      FutureBuilder<Profile> futureBuilder = new FutureBuilder(future: profileFuture,
+        builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) 
+          {
+            print("*******");
+            print("ACTIVE");
+            print("*******");
+          }
+          else if (snapshot.connectionState == ConnectionState.waiting) 
+          {
+            print("*******");
+            print("WAITING");
+            print("*******");
+          }
+          else if (snapshot.connectionState == ConnectionState.none) 
+          {
+            print("*******");
+            print("NONE");
+            print("*******");
+          }
+          else if (snapshot.connectionState == ConnectionState.done) 
+          {
+            print("*******");
+            print("DONE");
+            print("*******");
+            Profile profile = snapshot.data;
+            print(profile.toString());
+            processProfile(context, profile, tirths);
+          }
+        }
+      );
+
+    /*Scaffold scaffold = Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(GalleryLocalizations.of(context).demoCardTitle),
@@ -28,7 +65,7 @@ class _CardsDemoState extends State<CardsDemo> {
         child: ListView(
           padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
           children: [
-            for (final destination in destinations(context))
+            for (final destination in destinations(context, tirths))
               Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 child: (destination.type == CardDemoType.standard)
@@ -42,7 +79,9 @@ class _CardsDemoState extends State<CardsDemo> {
           ],
         ),
       ),
-    );
+    );*/
+
+    return futureBuilder; 
   }
 }
 
@@ -67,8 +106,8 @@ class TravelDestination {
         assert(title != null),
         assert(description != null),
         assert(city != null),
-        assert(location != null),
-        assert(profile != null)
+        assert(location != null)
+        //assert(profile != null)
         ;
 
   final String assetName;
@@ -81,57 +120,38 @@ class TravelDestination {
   final Profile profile;
 }
     
-List<TravelDestination> destinations(BuildContext context)
+List<TravelDestination> destinations(BuildContext context, List<TravelDestination> tirths)
 {
-      List<TravelDestination> tirths = new List();
-      ProfileRestClient restClient = new ProfileRestClient();
-      Future<Profile> profileFuture = restClient.getProfile();
+      
 
       print("*******");
       print("SUCCESS");
       print("*******");
 
-      FutureBuilder<Profile> futureBuilder = new FutureBuilder(future: profileFuture,
-        builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
-          if(snapshot.hasData)
-          {
-            Profile profile = snapshot.data;
-            print(profile.toString());
-            //processProfile(context, profile, tirths);
-          }
-        }
-      );
+      
 
-      TravelDestination tirth = TravelDestination(
-        assetName: 'places/india_tanjore_thanjavur_temple.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
-            "title",
-        //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
-        description : "description",
-        city : "mobile",
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation1,
-        type: CardDemoType.selectable,
-        profile: Profile("","","",""),
-      );
-      tirths.add(tirth);
+      print("*******");
+      print("LEAVING");
+      print("*******");
 
       return tirths;
 }
 
 void processProfile(BuildContext context, Profile profile, List<TravelDestination> tirths)
 {
+      print("*******");
+      print("PROCESS_PROFILE");
+      print("*******");
+
       TravelDestination tirth = TravelDestination(
         assetName: 'places/india_tanjore_thanjavur_temple.png',
         assetPackage: _kGalleryAssetsPackage,
         title:
             //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
-            profile.id,
+            "id",
         //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
-        description : profile.email,
-        city : profile.mobile,
+        description : "email",
+        city : "PHOTU",
         location: GalleryLocalizations.of(context)
             .cardsDemoTravelDestinationLocation1,
         type: CardDemoType.selectable,
