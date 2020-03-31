@@ -12,6 +12,7 @@ import 'package:google_maps_integration/l10n/gallery_localizations.dart';
 
 import './../../src/model/profile.dart';
 import './../../src/rest/profileRestClient.dart';
+import './../../src/context/activeSession.dart';
 
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
@@ -24,20 +25,31 @@ class _CardsDemoState extends State<CardsDemo> {
   @override
   Widget build(BuildContext context) {
     List<TravelDestination> tirths = new List();
-    FutureBuilder<String> futureBuilder = FutureBuilder<String>(
-      future: callAsyncFetch(),
-      builder: (context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.hasData) {
-          String profileStr = snapshot.data;
-          Profile profile = new Profile("id", "", "", "");
-          print(profileStr);
-          processProfile(context, profile, tirths);
-        } 
-        //else {
-        //  return CircularProgressIndicator();
-        //}
-      }
-    );
+    ActiveSession activeSession = ActiveSession.getInstance();
+
+    Profile profile = activeSession.getProfile();
+    print("***WE_WIN****");
+    print(profile.toString());
+    print("*******");
+
+    if(profile != null)
+    {
+    TravelDestination tirth = TravelDestination(
+        assetName: 'places/india_tanjore_thanjavur_temple.png',
+        assetPackage: _kGalleryAssetsPackage,
+        title:
+            //GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
+            profile.photo,
+        //description: GalleryLocalizations.of(context).cardsDemoTravelDestinationDescription3,
+        description : "email",
+        city : "PHOTU",
+        location: GalleryLocalizations.of(context)
+            .cardsDemoTravelDestinationLocation1,
+        type: CardDemoType.selectable,
+        profile: profile,
+      );
+      tirths.add(tirth);
+    }
 
     Scaffold scaffold = Scaffold(
       appBar: AppBar(
