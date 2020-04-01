@@ -9,13 +9,13 @@ class ProfileRestClient
 {
   void setProfile(ActiveSession activeSession)
   {
-    Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
+    /*Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
     activeSession.setProfile(profile);
     print("****HERE***");
     print(activeSession.getProfile());
-    print("****HERE***");
+    print("****HERE***");*/
 
-    /*print("START");
+    print("START");
     //String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
     String remoteUrl = "http://localhost:8080/registration/profile/";
     http.get(remoteUrl).then((response) {
@@ -26,6 +26,6 @@ class ProfileRestClient
       print(profile);
       activeSession.setProfile(profile);
     });
-    print("LEAVING");*/
+    print("LEAVING");
   }
 }
