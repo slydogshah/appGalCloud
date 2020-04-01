@@ -22,25 +22,14 @@ import './src/context/activeSession.dart';
 import 'package:threading/threading.dart';
 
 void main() {
-  /*setOverrideForDesktop();
+  print("I_LOVE_YOU_DHONI_FAMILY_YOU_ARE_ALWAYS_MY_CAPTAIN_BLESS_YOU_AND_YOUR_SWEET_WIFE_AND_DAUGHTER_ARE_ALWAYS_HAPPY_HAPPY");
+  ActiveSession session = ActiveSession.getInstance();
+  session.activate();
+
+  setOverrideForDesktop();
   GoogleFonts.config.allowHttp = false;
   ActiveSession.getInstance();
-  runApp(GalleryApp());*/
-  /*
-  ActiveSession session = ActiveSession.getInstance();
-  Profile profile = session.getProfile();
-  do{
-    print("LIVE_MUMMA_LOVE_LIVE");
-  }while(profile == null);
-
-  print("*bull*");
-  print(profile.toString());
-  print("*bull*");*/
-
-  print("I_LOVE_YOU_DHONI_FAMILY_YOU_ARE_ALWAYS_MY_CAPTAIN_BLESS_YOU_AND_YOUR_SWEET_WIFE_AND_DAUGHTER_ARE_ALWAYS_HAPPY_HAPPY");
-
-  //ThreadDemo threadDemo = new ThreadDemo();
-  //threadDemo.runThreads();
+  runApp(GalleryApp());
 }
 
 class ThreadDemo
@@ -50,18 +39,22 @@ class ThreadDemo
 
   }
 
-  Future runThreads() async {
+  Future runThreads(final ActiveSession session) async {
     print("Threads (interleaved execution)");
     print("----------------");
     var threads = <Thread>[];
     var numOfThreads = 3;
-    var count = 3;
+    var count = 100;
     for (var i = 0; i < numOfThreads; i++) {
       var name = new String.fromCharCode(65 + i);
       var thread = new Thread(() async {
         for (var j = 0; j < count; j++) {
-          await new Future.value();
-          print("$name: $j");
+          //await new Future.value();
+          //print("$name: $j");
+          Profile profile = session.getProfile();
+          print("***HERE****");
+          print(profile.toString());
+          print("****HERE***");
         }
       });
 

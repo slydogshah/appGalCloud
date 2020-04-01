@@ -7,22 +7,24 @@ class ActiveSession
 
   Profile profile;
 
-  ActiveSession()
-  {
-    this.load();
-  }
+  ActiveSession();
 
   Profile getProfile()
   {
     return this.profile;
   }
 
-  void load()
+  void setProfile(Profile profile)
   {
-    ProfileRestClient restClient = new ProfileRestClient();
-    Future<Profile> profileFuture = restClient.getProfile();
-    profileFuture.then((value)=>{this.profile = value});
+    this.profile = profile;
   }
+
+  void activate()
+  {
+      ProfileRestClient profileRestClient = new ProfileRestClient();
+      profileRestClient.setProfile(this);
+  }
+
 
   static ActiveSession getInstance()
   {
