@@ -34,4 +34,14 @@ public class Registration {
 
         return jsonObject.toString();
     }
+
+    @Path("profile")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String register()
+    {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("statusCode", "0");
+        return jsonObject.toString();
+    }
 }

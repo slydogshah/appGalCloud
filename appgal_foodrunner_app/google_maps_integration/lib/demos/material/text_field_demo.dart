@@ -8,8 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 
 import 'package:google_maps_integration/l10n/gallery_localizations.dart';
+import 'package:google_maps_integration/src/model/profile.dart';
 
 import 'landingScene.dart';
+import '../../src/rest/profileRestClient.dart';
+import '../../src/model/profile.dart';
 
 // BEGIN textFieldDemo
 
@@ -140,10 +143,14 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
       showInSnackBar(GalleryLocalizations.of(context)
           .demoTextFieldNameHasPhoneNumber(person.name, person.phoneNumber));
     }*/
-    Navigator.push(
+
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    profileRestClient.register(new Profile("id", "email", "mobile", "photu"));
+
+    /*Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => MyApp()),
-    );
+    );*/
   }
 
   String _validateName(String value) {

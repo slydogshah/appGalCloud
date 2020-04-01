@@ -28,4 +28,23 @@ class ProfileRestClient
     });
     print("LEAVING");
   }
+
+  void register(Profile profile)
+  {
+    /*Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
+    activeSession.setProfile(profile);
+    print("****HERE***");
+    print(activeSession.getProfile());
+    print("****HERE***");*/
+
+    print("START");
+    //String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
+    String remoteUrl = "http://localhost:8080/registration/profile/";
+    http.post(remoteUrl).then((response) {
+      print("BACK");
+      String body = response.body;
+      print(body);
+    });
+    print("LEAVING");
+  }
 }
