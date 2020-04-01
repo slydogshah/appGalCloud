@@ -12,7 +12,9 @@ class ProfileRestClient
     String profileJson = await http.read(remoteUrl);
     Map<String, dynamic> map = jsonDecode(profileJson);
     Profile profile = Profile.fromJson(map);
+    print("***blah***");
     print(profile.toString());
+    print("***blah***");
     return profile;
 
     //Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
@@ -22,12 +24,12 @@ class ProfileRestClient
     //return profile;
   }
 
-  Profile getSynchronousProfile()
+  /*Profile getSynchronousProfile()
   {
     String remoteUrl = "http://localhost:8080/registration/profile/";
     http.get(remoteUrl).then((response) {
       print(response.body);
     });
     return Profile("","","","");
-  }
+  }*/
 }

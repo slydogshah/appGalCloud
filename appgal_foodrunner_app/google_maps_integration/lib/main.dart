@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,26 @@ import 'package:google_maps_integration/data/gallery_options.dart';
 import 'package:google_maps_integration/l10n/gallery_localizations.dart';
 import 'package:google_maps_integration/pages/backdrop.dart';
 import 'package:google_maps_integration/pages/splash.dart';
+import 'package:google_maps_integration/src/model/profile.dart';
 import 'package:google_maps_integration/themes/gallery_theme_data.dart';
+
+import './src/context/activeSession.dart';
+
+void main() {
+  /*setOverrideForDesktop();
+  GoogleFonts.config.allowHttp = false;
+  ActiveSession.getInstance();
+  runApp(GalleryApp());*/
+  ActiveSession session = ActiveSession.getInstance();
+  Profile profile = session.getProfile();
+  do{
+    print("DIE_GOD_DIE");
+  }while(profile == null);
+
+  print("*bull*");
+  print(profile.toString());
+  print("*bull*");
+}
 
 void setOverrideForDesktop() {
   if (kIsWeb) return;
@@ -26,12 +46,6 @@ void setOverrideForDesktop() {
   } else if (Platform.isFuchsia) {
     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   }
-}
-
-void main() {
-  setOverrideForDesktop();
-  GoogleFonts.config.allowHttp = false;
-  runApp(GalleryApp());
 }
 
 class GalleryApp extends StatelessWidget {

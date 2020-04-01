@@ -21,7 +21,7 @@ class ActiveSession
   {
     ProfileRestClient restClient = new ProfileRestClient();
     Future<Profile> profileFuture = restClient.getProfile();
-    profileFuture.then((value)=> this.profile = value);
+    profileFuture.then((value)=>{this.profile = value});
   }
 
   static ActiveSession getInstance()
