@@ -19,21 +19,60 @@ import 'package:google_maps_integration/src/model/profile.dart';
 import 'package:google_maps_integration/themes/gallery_theme_data.dart';
 
 import './src/context/activeSession.dart';
+import 'package:threading/threading.dart';
 
 void main() {
   /*setOverrideForDesktop();
   GoogleFonts.config.allowHttp = false;
   ActiveSession.getInstance();
   runApp(GalleryApp());*/
+  /*
   ActiveSession session = ActiveSession.getInstance();
   Profile profile = session.getProfile();
   do{
-    print("DIE_GOD_DIE");
+    print("LIVE_MUMMA_LOVE_LIVE");
   }while(profile == null);
 
   print("*bull*");
   print(profile.toString());
-  print("*bull*");
+  print("*bull*");*/
+
+  print("I_LOVE_YOU_DHONI_FAMILY_YOU_ARE_ALWAYS_MY_CAPTAIN_BLESS_YOU_AND_YOUR_SWEET_WIFE_AND_DAUGHTER_ARE_ALWAYS_HAPPY_HAPPY");
+
+  //ThreadDemo threadDemo = new ThreadDemo();
+  //threadDemo.runThreads();
+}
+
+class ThreadDemo
+{
+  ThreadDemo()
+  {
+
+  }
+
+  Future runThreads() async {
+    print("Threads (interleaved execution)");
+    print("----------------");
+    var threads = <Thread>[];
+    var numOfThreads = 3;
+    var count = 3;
+    for (var i = 0; i < numOfThreads; i++) {
+      var name = new String.fromCharCode(65 + i);
+      var thread = new Thread(() async {
+        for (var j = 0; j < count; j++) {
+          await new Future.value();
+          print("$name: $j");
+        }
+      });
+
+      threads.add(thread);
+      await thread.start();
+    }
+
+    for (var i = 0; i < numOfThreads; i++) {
+      await threads[i].join();
+    }
+  }
 }
 
 void setOverrideForDesktop() {
