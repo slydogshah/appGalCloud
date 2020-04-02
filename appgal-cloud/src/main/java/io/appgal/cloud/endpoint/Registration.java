@@ -2,12 +2,17 @@ package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.foodRunnerSync.protocol.ProcessIncomingPackets;
+import io.appgal.cloud.foodRunnerSync.protocol.ProfileRegistrationService;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.model.OutstandingFoodRunnerNotification;
+import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.SourceNotification;
+import org.jboss.resteasy.annotations.Body;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -21,27 +26,33 @@ import java.util.UUID;
 public class Registration {
     private static Logger logger = LoggerFactory.getLogger(Registration.class);
 
+    @Inject
+    private ProfileRegistrationService profileRegistrationService;
+
     @Path("profile")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getProfile()
+    public String getProfile(@QueryParam("email") String email)
     {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", "CLOUD_ID");
-        jsonObject.addProperty("email", "blah@blah.com");
-        jsonObject.addProperty("mobile", "8675309");
-        jsonObject.addProperty("photo", "photu");
-
-        return jsonObject.toString();
+        Profile profile = this.profileRegistrationService.getProfile(email);
+        return profile.toString();
     }
 
     @Path("profile")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String register()
+    public String register(@RequestBody String profileJson)
     {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("statusCode", "0");
-        return jsonObject.toString();
+        logger.info("*******");
+        logger.info(profileJson);
+        logger.info("*******");
+
+        JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
+        Profile profile = Profile.parseProfile(jsonObject);
+        this.profileRegistrationService.register(profile);
+
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("statusCode", "0");
+        return responseJson.toString();
     }
 }

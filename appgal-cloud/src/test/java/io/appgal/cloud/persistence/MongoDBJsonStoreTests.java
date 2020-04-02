@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DestinationNotification;
+import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.SourceNotification;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
@@ -114,5 +115,18 @@ public class MongoDBJsonStoreTests {
         }
 
         //assert
+    }
+
+    @Test
+    public void testStoreProfile()
+    {
+        Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
+        this.mongoDBJsonStore.storeProfile(profile);
+
+        Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
+        logger.info("*******");
+        logger.info(storedProfile.toString());
+        logger.info("*******");
+        assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
     }
 }

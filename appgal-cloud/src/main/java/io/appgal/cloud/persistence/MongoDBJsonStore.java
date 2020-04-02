@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.mongodb.client.*;
 import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DestinationNotification;
+import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.SourceNotification;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -116,5 +117,39 @@ public class MongoDBJsonStore {
             activeFoodRunners.add(doc);
         }
         collection.insertMany(activeFoodRunners);
+    }
+
+    public void storeProfile(Profile profile)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        Document doc = Document.parse(profile.toString());
+        collection.insertOne(doc);
+    }
+
+    public Profile getProfile(String email)
+    {
+        Profile profile = new Profile();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        //TODO: OPTIMIZE_THIS_QUERY ASSIGNED_TO: @bugs.bunny.shah@gmail.com
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
+            profile = Profile.parseProfile(jsonObject);
+        }
+
+        return profile;
     }
 }
