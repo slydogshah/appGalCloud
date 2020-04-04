@@ -1,17 +1,9 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:google_maps_integration/l10n/gallery_localizations.dart';
 
 import './../../src/model/profile.dart';
-import './../../src/rest/profileRestClient.dart';
 import './../../src/context/activeSession.dart';
 
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
