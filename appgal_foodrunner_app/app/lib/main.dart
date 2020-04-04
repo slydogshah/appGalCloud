@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 
 import './src/context/activeSession.dart';
-import './demos/material/appGalFoodRunnerRegistration.dart';
+import './src/ui/appGalFoodRunnerRegistration.dart';
 
 void main() 
 {
