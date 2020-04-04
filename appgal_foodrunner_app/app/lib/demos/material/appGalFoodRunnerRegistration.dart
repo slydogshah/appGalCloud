@@ -1,8 +1,7 @@
 // Copyright 2019 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import './../../l10n/gallery_localizations.dart';
-import './../..//src/model/profile.dart';
+import 'package:flutter/material.dart';
 
 import './../../src/rest/profileRestClient.dart';
 import './../../src/model/profile.dart';
