@@ -4,8 +4,14 @@
 import 'package:flutter/material.dart';
 
 import './src/ui/appGalFoodRunnerRegistration.dart';
+import './src/context/activeSession.dart';
 
 void main() 
 {
+  //Activate the data source related Components (Loading Data from the Cloud)
+  ActiveSession activeSession = ActiveSession.getInstance();
+  activeSession.activate();
+
+  //Launch the App
   runApp(new RegistrationScene());
 }

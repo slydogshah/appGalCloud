@@ -11,6 +11,7 @@ class RegistrationScene extends StatelessWidget {
     Text text = new Text("Hello World", textDirection: TextDirection.ltr,);
     AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
     Scaffold scaffold = new Scaffold(appBar: appBar, body: text,);
-    return scaffold;
+    MaterialApp materialApp = new MaterialApp(home: scaffold);
+    return materialApp;
   }
 }
