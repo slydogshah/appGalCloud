@@ -14,7 +14,7 @@ class TextFieldDemo extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(GalleryLocalizations.of(context).demoTextFieldTitle),
+        title: Text("Register"),
       ),
       body: TextFormFieldDemo(),
     );
@@ -76,22 +76,22 @@ class _PasswordFieldState extends State<PasswordField> {
         hintText: widget.hintText,
         labelText: widget.labelText,
         helperText: widget.helperText,
-        suffixIcon: GestureDetector(
-          dragStartBehavior: DragStartBehavior.down,
-          onTap: () {
-            setState(() {
-              _obscureText = !_obscureText;
-            });
-          },
-          child: Icon(
-            _obscureText ? Icons.visibility : Icons.visibility_off,
-            semanticLabel: _obscureText
-                ? GalleryLocalizations.of(context)
-                    .demoTextFieldShowPasswordLabel
-                : GalleryLocalizations.of(context)
-                    .demoTextFieldHidePasswordLabel,
-          ),
-        ),
+        //suffixIcon: GestureDetector(
+        //  dragStartBehavior: DragStartBehavior.down,
+        //  onTap: () {
+        //    setState(() {
+        //      _obscureText = !_obscureText;
+        //    });
+        //  },
+        //  child: Icon(
+        //    _obscureText ? Icons.visibility : Icons.visibility_off,
+        //    semanticLabel: _obscureText
+        //        ? GalleryLocalizations.of(context)
+        //            .demoTextFieldShowPasswordLabel
+        //        : GalleryLocalizations.of(context)
+        //            .demoTextFieldHidePasswordLabel,
+        //  ),
+        //),
       ),
     );
   }
@@ -120,8 +120,8 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState<String>> _passwordFieldKey =
       GlobalKey<FormFieldState<String>>();
-  final _UsNumberTextInputFormatter _phoneNumberFormatter =
-      _UsNumberTextInputFormatter();
+  //final _UsNumberTextInputFormatter _phoneNumberFormatter =
+  //    _UsNumberTextInputFormatter();
 
   void _handleSubmitted() {
     /*final form = _formKey.currentState;
@@ -146,33 +146,33 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
   }
 
   String _validateName(String value) {
-    if (value.isEmpty) {
+    /*if (value.isEmpty) {
       return GalleryLocalizations.of(context).demoTextFieldNameRequired;
     }
     final nameExp = RegExp(r'^[A-Za-z ]+$');
     if (!nameExp.hasMatch(value)) {
       return GalleryLocalizations.of(context)
           .demoTextFieldOnlyAlphabeticalChars;
-    }
+    }*/
     return null;
   }
 
   String _validatePhoneNumber(String value) {
-    final phoneExp = RegExp(r'^\(\d\d\d\) \d\d\d\-\d\d\d\d$');
+    /*final phoneExp = RegExp(r'^\(\d\d\d\) \d\d\d\-\d\d\d\d$');
     if (!phoneExp.hasMatch(value)) {
       return GalleryLocalizations.of(context).demoTextFieldEnterUSPhoneNumber;
-    }
+    }*/
     return null;
   }
 
   String _validatePassword(String value) {
-    final passwordField = _passwordFieldKey.currentState;
+    /*final passwordField = _passwordFieldKey.currentState;
     if (passwordField.value == null || passwordField.value.isEmpty) {
       return GalleryLocalizations.of(context).demoTextFieldEnterPassword;
     }
     if (passwordField.value != value) {
       return GalleryLocalizations.of(context).demoTextFieldPasswordsDoNotMatch;
-    }
+    }*/
     return null;
   }
 
@@ -188,7 +188,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
         autovalidate: _autoValidate,
         child: Scrollbar(
           child: SingleChildScrollView(
-            dragStartBehavior: DragStartBehavior.down,
+            //dragStartBehavior: DragStartBehavior.down,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -199,10 +199,9 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
                   decoration: InputDecoration(
                     filled: true,
                     //icon: Icon(Icons.email),
-                    hintText: GalleryLocalizations.of(context)
-                        .demoTextFieldYourEmailAddress,
+                    hintText: "Your Email",
                     labelText:
-                        GalleryLocalizations.of(context).demoTextFieldEmail,
+                        "Email",
                   ),
                   keyboardType: TextInputType.emailAddress,
                   onSaved: (value) {
@@ -213,9 +212,9 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
                 PasswordField(
                   fieldKey: _passwordFieldKey,
                   helperText:
-                      GalleryLocalizations.of(context).demoTextFieldNoMoreThan,
+                      "Password",
                   labelText:
-                      GalleryLocalizations.of(context).demoTextFieldPassword,
+                      "Password",
                   onFieldSubmitted: (value) {
                     setState(() {
                       person.password = value;
@@ -227,8 +226,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
                   cursorColor: cursorColor,
                   decoration: InputDecoration(
                     filled: true,
-                    labelText: GalleryLocalizations.of(context)
-                        .demoTextFieldRetypePassword,
+                    labelText: "Password",
                   ),
                   maxLength: 8,
                   obscureText: true,
@@ -238,16 +236,11 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
                 Center(
                   child: RaisedButton(
                     child: Text(
-                        GalleryLocalizations.of(context).demoTextFieldSubmit),
-                    onPressed: _handleSubmitted,
+                        "Submit",
+                    //onPressed: _handleSubmitted,
                   ),
-                ),
-                sizedBoxSpace,
-                Text(
-                  GalleryLocalizations.of(context).demoTextFieldRequiredField,
-                  style: Theme.of(context).textTheme.caption,
-                ),
-                sizedBoxSpace,
+                )
+                )
               ],
             ),
           ),
@@ -258,7 +251,7 @@ class TextFormFieldDemoState extends State<TextFormFieldDemo> with TickerProvide
 }
 
 /// Format incoming numeric text to fit the format of (###) ###-#### ##
-class _UsNumberTextInputFormatter extends TextInputFormatter {
+/*class _UsNumberTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
@@ -293,5 +286,5 @@ class _UsNumberTextInputFormatter extends TextInputFormatter {
       selection: TextSelection.collapsed(offset: selectionIndex),
     );
   }
-}
+}*/
 // END
