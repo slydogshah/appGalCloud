@@ -1,4 +1,4 @@
-package io.appgal.cloud;
+package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonObject;
 
