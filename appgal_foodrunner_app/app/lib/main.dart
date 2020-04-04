@@ -13,5 +13,5 @@ void main()
   session.activate();
   ActiveSession.getInstance();
 
-  //runApp(TextFieldDemo());
+  runApp(MyApp());
 }

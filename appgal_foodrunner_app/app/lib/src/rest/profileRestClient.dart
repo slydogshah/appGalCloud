@@ -15,8 +15,8 @@ class ProfileRestClient
     print("****HERE***");*/
 
     print("START");
-    //String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
-    String remoteUrl = "http://localhost:8080/registration/profile/";
+    String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
+    //String remoteUrl = "http://localhost:8080/registration/profile/";
     http.get(remoteUrl).then((response) {
       print("BACK");
       String profileJson = response.body;
