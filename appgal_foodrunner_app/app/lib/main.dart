@@ -10,16 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_integration/constants.dart';
-import 'package:google_maps_integration/data/gallery_options.dart';
-import 'package:google_maps_integration/l10n/gallery_localizations.dart';
-import 'package:google_maps_integration/pages/backdrop.dart';
-import 'package:google_maps_integration/pages/splash.dart';
-import 'package:google_maps_integration/src/model/profile.dart';
-import 'package:google_maps_integration/themes/gallery_theme_data.dart';
+import 'package:app/constants.dart';
+import 'package:app/data/gallery_options.dart';
+import 'package:app/l10n/gallery_localizations.dart';
+import 'package:app/pages/backdrop.dart';
+import 'package:app/pages/splash.dart';
+import 'package:app/src/model/profile.dart';
+import 'package:app/themes/gallery_theme_data.dart';
 
 import './src/context/activeSession.dart';
-import 'package:threading/threading.dart';
 
 void main() {
   print("I_LOVE_YOU_DHONI_FAMILY_YOU_ARE_ALWAYS_MY_CAPTAIN_BLESS_YOU_AND_YOUR_SWEET_WIFE_AND_DAUGHTER_ARE_ALWAYS_HAPPY_HAPPY");
@@ -32,7 +31,7 @@ void main() {
   runApp(GalleryApp());
 }
 
-class ThreadDemo
+/*class ThreadDemo
 {
   ThreadDemo()
   {
@@ -66,7 +65,7 @@ class ThreadDemo
       await threads[i].join();
     }
   }
-}
+}*/
 
 void setOverrideForDesktop() {
   if (kIsWeb) return;
