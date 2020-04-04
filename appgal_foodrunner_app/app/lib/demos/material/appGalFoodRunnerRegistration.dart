@@ -11,13 +11,7 @@ import './../../src/model/profile.dart';
 class TextFieldDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("Register"),
-      ),
-      body: TextFormFieldDemo(),
-    );
+    return Scaffold();
   }
 }
 
