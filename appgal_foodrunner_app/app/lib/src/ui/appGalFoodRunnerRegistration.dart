@@ -4,16 +4,13 @@
 
 import 'package:flutter/material.dart';
 
-class CommonThings {
-  static Size size;
-}
-
 class RegistrationScene extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     Text text = new Text("Hello World", textDirection: TextDirection.ltr,);
-    Center center = new Center(child: text,);
-    return center;
+    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
+    Scaffold scaffold = new Scaffold(appBar: appBar, body: text,);
+    return scaffold;
   }
 }
