@@ -31,8 +31,29 @@ class RegistrationScene extends StatelessWidget {
                   )
                 ),
                 sizedBoxSpace,
-                PasswordField(fieldKey: new Key("0"), hintText: "Password", labelText: "Password",
-                helperText: "Password", obscureText: "Password",)
+                PasswordField(fieldKey: new Key("0"),
+                hintText: "Password", 
+                labelText: "Password",
+                helperText: "Password", obscureText: "Password",),
+                sizedBoxSpace,
+                TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.phone),
+                    hintText: "Your mobile number",
+                    labelText:
+                        "Mobile",
+                  )
+                ),
+                sizedBoxSpace,
+                Center(
+                  child: RaisedButton(
+                    child: Text("Submit"),
+                    onPressed: _handleSubmitted,
+                  ),
+                )
               ],
             )
           )
@@ -44,6 +65,20 @@ class RegistrationScene extends StatelessWidget {
     Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
     MaterialApp materialApp = new MaterialApp(home: scaffold);
     return materialApp;
+  }
+
+  void _handleSubmitted() {
+    /*final form = _formKey.currentState;
+    if (!form.validate()) {
+      _autoValidate = true; // Start validating on every change.
+      showInSnackBar(
+        GalleryLocalizations.of(context).demoTextFieldFormErrors,
+      );
+    } else {
+      form.save();
+      showInSnackBar(GalleryLocalizations.of(context)
+          .demoTextFieldNameHasPhoneNumber(person.name, person.phoneNumber));
+    }*/
   }
 }
 
@@ -82,6 +117,7 @@ class PasswordField extends StatelessWidget {
         hintText: this.hintText,
         labelText: this.labelText,
         helperText: this.helperText,
+        icon: Icon(Icons.pregnant_woman),
         suffixIcon: GestureDetector(
           dragStartBehavior: DragStartBehavior.down,
           //onTap: () {
