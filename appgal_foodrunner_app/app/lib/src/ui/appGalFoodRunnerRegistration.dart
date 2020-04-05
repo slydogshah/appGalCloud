@@ -9,10 +9,39 @@ class RegistrationScene extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    PasswordField passwordField = new PasswordField(fieldKey: new Key("0"), hintText: "Password", labelText: "Password",
-    helperText: "Password", obscureText: "Password",);
+    final cursorColor = Theme.of(context).cursorColor;
+    const sizedBoxSpace = SizedBox(height: 24);
+
+    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
+            dragStartBehavior: DragStartBehavior.down,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                sizedBoxSpace,
+                TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.person),
+                    hintText: "Your email address",
+                    labelText:
+                        "Email",
+                  )
+                ),
+                sizedBoxSpace,
+                PasswordField(fieldKey: new Key("0"), hintText: "Password", labelText: "Password",
+                helperText: "Password", obscureText: "Password",)
+              ],
+            )
+          )
+    );
+
+    Form form = new Form(child: scrollbar);
+
     AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
-    Scaffold scaffold = new Scaffold(appBar: appBar, body: passwordField,);
+    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
     MaterialApp materialApp = new MaterialApp(home: scaffold);
     return materialApp;
   }
