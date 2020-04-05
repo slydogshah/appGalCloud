@@ -2,16 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class RegistrationScene extends StatelessWidget {
+  BuildContext context;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final cursorColor = Theme.of(context).cursorColor;
     const sizedBoxSpace = SizedBox(height: 24);
-
+    this.context = context;
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -51,7 +56,20 @@ class RegistrationScene extends StatelessWidget {
                 Center(
                   child: RaisedButton(
                     child: Text("Submit"),
-                    onPressed: _handleSubmitted,
+                    onPressed: (){
+                        SliverFillRemaining popup = new SliverFillRemaining(
+                        child:  new Container(
+                          child: new Center(
+                            child: new CupertinoActivityIndicator(),
+                          ),
+                        ),
+                      );
+
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => popup),
+                      );
+                    },
                   ),
                 )
               ],
@@ -67,18 +85,48 @@ class RegistrationScene extends StatelessWidget {
     return materialApp;
   }
 
-  void _handleSubmitted() {
-    /*final form = _formKey.currentState;
-    if (!form.validate()) {
-      _autoValidate = true; // Start validating on every change.
-      showInSnackBar(
-        GalleryLocalizations.of(context).demoTextFieldFormErrors,
-      );
-    } else {
-      form.save();
-      showInSnackBar(GalleryLocalizations.of(context)
-          .demoTextFieldNameHasPhoneNumber(person.name, person.phoneNumber));
-    }*/
+  /*Widget _beforeDataLoaded() {
+    print("blah");
+    return new SliverFillRemaining(
+      child:  new Container(
+        child: new Center(
+          child: new CupertinoActivityIndicator(),
+        ),
+      ),
+    );
+  }*/
+
+  void showProgressIndicator()
+  {
+    SliverFillRemaining popup = new SliverFillRemaining(
+      child:  new Container(
+        child: new Center(
+          child: new CupertinoActivityIndicator(),
+        ),
+      ),
+     );
+
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => popup),
+    );
+  }
+}
+
+class CupertinoProgressIndicatorDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        automaticallyImplyLeading: false,
+        middle: Text(
+          "Registration In Progress",
+        ),
+      ),
+      child: const Center(
+        child: CupertinoActivityIndicator(),
+      ),
+    );
   }
 }
 
