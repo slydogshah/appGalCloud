@@ -13,5 +13,5 @@ void main()
   activeSession.activate();
 
   //Launch the App
-  runApp(new RegistrationScene());
+  runApp(new MyApp());
 }
