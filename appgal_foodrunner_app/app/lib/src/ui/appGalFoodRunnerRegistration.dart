@@ -8,6 +8,7 @@ import 'dart:ui';
 
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/rest/profileRestClient.dart';
+import 'package:app/src/ui/landingScene.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -125,7 +126,11 @@ class RegistrationScene extends StatelessWidget {
       ProfileRestClient profileRestClient = new ProfileRestClient();
       profileRestClient.register(session.getProfile());
       Navigator.of(this.context).pop();
-      Navigator.of(this.context).pop();
+
+      Navigator.push(
+     context,
+     MaterialPageRoute(builder: (context) => LandingScene()),
+     );
     });
   }
 
