@@ -39,7 +39,7 @@ class ProfileRestClient
     print("START");
     //String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
     String remoteUrl = "http://localhost:8080/registration/profile/";
-    http.post(remoteUrl).then((response) {
+    http.post(remoteUrl, body: profile.toString()).then((response) {
       print("BACK");
       String body = response.body;
       print(body);

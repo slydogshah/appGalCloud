@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Profile {
   String id;
   String email;
@@ -22,12 +24,7 @@ class Profile {
 
   String toString()
   {
-    Map<String, dynamic> json = this.toJson();
-    StringBuffer buffer = new StringBuffer();
-    buffer.write("ID: "+json['id']+"\n");
-    buffer.write("EMAIL: "+json['email']+"\n");
-    buffer.write("MOBILE: "+json['mobile']+"\n");
-    buffer.write("PHOTO: "+json['photo']+"\n");
-    return buffer.toString();
+    String json = jsonEncode(this.toJson());
+    return json;
   }
 }

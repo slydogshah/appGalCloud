@@ -2,8 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/rest/profileRestClient.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -69,10 +73,7 @@ class RegistrationScene extends StatelessWidget {
                     child: Text("Submit"),
                     onPressed: () 
                     {
-                        //RenderBox renderBox = context.findRenderObject();
-                        //Navigator.push(context,MaterialPageRoute(builder: (context) => renderBox),);
-                        //Navigator.of(context).pop();
-                        showAlertDialog(context);
+                      showAlertDialog(context);
                     }
                   )
                 ),
@@ -88,87 +89,49 @@ class RegistrationScene extends StatelessWidget {
     return scaffold;
   }
 
-  /*Widget _beforeDataLoaded() {
-    print("blah");
-    return new SliverFillRemaining(
-      child:  new Container(
-        child: new Center(
-          child: new CupertinoActivityIndicator(),
-        ),
-      ),
-    );
-  }*/
-  // replace this function with the examples above
-  showAlertDialog(BuildContext context) {
-
-  // set up the list options
-  Widget optionOne = SimpleDialogOption(
-    child: const Text('horse'),
-    onPressed: () {
-      print('horse');
-      Navigator.of(context).pop();
-    },
-  );
-  Widget optionTwo = SimpleDialogOption(
-    child: const Text('cow'),
-    onPressed: () {
-      print('cow');
-      Navigator.of(context).pop();
-    },
-  );
-  Widget optionThree = SimpleDialogOption(
-    child: const Text('camel'),
-    onPressed: () {
-      print('camel');
-      Navigator.of(context).pop();
-    },
-  );
-  Widget optionFour = SimpleDialogOption(
-    child: const Text('sheep'),
-    onPressed: () {
-      print('sheep');
-      Navigator.of(context).pop();
-    },
-  );
-  Widget optionFive = SimpleDialogOption(
-    child: const Text('goat'),
-    onPressed: () {
-      print('goat');
-      Navigator.of(context).pop();
-    },
-  );
-
-  // set up the SimpleDialog
-  SimpleDialog dialog = SimpleDialog(
-    //title: const Text('Choose an animal'),
-    children: [
-      CupertinoActivityIndicator(),
-    ],
-  );
-
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return dialog;
-    },
-  );
-}
-
-  void showProgressIndicator()
+  
+  void showAlertDialog(BuildContext context) 
   {
-    SliverFillRemaining popup = new SliverFillRemaining(
-      child:  new Container(
-        child: new Center(
-          child: new CupertinoActivityIndicator(),
-        ),
-      ),
-     );
-
-    Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => popup),
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+      //title: const Text('Choose an animal'),
+      children: [
+        CupertinoActivityIndicator(),]
+        /*RaisedButton(
+                    child: Text("Submit"),
+                    onPressed: () 
+                    {
+                        createOrderMessage();
+                    }
+                  ),
+      ]*/
     );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+    createOrderMessage();
+  }
+
+  String createOrderMessage () {
+    print("CREATE_ORDER");
+    Future<String> future = fetchUserOrder();
+    future.then((order){
+      ActiveSession session = ActiveSession.getInstance();
+      ProfileRestClient profileRestClient = new ProfileRestClient();
+      profileRestClient.register(session.getProfile());
+      Navigator.of(this.context).pop();
+      Navigator.of(this.context).pop();
+    });
+  }
+
+  Future<String> fetchUserOrder() {
+    // Imagine that this function is more complex and slow
+    return Future.delayed(Duration(seconds: 0), () => 'Large Latte');
   }
 }
 
