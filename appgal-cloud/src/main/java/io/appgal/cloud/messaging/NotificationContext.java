@@ -1,8 +1,14 @@
 package io.appgal.cloud.messaging;
 
+import com.google.gson.JsonObject;
+
 public class NotificationContext {
     private String topic;
     private MessageWindow messageWindow;
+
+    public NotificationContext(String topic) {
+        this.topic = topic;
+    }
 
     public NotificationContext(String topic, MessageWindow messageWindow) {
         this.topic = topic;

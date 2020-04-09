@@ -96,4 +96,19 @@ public class NotificationReceiversTest {
         String sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
         assertEquals("92ed655a-99a2-438b-8eeb-05d12a2d8a1b", sourceNotificationId);
     }
+
+    @Test
+    public void testGetOutstandingFoodRunnerNotification() {
+        Response response = given().when().get("/notification/getOutstandingFoodRunnerNotification").andReturn();
+
+        String json = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(json);
+        logger.info("****");
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String foodRunnerId = jsonObject.get("foodRunnerId").getAsString();
+        assertNotNull(foodRunnerId);
+    }
 }

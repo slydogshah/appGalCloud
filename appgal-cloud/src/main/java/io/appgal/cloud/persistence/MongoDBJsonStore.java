@@ -4,7 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.client.*;
+import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DestinationNotification;
+import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.SourceNotification;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -85,7 +87,10 @@ public class MongoDBJsonStore {
 
     public List<String> findKafakaDaemonBootstrapData()
     {
-        List<String> topics = Arrays.asList(SourceNotification.TOPIC, DestinationNotification.TOPIC);
+        List<String> topics = new ArrayList<>();
+        topics.add(SourceNotification.TOPIC);
+        topics.add(DestinationNotification.TOPIC);
+        topics.add(ActiveFoodRunnerData.TOPIC);
 
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
@@ -97,5 +102,54 @@ public class MongoDBJsonStore {
         collection.insertOne(document);
 
         return topics;
+    }
+
+    public void storeActiveFoodRunnerData(List<ActiveFoodRunnerData> activeFoodRunnerData)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+
+        List<Document> activeFoodRunners = new ArrayList<>();
+        for(ActiveFoodRunnerData local:activeFoodRunnerData)
+        {
+            Document doc = Document.parse(local.toString());
+            activeFoodRunners.add(doc);
+        }
+        collection.insertMany(activeFoodRunners);
+    }
+
+    public void storeProfile(Profile profile)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        Document doc = Document.parse(profile.toString());
+        collection.insertOne(doc);
+    }
+
+    public Profile getProfile(String email)
+    {
+        Profile profile = new Profile();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        //TODO: OPTIMIZE_THIS_QUERY ASSIGNED_TO: @bugs.bunny.shah@gmail.com
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
+            profile = Profile.parseProfile(jsonObject);
+        }
+
+        return profile;
     }
 }

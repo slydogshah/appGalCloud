@@ -91,7 +91,7 @@ public class SessionNetworkTests {
             logger.info(jsonArray.toString());
         }
 
-        Thread.sleep(120000);
+        Thread.sleep(15000);
 
 
         /*Map<String, Map<String, JsonArray>> lookupTable = this.kafkaDaemon.getLookupTable();

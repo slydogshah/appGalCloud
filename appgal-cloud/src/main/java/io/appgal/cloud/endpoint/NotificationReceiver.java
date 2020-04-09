@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.foodRunnerSync.protocol.ProcessIncomingPackets;
 import io.appgal.cloud.messaging.MessageWindow;
+import io.appgal.cloud.model.OutstandingFoodRunnerNotification;
 import io.appgal.cloud.model.SourceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,5 +65,19 @@ public class NotificationReceiver {
         sourceNotification.setSourceNotificationId(sourceNotificationId);
         JsonArray response = this.processIncomingPackets.processNotificationForPickup(sourceNotification);
         return response.toString();
+    }
+
+    @Path("getOutstandingFoodRunnerNotification")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getOutstandingFoodRunnerNotification()
+    {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("statusCode", "0");
+
+        OutstandingFoodRunnerNotification outstandingFoodRunnerNotification = new OutstandingFoodRunnerNotification();
+        outstandingFoodRunnerNotification.setFoodRunnerId(UUID.randomUUID().toString());
+        jsonObject.addProperty("foodRunnerId", outstandingFoodRunnerNotification.getFoodRunnerId());
+        return jsonObject.toString();
     }
 }
