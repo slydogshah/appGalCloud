@@ -1,14 +1,9 @@
 import 'dart:convert';
 
-import 'package:app/src/ui/localization/localization.dart';
 import 'package:flutter/src/material/material_localizations.dart';
 import 'package:test/test.dart';
 
-/*void main(List<String> args)
-{
-  MaterialLocalizations localization = Localization.of(null);
-  print(localization);
-}*/
+import 'localization.dart';
 
 void main() {
   group('Home Screen Test', () {
