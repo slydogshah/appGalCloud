@@ -4,10 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.MessageWindow;
-import io.appgal.cloud.model.ActiveFoodRunnerData;
-import io.appgal.cloud.model.DestinationNotification;
-import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.SourceNotification;
+import io.appgal.cloud.model.*;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -128,5 +125,18 @@ public class MongoDBJsonStoreTests {
         logger.info(storedProfile.toString());
         logger.info("*******");
         assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
+    }
+
+    @Test
+    public void testSourceOrgLifecycle()
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+        SourceOrg stored = this.mongoDBJsonStore.getSourceOrg();
+
+        logger.info("*******");
+        logger.info(stored.toString());
+        logger.info("*******");
+        assertNotNull(stored);
     }
 }

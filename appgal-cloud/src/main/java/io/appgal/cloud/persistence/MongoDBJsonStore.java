@@ -4,10 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.client.*;
-import io.appgal.cloud.model.ActiveFoodRunnerData;
-import io.appgal.cloud.model.DestinationNotification;
-import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.SourceNotification;
+import io.appgal.cloud.model.*;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,5 +148,39 @@ public class MongoDBJsonStore {
         }
 
         return profile;
+    }
+
+    public void storeSourceOrg(SourceOrg sourceOrg)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("customers");
+
+        Document doc = Document.parse(sourceOrg.toString());
+        collection.insertOne(doc);
+    }
+
+    public SourceOrg getSourceOrg()
+    {
+        SourceOrg sourceOrg = new SourceOrg();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("customers");
+
+        //TODO: OPTIMIZE_THIS_QUERY ASSIGNED_TO: @bugs.bunny.shah@gmail.com
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
+            sourceOrg = SourceOrg.parseJson(jsonObject);
+        }
+
+        return sourceOrg;
     }
 }

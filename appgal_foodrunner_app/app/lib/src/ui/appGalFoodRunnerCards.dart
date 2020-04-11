@@ -41,7 +41,9 @@ class TravelDestination {
   final CardDemoType type;
 }
 
-List<TravelDestination> destinations(BuildContext context) => [
+List<TravelDestination> destinations(BuildContext context) {
+    print("BLAH_$GalleryLocalizations.of(context)");
+    List<TravelDestination> destinations = [
       TravelDestination(
         assetName: 'places/india_thanjavur_market.png',
         assetPackage: _kGalleryAssetsPackage,
@@ -78,6 +80,8 @@ List<TravelDestination> destinations(BuildContext context) => [
         type: CardDemoType.selectable,
       ),
     ];
+    return destinations;
+}
 
 class TravelDestinationItem extends StatelessWidget {
   const TravelDestinationItem({Key key, @required this.destination, this.shape})
@@ -382,6 +386,8 @@ class CardsDemo extends StatefulWidget {
 class _CardsDemoState extends State<CardsDemo> {
   @override
   Widget build(BuildContext context) {
+    String blah = GalleryLocalizations.of(context).toString();
+    print("BLAH_$blah");
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
