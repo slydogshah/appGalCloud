@@ -4,10 +4,82 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import './l10n/gallery_localizations.dart';
+//import './l10n/gallery_localizations.dart';
 
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
+class CardsDemo extends StatefulWidget {
+  const CardsDemo();
+
+  @override
+  _CardsDemoState createState() => _CardsDemoState();
+}
+
+class _CardsDemoState extends State<CardsDemo> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text("title"),
+      ),
+      body: Scrollbar(
+        child: ListView(
+          padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+          children: [
+            for (final destination in destinations(context))
+              Container(
+                  width: 200,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    color: Colors.pink,
+                    elevation: 10,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const ListTile(
+                          leading: Icon(Icons.album, size: 70),
+                          title: Text('Heart Shaker', style: TextStyle(color: Colors.white)),
+                          subtitle: Text('TWICE', style: TextStyle(color: Colors.white)),
+                        ),
+                        ButtonTheme.bar(
+                          child: ButtonBar(
+                            children: <Widget>[
+                              FlatButton(
+                                child: const Text('Edit', style: TextStyle(color: Colors.white)),
+                                onPressed: () {},
+                              ),
+                              FlatButton(
+                                child: const Text('Delete', style: TextStyle(color: Colors.white)),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+          ],
+        ),
+      ),
+    );
+    /*return Card(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const ListTile(
+            leading: Icon(Icons.album, size: 50),
+            title: Text('Heart Shaker'),
+            subtitle: Text('TWICE'),
+          ),
+        ],
+      ),
+    );*/
+  }
+}
 // BEGIN cardsDemo
 
 enum CardDemoType {
@@ -18,16 +90,14 @@ enum CardDemoType {
 
 class TravelDestination {
   const TravelDestination({
-    @required this.assetName,
-    @required this.assetPackage,
+    this.assetName,
+    this.assetPackage,
     @required this.title,
     @required this.description,
     @required this.city,
     @required this.location,
     this.type = CardDemoType.standard,
-  })  : assert(assetName != null),
-        assert(assetPackage != null),
-        assert(title != null),
+  })  : assert(title != null),
         assert(description != null),
         assert(city != null),
         assert(location != null);
@@ -42,42 +112,15 @@ class TravelDestination {
 }
 
 List<TravelDestination> destinations(BuildContext context) {
-    print("BLAH_$GalleryLocalizations.of(context)");
     List<TravelDestination> destinations = [
       TravelDestination(
         assetName: 'places/india_thanjavur_market.png',
         assetPackage: _kGalleryAssetsPackage,
         title:
-            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle1,
-        description: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationDescription1,
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation1,
-      ),
-      TravelDestination(
-        assetName: 'places/india_chettinad_silk_maker.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle2,
-        description: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationDescription2,
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity2,
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation2,
-        type: CardDemoType.tappable,
-      ),
-      TravelDestination(
-        assetName: 'places/india_tanjore_thanjavur_temple.png',
-        assetPackage: _kGalleryAssetsPackage,
-        title:
-            GalleryLocalizations.of(context).cardsDemoTravelDestinationTitle3,
-        description: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationDescription3,
-        city: GalleryLocalizations.of(context).cardsDemoTravelDestinationCity1,
-        location: GalleryLocalizations.of(context)
-            .cardsDemoTravelDestinationLocation1,
-        type: CardDemoType.selectable,
+            "title",
+        description: "description",
+        city: "city",
+        location: "location",
       ),
     ];
     return destinations;
@@ -102,9 +145,6 @@ class TravelDestinationItem extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            SectionTitle(
-                title:
-                    GalleryLocalizations.of(context).settingsTextScalingNormal),
             SizedBox(
               height: height,
               child: Card(
@@ -141,8 +181,6 @@ class TappableTravelDestinationItem extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            SectionTitle(
-                title: GalleryLocalizations.of(context).cardsDemoTappable),
             SizedBox(
               height: height,
               child: Card(
@@ -200,8 +238,6 @@ class _SelectableTravelDestinationItemState
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            SectionTitle(
-                title: GalleryLocalizations.of(context).cardsDemoSelectable),
             SizedBox(
               height: height,
               child: Card(
@@ -248,26 +284,6 @@ class _SelectableTravelDestinationItemState
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class SectionTitle extends StatelessWidget {
-  const SectionTitle({
-    Key key,
-    this.title,
-  }) : super(key: key);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 4, 4, 12),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(title)
       ),
     );
   }
@@ -327,6 +343,7 @@ class TravelDestinationContent extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: DefaultTextStyle(
+            style: TextStyle(fontSize: 36, color: Colors.blue),
             softWrap: false,
             overflow: TextOverflow.ellipsis,
             child: Column(
@@ -346,73 +363,8 @@ class TravelDestinationContent extends StatelessWidget {
             ),
           ),
         ),
-        if (destination.type == CardDemoType.standard)
-          // share, explore buttons
-          ButtonBar(
-            alignment: MainAxisAlignment.start,
-            children: [
-              FlatButton(
-                child: Text(GalleryLocalizations.of(context).demoMenuShare,
-                    semanticsLabel: GalleryLocalizations.of(context)
-                        .cardsDemoShareSemantics(destination.title)),
-                textColor: Colors.amber.shade500,
-                onPressed: () {
-                  print('pressed');
-                },
-              ),
-              FlatButton(
-                child: Text(GalleryLocalizations.of(context).cardsDemoExplore,
-                    semanticsLabel: GalleryLocalizations.of(context)
-                        .cardsDemoExploreSemantics(destination.title)),
-                textColor: Colors.amber.shade500,
-                onPressed: () {
-                  print('pressed');
-                },
-              ),
-            ],
-          ),
       ],
     );
   }
 }
-
-class CardsDemo extends StatefulWidget {
-  const CardsDemo();
-
-  @override
-  _CardsDemoState createState() => _CardsDemoState();
-}
-
-class _CardsDemoState extends State<CardsDemo> {
-  @override
-  Widget build(BuildContext context) {
-    String blah = GalleryLocalizations.of(context).toString();
-    print("BLAH_$blah");
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(GalleryLocalizations.of(context).demoCardTitle),
-      ),
-      body: Scrollbar(
-        child: ListView(
-          padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-          children: [
-            for (final destination in destinations(context))
-              Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: (destination.type == CardDemoType.standard)
-                    ? TravelDestinationItem(destination: destination)
-                    : destination.type == CardDemoType.tappable
-                        ? TappableTravelDestinationItem(
-                            destination: destination)
-                        : SelectableTravelDestinationItem(
-                            destination: destination),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 // END
