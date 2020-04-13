@@ -75,6 +75,7 @@ public class SourceOrg implements Serializable {
         return jsonObject.toString();
     }
 
+    //Fix this shit...this is bullshit
     public static SourceOrg parseJson(JsonObject jsonObject)
     {
         SourceOrg sourceOrg = new SourceOrg();
