@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/appGalFoodRunnerCards.dart';
 import 'package:app/src/ui/landingScene.dart';
