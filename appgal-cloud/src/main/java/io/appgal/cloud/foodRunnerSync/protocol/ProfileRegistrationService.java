@@ -1,5 +1,6 @@
 package io.appgal.cloud.foodRunnerSync.protocol;
 
+import com.google.gson.JsonObject;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.slf4j.Logger;
@@ -24,5 +25,30 @@ public class ProfileRegistrationService {
     public void register(Profile profile)
     {
         this.mongoDBJsonStore.storeProfile(profile);
+    }
+
+    public JsonObject login(String email, String password)
+    {
+        Profile profile = this.getProfile(email);
+
+        String registeredEmail = profile.getEmail();
+        String registeredPassword = profile.getPassword();
+        boolean authSuccess = false;
+        if(registeredEmail.equals(email) && registeredPassword != null && registeredPassword.equals(password))
+        {
+            authSuccess = true;
+        }
+
+        JsonObject authResponse = new JsonObject();
+
+        if(authSuccess) {
+            authResponse.addProperty("statusCode", 200);
+        }
+        else
+        {
+            authResponse.addProperty("statusCode", 401);
+        }
+
+        return authResponse;
     }
 }

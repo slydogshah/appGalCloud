@@ -55,4 +55,17 @@ public class Registration {
         responseJson.addProperty("statusCode", "0");
         return responseJson.toString();
     }
+
+    @Path("login")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String login(@RequestBody String credentialsJson)
+    {
+        JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
+
+        String email = jsonObject.get("email").getAsString();
+        String password = jsonObject.get("password").getAsString();
+
+        return this.profileRegistrationService.login(email, password).toString();
+    }
 }

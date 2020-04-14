@@ -60,4 +60,23 @@ public class RegistrationTests {
         String statusCode = jsonObject.get("statusCode").getAsString();
         assertEquals("0", statusCode);*/
     }
+
+    @Test
+    public void testLogin() {
+        JsonObject json = new JsonObject();
+        json.addProperty("email", "blah@blah.com");
+        json.addProperty("password", "blahblah");
+
+        Response response = given().body(json.toString()).when().post("/registration/login").andReturn();
+
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(jsonString);
+        logger.info("****");
+
+        //assert the body
+        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        assertEquals("0", statusCode);*/
+    }
 }

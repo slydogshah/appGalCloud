@@ -13,6 +13,7 @@ public class Profile implements Serializable {
     private String email;
     private String mobile;
     private String photo;
+    private String password;
 
     public Profile()
     {
@@ -62,10 +63,20 @@ public class Profile implements Serializable {
         return photo;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void setPhoto(String photo)
     {
         this.photo = photo;
     }
+
+
 
     @Override
     public String toString()
@@ -93,6 +104,9 @@ public class Profile implements Serializable {
         profile.email = jsonObject.get("email").getAsString();
         profile.mobile = jsonObject.get("mobile").getAsString();
         profile.photo = jsonObject.get("photo").getAsString();
+        if(jsonObject.has("password")) {
+            profile.password = jsonObject.get("password").getAsString();
+        }
 
         return profile;
     }
