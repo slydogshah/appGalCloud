@@ -25,17 +25,12 @@ public class NetworkOrchestrator {
     @PostConstruct
     public void start()
     {
+        this.activeNetwork = new ActiveNetwork();
         this.activeFoodRunnerQueue = new PriorityQueue<>();
         this.finderResults = new HashMap<>();
         logger.info("*******");
         logger.info("NETWORK_ORCHESTRATOR_IS_ONLINE_NOW");
         logger.info("*******");
-
-    }
-
-    public void bootUp()
-    {
-        this.activeNetwork = new ActiveNetwork();
     }
 
     public void enterNetwork(FoodRunner foodRunner)

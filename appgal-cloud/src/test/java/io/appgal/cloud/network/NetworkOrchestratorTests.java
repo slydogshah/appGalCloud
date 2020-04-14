@@ -28,8 +28,6 @@ public class NetworkOrchestratorTests {
     @Test
     public void testBootup() throws Exception
     {
-        this.networkOrchestrator.bootUp();
-
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "");
@@ -52,8 +50,6 @@ public class NetworkOrchestratorTests {
     @Test
     public void testOrchestration() throws Exception
     {
-        this.networkOrchestrator.bootUp();
-
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "");
