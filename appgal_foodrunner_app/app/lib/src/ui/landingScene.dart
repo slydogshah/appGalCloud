@@ -1,29 +1,27 @@
-import 'package:app/src/model/activeView.dart';
+import 'package:app/src/model/authCredentials.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LandingScene extends StatefulWidget {
-  ActiveView activeView;
+  AuthCredentials authCredentials;
 
-  LandingScene(ActiveView activeView)
+  LandingScene(AuthCredentials authCredentials)
   {
-    this.activeView = activeView;
+    this.authCredentials = authCredentials;
   }
 
   @override
-  LandingSceneState createState() => LandingSceneState(this.activeView);
+  LandingSceneState createState() => LandingSceneState(this.authCredentials);
 }
 
 class LandingSceneState extends State<LandingScene> {
   GoogleMapController mapController;
-
   final LatLng _center = const LatLng(45.521563, -122.677433);
+  AuthCredentials authCredentials;
 
-  ActiveView activeView;
-
-  LandingSceneState(ActiveView activeView)
+  LandingSceneState(AuthCredentials authCredentials)
   {
-    this.activeView = activeView;
+    this.authCredentials = authCredentials;
   }
 
   void _onMapCreated(GoogleMapController controller) {

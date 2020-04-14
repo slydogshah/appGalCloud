@@ -8,6 +8,7 @@ import 'dart:ui';
 
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/activeView.dart';
+import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/appGalFoodRunnerCards.dart';
@@ -17,17 +18,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
-class MyApp extends StatelessWidget
+class Login extends StatelessWidget
 {
   @override
   Widget build(BuildContext context) {
-   MaterialApp materialApp = new MaterialApp(home: new RegistrationScene());
+   MaterialApp materialApp = new MaterialApp(home: new LoginScene());
    return materialApp;
   }
   
 }
 
-class RegistrationScene extends StatelessWidget {
+class LoginScene extends StatelessWidget {
   BuildContext context;
 
   // This widget is the root of your application.
@@ -60,18 +61,6 @@ class RegistrationScene extends StatelessWidget {
                 labelText: "Password",
                 helperText: "Password", obscureText: "Password",),
                 sizedBoxSpace,
-                TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.phone),
-                    hintText: "Your mobile number",
-                    labelText:
-                        "Mobile",
-                  )
-                ),
-                sizedBoxSpace,
                 Center(
                   child: RaisedButton(
                     child: Text("Submit"),
@@ -88,7 +77,7 @@ class RegistrationScene extends StatelessWidget {
 
     Form form = new Form(child: scrollbar);
 
-    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
+    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Login"),);
     Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
     return scaffold;
   }
@@ -118,19 +107,23 @@ class RegistrationScene extends StatelessWidget {
         return dialog;
       },
     );
-    login();
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = "blah@blah.com";
+    credentials.password = "blahblah";
+    login(credentials);
   }
 
-  void login () {
+  void login (AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    //Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
-    Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
-    activeViewFuture.then((activeView){
+    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
+    future.then((response){
       Navigator.of(this.context).pop();
 
-      //Navigator.push(
-      //context,
-      //MaterialPageRoute(builder: (context) => new LandingScene(activeView)));
+      print(response.toString());
+
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => new LandingScene(response)));
     });
   }
 }
