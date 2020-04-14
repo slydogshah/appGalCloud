@@ -11,6 +11,14 @@ void main() {
     });
   });
 
+  test('getActiveView', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<String> activeViewFuture = profileRestClient.getActiveView();
+    activeViewFuture.then((activeViewJson){
+      print(activeViewJson);
+    });
+  });
+
   test('String.trim() removes surrounding whitespace', () {
     var string = '  foo ';
     expect(string.trim(), equals('foo'));

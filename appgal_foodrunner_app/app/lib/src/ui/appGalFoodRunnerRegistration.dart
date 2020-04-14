@@ -122,16 +122,14 @@ class RegistrationScene extends StatelessWidget {
 
   void login () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
-    profileFuture.then((profile){
-      ActiveSession session = ActiveSession.getInstance();
-      profileRestClient.register(session.getProfile());
+    //Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
+    Future<String> activeViewFuture = profileRestClient.getActiveView();
+    activeViewFuture.then((activeView){
       Navigator.of(this.context).pop();
 
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => new CardsDemo(profile)),
-      );
+      MaterialPageRoute(builder: (context) => new LandingScene(activeView)));
     });
   }
 }
