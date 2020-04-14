@@ -70,6 +70,11 @@ public class Profile implements Serializable {
     @Override
     public String toString()
     {
+        return this.toJson().toString();
+    }
+
+    public JsonObject toJson()
+    {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("id", this.id);
@@ -77,7 +82,7 @@ public class Profile implements Serializable {
         jsonObject.addProperty("mobile", this.mobile);
         jsonObject.addProperty("photo", this.photo);
 
-        return jsonObject.toString();
+        return jsonObject;
     }
 
     public static Profile parseProfile(JsonObject jsonObject)

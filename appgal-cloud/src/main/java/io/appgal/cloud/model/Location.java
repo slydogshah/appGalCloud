@@ -1,5 +1,6 @@
 package io.appgal.cloud.model;
 
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,5 +34,15 @@ public class Location implements Serializable {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public JsonObject toJson()
+    {
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.addProperty("latitude", this.latitude);
+        jsonObject.addProperty("longitude", this.longitude);
+
+        return jsonObject;
     }
 }

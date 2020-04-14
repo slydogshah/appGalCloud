@@ -1,5 +1,6 @@
 package io.appgal.cloud.network;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
@@ -11,6 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @QuarkusTest
 public class NetworkOrchestratorTests {
@@ -36,5 +40,10 @@ public class NetworkOrchestratorTests {
         logger.info("*******");
         logger.info(activeView.toString());
         logger.info("*******");
+
+        JsonArray activeFoodRunners = activeView.getAsJsonArray("activeFoodRunners");
+        JsonObject activeFoodRunner = activeFoodRunners.get(0).getAsJsonObject();
+        JsonObject runnerProfile = activeFoodRunner.getAsJsonObject("profile");
+        assertEquals("bugs.bunny.shah@gmail.com", runnerProfile.get("email").getAsString());
     }
 }
