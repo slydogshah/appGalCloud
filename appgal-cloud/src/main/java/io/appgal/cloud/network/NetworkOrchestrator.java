@@ -10,8 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 @ApplicationScoped
 public class NetworkOrchestrator {
@@ -19,12 +18,19 @@ public class NetworkOrchestrator {
 
     private ActiveNetwork activeNetwork;
 
+    private Queue<PickupRequest> activeFoodRunnerQueue;
+
+    private Map<String, Collection<FoodRunner>> finderResults;
+
     @PostConstruct
     public void start()
     {
+        this.activeFoodRunnerQueue = new PriorityQueue<>();
+        this.finderResults = new HashMap<>();
         logger.info("*******");
         logger.info("NETWORK_ORCHESTRATOR_IS_ONLINE_NOW");
         logger.info("*******");
+
     }
 
     public void bootUp()
@@ -39,7 +45,10 @@ public class NetworkOrchestrator {
 
     public void sendPickUpRequest(PickupRequest pickupRequest)
     {
-        logger.info("RECEIVED: "+pickupRequest.toString());
+        //Place the PickUp Request in the ActiveFoodRunner Queue
+        this.activeFoodRunnerQueue.add(pickupRequest);
+
+        this.runFoodRunnerFinder();
     }
 
     public JsonObject getActiveView()
@@ -56,6 +65,39 @@ public class NetworkOrchestrator {
         }
         jsonObject.add("activeFoodRunners", activeFoodRunnerArray);
 
+        JsonArray pickUpRequestArray = new JsonArray();
+        Iterator<PickupRequest> itr = this.activeFoodRunnerQueue.iterator();
+        while(itr.hasNext())
+        {
+            PickupRequest pickupRequest = itr.next();
+            pickUpRequestArray.add(pickupRequest.toJson());
+        }
+        jsonObject.add("activeFoodRunnerQueue", pickUpRequestArray);
+
+        JsonArray finderResultsArray = new JsonArray();
+        final Set<Map.Entry<String, Collection<FoodRunner>>> entrySet = this.finderResults.entrySet();
+        for(Map.Entry<String, Collection<FoodRunner>> entry:entrySet)
+        {
+            String resultId = entry.getKey();
+            Collection<FoodRunner> results = entry.getValue();
+            JsonArray array = new JsonArray();
+            Iterator<FoodRunner> i = results.iterator();
+            while(i.hasNext())
+            {
+                array.add(i.next().toJson());
+            }
+            JsonObject result = new JsonObject();
+            result.add("result", array);
+            finderResultsArray.add(result);
+        }
+        jsonObject.add("finderResults", finderResultsArray);
+
         return jsonObject;
+    }
+
+    private void runFoodRunnerFinder()
+    {
+        Collection<FoodRunner> findResults = this.activeNetwork.readActiveFoodRunners();
+        this.finderResults.put(UUID.randomUUID().toString(), findResults);
     }
 }

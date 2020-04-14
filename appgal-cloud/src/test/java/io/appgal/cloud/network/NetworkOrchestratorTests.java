@@ -82,5 +82,10 @@ public class NetworkOrchestratorTests {
 
         PickupRequest pickupRequest = new PickupRequest(pickUp1, new Location(30.25860595703125d,-97.74873352050781d));
         this.networkOrchestrator.sendPickUpRequest(pickupRequest);
+
+        activeView = this.networkOrchestrator.getActiveView();
+        logger.info("*******");
+        logger.info(activeView.toString());
+        logger.info("*******");
     }
 }
