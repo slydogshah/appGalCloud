@@ -66,13 +66,18 @@ public class SourceOrg implements Serializable {
     @Override
     public String toString()
     {
+        return this.toJson().toString();
+    }
+
+    public JsonObject toJson()
+    {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("orgId", this.orgId);
         jsonObject.addProperty("orgName", this.orgName);
         jsonObject.addProperty("orgContactEmail", this.orgContactEmail);
 
-        return jsonObject.toString();
+        return jsonObject;
     }
 
     //Fix this shit...this is bullshit

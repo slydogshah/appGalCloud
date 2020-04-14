@@ -1,5 +1,6 @@
 package io.appgal.cloud.network.model;
 
+import com.google.gson.JsonObject;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.SourceOrg;
 import org.slf4j.Logger;
@@ -35,5 +36,21 @@ public class PickupRequest implements Serializable {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.toJson().toString();
+    }
+
+    public JsonObject toJson()
+    {
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        jsonObject.add("location", this.location.toJson());
+
+        return jsonObject;
     }
 }
