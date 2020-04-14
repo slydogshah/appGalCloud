@@ -1,4 +1,5 @@
 import 'package:app/src/model/activeView.dart';
+import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
@@ -17,6 +18,17 @@ void main() {
     Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
     activeViewFuture.then((activeView){
       print(activeView);
+    });
+  });
+
+  test('login', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = "blah@blah.com";
+    credentials.password = "blahblah";
+    Future<AuthCredentials> future = profileRestClient.login(credentials);
+    future.then((authCredentials){
+      print(authCredentials.toString());
     });
   });
 

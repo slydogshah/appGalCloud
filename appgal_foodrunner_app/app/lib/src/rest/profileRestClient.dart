@@ -1,4 +1,5 @@
 import 'package:app/src/model/activeView.dart';
+import 'package:app/src/model/authCredentials.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -8,7 +9,7 @@ import '../context/activeSession.dart';
 
 class ProfileRestClient
 {
-  void setProfile(ActiveSession activeSession)
+  void setProfile(ActiveSession activeSession) async
   {
     //String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
     String remoteUrl = "http://localhost:8080/registration/profile/";
@@ -20,7 +21,7 @@ class ProfileRestClient
     });
   }
 
-  void register(Profile profile)
+  void register(Profile profile) async
   {
     //String remoteUrl = "http://10.0.2.2:8080/registration/profile/";
     String remoteUrl = "http://localhost:8080/registration/profile/";
@@ -47,4 +48,13 @@ class ProfileRestClient
     return activeView;
   }
 
+  Future<AuthCredentials> login(AuthCredentials credentials) async
+  {
+    //String remoteUrl = "http://10.0.2.2:8080/registration/login/";
+    String remoteUrl = "http://localhost:8080/registration/login/";
+    var response = await http.post(remoteUrl, body: credentials.toString());
+    String authResponseJson = response.body;
+    AuthCredentials authResponse = AuthCredentials.fromJson(jsonDecode(authResponseJson));
+    return authResponse;
+  }
 }
