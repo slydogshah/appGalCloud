@@ -117,28 +117,22 @@ class RegistrationScene extends StatelessWidget {
         return dialog;
       },
     );
-    createOrderMessage();
+    login();
   }
 
-  String createOrderMessage () {
-    print("CREATE_ORDER");
-    Future<String> future = fetchUserOrder();
-    future.then((order){
+  void login () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
+    profileFuture.then((profile){
       ActiveSession session = ActiveSession.getInstance();
-      ProfileRestClient profileRestClient = new ProfileRestClient();
       profileRestClient.register(session.getProfile());
       Navigator.of(this.context).pop();
 
       Navigator.push(
-     context,
-     MaterialPageRoute(builder: (context) => new CardsDemo()),
-     );
+      context,
+      MaterialPageRoute(builder: (context) => new CardsDemo(profile)),
+      );
     });
-  }
-
-  Future<String> fetchUserOrder() {
-    // Imagine that this function is more complex and slow
-    return Future.delayed(Duration(seconds: 0), () => 'Large Latte');
   }
 }
 

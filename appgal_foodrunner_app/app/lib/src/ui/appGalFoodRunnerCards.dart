@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:flutter/foundation.dart';
@@ -11,20 +13,28 @@ import 'package:flutter/material.dart';
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
 class CardsDemo extends StatefulWidget {
-  CardsDemo()
+  Profile profile;
+  CardsDemo(Profile profile)
   {
-
+    this.profile = profile;
   }
 
   @override
-  _CardsDemoState createState() => _CardsDemoState();
+  _CardsDemoState createState() => _CardsDemoState(this.profile);
 }
 
 class _CardsDemoState extends State<CardsDemo> {
+  Profile profile;
+
+  _CardsDemoState(Profile profile)
+  {
+    this.profile = profile;
+  }
   @override
   Widget build(BuildContext context) {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Profile profile = profileRestClient.getProfile("blah@blah.com");
+    String id = this.profile.id;
+    String email = this.profile.email;
+    String mobile = this.profile.mobile;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -54,19 +64,19 @@ class _CardsDemoState extends State<CardsDemo> {
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Food Runner Id: $profile.id',
+                          labelText: 'Food Runner Id: $id',
                           ),
                         ),
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Email: $profile.email',
+                          labelText: 'Email: $email',
                           ),
                         ),
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Mobile: $profile.mobile',
+                          labelText: 'Mobile: $mobile',
                           ),
                         ),
                         ButtonTheme.bar(
@@ -91,18 +101,6 @@ class _CardsDemoState extends State<CardsDemo> {
         ),
       ),
     );
-    /*return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const ListTile(
-            leading: Icon(Icons.album, size: 50),
-            title: Text('Heart Shaker'),
-            subtitle: Text('TWICE'),
-          ),
-        ],
-      ),
-    );*/
   }
 }
 // BEGIN cardsDemo
