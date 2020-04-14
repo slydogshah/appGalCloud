@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @QuarkusTest
@@ -44,7 +45,8 @@ public class NetworkOrchestratorTests {
         JsonArray activeFoodRunners = activeView.getAsJsonArray("activeFoodRunners");
         JsonObject activeFoodRunner = activeFoodRunners.get(0).getAsJsonObject();
         JsonObject runnerProfile = activeFoodRunner.getAsJsonObject("profile");
-        assertEquals("bugs.bunny.shah@gmail.com", runnerProfile.get("email").getAsString());
+        assertNotNull(runnerProfile);
+        logger.info(runnerProfile.toString());
     }
 
     @Test
