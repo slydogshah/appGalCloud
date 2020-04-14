@@ -1,10 +1,11 @@
+import 'package:app/src/model/activeView.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LandingScene extends StatefulWidget {
-  String activeView;
+  ActiveView activeView;
 
-  LandingScene(String activeView)
+  LandingScene(ActiveView activeView)
   {
     this.activeView = activeView;
   }
@@ -18,9 +19,9 @@ class LandingSceneState extends State<LandingScene> {
 
   final LatLng _center = const LatLng(45.521563, -122.677433);
 
-  String activeView;
+  ActiveView activeView;
 
-  LandingSceneState(String activeView)
+  LandingSceneState(ActiveView activeView)
   {
     this.activeView = activeView;
   }
@@ -31,7 +32,6 @@ class LandingSceneState extends State<LandingScene> {
 
   @override
   Widget build(BuildContext context) {
-    print(this.activeView);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(

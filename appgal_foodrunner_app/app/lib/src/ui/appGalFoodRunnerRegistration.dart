@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/appGalFoodRunnerCards.dart';
@@ -123,7 +124,7 @@ class RegistrationScene extends StatelessWidget {
   void login () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     //Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
-    Future<String> activeViewFuture = profileRestClient.getActiveView();
+    Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
     activeViewFuture.then((activeView){
       Navigator.of(this.context).pop();
 

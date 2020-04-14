@@ -1,3 +1,4 @@
+import 'package:app/src/model/activeView.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -15,7 +16,6 @@ class ProfileRestClient
       String profileJson = response.body;
       Map<String, dynamic> map = jsonDecode(profileJson);
       Profile profile = Profile.fromJson(map);
-      print(profile);
       activeSession.setProfile(profile);
     });
   }
@@ -37,13 +37,14 @@ class ProfileRestClient
     return profile;
   }
 
-  Future<String> getActiveView() async
+  Future<ActiveView> getActiveView() async
   {
     //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/activeView/";
     String remoteUrl = "http://localhost:8080/activeNetwork/activeView/";
     var response = await http.get(remoteUrl);
     String activeViewJson = response.body;
-    return activeViewJson;
+    ActiveView activeView = ActiveView.fromJson(jsonDecode(activeViewJson));
+    return activeView;
   }
 
 }

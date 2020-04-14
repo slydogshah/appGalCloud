@@ -1,3 +1,4 @@
+import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
@@ -13,9 +14,9 @@ void main() {
 
   test('getActiveView', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<String> activeViewFuture = profileRestClient.getActiveView();
-    activeViewFuture.then((activeViewJson){
-      print(activeViewJson);
+    Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
+    activeViewFuture.then((activeView){
+      print(activeView);
     });
   });
 
