@@ -20,18 +20,16 @@ class Login extends StatelessWidget
    MaterialApp materialApp = new MaterialApp(home: new LoginScene());
    return materialApp;
   }
-  
 }
 
 class LoginScene extends StatelessWidget {
-  BuildContext context;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final cursorColor = Theme.of(context).cursorColor;
     const sizedBoxSpace = SizedBox(height: 24);
-    this.context = context;
+    ProfileFunctions profileFunctions = new ProfileFunctions();
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -76,7 +74,7 @@ class LoginScene extends StatelessWidget {
                       child: Text("Login"),
                       onPressed: () 
                       {
-                        showAlertDialog(context);
+                        profileFunctions.showAlertDialog(context);
                       }
                     )
                 )
@@ -90,50 +88,6 @@ class LoginScene extends StatelessWidget {
     AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Login"),);
     Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
     return scaffold;
-  }
-
-  void showAlertDialog(BuildContext context) 
-  {
-    // set up the SimpleDialog
-    SimpleDialog dialog = SimpleDialog(
-      //title: const Text('Choose an animal'),
-      children: [
-        CupertinoActivityIndicator(),]
-        /*RaisedButton(
-                    child: Text("Submit"),
-                    onPressed: () 
-                    {
-                        createOrderMessage();
-                    }
-                  ),
-      ]*/
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
-    AuthCredentials credentials = new AuthCredentials();
-    credentials.email = "blah@blah.com";
-    credentials.password = "blahblah";
-    login(credentials);
-  }
-
-  void login (AuthCredentials authCredentials) {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
-    future.then((response){
-      print(response.toString());
-
-      Navigator.of(this.context).pop();
-
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => new LandingScene(response)));
-    });
   }
 }
 
@@ -203,14 +157,13 @@ class Registration extends StatelessWidget
 }
 
 class RegistrationScene extends StatelessWidget {
-  BuildContext context;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final cursorColor = Theme.of(context).cursorColor;
     const sizedBoxSpace = SizedBox(height: 24);
-    this.context = context;
+    ProfileFunctions profileFunctions = new ProfileFunctions();
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -249,10 +202,10 @@ class RegistrationScene extends StatelessWidget {
                 sizedBoxSpace,
                 Center(
                   child: RaisedButton(
-                    child: Text("Submit"),
+                    child: Text("Register"),
                     onPressed: () 
                     {
-                      showAlertDialog(context);
+                      profileFunctions.showAlertDialog(context);
                     }
                   )
                 ),
@@ -267,7 +220,10 @@ class RegistrationScene extends StatelessWidget {
     Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
     return scaffold;
   }
+}
 
+class ProfileFunctions
+{
   void showAlertDialog(BuildContext context) 
   {
     // set up the SimpleDialog
@@ -295,20 +251,20 @@ class RegistrationScene extends StatelessWidget {
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = "blah@blah.com";
     credentials.password = "blahblah";
-    login(credentials);
+    login(context, credentials);
   }
 
-  void login (AuthCredentials authCredentials) {
+  void login (BuildContext context, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
     future.then((response){
       print(response.toString());
 
-      Navigator.of(this.context).pop();
+      Navigator.of(context).pop();
 
       Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => new LandingScene(response)));
     });
-  }
+  }  
 }
