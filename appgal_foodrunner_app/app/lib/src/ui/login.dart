@@ -7,11 +7,12 @@ import 'dart:ui';
 
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/rest/profileRestClient.dart';
-import 'package:app/src/ui/landingScene.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
+
+import 'landingScene.dart';
 
 class Login extends StatelessWidget
 {
@@ -59,9 +60,8 @@ class LoginScene extends StatelessWidget {
                     children: <Widget>[
                       FlatButton(
                         child: const Text('Register', style: TextStyle(color: Colors.black)),
-                        onPressed: () {Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => new Registration()));
+                        onPressed: () {
+                          Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
                         },
                       ),
                     ],
@@ -228,17 +228,7 @@ class ProfileFunctions
   {
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
-      //title: const Text('Choose an animal'),
-      children: [
-        CupertinoActivityIndicator(),]
-        /*RaisedButton(
-                    child: Text("Submit"),
-                    onPressed: () 
-                    {
-                        createOrderMessage();
-                    }
-                  ),
-      ]*/
+      children: [CupertinoActivityIndicator()]
     );
 
     // show the dialog
@@ -248,6 +238,7 @@ class ProfileFunctions
         return dialog;
       },
     );
+
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = "blah@blah.com";
     credentials.password = "blahblah";
@@ -260,7 +251,7 @@ class ProfileFunctions
     future.then((response){
       print(response.toString());
 
-      Navigator.of(context).pop();
+      Navigator.of(context, rootNavigator: true).pop();
 
       Navigator.push(
       context,
