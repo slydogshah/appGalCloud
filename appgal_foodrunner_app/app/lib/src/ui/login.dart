@@ -3,15 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
-import 'package:app/src/context/activeSession.dart';
-import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
-import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/profileRestClient.dart';
-import 'package:app/src/ui/appGalFoodRunnerCards.dart';
 import 'package:app/src/ui/landingScene.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -61,15 +56,30 @@ class LoginScene extends StatelessWidget {
                 labelText: "Password",
                 helperText: "Password", obscureText: "Password",),
                 sizedBoxSpace,
-                Center(
-                  child: RaisedButton(
-                    child: Text("Submit"),
-                    onPressed: () 
-                    {
-                      showAlertDialog(context);
-                    }
-                  )
+                ButtonTheme.bar(
+                  child: ButtonBar(
+                    children: <Widget>[
+                      FlatButton(
+                        child: const Text('Register', style: TextStyle(color: Colors.black)),
+                        onPressed: () {Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => new Registration()));
+                        },
+                      ),
+                    ],
+                  ),
                 ),
+                sizedBoxSpace,
+                Center(
+                  child:
+                    RaisedButton(
+                      child: Text("Login"),
+                      onPressed: () 
+                      {
+                        showAlertDialog(context);
+                      }
+                    )
+                )
               ],
             )
           )
@@ -82,7 +92,6 @@ class LoginScene extends StatelessWidget {
     return scaffold;
   }
 
-  
   void showAlertDialog(BuildContext context) 
   {
     // set up the SimpleDialog
@@ -117,31 +126,14 @@ class LoginScene extends StatelessWidget {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
     future.then((response){
-      Navigator.of(this.context).pop();
-
       print(response.toString());
+
+      Navigator.of(this.context).pop();
 
       Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => new LandingScene(response)));
     });
-  }
-}
-
-class CupertinoProgressIndicatorDemo extends OverlayEntry {
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        automaticallyImplyLeading: false,
-        middle: Text(
-          "Registration In Progress",
-        ),
-      ),
-      child: const Center(
-        child: CupertinoActivityIndicator(),
-      ),
-    );
   }
 }
 
@@ -197,5 +189,126 @@ class PasswordField extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class Registration extends StatelessWidget
+{
+  @override
+  Widget build(BuildContext context) {
+   MaterialApp materialApp = new MaterialApp(home: new RegistrationScene());
+   return materialApp;
+  }
+  
+}
+
+class RegistrationScene extends StatelessWidget {
+  BuildContext context;
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    final cursorColor = Theme.of(context).cursorColor;
+    const sizedBoxSpace = SizedBox(height: 24);
+    this.context = context;
+    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
+            dragStartBehavior: DragStartBehavior.down,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                sizedBoxSpace,
+                TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.person),
+                    hintText: "Your email address",
+                    labelText:
+                        "Email",
+                  )
+                ),
+                sizedBoxSpace,
+                PasswordField(fieldKey: new Key("0"),
+                hintText: "Password", 
+                labelText: "Password",
+                helperText: "Password", obscureText: "Password",),
+                sizedBoxSpace,
+                TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.phone),
+                    hintText: "Your mobile number",
+                    labelText:
+                        "Mobile",
+                  )
+                ),
+                sizedBoxSpace,
+                Center(
+                  child: RaisedButton(
+                    child: Text("Submit"),
+                    onPressed: () 
+                    {
+                      showAlertDialog(context);
+                    }
+                  )
+                ),
+              ],
+            )
+          )
+    );
+
+    Form form = new Form(child: scrollbar);
+
+    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
+    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
+    return scaffold;
+  }
+
+  void showAlertDialog(BuildContext context) 
+  {
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+      //title: const Text('Choose an animal'),
+      children: [
+        CupertinoActivityIndicator(),]
+        /*RaisedButton(
+                    child: Text("Submit"),
+                    onPressed: () 
+                    {
+                        createOrderMessage();
+                    }
+                  ),
+      ]*/
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = "blah@blah.com";
+    credentials.password = "blahblah";
+    login(credentials);
+  }
+
+  void login (AuthCredentials authCredentials) {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
+    future.then((response){
+      print(response.toString());
+
+      Navigator.of(this.context).pop();
+
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => new LandingScene(response)));
+    });
   }
 }

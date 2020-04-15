@@ -4,7 +4,6 @@
 import 'package:app/src/ui/login.dart';
 import 'package:flutter/material.dart';
 
-import './src/ui/appGalFoodRunnerRegistration.dart';
 import './src/context/activeSession.dart';
 
 void main() 
