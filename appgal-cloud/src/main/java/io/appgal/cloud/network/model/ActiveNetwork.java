@@ -36,6 +36,13 @@ public class ActiveNetwork implements Serializable {
 
     public Collection<FoodRunner> readActiveFoodRunners()
     {
+
+        return this.activeFoodRunners.values();
+    }
+
+    public Collection<FoodRunner> findFoodRunners(PickupRequest pickupRequest)
+    {
+
         return this.activeFoodRunners.values();
     }
 }

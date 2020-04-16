@@ -92,7 +92,8 @@ public class NetworkOrchestrator {
 
     private void runFoodRunnerFinder()
     {
-        Collection<FoodRunner> findResults = this.activeNetwork.readActiveFoodRunners();
+        PickupRequest pickupRequest = this.activeFoodRunnerQueue.remove();
+        Collection<FoodRunner> findResults = this.activeNetwork.findFoodRunners(pickupRequest);
         this.finderResults.put(UUID.randomUUID().toString(), findResults);
     }
 }
