@@ -1,12 +1,12 @@
 package io.appgal.cloud.network.model;
 
+import io.appgal.cloud.geospatial.DistanceCalculator;
+import io.appgal.cloud.model.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ActiveNetwork implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(ActiveNetwork.class);
@@ -40,9 +40,22 @@ public class ActiveNetwork implements Serializable {
         return this.activeFoodRunners.values();
     }
 
-    public Collection<FoodRunner> findFoodRunners(PickupRequest pickupRequest)
+    public List<FoodRunner> findFoodRunners(PickupRequest pickupRequest)
     {
-
-        return this.activeFoodRunners.values();
+        List<FoodRunner> ranbeeras = new ArrayList<>();
+        DistanceCalculator distanceCalculator = new DistanceCalculator();
+        Iterator<FoodRunner> iterator = this.activeFoodRunners.values().iterator();
+        while(iterator.hasNext())
+        {
+            FoodRunner foodRunner = iterator.next();
+            Location pickUpLocation = pickupRequest.getLocation();
+            Location foodRunnerLocation = foodRunner.getLocation();
+            Double distance = distanceCalculator.calculateDistance(pickUpLocation, foodRunnerLocation);
+            if(distance <= 5.0d)
+            {
+                ranbeeras.add(foodRunner);
+            }
+        }
+        return ranbeeras;
     }
 }
