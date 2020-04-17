@@ -12,14 +12,12 @@ public class PickupRequest implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(PickupRequest.class);
 
     private SourceOrg sourceOrg;
-    private Location location;
 
     public PickupRequest() {
     }
 
-    public PickupRequest(SourceOrg sourceOrg, Location location) {
+    public PickupRequest(SourceOrg sourceOrg) {
         this.sourceOrg = sourceOrg;
-        this.location = location;
     }
 
     public SourceOrg getSourceOrg() {
@@ -28,14 +26,6 @@ public class PickupRequest implements Serializable {
 
     public void setSourceOrg(SourceOrg sourceOrg) {
         this.sourceOrg = sourceOrg;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 
     @Override
@@ -49,7 +39,6 @@ public class PickupRequest implements Serializable {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.add("sourceOrg", this.sourceOrg.toJson());
-        jsonObject.add("location", this.location.toJson());
 
         return jsonObject;
     }

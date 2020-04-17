@@ -73,12 +73,13 @@ public class NetworkOrchestratorTests {
         logger.info("*******");
 
         SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        pickUp1.setLocation(new Location(30.25860595703125d,-97.74873352050781d));
         SourceOrg pickUp2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com");
 
         SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com");
         SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
 
-        PickupRequest pickupRequest = new PickupRequest(pickUp1, new Location(30.25860595703125d,-97.74873352050781d));
+        PickupRequest pickupRequest = new PickupRequest(pickUp1);
         this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
         activeView = this.networkOrchestrator.getActiveView();

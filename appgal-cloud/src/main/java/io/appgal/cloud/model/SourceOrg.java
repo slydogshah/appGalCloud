@@ -14,6 +14,8 @@ public class SourceOrg implements Serializable {
     private String orgName;
     private String orgContactEmail;
 
+    private Location location;
+
     public SourceOrg()
     {
 
@@ -48,6 +50,14 @@ public class SourceOrg implements Serializable {
 
     public void setOrgContactEmail(String orgContactEmail) {
         this.orgContactEmail = orgContactEmail;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override

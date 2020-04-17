@@ -42,20 +42,20 @@ public class ActiveNetwork implements Serializable {
 
     public List<FoodRunner> findFoodRunners(PickupRequest pickupRequest)
     {
-        List<FoodRunner> ranbeeras = new ArrayList<>();
+        List<FoodRunner> result = new ArrayList<>();
         DistanceCalculator distanceCalculator = new DistanceCalculator();
         Iterator<FoodRunner> iterator = this.activeFoodRunners.values().iterator();
         while(iterator.hasNext())
         {
             FoodRunner foodRunner = iterator.next();
-            Location pickUpLocation = pickupRequest.getLocation();
+            Location pickUpLocation = pickupRequest.getSourceOrg().getLocation();
             Location foodRunnerLocation = foodRunner.getLocation();
             Double distance = distanceCalculator.calculateDistance(pickUpLocation, foodRunnerLocation);
             if(distance <= 5.0d)
             {
-                ranbeeras.add(foodRunner);
+                result.add(foodRunner);
             }
         }
-        return ranbeeras;
+        return result;
     }
 }
