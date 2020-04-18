@@ -1,4 +1,15 @@
-import 'package:flutter/gestures.dart';
+import 'dart:async';
+main() {
+  const oneSec = const Duration(seconds:1);
+  new Timer.periodic(oneSec, (Timer t) => print('hi!'));
+}
+
+
+
+
+
+
+/*import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
@@ -70,4 +81,4 @@ class DropdownScreenState extends State<DropdownScreen> {
       ),
     );
   }
-}
+}*/

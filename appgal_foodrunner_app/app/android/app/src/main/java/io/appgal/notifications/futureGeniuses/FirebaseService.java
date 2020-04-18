@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
+import android.widget.Toast; 
 
 public class FirebaseService extends FirebaseMessagingService
 {
@@ -38,7 +39,10 @@ public class FirebaseService extends FirebaseMessagingService
         String nhMessage;
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            Log.i(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            String notificationBody = remoteMessage.getNotification().getBody();
+            Log.i(TAG, "Message Notification Body: " + notificationBody);
+
+            Toast.makeText(getApplicationContext(),notificationBody,Toast.LENGTH_SHORT).show();  
 
             nhMessage = remoteMessage.getNotification().getBody();
         }
