@@ -2,6 +2,8 @@ package io.appgal.cloud.network;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import io.appgal.cloud.model.Location;
+import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.network.model.ActiveNetwork;
 import io.appgal.cloud.network.model.FoodRunner;
 import io.appgal.cloud.network.model.PickupRequest;
@@ -44,6 +46,25 @@ public class NetworkOrchestrator {
         this.activeFoodRunnerQueue.add(pickupRequest);
 
         this.runFoodRunnerFinder();
+    }
+
+    public JsonArray getPickRequestResult(String requestId)
+    {
+        //TODO: unmock this beautiful dataset @bugs.bunny.shah@gmail.com
+        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        pickUp1.setLocation(new Location(30.25860595703125d,-97.74873352050781d));
+
+
+        PickupRequest pickupRequest = new PickupRequest(requestId, pickUp1);
+        Collection<FoodRunner> foodRunners = this.activeNetwork.findFoodRunners(pickupRequest);
+        Iterator<FoodRunner> itr = foodRunners.iterator();
+        JsonArray array = new JsonArray();
+        while(itr.hasNext())
+        {
+            FoodRunner foodRunner = itr.next();
+            array.add(foodRunner.toJson());
+        }
+        return array;
     }
 
     public JsonObject getActiveView()
@@ -94,6 +115,6 @@ public class NetworkOrchestrator {
     {
         PickupRequest pickupRequest = this.activeFoodRunnerQueue.remove();
         Collection<FoodRunner> findResults = this.activeNetwork.findFoodRunners(pickupRequest);
-        this.finderResults.put(UUID.randomUUID().toString(), findResults);
+        this.finderResults.put(pickupRequest.getRequestId(), findResults);
     }
 }

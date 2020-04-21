@@ -79,12 +79,18 @@ public class NetworkOrchestratorTests {
         SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com");
         SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
 
-        PickupRequest pickupRequest = new PickupRequest(pickUp1);
+        PickupRequest pickupRequest = new PickupRequest(UUID.randomUUID().toString(), pickUp1);
         this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
         activeView = this.networkOrchestrator.getActiveView();
         logger.info("*******");
         logger.info(activeView.toString());
+        logger.info("*******");
+
+        JsonArray result = this.networkOrchestrator.getPickRequestResult(pickupRequest.getRequestId());
+        assertNotNull(result);
+        logger.info("*******");
+        logger.info(result.toString());
         logger.info("*******");
     }
 }

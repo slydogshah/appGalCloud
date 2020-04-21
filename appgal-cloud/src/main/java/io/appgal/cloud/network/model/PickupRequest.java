@@ -11,13 +11,19 @@ import java.io.Serializable;
 public class PickupRequest implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(PickupRequest.class);
 
+    private String requestId;
     private SourceOrg sourceOrg;
 
     public PickupRequest() {
     }
 
-    public PickupRequest(SourceOrg sourceOrg) {
+    public PickupRequest(String requestId, SourceOrg sourceOrg) {
+        this.requestId = requestId;
         this.sourceOrg = sourceOrg;
+    }
+
+    public String getRequestId() {
+        return requestId;
     }
 
     public SourceOrg getSourceOrg() {
