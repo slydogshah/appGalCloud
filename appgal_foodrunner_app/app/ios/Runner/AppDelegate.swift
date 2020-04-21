@@ -11,8 +11,13 @@ import UserNotifications
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
     GMSServices.provideAPIKey("AIzaSyAAGiFi2Vm2__zWssAL6sgghY5UEPTdlDs")
+
+    let calendar = Calendar(identifier: .gregorian)
+    let components = calendar.dateComponents(in: .current, from: Date())
+    let newComponents = DateComponents(calendar: calendar, timeZone: .current, 
+    month: components.month, day: components.day, hour: components.hour, minute: components.minute)
  
-    let trigger = UNCalendarNotificationTrigger(dateMatching: newComponents, repeats: false)
+    let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
 
     let content = UNMutableNotificationContent()
     content.title = "Tutorial Reminder"
@@ -28,7 +33,7 @@ import UserNotifications
       }
     }
 
-    let selectedDate = sender.date
+    let selectedDate = Date()
     let delegate = UIApplication.shared.delegate as? AppDelegate
     delegate?.scheduleNotification(at: selectedDate)
 
@@ -37,9 +42,9 @@ import UserNotifications
 
   func scheduleNotification(at date: Date) 
   {
-    let calendar = Calendar(identifier: .gregorian)
-    let components = calendar.dateComponents(in: .current, from: date)
-    let newComponents = DateComponents(calendar: calendar, timeZone: .current, 
-    month: components.month, day: components.day, hour: components.hour, minute: components.minute)
+    //let calendar = Calendar(identifier: .gregorian)
+    //let components = calendar.dateComponents(in: .current, from: date)
+    //let newComponents = DateComponents(calendar: calendar, timeZone: .current, 
+    //month: components.month, day: components.day, hour: components.hour, minute: components.minute)
   }
 }
