@@ -12,8 +12,10 @@ public class ActiveNetwork implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(ActiveNetwork.class);
 
     private Map<String, FoodRunner> activeFoodRunners;
+    
 
-    public ActiveNetwork() {
+    public ActiveNetwork()
+    {
         this.activeFoodRunners = new HashMap<>();
     }
 
@@ -23,10 +25,6 @@ public class ActiveNetwork implements Serializable {
 
     public Map<String, FoodRunner> getActiveFoodRunners() {
         return activeFoodRunners;
-    }
-
-    public void setActiveFoodRunners(Map<String, FoodRunner> activeFoodRunners) {
-        this.activeFoodRunners = activeFoodRunners;
     }
 
     public void addActiveFoodRunner(FoodRunner foodRunner)
