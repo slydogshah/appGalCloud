@@ -127,15 +127,6 @@ public class MongoDBJsonStoreTests {
     }
 
     @Test
-    public void testGetProfileById()
-    {
-        Profile storedProfile = this.mongoDBJsonStore.getProfileById("da6796c5-ba90-4a71-b6b1-4011aa7ea1ab");
-        logger.info("*******");
-        logger.info(storedProfile.toString());
-        logger.info("*******");
-    }
-
-    @Test
     public void testSourceOrgLifecycle()
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");

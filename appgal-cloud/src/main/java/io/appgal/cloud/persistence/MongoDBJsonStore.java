@@ -151,34 +151,6 @@ public class MongoDBJsonStore {
         return profile;
     }
 
-    public Profile getProfileById(String profileId)
-    {
-        Profile profile = new Profile();
-
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("profile");
-
-        //String queryJson = "{\"id\":\""+profileId+"\"}";
-        //System.out.println(queryJson);
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
-            if(jsonObject.get("id").getAsString().equals(profileId)) {
-                profile = Profile.parseProfile(jsonObject.toString());
-                return profile;
-            }
-        }
-
-        return profile;
-    }
-
     public void storeSourceOrg(SourceOrg sourceOrg)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
@@ -247,12 +219,6 @@ public class MongoDBJsonStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-
-            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
-            String foodRunnerId = jsonObject.get("foodRunnerId").getAsString();
-            Profile profile = this.getProfileById(foodRunnerId);
-
-
 
             FoodRunner foodRunner = FoodRunner.parse(documentJson);
             activeNetwork.addActiveFoodRunner(foodRunner);

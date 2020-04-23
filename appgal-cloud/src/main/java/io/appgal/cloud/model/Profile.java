@@ -103,9 +103,15 @@ public class Profile implements Serializable {
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         profile.id = jsonObject.get("id").getAsString();
-        profile.email = jsonObject.get("email").getAsString();
-        profile.mobile = jsonObject.get("mobile").getAsString();
-        profile.photo = jsonObject.get("photo").getAsString();
+        if(jsonObject.has("email")) {
+            profile.email = jsonObject.get("email").getAsString();
+        }
+        if(jsonObject.has("mobile")) {
+            profile.mobile = jsonObject.get("mobile").getAsString();
+        }
+        if(jsonObject.has("photo")) {
+            profile.photo = jsonObject.get("photo").getAsString();
+        }
         if(jsonObject.has("password")) {
             profile.password = jsonObject.get("password").getAsString();
         }

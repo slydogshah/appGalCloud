@@ -1,5 +1,6 @@
 package io.appgal.cloud.network.model;
 
+import com.google.gson.JsonArray;
 import io.appgal.cloud.geospatial.DistanceCalculator;
 import io.appgal.cloud.model.Location;
 import org.slf4j.Logger;
@@ -61,5 +62,16 @@ public class ActiveNetwork implements Serializable {
             }
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        Collection<FoodRunner> foodRunners = this.activeFoodRunners.values();
+        JsonArray array = new JsonArray();
+        for(FoodRunner cour:foodRunners)
+        {
+            array.add(cour.toJson());
+        }
+        return array.toString();
     }
 }
