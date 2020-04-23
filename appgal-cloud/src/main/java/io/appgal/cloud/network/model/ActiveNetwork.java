@@ -27,14 +27,20 @@ public class ActiveNetwork implements Serializable {
         return activeFoodRunners;
     }
 
+    public void setActiveFoodRunners(Map<String, FoodRunner> activeFoodRunners)
+    {
+        this.activeFoodRunners = activeFoodRunners;
+    }
+
     public void addActiveFoodRunner(FoodRunner foodRunner)
     {
         this.activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
+
+        //persist the state of the network
     }
 
     public Collection<FoodRunner> readActiveFoodRunners()
     {
-
         return this.activeFoodRunners.values();
     }
 

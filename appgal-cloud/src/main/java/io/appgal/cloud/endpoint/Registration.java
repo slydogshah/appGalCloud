@@ -48,7 +48,7 @@ public class Registration {
         logger.info("*******");
 
         JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
-        Profile profile = Profile.parseProfile(jsonObject);
+        Profile profile = Profile.parseProfile(jsonObject.toString());
         this.profileRegistrationService.register(profile);
 
         JsonObject responseJson = new JsonObject();

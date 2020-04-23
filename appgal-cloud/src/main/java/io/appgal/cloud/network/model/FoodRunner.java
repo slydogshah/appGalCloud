@@ -2,6 +2,7 @@ package io.appgal.cloud.network.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
 import org.slf4j.Logger;
@@ -47,5 +48,21 @@ public class FoodRunner implements Serializable {
         jsonObject.add("location", this.location.toJson());
 
         return jsonObject;
+    }
+
+    @Override
+    public String toString() {
+        return this.toJson().toString();
+    }
+
+    public static FoodRunner parse(String json)
+    {
+        FoodRunner foodRunner = new FoodRunner();
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        Profile profile = Profile.parseProfile(jsonObject.get("profile").getAsString());
+        Location location = Location.parse(jsonObject.get("location").getAsString());
+        foodRunner.setProfile(profile);
+        foodRunner.setLocation(location);
+        return foodRunner;
     }
 }

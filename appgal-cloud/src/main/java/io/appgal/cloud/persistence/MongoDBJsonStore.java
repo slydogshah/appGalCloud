@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.client.*;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.network.model.ActiveNetwork;
+import io.appgal.cloud.network.model.FoodRunner;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +20,15 @@ import com.mongodb.ConnectionString;
 import com.mongodb.ServerAddress;
 
 import org.bson.Document;
-import java.util.Arrays;
+
+import java.util.*;
+
 import com.mongodb.Block;
 
 import static com.mongodb.client.model.Filters.*;
 import com.mongodb.client.result.DeleteResult;
 import static com.mongodb.client.model.Updates.*;
 import com.mongodb.client.result.UpdateResult;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @ApplicationScoped
 public class MongoDBJsonStore {
@@ -101,7 +102,7 @@ public class MongoDBJsonStore {
         return topics;
     }
 
-    public void storeActiveFoodRunnerData(List<ActiveFoodRunnerData> activeFoodRunnerData)
+    /*public void storeActiveFoodRunnerData(List<ActiveFoodRunnerData> activeFoodRunnerData)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
@@ -114,7 +115,7 @@ public class MongoDBJsonStore {
             activeFoodRunners.add(doc);
         }
         collection.insertMany(activeFoodRunners);
-    }
+    }*/
 
     public void storeProfile(Profile profile)
     {
@@ -144,7 +145,35 @@ public class MongoDBJsonStore {
             Document document = cursor.next();
             String documentJson = document.toJson();
             JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
-            profile = Profile.parseProfile(jsonObject);
+            profile = Profile.parseProfile(jsonObject.toString());
+        }
+
+        return profile;
+    }
+
+    public Profile getProfileById(String profileId)
+    {
+        Profile profile = new Profile();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        //String queryJson = "{\"id\":\""+profileId+"\"}";
+        //System.out.println(queryJson);
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
+            if(jsonObject.get("id").getAsString().equals(profileId)) {
+                profile = Profile.parseProfile(jsonObject.toString());
+                return profile;
+            }
         }
 
         return profile;
@@ -182,5 +211,53 @@ public class MongoDBJsonStore {
         }
 
         return sourceOrg;
+    }
+
+    public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+
+        List<Document> activeFoodRunnerDocs = new ArrayList<>();
+        final Iterator<FoodRunner> iterator = activeFoodRunners.values().iterator();
+        while(iterator.hasNext())
+        {
+            FoodRunner foodRunner = iterator.next();
+            String json = foodRunner.toString();
+            Document doc = Document.parse(json);
+            activeFoodRunnerDocs.add(doc);
+        }
+        collection.insertMany(activeFoodRunnerDocs);
+    }
+
+    public ActiveNetwork getActiveNetwork()
+    {
+        ActiveNetwork activeNetwork = new ActiveNetwork();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+
+            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
+            String foodRunnerId = jsonObject.get("foodRunnerId").getAsString();
+            Profile profile = this.getProfileById(foodRunnerId);
+
+
+
+            FoodRunner foodRunner = FoodRunner.parse(documentJson);
+            activeNetwork.addActiveFoodRunner(foodRunner);
+        }
+
+        return activeNetwork;
     }
 }

@@ -1,6 +1,7 @@
 package io.appgal.cloud.model;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,10 +97,11 @@ public class Profile implements Serializable {
         return jsonObject;
     }
 
-    public static Profile parseProfile(JsonObject jsonObject)
+    public static Profile parseProfile(String json)
     {
         Profile profile = new Profile();
 
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         profile.id = jsonObject.get("id").getAsString();
         profile.email = jsonObject.get("email").getAsString();
         profile.mobile = jsonObject.get("mobile").getAsString();

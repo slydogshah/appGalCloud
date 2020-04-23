@@ -5,6 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.network.model.ActiveNetwork;
+import io.appgal.cloud.network.model.FoodRunner;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +19,7 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -101,7 +100,7 @@ public class MongoDBJsonStoreTests {
         assertTrue(topics.contains(DestinationNotification.TOPIC));
     }
 
-    @Test
+    /*@Test
     public void testStoreActiveFoodRunnerData()
     {
         for(int i=0; i<5; i++) {
@@ -112,7 +111,7 @@ public class MongoDBJsonStoreTests {
         }
 
         //assert
-    }
+    }*/
 
     @Test
     public void testStoreProfile()
@@ -128,6 +127,15 @@ public class MongoDBJsonStoreTests {
     }
 
     @Test
+    public void testGetProfileById()
+    {
+        Profile storedProfile = this.mongoDBJsonStore.getProfileById("da6796c5-ba90-4a71-b6b1-4011aa7ea1ab");
+        logger.info("*******");
+        logger.info(storedProfile.toString());
+        logger.info("*******");
+    }
+
+    @Test
     public void testSourceOrgLifecycle()
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
@@ -138,5 +146,25 @@ public class MongoDBJsonStoreTests {
         logger.info(stored.toString());
         logger.info("*******");
         assertNotNull(stored);
+    }
+
+    @Test
+    public void testStoreActiveNetwork()
+    {
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "");
+        Location location = new Location(startLatitude, startLongitude);
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+
+        Map<String, FoodRunner> activeFoodRunners = new HashMap<>();
+        activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
+
+        this.mongoDBJsonStore.storeActiveNetwork(activeFoodRunners);
+
+        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        logger.info("*******");
+        logger.info(activeNetwork.toString());
+        logger.info("*******");
     }
 }
