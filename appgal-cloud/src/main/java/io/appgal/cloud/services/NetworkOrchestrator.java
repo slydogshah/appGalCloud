@@ -47,6 +47,11 @@ public class NetworkOrchestrator {
         this.mongoDBJsonStore.storeActiveNetwork(this.activeNetwork.getActiveFoodRunners());
     }
 
+    public void leaveNetwork(FoodRunner foodRunner)
+    {
+        this.activeNetwork.removeFoodRunner(foodRunner);
+    }
+
     public void sendPickUpRequest(PickupRequest pickupRequest)
     {
         //Place the PickUp Request in the ActiveFoodRunner Queue

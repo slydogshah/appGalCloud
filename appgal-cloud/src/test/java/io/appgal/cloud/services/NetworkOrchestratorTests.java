@@ -1,4 +1,4 @@
-package io.appgal.cloud.network;
+package io.appgal.cloud.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -92,6 +92,12 @@ public class NetworkOrchestratorTests {
         assertNotNull(result);
         logger.info("*******");
         logger.info(result.toString());
+        logger.info("*******");
+
+        this.networkOrchestrator.leaveNetwork(bugsBunny);
+        activeView = this.networkOrchestrator.getActiveView();
+        logger.info("*******");
+        logger.info(activeView.toString());
         logger.info("*******");
     }
 }

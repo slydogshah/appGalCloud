@@ -40,6 +40,11 @@ public class ActiveNetwork implements Serializable {
         //persist the state of the network
     }
 
+    public void removeFoodRunner(FoodRunner foodRunner)
+    {
+        this.activeFoodRunners.remove(foodRunner.getProfile().getId());
+    }
+
     public Collection<FoodRunner> readActiveFoodRunners()
     {
         return this.activeFoodRunners.values();
