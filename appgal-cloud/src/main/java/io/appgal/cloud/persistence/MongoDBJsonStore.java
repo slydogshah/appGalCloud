@@ -226,4 +226,15 @@ public class MongoDBJsonStore {
 
         return activeNetwork;
     }
+
+    public void deleteFoodRunner(FoodRunner foodRunner)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+
+        String json = "{}";
+
+        collection.deleteMany(Document.parse(json));
+    }
 }

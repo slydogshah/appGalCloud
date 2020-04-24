@@ -158,4 +158,20 @@ public class MongoDBJsonStoreTests {
         logger.info(activeNetwork.toString());
         logger.info("*******");
     }
+
+    @Test
+    public void testDeleteFoodRunner()
+    {
+        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        logger.info("***BEFORE****");
+        logger.info(activeNetwork.toString());
+        logger.info("*******");
+
+        this.mongoDBJsonStore.deleteFoodRunner(null);
+
+        activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        logger.info("***AFTER****");
+        logger.info(activeNetwork.toString());
+        logger.info("*******");
+    }
 }
