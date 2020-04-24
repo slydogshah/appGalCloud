@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.client.*;
 import io.appgal.cloud.model.*;
-import io.appgal.cloud.network.model.ActiveNetwork;
-import io.appgal.cloud.network.model.FoodRunner;
+import io.appgal.cloud.model.ActiveNetwork;
+import io.appgal.cloud.model.FoodRunner;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,20 +15,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 
-import com.mongodb.ConnectionString;
-
-import com.mongodb.ServerAddress;
-
 import org.bson.Document;
 
 import java.util.*;
-
-import com.mongodb.Block;
-
-import static com.mongodb.client.model.Filters.*;
-import com.mongodb.client.result.DeleteResult;
-import static com.mongodb.client.model.Updates.*;
-import com.mongodb.client.result.UpdateResult;
 
 @ApplicationScoped
 public class MongoDBJsonStore {

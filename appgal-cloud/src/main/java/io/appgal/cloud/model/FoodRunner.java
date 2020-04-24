@@ -1,10 +1,7 @@
-package io.appgal.cloud.network.model;
+package io.appgal.cloud.model;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.appgal.cloud.model.Location;
-import io.appgal.cloud.model.Profile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

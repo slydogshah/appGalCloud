@@ -1,8 +1,7 @@
-package io.appgal.cloud.network.model;
+package io.appgal.cloud.model;
 
 import com.google.gson.JsonArray;
 import io.appgal.cloud.geospatial.DistanceCalculator;
-import io.appgal.cloud.model.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,6 +16,8 @@ public class SourceOrg implements Serializable {
 
     private Location location;
 
+    private DeliveryPreference deliveryPreference;
+
     public SourceOrg()
     {
 
@@ -58,6 +60,14 @@ public class SourceOrg implements Serializable {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public DeliveryPreference getDeliveryPreference() {
+        return deliveryPreference;
+    }
+
+    public void setDeliveryPreference(DeliveryPreference deliveryPreference) {
+        this.deliveryPreference = deliveryPreference;
     }
 
     @Override

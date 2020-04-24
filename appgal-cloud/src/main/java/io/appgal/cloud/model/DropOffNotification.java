@@ -1,7 +1,5 @@
-package io.appgal.cloud.network.model;
+package io.appgal.cloud.model;
 
-import io.appgal.cloud.model.Location;
-import io.appgal.cloud.model.SourceOrg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
