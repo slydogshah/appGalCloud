@@ -1,4 +1,4 @@
-package io.appgal.cloud.foodRunnerSync.protocol;
+package io.appgal.cloud.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -7,7 +7,6 @@ import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.messaging.MessageWindow;
 
 import io.appgal.cloud.model.SourceNotification;
-import io.appgal.cloud.services.ProcessIncomingPackets;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
