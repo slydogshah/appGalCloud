@@ -1,15 +1,9 @@
 package io.appgal.cloud.endpoint;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.appgal.cloud.foodRunnerSync.protocol.ProcessIncomingPackets;
-import io.appgal.cloud.foodRunnerSync.protocol.ProfileRegistrationService;
-import io.appgal.cloud.messaging.MessageWindow;
-import io.appgal.cloud.model.OutstandingFoodRunnerNotification;
+import io.appgal.cloud.services.ProfileRegistrationService;
 import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.SourceNotification;
-import org.jboss.resteasy.annotations.Body;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.UUID;
 
 @Path("registration")
 public class Registration {

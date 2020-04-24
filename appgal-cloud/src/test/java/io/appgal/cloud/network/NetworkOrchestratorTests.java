@@ -7,6 +7,7 @@ import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.network.model.FoodRunner;
 import io.appgal.cloud.network.model.PickupRequest;
+import io.appgal.cloud.services.NetworkOrchestrator;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

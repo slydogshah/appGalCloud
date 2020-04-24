@@ -1,17 +1,20 @@
-package io.appgal.cloud.network;
+package io.appgal.cloud.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.network.model.ActiveNetwork;
 import io.appgal.cloud.network.model.FoodRunner;
 import io.appgal.cloud.network.model.PickupRequest;
+import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.*;
 
 @ApplicationScoped
@@ -24,10 +27,13 @@ public class NetworkOrchestrator {
 
     private Map<String, Collection<FoodRunner>> finderResults;
 
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
     @PostConstruct
     public void start()
     {
-        this.activeNetwork = new ActiveNetwork();
+        this.activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
         this.activeFoodRunnerQueue = new PriorityQueue<>();
         this.finderResults = new HashMap<>();
         logger.info("*******");
@@ -38,6 +44,7 @@ public class NetworkOrchestrator {
     public void enterNetwork(FoodRunner foodRunner)
     {
         this.activeNetwork.addActiveFoodRunner(foodRunner);
+        this.mongoDBJsonStore.storeActiveNetwork(this.activeNetwork.getActiveFoodRunners());
     }
 
     public void sendPickUpRequest(PickupRequest pickupRequest)
@@ -71,15 +78,7 @@ public class NetworkOrchestrator {
     {
         JsonObject jsonObject = new JsonObject();
 
-        Collection<FoodRunner> activeFoodRunners = this.activeNetwork.readActiveFoodRunners();
-        JsonArray activeFoodRunnerArray = new JsonArray();
-        Iterator<FoodRunner> iterator = activeFoodRunners.iterator();
-        while(iterator.hasNext())
-        {
-            FoodRunner foodRunner = iterator.next();
-            activeFoodRunnerArray.add(foodRunner.toJson());
-        }
-        jsonObject.add("activeFoodRunners", activeFoodRunnerArray);
+        jsonObject.add("activeFoodRunners", JsonParser.parseString(this.activeNetwork.toString()));
 
         JsonArray pickUpRequestArray = new JsonArray();
         Iterator<PickupRequest> itr = this.activeFoodRunnerQueue.iterator();

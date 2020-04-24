@@ -1,4 +1,4 @@
-package io.appgal.cloud.foodRunnerSync.protocol;
+package io.appgal.cloud.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

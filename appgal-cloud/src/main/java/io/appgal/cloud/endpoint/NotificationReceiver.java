@@ -2,7 +2,7 @@ package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.appgal.cloud.foodRunnerSync.protocol.ProcessIncomingPackets;
+import io.appgal.cloud.services.ProcessIncomingPackets;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.model.OutstandingFoodRunnerNotification;
 import io.appgal.cloud.model.SourceNotification;
