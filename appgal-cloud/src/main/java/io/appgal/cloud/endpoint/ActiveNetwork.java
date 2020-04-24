@@ -7,10 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("activeNetwork")
@@ -36,5 +33,15 @@ public class ActiveNetwork {
     {
         JsonArray pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
         return pickRequestResult.toString();
+    }
+
+    @Path("/enterNetwork")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String enterNetwork(@PathParam("") String email, @QueryParam("") String latitude, @QueryParam("") String longitude)
+    {
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("statusCode", "0");
+        return responseJson.toString();
     }
 }
