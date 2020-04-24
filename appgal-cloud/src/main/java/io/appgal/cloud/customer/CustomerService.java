@@ -18,8 +18,9 @@ public class CustomerService {
 
     public SourceOrg getSourceOrg(String sourceOrgId)
     {
-        SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg();
-        return sourceOrg;
+        //SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg();
+        //return sourceOrg;
+        return null;
     }
 
     public void storeSourceOrg(SourceOrg sourceOrg)

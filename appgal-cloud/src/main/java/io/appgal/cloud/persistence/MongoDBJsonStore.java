@@ -150,15 +150,14 @@ public class MongoDBJsonStore {
         collection.insertOne(doc);
     }
 
-    public SourceOrg getSourceOrg()
+    public List<SourceOrg> getSourceOrgs()
     {
-        SourceOrg sourceOrg = new SourceOrg();
+        List<SourceOrg> sourceOrgs = new ArrayList<>();
 
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("customers");
 
-        //TODO: OPTIMIZE_THIS_QUERY ASSIGNED_TO: @bugs.bunny.shah@gmail.com
         String queryJson = "{}";
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
@@ -168,10 +167,11 @@ public class MongoDBJsonStore {
             Document document = cursor.next();
             String documentJson = document.toJson();
             JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
-            sourceOrg = SourceOrg.parseJson(jsonObject);
+            SourceOrg sourceOrg = SourceOrg.parseJson(jsonObject);
+            sourceOrgs.add(sourceOrg);
         }
 
-        return sourceOrg;
+        return sourceOrgs;
     }
 
     public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
@@ -212,6 +212,9 @@ public class MongoDBJsonStore {
             FoodRunner foodRunner = FoodRunner.parse(documentJson);
             activeNetwork.addActiveFoodRunner(foodRunner);
         }
+
+        //Load the SourceOrgs
+        activeNetwork.setSourceOrgs(this.getSourceOrgs());
 
         return activeNetwork;
     }

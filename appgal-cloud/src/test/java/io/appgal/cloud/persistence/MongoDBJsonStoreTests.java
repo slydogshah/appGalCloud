@@ -131,7 +131,7 @@ public class MongoDBJsonStoreTests {
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
-        SourceOrg stored = this.mongoDBJsonStore.getSourceOrg();
+        List<SourceOrg> stored = this.mongoDBJsonStore.getSourceOrgs();
 
         logger.info("*******");
         logger.info(stored.toString());

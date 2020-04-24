@@ -12,11 +12,13 @@ public class ActiveNetwork implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(ActiveNetwork.class);
 
     private Map<String, FoodRunner> activeFoodRunners;
+    private List<SourceOrg> sourceOrgs;
     
 
     public ActiveNetwork()
     {
         this.activeFoodRunners = new HashMap<>();
+        this.sourceOrgs = new ArrayList<>();
     }
 
     public ActiveNetwork(Map<String, FoodRunner> activeFoodRunners) {
@@ -30,6 +32,14 @@ public class ActiveNetwork implements Serializable {
     public void setActiveFoodRunners(Map<String, FoodRunner> activeFoodRunners)
     {
         this.activeFoodRunners = activeFoodRunners;
+    }
+
+    public List<SourceOrg> getSourceOrgs() {
+        return sourceOrgs;
+    }
+
+    public void setSourceOrgs(List<SourceOrg> sourceOrgs) {
+        this.sourceOrgs = sourceOrgs;
     }
 
     public void addActiveFoodRunner(FoodRunner foodRunner)

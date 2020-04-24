@@ -113,6 +113,8 @@ public class NetworkOrchestrator {
         }
         jsonObject.add("finderResults", finderResultsArray);
 
+        jsonObject.add("sourceOrgs", JsonParser.parseString(this.activeNetwork.getSourceOrgs().toString()));
+
         return jsonObject;
     }
 
