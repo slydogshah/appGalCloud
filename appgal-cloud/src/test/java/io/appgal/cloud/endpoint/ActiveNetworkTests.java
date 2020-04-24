@@ -1,5 +1,6 @@
 package io.appgal.cloud.endpoint;
 
+import com.google.gson.JsonObject;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -30,17 +31,17 @@ public class ActiveNetworkTests {
 
     @Test
     public void testEnterNetwork() {
-        Response response = given().when().get("/activeNetwork/enterNetwork/")
-                .andReturn();
+        JsonObject json = new JsonObject();
+        json.addProperty("id", "CLOUD_ID");
+        json.addProperty("email", "blah@blah.com");
+        json.addProperty("mobile", "8675309");
+        json.addProperty("photo", "photu");
 
-        String json = response.getBody().prettyPrint();
-        logger.info("****");
-        logger.info(json);
-        logger.info("****");
+        Response response = given().body(json.toString()).when().post("/activeNetwork/enterNetwork/").andReturn();
 
-        //assert the body
-        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String statusCode = jsonObject.get("statusCode").getAsString();
-        assertEquals("0", statusCode);*/
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(jsonString);
+        logger.info("****");
     }
 }
