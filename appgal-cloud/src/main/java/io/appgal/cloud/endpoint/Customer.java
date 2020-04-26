@@ -37,8 +37,7 @@ public class Customer {
         logger.info(customerJson);
         logger.info("*******");
 
-        JsonObject jsonObject = JsonParser.parseString(customerJson).getAsJsonObject();
-        SourceOrg sourceOrg = SourceOrg.parseJson(jsonObject);
+        SourceOrg sourceOrg = SourceOrg.parse(customerJson);
         this.customerService.storeSourceOrg(sourceOrg);
 
         JsonObject responseJson = new JsonObject();

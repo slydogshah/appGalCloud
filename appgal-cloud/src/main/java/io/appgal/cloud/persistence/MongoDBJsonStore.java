@@ -133,8 +133,7 @@ public class MongoDBJsonStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
-            profile = Profile.parseProfile(jsonObject.toString());
+            profile = Profile.parse(documentJson);
         }
 
         return profile;
@@ -166,8 +165,7 @@ public class MongoDBJsonStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
-            SourceOrg sourceOrg = SourceOrg.parseJson(jsonObject);
+            SourceOrg sourceOrg = SourceOrg.parse(documentJson);
             sourceOrgs.add(sourceOrg);
         }
 
@@ -258,7 +256,7 @@ public class MongoDBJsonStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            dropOffNotification = DropOffNotification.parseJson(JsonParser.parseString(documentJson).getAsJsonObject());
+            dropOffNotification = DropOffNotification.parse(documentJson);
         }
 
         return dropOffNotification;

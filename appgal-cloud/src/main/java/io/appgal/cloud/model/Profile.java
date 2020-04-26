@@ -97,7 +97,7 @@ public class Profile implements Serializable {
         return jsonObject;
     }
 
-    public static Profile parseProfile(String json)
+    public static Profile parse(String json)
     {
         Profile profile = new Profile();
 

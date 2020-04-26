@@ -1,6 +1,7 @@
 package io.appgal.cloud.model;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +101,11 @@ public class SourceOrg implements Serializable {
         return jsonObject;
     }
 
-    public static SourceOrg parseJson(JsonObject jsonObject)
+    public static SourceOrg parse(String json)
     {
         SourceOrg sourceOrg = new SourceOrg();
 
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         sourceOrg.orgId = jsonObject.get("orgId").getAsString();
         sourceOrg.orgName = jsonObject.get("orgName").getAsString();
         sourceOrg.orgContactEmail = jsonObject.get("orgContactEmail").getAsString();

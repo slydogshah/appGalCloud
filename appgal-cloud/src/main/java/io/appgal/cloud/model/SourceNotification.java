@@ -80,10 +80,11 @@ public class SourceNotification {
         return jsonObject;
     }
 
-    public static SourceNotification fromJson(JsonObject jsonObject)
+    public static SourceNotification parse(String json)
     {
         SourceNotification sourceNotification = new SourceNotification();
 
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         sourceNotification.sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
         sourceNotification.latitude = jsonObject.get("latitude").getAsString();
         sourceNotification.longitude = jsonObject.get("longitude").getAsString();

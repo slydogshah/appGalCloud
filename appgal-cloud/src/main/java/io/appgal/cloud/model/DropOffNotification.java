@@ -59,11 +59,12 @@ public class DropOffNotification implements Serializable {
         return jsonObject.toString();
     }
 
-    public static DropOffNotification parseJson(JsonObject jsonObject)
+    public static DropOffNotification parse(String json)
     {
         DropOffNotification dropOffNotification = new DropOffNotification();
 
-        dropOffNotification.sourceOrg = SourceOrg.parseJson(jsonObject.get("sourceOrg").getAsJsonObject());
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        dropOffNotification.sourceOrg = SourceOrg.parse(jsonObject.get("sourceOrg").toString());
         dropOffNotification.location = Location.parse(jsonObject.get("location").toString());
         dropOffNotification.foodRunner = FoodRunner.parse(jsonObject.get("foodRunner").toString());
 
