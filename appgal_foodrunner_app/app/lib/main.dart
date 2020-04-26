@@ -16,6 +16,6 @@ void main()
   //Launch the App
   runApp(new Login());
 
-  CloudDataPoller cloudDataPoller = new CloudDataPoller();
-      cloudDataPoller.startPolling();
+  //CloudDataPoller cloudDataPoller = new CloudDataPoller();
+  //cloudDataPoller.startPolling();
 }

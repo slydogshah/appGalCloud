@@ -5,8 +5,10 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/rest/profileRestClient.dart';
+import 'package:app/src/ui/appGalFoodRunnerCards.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -287,9 +289,12 @@ class ProfileFunctions
 
       Navigator.of(context, rootNavigator: true).pop();
 
+      //Navigator.push(
+      //context,
+      //MaterialPageRoute(builder: (context) => new LandingScene(response)));
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => new LandingScene(response)));
+      MaterialPageRoute(builder: (context) => new CardsDemo(ActiveSession.getInstance().getProfile())));
     });
   }  
 }
