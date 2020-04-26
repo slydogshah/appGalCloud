@@ -54,6 +54,11 @@ public class ActiveNetwork implements Serializable {
         this.activeFoodRunners.remove(foodRunner.getProfile().getId());
     }
 
+    public void receiveDropOffNotification(DropOffNotification dropOffNotification)
+    {
+
+    }
+
     public Collection<FoodRunner> readActiveFoodRunners()
     {
         return this.activeFoodRunners.values();

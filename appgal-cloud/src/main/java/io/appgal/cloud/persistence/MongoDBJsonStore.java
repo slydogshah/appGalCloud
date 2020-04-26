@@ -229,4 +229,38 @@ public class MongoDBJsonStore {
 
         collection.deleteMany(Document.parse(json));
     }
+
+    public void storeDropOffNotification(DropOffNotification dropOffNotification)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
+
+        String json = dropOffNotification.toString();
+        Document doc = Document.parse(json);
+
+        collection.insertOne(doc);
+    }
+
+    public DropOffNotification findDropOffNotification(String dropOffNotificationId)
+    {
+        DropOffNotification dropOffNotification = new DropOffNotification();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
+
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            dropOffNotification = DropOffNotification.parseJson(JsonParser.parseString(documentJson).getAsJsonObject());
+        }
+
+        return dropOffNotification;
+    }
 }

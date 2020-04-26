@@ -43,52 +43,19 @@ public class MongoDBJsonStoreTests {
     }
 
     @Test
-    public void testFindDestinationNotifications()
+    public void testDropOffNotificationStorageCycle()
     {
-        List<String> notificationIds = new ArrayList<>();
-        for(int i=0; i<10; i++)
-        {
-            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-            OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-            MessageWindow messageWindow = new MessageWindow(start, end);
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        Location location = new Location(30.25860595703125d,-97.74873352050781d);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "");
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+        DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
+        this.mongoDBJsonStore.storeDropOffNotification(dropOffNotification);
 
-            String sourceNotificationId = UUID.randomUUID().toString();
-            SourceNotification sourceNotification = new SourceNotification();
-            sourceNotification.setSourceNotificationId(sourceNotificationId);
-            sourceNotification.setMessageWindow(messageWindow);
-
-            String destinationNotificationId = UUID.randomUUID().toString();
-            DestinationNotification destinationNotification = new DestinationNotification();
-            destinationNotification.setDestinationNotificationId(destinationNotificationId);
-            destinationNotification.setSourceNotification(sourceNotification);
-
-            notificationIds.add(destinationNotificationId);
-
-            this.mongoDBJsonStore.storeDestinationNotifications(destinationNotification);
-        }
-
-
-        JsonArray jsonArray = this.mongoDBJsonStore.findDestinationNotifications(notificationIds);
-
-        //assert
-        assertNotNull(jsonArray);
-
-        logger.info("****");
-        logger.info(jsonArray.toString());
-        logger.info("****");
-
-        Iterator<JsonElement> iterator = jsonArray.iterator();
-        int searchSize = 0;
-        while(iterator.hasNext())
-        {
-            JsonObject local = iterator.next().getAsJsonObject();
-            String localId = local.get("destinationNotificationId").getAsString();
-            if(notificationIds.contains(localId))
-            {
-                searchSize++;
-            }
-        }
-        assertEquals(notificationIds.size(), searchSize);
+        DropOffNotification stored = this.mongoDBJsonStore.findDropOffNotification("blah");
+        logger.info("*******");
+        logger.info(stored.toString());
+        logger.info("*******");
     }
 
     @Test
