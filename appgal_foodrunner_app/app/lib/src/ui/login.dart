@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
+import 'foodRunnerDestinations.dart';
 import 'landingScene.dart';
 
 class Login extends StatelessWidget
@@ -287,9 +288,9 @@ class ProfileFunctions
 
   void login (BuildContext context, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
+    //Future<AuthCredentials> future = profileRestClient.login(authCredentials);
     Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
-    future.then((response){
+    /*future.then((response){
       print(response.toString());
 
       Navigator.of(context, rootNavigator: true).pop();
@@ -300,16 +301,13 @@ class ProfileFunctions
       Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => new CardsDemo(ActiveSession.getInstance().getProfile())));
-    });
+    });*/
 
     futureP.then((sourceOrgs){
-      for(Map<String, dynamic> json in sourceOrgs)
-      {
-        SourceOrg sourceOrg = SourceOrg.fromJson(json);
-        Location location = new Location(0.0, 0.0);
-        sourceOrg.location = location;
-        print(sourceOrg.toString());
-      }
+      Navigator.of(context, rootNavigator: true).pop();
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FoodRunnerDestination(sourceOrgs)));
     });
   }  
 }
