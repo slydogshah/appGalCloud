@@ -19,10 +19,8 @@ class FoodRunner
 
   Map<String, dynamic> toJson() =>
   {
-    "id": "id",
-    "email": "email",
-    "mobile": "mobile",
-    "photo": "photo"
+    "profile": "profile",
+    "Location": this.location.toJson()
   };
 
   String toString()

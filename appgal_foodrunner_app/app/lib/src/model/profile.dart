@@ -16,10 +16,10 @@ class Profile {
 
   Map<String, dynamic> toJson() =>
   {
-    "id": id,
-    "email": email,
-    "mobile": mobile,
-    "photo": photo
+    "id": this.id,
+    "email": this.email,
+    "mobile": this.mobile,
+    "photo": this.photo
   };
 
   String toString()

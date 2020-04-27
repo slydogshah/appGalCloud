@@ -47,6 +47,8 @@ void main() {
       for(Map<String, dynamic> json in sourceOrgs)
       {
         SourceOrg sourceOrg = SourceOrg.fromJson(json);
+        Location location = new Location(0.0, 0.0);
+        sourceOrg.location = location;
         print(sourceOrg.toString());
       }
     });
