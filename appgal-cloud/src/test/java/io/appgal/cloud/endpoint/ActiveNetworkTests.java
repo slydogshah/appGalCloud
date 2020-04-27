@@ -44,4 +44,20 @@ public class ActiveNetworkTests {
         logger.info(jsonString);
         logger.info("****");
     }
+
+    @Test
+    public void testFindBestDestination() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", "CLOUD_ID");
+        json.addProperty("email", "blah@blah.com");
+        json.addProperty("mobile", "8675309");
+        json.addProperty("photo", "photu");
+
+        Response response = given().body(json.toString()).when().post("/activeNetwork/findBestDestination/").andReturn();
+
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(jsonString);
+        logger.info("****");
+    }
 }

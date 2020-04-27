@@ -1,5 +1,7 @@
 import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
+import 'package:app/src/model/foodRunner.dart';
+import 'package:app/src/model/sourceOrg.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -56,5 +58,17 @@ class ProfileRestClient
     String authResponseJson = response.body;
     AuthCredentials authResponse = AuthCredentials.fromJson(jsonDecode(authResponseJson));
     return authResponse;
+  }
+
+  Future<List<SourceOrg>> findBestDestination(FoodRunner foodRunner) async
+  {
+    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
+    String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
+    print(foodRunner.toString());
+    var response = await http.post(remoteUrl, body: foodRunner.toString());
+    String responseJson = response.body;
+    List<SourceOrg> sourceOrgs = new List();
+    //return SourceOrg.fromJson(jsonDecode(responseJson));
+    return sourceOrgs;
   }
 }

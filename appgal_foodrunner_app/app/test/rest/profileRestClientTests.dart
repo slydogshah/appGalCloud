@@ -1,11 +1,14 @@
 import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
+import 'package:app/src/model/foodRunner.dart';
+import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('getProfile', () {
+  /*test('getProfile', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
     profileFuture.then((profile){
@@ -35,6 +38,14 @@ void main() {
   test('String.trim() removes surrounding whitespace', () {
     var string = '  foo ';
     expect(string.trim(), equals('foo'));
+  });*/
+
+  test('findBestDestination', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<List<SourceOrg>> future = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    future.then((sourceOrgs){
+      print(sourceOrgs.toString());
+    });
   });
 
   /*Future<int> future = Future.delayed(
