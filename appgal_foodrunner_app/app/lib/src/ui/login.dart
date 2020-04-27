@@ -7,6 +7,10 @@ import 'dart:ui';
 
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/authCredentials.dart';
+import 'package:app/src/model/foodRunner.dart';
+import 'package:app/src/model/location.dart';
+import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/appGalFoodRunnerCards.dart';
 import 'package:flutter/gestures.dart';
@@ -284,6 +288,7 @@ class ProfileFunctions
   void login (BuildContext context, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
+    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
     future.then((response){
       print(response.toString());
 
@@ -295,6 +300,16 @@ class ProfileFunctions
       Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => new CardsDemo(ActiveSession.getInstance().getProfile())));
+    });
+
+    futureP.then((sourceOrgs){
+      for(Map<String, dynamic> json in sourceOrgs)
+      {
+        SourceOrg sourceOrg = SourceOrg.fromJson(json);
+        Location location = new Location(0.0, 0.0);
+        sourceOrg.location = location;
+        print(sourceOrg.toString());
+      }
     });
   }  
 }
