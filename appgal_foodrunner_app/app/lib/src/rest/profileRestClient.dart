@@ -60,15 +60,15 @@ class ProfileRestClient
     return authResponse;
   }
 
-  Future<List<SourceOrg>> findBestDestination(FoodRunner foodRunner) async
+  Future<Iterable> findBestDestination(FoodRunner foodRunner) async
   {
     //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
     String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
-    print(foodRunner.toString());
     var response = await http.post(remoteUrl, body: foodRunner.toString());
     String responseJson = response.body;
-    List<SourceOrg> sourceOrgs = new List();
-    //return SourceOrg.fromJson(jsonDecode(responseJson));
-    return sourceOrgs;
+  
+    Iterable l = json.decode(responseJson);
+    
+    return l;
   }
 }

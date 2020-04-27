@@ -13,9 +13,9 @@ class ActiveView
 
   Map<String, dynamic> toJson() =>
   {
-    'activeFoodRunners': this.activeFoodRunners,
-    'activeFoodRunnerQueue': this.activeFoodRunnerQueue,
-    'finderResults': this.finderResults
+    "activeFoodRunners": this.activeFoodRunners,
+    "activeFoodRunnerQueue": this.activeFoodRunnerQueue,
+    "finderResults": this.finderResults
   };
 
   String toString()

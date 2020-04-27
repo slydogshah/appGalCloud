@@ -15,9 +15,9 @@ class AuthCredentials
 
   Map<String, dynamic> toJson() =>
   {
-    'email': email,
-    'password': password,
-    'statusCode': statusCode
+    "email": email,
+    "password": password,
+    "statusCode": statusCode
   };
 
   String toString()

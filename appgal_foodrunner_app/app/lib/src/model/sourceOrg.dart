@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'location.dart';
 
 class SourceOrg
@@ -18,4 +20,17 @@ class SourceOrg
     }
 
     SourceOrg.fromJson(Map<String, dynamic> json);
+
+    Map<String, dynamic> toJson() =>
+    {
+      "orgId": this.orgId,
+      "orgName": this.orgName,
+      "orgContactEmail": this.orgContactEmail
+    };
+
+    String toString()
+    {
+      String json = jsonEncode(this.toJson());
+      return json;
+    }
 }

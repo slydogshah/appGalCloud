@@ -42,9 +42,13 @@ void main() {
 
   test('findBestDestination', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<List<SourceOrg>> future = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    Future<Iterable> future = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
     future.then((sourceOrgs){
-      print(sourceOrgs.toString());
+      for(Map<String, dynamic> json in sourceOrgs)
+      {
+        SourceOrg sourceOrg = SourceOrg.fromJson(json);
+        print(sourceOrg.toString());
+      }
     });
   });
 
