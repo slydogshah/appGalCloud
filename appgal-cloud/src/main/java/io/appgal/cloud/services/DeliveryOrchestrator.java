@@ -43,6 +43,6 @@ public class DeliveryOrchestrator {
 
     public void sendDeliveryNotification(DropOffNotification notification)
     {
-
+        this.mongoDBJsonStore.storeDropOffNotification(notification);
     }
 }
