@@ -2,6 +2,7 @@ import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/model/dropOffNotification.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -62,13 +63,24 @@ class ProfileRestClient
 
   Future<Iterable> findBestDestination(FoodRunner foodRunner) async
   {
-    String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
-    //String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
+    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
+    String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
     var response = await http.post(remoteUrl, body: foodRunner.toString());
     String responseJson = response.body;
   
     Iterable l = json.decode(responseJson);
     
     return l;
+  }
+
+  void sendDeliveryNotification(DropOffNotification dropOffNotification) async
+  {
+    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
+    String remoteUrl = "http://localhost:8080/activeNetwork/sendDeliveryNotification/";
+    String jsonBody = dropOffNotification.toString();
+    print(jsonBody);
+    var response = await http.post(remoteUrl, body: jsonBody);
+    String responseJson = response.body;
+    print(responseJson);
   }
 }

@@ -54,6 +54,7 @@ public class FoodRunner implements Serializable {
 
     public static FoodRunner parse(String json)
     {
+        logger.info(json);
         FoodRunner foodRunner = new FoodRunner();
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
