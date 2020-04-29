@@ -39,7 +39,7 @@ public class MongoDBJsonStoreTests {
     @AfterEach
     public void tearDown()
     {
-
+        this.mongoDBJsonStore.cleanup();
     }
 
     @Test
@@ -67,18 +67,6 @@ public class MongoDBJsonStoreTests {
         assertTrue(topics.contains(DestinationNotification.TOPIC));
     }
 
-    /*@Test
-    public void testStoreActiveFoodRunnerData()
-    {
-        for(int i=0; i<5; i++) {
-            ActiveFoodRunnerData activeFoodRunnerData = new ActiveFoodRunnerData(UUID.randomUUID().toString(), "latitude", "longitude");
-            List<ActiveFoodRunnerData> list = new ArrayList<>();
-            list.add(activeFoodRunnerData);
-            this.mongoDBJsonStore.storeActiveFoodRunnerData(list);
-        }
-
-        //assert
-    }*/
 
     @Test
     public void testStoreProfile()

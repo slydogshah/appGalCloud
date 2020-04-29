@@ -7,6 +7,8 @@ import com.mongodb.client.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
+import org.bson.BsonDocument;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -252,5 +254,25 @@ public class MongoDBJsonStore {
         List<CompletedTrip> completedTrips = new ArrayList<>();
 
         return completedTrips;
+    }
+
+    void cleanup()
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("customers");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("dropOffNotifications");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("kafkaDaemonBootstrapData");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("profile");
+        collection.deleteMany(Document.parse("{}"));
     }
 }
