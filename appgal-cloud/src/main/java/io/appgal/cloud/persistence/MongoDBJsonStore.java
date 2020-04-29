@@ -249,9 +249,36 @@ public class MongoDBJsonStore {
         return dropOffNotification;
     }
 
+    public void setCompletedTrip(CompletedTrip completedTrip)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+
+        collection.insertOne(Document.parse(completedTrip.getFoodRunner().toString()));
+    }
+
     public List<CompletedTrip> getCompletedTrips()
     {
         List<CompletedTrip> completedTrips = new ArrayList<>();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            CompletedTrip completedTrip = new CompletedTrip();
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+
+            FoodRunner foodRunner = FoodRunner.parse(documentJson);
+            completedTrip.setFoodRunner(foodRunner);
+
+            completedTrips.add(completedTrip);
+        }
 
         return completedTrips;
     }

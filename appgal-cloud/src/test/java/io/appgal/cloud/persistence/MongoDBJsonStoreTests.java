@@ -129,4 +129,22 @@ public class MongoDBJsonStoreTests {
         logger.info(activeNetwork.toString());
         logger.info("*******");
     }
+
+    @Test
+    public void testGetCompletedTrips()
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        Location location = new Location(30.25860595703125d,-97.74873352050781d);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "");
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+        DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
+        CompletedTrip completedTrip = new CompletedTrip(foodRunner, dropOffNotification, null);
+        this.mongoDBJsonStore.setCompletedTrip(completedTrip);
+
+        List<CompletedTrip> completedTrips = this.mongoDBJsonStore.getCompletedTrips();
+
+        logger.info("*******");
+        logger.info(completedTrips.toString());
+        logger.info("*******");
+    }
 }
