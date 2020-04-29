@@ -1,8 +1,7 @@
 package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import io.appgal.cloud.customer.CustomerService;
+import io.appgal.cloud.services.CustomerService;
 import io.appgal.cloud.model.SourceOrg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

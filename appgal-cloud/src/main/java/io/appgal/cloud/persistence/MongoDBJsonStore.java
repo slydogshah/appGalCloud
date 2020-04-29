@@ -91,21 +91,6 @@ public class MongoDBJsonStore {
         return topics;
     }
 
-    /*public void storeActiveFoodRunnerData(List<ActiveFoodRunnerData> activeFoodRunnerData)
-    {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-
-        List<Document> activeFoodRunners = new ArrayList<>();
-        for(ActiveFoodRunnerData local:activeFoodRunnerData)
-        {
-            Document doc = Document.parse(local.toString());
-            activeFoodRunners.add(doc);
-        }
-        collection.insertMany(activeFoodRunners);
-    }*/
-
     public void storeProfile(Profile profile)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");

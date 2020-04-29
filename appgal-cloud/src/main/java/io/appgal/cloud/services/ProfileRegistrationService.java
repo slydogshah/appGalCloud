@@ -24,6 +24,7 @@ public class ProfileRegistrationService {
 
     public void register(Profile profile)
     {
+        //TODO: Add validation
         this.mongoDBJsonStore.storeProfile(profile);
     }
 

@@ -1,6 +1,5 @@
-package io.appgal.cloud.customer;
+package io.appgal.cloud.services;
 
-import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.slf4j.Logger;
@@ -18,6 +17,7 @@ public class CustomerService {
 
     public SourceOrg getSourceOrg(String sourceOrgId)
     {
+        //TODO: Implement this
         //SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg();
         //return sourceOrg;
         return null;

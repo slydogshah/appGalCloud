@@ -33,10 +33,6 @@ public class ProcessIncomingPackets {
 
     public void processSourceNotification(MessageWindow messageWindow)
     {
-        logger.info("....");
-        logger.info("PROCESS_SOURCE_NOTIFICATION");
-        logger.info("....");
-
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(UUID.randomUUID().toString());
         sourceNotification.setMessageWindow(messageWindow);
@@ -49,10 +45,6 @@ public class ProcessIncomingPackets {
 
     public JsonArray readDestinationNotifications(MessageWindow messageWindow)
     {
-        logger.info("....");
-        logger.info("READ_DESTINATION_NOTIFICATIONS");
-        logger.info("....");
-
         JsonArray destinationNotifications = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
 
         return destinationNotifications;
@@ -60,10 +52,6 @@ public class ProcessIncomingPackets {
 
     public JsonArray processNotificationForPickup(SourceNotification sourceNotification)
     {
-        logger.info("....");
-        logger.info("PROCES_NOTIFICATION_FOR_PICKUP");
-        logger.info("....");
-
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         MessageWindow messageWindow = new MessageWindow(start, end);
