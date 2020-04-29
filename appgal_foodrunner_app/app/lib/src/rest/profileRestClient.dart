@@ -63,8 +63,8 @@ class ProfileRestClient
 
   Future<Iterable> findBestDestination(FoodRunner foodRunner) async
   {
-    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
-    String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
+    String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
+    //String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
     var response = await http.post(remoteUrl, body: foodRunner.toString());
     String responseJson = response.body;
   
@@ -75,8 +75,8 @@ class ProfileRestClient
 
   void sendDeliveryNotification(DropOffNotification dropOffNotification) async
   {
-    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
-    String remoteUrl = "http://localhost:8080/activeNetwork/sendDeliveryNotification/";
+    String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
+    //String remoteUrl = "http://localhost:8080/activeNetwork/sendDeliveryNotification/";
     String jsonBody = dropOffNotification.toString();
     print(jsonBody);
     var response = await http.post(remoteUrl, body: jsonBody);
