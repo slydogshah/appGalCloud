@@ -249,6 +249,32 @@ public class MongoDBJsonStore {
         return dropOffNotification;
     }
 
+    public DropOffNotification findDropOffNotificationByFoodRunnerId(String foodRunnerId)
+    {
+        DropOffNotification dropOffNotification = new DropOffNotification();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
+
+        JsonObject foodRunnerJson = new JsonObject();
+        JsonObject profileJson = new JsonObject();
+        profileJson.addProperty("id", foodRunnerId);
+        foodRunnerJson.add("profile", profileJson);
+        String queryJson = foodRunnerJson.toString();
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            dropOffNotification = DropOffNotification.parse(documentJson);
+        }
+
+        return dropOffNotification;
+    }
+
     public void setCompletedTrip(CompletedTrip completedTrip)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
@@ -276,6 +302,10 @@ public class MongoDBJsonStore {
 
             FoodRunner foodRunner = FoodRunner.parse(documentJson);
             completedTrip.setFoodRunner(foodRunner);
+
+            DropOffNotification dropOffNotification = this.findDropOffNotificationByFoodRunnerId(foodRunner.getProfile().getId());
+            dropOffNotification.setFoodRunner(foodRunner);
+            completedTrip.setDropOffNotification(dropOffNotification);
 
             completedTrips.add(completedTrip);
         }

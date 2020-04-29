@@ -62,9 +62,15 @@ public class DropOffNotification implements Serializable {
     public JsonObject toJson()
     {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("foodRunner", this.foodRunner.toJson());
-        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
-        jsonObject.add("location", this.location.toJson());
+        if(this.foodRunner != null) {
+            jsonObject.add("foodRunner", this.foodRunner.toJson());
+        }
+        if(this.sourceOrg != null) {
+            jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        }
+        if(this.location != null) {
+            jsonObject.add("location", this.location.toJson());
+        }
         return jsonObject;
     }
 
