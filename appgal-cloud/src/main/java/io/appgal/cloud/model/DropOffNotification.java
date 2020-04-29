@@ -47,18 +47,6 @@ public class DropOffNotification implements Serializable {
         this.foodRunner = foodRunner;
     }
 
-    @Override
-    public String toString()
-    {
-        JsonObject jsonObject = new JsonObject();
-
-        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
-        jsonObject.add("location", this.location.toJson());
-        jsonObject.add("foodRunner", this.foodRunner.toJson());
-
-        return jsonObject.toString();
-    }
-
     public static DropOffNotification parse(String json)
     {
         DropOffNotification dropOffNotification = new DropOffNotification();
@@ -69,5 +57,26 @@ public class DropOffNotification implements Serializable {
         dropOffNotification.foodRunner = FoodRunner.parse(jsonObject.get("foodRunner").toString());
 
         return dropOffNotification;
+    }
+
+    public JsonObject toJson()
+    {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("foodRunner", this.foodRunner.toJson());
+        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        jsonObject.add("location", this.location.toJson());
+        return jsonObject;
+    }
+
+    @Override
+    public String toString()
+    {
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        jsonObject.add("location", this.location.toJson());
+        jsonObject.add("foodRunner", this.foodRunner.toJson());
+
+        return jsonObject.toString();
     }
 }

@@ -246,4 +246,11 @@ public class MongoDBJsonStore {
 
         return dropOffNotification;
     }
+
+    public List<CompletedTrip> getCompletedTrips()
+    {
+        List<CompletedTrip> completedTrips = new ArrayList<>();
+
+        return completedTrips;
+    }
 }
