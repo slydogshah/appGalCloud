@@ -6,27 +6,33 @@ class OutstandingFoodRuneerNotification
 
   OutstandingFoodRuneerNotification();
 
-  String getFoodRunnerId() {
+  String getFoodRunnerId() 
+  {
         return foodRunnerId;
   }
 
-  void setFoodRunnerId(String foodRunnerId) {
+  void setFoodRunnerId(String foodRunnerId) 
+  {
         this.foodRunnerId = foodRunnerId;
   }
 
-  String getStartTime() {
+  String getStartTime() 
+  {
         return startTime;
   }
 
-  void setStartTime(String startTime) {
+  void setStartTime(String startTime) 
+  {
         this.startTime = startTime;
   }
 
-  String getEstimatedTimeOfArrival() {
+  String getEstimatedTimeOfArrival() 
+  {
     return estimatedTimeOfInterval;
   }
 
-  setEstimatedTimeOfArrival(String estimatedTimeOfInterval) {
+  setEstimatedTimeOfArrival(String estimatedTimeOfInterval) 
+  {
         this.estimatedTimeOfInterval = estimatedTimeOfInterval;
   }
 }
