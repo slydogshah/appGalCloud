@@ -89,10 +89,18 @@ public class Profile implements Serializable {
     {
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.addProperty("id", this.id);
-        jsonObject.addProperty("email", this.email);
-        jsonObject.addProperty("mobile", this.mobile);
-        jsonObject.addProperty("photo", this.photo);
+        if(this.id != null) {
+            jsonObject.addProperty("id", this.id);
+        }
+        if(this.email != null) {
+            jsonObject.addProperty("email", this.email);
+        }
+        if(this.mobile != null) {
+            jsonObject.addProperty("mobile", this.mobile);
+        }
+        if(this.photo != null) {
+            jsonObject.addProperty("photo", this.photo);
+        }
 
         return jsonObject;
     }
@@ -102,7 +110,9 @@ public class Profile implements Serializable {
         Profile profile = new Profile();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        profile.id = jsonObject.get("id").getAsString();
+        if(jsonObject.has("id")) {
+            profile.id = jsonObject.get("id").getAsString();
+        }
         if(jsonObject.has("email")) {
             profile.email = jsonObject.get("email").getAsString();
         }

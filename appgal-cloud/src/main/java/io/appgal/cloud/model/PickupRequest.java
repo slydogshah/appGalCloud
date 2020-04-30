@@ -42,7 +42,9 @@ public class PickupRequest implements Serializable {
     {
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        if(this.sourceOrg != null) {
+            jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        }
 
         return jsonObject;
     }

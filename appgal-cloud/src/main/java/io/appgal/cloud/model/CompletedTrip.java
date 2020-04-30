@@ -49,9 +49,13 @@ public class CompletedTrip {
     public JsonObject toJson()
     {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("foodRunner", this.foodRunner.toJson());
+        if(this.foodRunner != null) {
+            jsonObject.add("foodRunner", this.foodRunner.toJson());
+        }
         //jsonObject.add("pickUpRequest", this.foodRunner.toJson());
-        jsonObject.add("dropOffNotification", this.dropOffNotification.toJson());
+        if(this.dropOffNotification != null) {
+            jsonObject.add("dropOffNotification", this.dropOffNotification.toJson());
+        }
         return jsonObject;
     }
 

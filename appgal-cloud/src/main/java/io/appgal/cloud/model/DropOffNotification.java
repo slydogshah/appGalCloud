@@ -52,9 +52,15 @@ public class DropOffNotification implements Serializable {
         DropOffNotification dropOffNotification = new DropOffNotification();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        dropOffNotification.sourceOrg = SourceOrg.parse(jsonObject.get("sourceOrg").toString());
-        dropOffNotification.location = Location.parse(jsonObject.get("location").toString());
-        dropOffNotification.foodRunner = FoodRunner.parse(jsonObject.get("foodRunner").toString());
+        if(jsonObject.has("sourceOrg")) {
+            dropOffNotification.sourceOrg = SourceOrg.parse(jsonObject.get("sourceOrg").toString());
+        }
+        if(jsonObject.has("location")) {
+            dropOffNotification.location = Location.parse(jsonObject.get("location").toString());
+        }
+        if(jsonObject.has("foodRunner")) {
+            dropOffNotification.foodRunner = FoodRunner.parse(jsonObject.get("foodRunner").toString());
+        }
 
         return dropOffNotification;
     }
@@ -77,12 +83,6 @@ public class DropOffNotification implements Serializable {
     @Override
     public String toString()
     {
-        JsonObject jsonObject = new JsonObject();
-
-        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
-        jsonObject.add("location", this.location.toJson());
-        jsonObject.add("foodRunner", this.foodRunner.toJson());
-
-        return jsonObject.toString();
+        return this.toJson().toString();
     }
 }

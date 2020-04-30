@@ -41,8 +41,12 @@ public class FoodRunner implements Serializable {
     {
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.add("profile", this.profile.toJson());
-        jsonObject.add("location", this.location.toJson());
+        if(this.profile != null) {
+            jsonObject.add("profile", this.profile.toJson());
+        }
+        if(this.location != null) {
+            jsonObject.add("location", this.location.toJson());
+        }
 
         return jsonObject;
     }
@@ -57,10 +61,14 @@ public class FoodRunner implements Serializable {
         logger.info(json);
         FoodRunner foodRunner = new FoodRunner();
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        Profile profile = Profile.parse(jsonObject.get("profile").toString());
-        Location location = Location.parse(jsonObject.get("location").toString());
-        foodRunner.setProfile(profile);
-        foodRunner.setLocation(location);
+        if(jsonObject.has("profile")) {
+            Profile profile = Profile.parse(jsonObject.get("profile").toString());
+            foodRunner.setProfile(profile);
+        }
+        if(jsonObject.has("location")) {
+            Location location = Location.parse(jsonObject.get("location").toString());
+            foodRunner.setLocation(location);
+        }
         return foodRunner;
     }
 }

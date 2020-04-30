@@ -94,9 +94,15 @@ public class SourceOrg implements Serializable {
     {
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.addProperty("orgId", this.orgId);
-        jsonObject.addProperty("orgName", this.orgName);
-        jsonObject.addProperty("orgContactEmail", this.orgContactEmail);
+        if(this.orgId != null) {
+            jsonObject.addProperty("orgId", this.orgId);
+        }
+        if(this.orgName != null) {
+            jsonObject.addProperty("orgName", this.orgName);
+        }
+        if(this.orgContactEmail != null) {
+            jsonObject.addProperty("orgContactEmail", this.orgContactEmail);
+        }
 
         return jsonObject;
     }
@@ -106,9 +112,16 @@ public class SourceOrg implements Serializable {
         SourceOrg sourceOrg = new SourceOrg();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        sourceOrg.orgId = jsonObject.get("orgId").getAsString();
-        sourceOrg.orgName = jsonObject.get("orgName").getAsString();
-        sourceOrg.orgContactEmail = jsonObject.get("orgContactEmail").getAsString();
+
+        if(jsonObject.has("orgId")) {
+            sourceOrg.orgId = jsonObject.get("orgId").getAsString();
+        }
+        if(jsonObject.has("orgName")) {
+            sourceOrg.orgName = jsonObject.get("orgName").getAsString();
+        }
+        if(jsonObject.has("orgContactEmail")) {
+            sourceOrg.orgContactEmail = jsonObject.get("orgContactEmail").getAsString();
+        }
 
         return sourceOrg;
     }

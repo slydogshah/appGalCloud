@@ -46,22 +46,22 @@ public class ActiveFoodRunnerData {
     @Override
     public String toString()
     {
-        JsonObject jsonObject = new JsonObject();
-
-        jsonObject.addProperty("foodRunnerId", this.foodRunnerId);
-        jsonObject.addProperty("latitude", this.latitude);
-        jsonObject.addProperty("longitude", this.longitude);
-
-        return jsonObject.toString();
+        return this.toJson().toString();
     }
 
     public JsonObject toJson()
     {
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.addProperty("foodRunnerId", this.foodRunnerId);
-        jsonObject.addProperty("latitude", this.latitude);
-        jsonObject.addProperty("longitude", this.longitude);
+        if(this.foodRunnerId != null) {
+            jsonObject.addProperty("foodRunnerId", this.foodRunnerId);
+        }
+        if(this.latitude != null) {
+            jsonObject.addProperty("latitude", this.latitude);
+        }
+        if(this.longitude != null) {
+            jsonObject.addProperty("longitude", this.longitude);
+        }
 
         return jsonObject;
     }

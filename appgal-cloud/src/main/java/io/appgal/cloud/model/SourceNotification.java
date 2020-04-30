@@ -56,15 +56,7 @@ public class SourceNotification {
     @Override
     public String toString()
     {
-        JsonObject jsonObject = new JsonObject();
-
-        jsonObject.addProperty("sourceNotificationId", this.sourceNotificationId);
-        jsonObject.addProperty("startTimestamp", messageWindow.getStart().toEpochSecond());
-        jsonObject.addProperty("endTimestamp", messageWindow.getEnd().toEpochSecond());
-        jsonObject.addProperty("latitude", this.latitude);
-        jsonObject.addProperty("longitude", this.longitude);
-
-        return jsonObject.toString();
+        return this.toJson().toString();
     }
 
     public JsonObject toJson()
@@ -85,22 +77,30 @@ public class SourceNotification {
         SourceNotification sourceNotification = new SourceNotification();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        sourceNotification.sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
-        sourceNotification.latitude = jsonObject.get("latitude").getAsString();
-        sourceNotification.longitude = jsonObject.get("longitude").getAsString();
+        if(jsonObject.has("sourceNotificationId")) {
+            sourceNotification.sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
+        }
+        if(jsonObject.has("latitude")) {
+            sourceNotification.latitude = jsonObject.get("latitude").getAsString();
+        }
+        if(jsonObject.has("longitude")) {
+            sourceNotification.longitude = jsonObject.get("longitude").getAsString();
+        }
 
-        Object messageWindowJson = jsonObject.get("messageWindow");
-        if(messageWindowJson != null) {
-            long start = jsonObject.get("start").getAsLong();
-            long end = jsonObject.get("end").getAsLong();
-            JsonArray messages = jsonObject.get("messages").getAsJsonArray();
+        if(jsonObject.has("messageWindow")) {
+            Object messageWindowJson = jsonObject.get("messageWindow");
+            if (messageWindowJson != null) {
+                long start = jsonObject.get("start").getAsLong();
+                long end = jsonObject.get("end").getAsLong();
+                JsonArray messages = jsonObject.get("messages").getAsJsonArray();
 
-            MessageWindow messageWindow = new MessageWindow(OffsetDateTime.parse("" + start), OffsetDateTime.parse("" + end));
-            Iterator<JsonElement> iterator = messages.iterator();
-            while (iterator.hasNext()) {
-                messageWindow.addMessage((JsonObject) iterator.next());
+                MessageWindow messageWindow = new MessageWindow(OffsetDateTime.parse("" + start), OffsetDateTime.parse("" + end));
+                Iterator<JsonElement> iterator = messages.iterator();
+                while (iterator.hasNext()) {
+                    messageWindow.addMessage((JsonObject) iterator.next());
+                }
+                sourceNotification.messageWindow = messageWindow;
             }
-            sourceNotification.messageWindow = messageWindow;
         }
 
         return sourceNotification;
