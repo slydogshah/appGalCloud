@@ -62,22 +62,26 @@ public class RegistrationTests {
     }
 
     @Test
-    public void testLogin() {
-        JsonObject json = new JsonObject();
-        json.addProperty("email", "blah@blah.com");
-        json.addProperty("password", "blahblah");
+    public void testLoginSuccess() {
+        JsonObject registrationJson = new JsonObject();
+        registrationJson.addProperty("id", UUID.randomUUID().toString());
+        registrationJson.addProperty("email", "blah@blah.com");
+        registrationJson.addProperty("mobile", "8675309");
+        registrationJson.addProperty("photo", "photu");
+        registrationJson.addProperty("password", "blahblah");
+        given().body(registrationJson.toString()).post("/registration/profile");
 
-        Response response = given().body(json.toString()).when().post("/registration/login").andReturn();
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", "blah@blah.com");
+        loginJson.addProperty("password", "blahblah");
+        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
-        String jsonString = response.getBody().prettyPrint();
-        logger.info("****");
-        logger.info(jsonString);
-        logger.info("****");
+        String json = response.getBody().prettyPrint();
 
         //assert the body
-        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         String statusCode = jsonObject.get("statusCode").getAsString();
-        assertEquals("0", statusCode);*/
+        assertEquals("200", statusCode);
     }
 
     @Test

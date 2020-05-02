@@ -39,7 +39,7 @@ public class MongoDBJsonStoreTests {
     @AfterEach
     public void tearDown()
     {
-        this.mongoDBJsonStore.cleanup();
+        //this.mongoDBJsonStore.cleanup();
     }
 
     @Test
@@ -79,6 +79,18 @@ public class MongoDBJsonStoreTests {
         logger.info(storedProfile.toString());
         logger.info("*******");
         assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
+    }
+
+    @Test
+    public void testGetProfile()
+    {
+        Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
+        logger.info("*******");
+        logger.info(storedProfile.toString());
+        logger.info(storedProfile.getEmail());
+        logger.info(storedProfile.getPassword());
+        logger.info("*******");
+        //assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
     }
 
     @Test

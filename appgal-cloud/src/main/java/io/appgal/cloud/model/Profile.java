@@ -101,6 +101,10 @@ public class Profile implements Serializable {
         if(this.photo != null) {
             jsonObject.addProperty("photo", this.photo);
         }
+        if(this.password != null)
+        {
+            jsonObject.addProperty("password", this.password);
+        }
 
         return jsonObject;
     }
@@ -110,6 +114,7 @@ public class Profile implements Serializable {
         Profile profile = new Profile();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+
         if(jsonObject.has("id")) {
             profile.id = jsonObject.get("id").getAsString();
         }

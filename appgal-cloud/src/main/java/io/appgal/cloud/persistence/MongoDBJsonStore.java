@@ -112,7 +112,7 @@ public class MongoDBJsonStore {
         MongoCollection<Document> collection = database.getCollection("profile");
 
         //TODO: OPTIMIZE_THIS_QUERY ASSIGNED_TO: @bugs.bunny.shah@gmail.com
-        String queryJson = "{}";
+        String queryJson = "{\"email\":\""+email+"\"}";
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();

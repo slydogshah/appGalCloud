@@ -29,8 +29,10 @@ public class ProfileRegistrationService {
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("profile", profile.toJson());
-        jsonObject.addProperty("latitude", foodRunner.getLocation().getLatitude());
-        jsonObject.addProperty("longitude", foodRunner.getLocation().getLongitude());
+        if(foodRunner != null) {
+            jsonObject.addProperty("latitude", foodRunner.getLocation().getLatitude());
+            jsonObject.addProperty("longitude", foodRunner.getLocation().getLongitude());
+        }
 
         return jsonObject;
     }
@@ -46,8 +48,9 @@ public class ProfileRegistrationService {
         JsonObject reject = new JsonObject();
         reject.addProperty("statusCode", "401");
 
-        JsonObject jsonObject = this.getProfile(email);
-        Profile profile = Profile.parse(jsonObject.toString());
+        JsonObject jsonp = this.getProfile(email);
+        Profile profile = this.mongoDBJsonStore.getProfile(email);
+        Profile profileP = Profile.parse(jsonp.toString());
         if(profile == null)
         {
             return reject;
@@ -55,6 +58,7 @@ public class ProfileRegistrationService {
 
         String registeredEmail = profile.getEmail();
         String registeredPassword = profile.getPassword();
+
         if(registeredEmail == null)
         {
             return reject;
@@ -66,8 +70,10 @@ public class ProfileRegistrationService {
             authResponse.addProperty("statusCode", 200);
 
             FoodRunner foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
-            authResponse.addProperty("latitude", foodRunner.getLocation().getLatitude());
-            authResponse.addProperty("longitude", foodRunner.getLocation().getLongitude());
+            if(foodRunner != null) {
+                authResponse.addProperty("latitude", foodRunner.getLocation().getLatitude());
+                authResponse.addProperty("longitude", foodRunner.getLocation().getLongitude());
+            }
 
             return authResponse;
         }

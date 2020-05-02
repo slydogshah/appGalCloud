@@ -33,10 +33,6 @@ public class Registration {
     @Produces(MediaType.APPLICATION_JSON)
     public String register(@RequestBody String profileJson)
     {
-        logger.info("*******");
-        logger.info(profileJson);
-        logger.info("*******");
-
         JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
         Profile profile = Profile.parse(jsonObject.toString());
         this.profileRegistrationService.register(profile);
