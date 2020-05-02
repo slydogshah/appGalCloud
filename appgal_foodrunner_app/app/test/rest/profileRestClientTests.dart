@@ -9,23 +9,24 @@ import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
 
 void main() {
-  /*test('getProfile', () {
+  test('getProfile', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
     profileFuture.then((profile){
-      expect(profile.email, "blah@blah.com");
+      //expect(profile.email, "blah@blah.com");
+      print(profile.latitude);
     });
   });
 
-  test('getActiveView', () {
+  /*test('getActiveView', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
     activeViewFuture.then((activeView){
       print(activeView);
     });
-  });
+  });*/
 
-  test('login', () {
+  /*test('login', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = "blah@blah.com";
@@ -34,9 +35,9 @@ void main() {
     future.then((authCredentials){
       print(authCredentials.toString());
     });
-  });
+  });*/
 
-  test('String.trim() removes surrounding whitespace', () {
+  /*test('String.trim() removes surrounding whitespace', () {
     var string = '  foo ';
     expect(string.trim(), equals('foo'));
   });*/
@@ -55,7 +56,7 @@ void main() {
     });
   });*/
 
-  test('sendDeliveryNotification', () {
+  /*test('sendDeliveryNotification', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Location location = new Location(30.25860595703125,-97.74873352050781);
     SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",location);
@@ -63,20 +64,5 @@ void main() {
     FoodRunner foodRunner = new FoodRunner(profile, location);
     DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
     profileRestClient.sendDeliveryNotification(dropOffNotification);
-  });
-
-  /*Future<int> future = Future.delayed(
-    const Duration(seconds: 3),
-    () => 100,
-  );
-  future.then((value) {
-    print('The value is $value.'); // Prints later, after 3 seconds.
-  });
-  print('Waiting for a value...'); 
-
-  ProfileRestClient profileRestClient = new ProfileRestClient();
-  Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
-  profileFuture.then((value){
-    print(value.toString());
   });*/
 }

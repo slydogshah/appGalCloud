@@ -33,7 +33,6 @@ public class NetworkOrchestrator {
     @PostConstruct
     public void start()
     {
-        this.activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
         this.activeFoodRunnerQueue = new PriorityQueue<>();
         this.finderResults = new HashMap<>();
         logger.info("*******");

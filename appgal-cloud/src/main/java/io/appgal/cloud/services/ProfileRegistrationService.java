@@ -1,6 +1,8 @@
 package io.appgal.cloud.services;
 
 import com.google.gson.JsonObject;
+import io.appgal.cloud.model.ActiveNetwork;
+import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.slf4j.Logger;
@@ -16,10 +18,21 @@ public class ProfileRegistrationService {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
-    public Profile getProfile(String email)
+    @Inject
+    private ActiveNetwork activeNetwork;
+
+    public JsonObject getProfile(String email)
     {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
-        return profile;
+
+        FoodRunner foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("profile", profile.toJson());
+        jsonObject.addProperty("latitude", foodRunner.getLocation().getLatitude());
+        jsonObject.addProperty("longitude", foodRunner.getLocation().getLongitude());
+
+        return jsonObject;
     }
 
     public void register(Profile profile)
@@ -30,26 +43,34 @@ public class ProfileRegistrationService {
 
     public JsonObject login(String email, String password)
     {
-        Profile profile = this.getProfile(email);
+        JsonObject reject = new JsonObject();
+        reject.addProperty("statusCode", "401");
+
+        JsonObject jsonObject = this.getProfile(email);
+        Profile profile = Profile.parse(jsonObject.toString());
+        if(profile == null)
+        {
+            return reject;
+        }
 
         String registeredEmail = profile.getEmail();
         String registeredPassword = profile.getPassword();
-        boolean authSuccess = false;
-        if(registeredEmail.equals(email) && registeredPassword != null && registeredPassword.equals(password))
+        if(registeredEmail == null)
         {
-            authSuccess = true;
+            return reject;
         }
 
-        JsonObject authResponse = new JsonObject();
-
-        if(authSuccess) {
+        if(registeredEmail.equals(email) && registeredPassword.equals(password))
+        {
+            JsonObject authResponse = new JsonObject();
             authResponse.addProperty("statusCode", 200);
-        }
-        else
-        {
-            authResponse.addProperty("statusCode", 401);
-        }
 
-        return authResponse;
+            FoodRunner foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
+            authResponse.addProperty("latitude", foodRunner.getLocation().getLatitude());
+            authResponse.addProperty("longitude", foodRunner.getLocation().getLongitude());
+
+            return authResponse;
+        }
+        return reject;
     }
 }

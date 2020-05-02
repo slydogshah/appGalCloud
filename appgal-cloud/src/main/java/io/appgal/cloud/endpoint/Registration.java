@@ -24,7 +24,7 @@ public class Registration {
     @Produces(MediaType.APPLICATION_JSON)
     public String getProfile(@QueryParam("email") String email)
     {
-        Profile profile = this.profileRegistrationService.getProfile(email);
+        JsonObject profile = this.profileRegistrationService.getProfile(email);
         return profile.toString();
     }
 

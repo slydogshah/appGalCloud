@@ -288,27 +288,26 @@ class ProfileFunctions
 
   void login (BuildContext context, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    //Future<AuthCredentials> future = profileRestClient.login(authCredentials);
-    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
-    /*future.then((response){
-      print(response.toString());
-
+    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
+    //Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    future.then((authCredentials){
       Navigator.of(context, rootNavigator: true).pop();
 
-      //Navigator.push(
-      //context,
-      //MaterialPageRoute(builder: (context) => new LandingScene(response)));
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => new CardsDemo(ActiveSession.getInstance().getProfile())));
-    });*/
+      MaterialPageRoute(builder: (context) => new LandingScene()));
+      
+      /*Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => new CardsDemo(ActiveSession.getInstance().getProfile())));*/
+    });
 
-    futureP.then((sourceOrgs){
+    /*futureP.then((sourceOrgs){
       Navigator.of(context, rootNavigator: true).pop();
       Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => FoodRunnerDestination(sourceOrgs)));
-    });
+    });*/
   }  
 }
 
