@@ -23,6 +23,16 @@ class Profile {
     return this.longitude;
   }
 
+  void setLatitude(double latitude)
+  {
+    this.latitude = latitude;
+  }
+
+  void setLongitude(double longitude)
+  {
+    this.longitude = longitude;
+  }
+
   Profile.fromJson(Map<String, dynamic> json)
   : id = json['id'],
     email = json['email'],

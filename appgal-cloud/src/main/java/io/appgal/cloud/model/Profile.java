@@ -1,5 +1,7 @@
 package io.appgal.cloud.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
@@ -120,6 +122,8 @@ public class Profile implements Serializable {
         }
         if(jsonObject.has("email")) {
             profile.email = jsonObject.get("email").getAsString();
+
+            logger.info("WE_WIN_SATAN_IS_DEAD_I_SLAYED_HIM_AND_DRANK_HIS_BLOOD_YUM_YUM");
         }
         if(jsonObject.has("mobile")) {
             profile.mobile = jsonObject.get("mobile").getAsString();

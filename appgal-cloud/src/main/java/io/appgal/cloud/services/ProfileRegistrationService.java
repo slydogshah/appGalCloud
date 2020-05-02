@@ -74,6 +74,11 @@ public class ProfileRegistrationService {
                 authResponse.addProperty("latitude", foodRunner.getLocation().getLatitude());
                 authResponse.addProperty("longitude", foodRunner.getLocation().getLongitude());
             }
+            else
+            {
+                authResponse.addProperty("latitude", 30.25860595703125d);
+                authResponse.addProperty("longitude", -97.74873352050781d);
+            }
 
             return authResponse;
         }

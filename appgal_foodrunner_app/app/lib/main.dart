@@ -11,12 +11,8 @@ import './src/context/activeSession.dart';
 
 void main() 
 {
-  //Activate the data source related Components (Loading Data from the Cloud)
   ActiveSession activeSession = ActiveSession.getInstance();
   activeSession.activate();
-
-  print("BLAH_"+activeSession.getProfile().toString());
-  //print(activeSession.getProfile().getLatitude());
 
   //Launch the App
   runApp(new Login());

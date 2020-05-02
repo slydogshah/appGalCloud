@@ -291,6 +291,13 @@ class ProfileFunctions
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
     //Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
     future.then((authCredentials){
+      //Activate the data source related Components (Loading Data from the Cloud)
+      ActiveSession activeSession = ActiveSession.getInstance();
+      Profile profile = activeSession.getProfile();
+      profile.setLatitude(authCredentials.latitude);
+      profile.setLongitude(authCredentials.longitude);
+
+
       Navigator.of(context, rootNavigator: true).pop();
 
       Navigator.push(
