@@ -281,8 +281,8 @@ class ProfileFunctions
     );
 
     AuthCredentials credentials = new AuthCredentials();
-    credentials.email = "blah@blah.com";
-    credentials.password = "blahblah";
+    credentials.email = "c@s.com";
+    credentials.password = "c";
     login(context, credentials);
   }
 
@@ -298,6 +298,9 @@ class ProfileFunctions
       profile.setLongitude(authCredentials.longitude);
 
 
+      print(profile.getLatitude());
+      print(profile.getLongitude());
+      
       Navigator.of(context, rootNavigator: true).pop();
 
       Navigator.push(

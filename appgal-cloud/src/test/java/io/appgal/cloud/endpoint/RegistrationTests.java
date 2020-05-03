@@ -65,15 +65,15 @@ public class RegistrationTests {
     public void testLoginSuccess() {
         JsonObject registrationJson = new JsonObject();
         registrationJson.addProperty("id", UUID.randomUUID().toString());
-        registrationJson.addProperty("email", "blah@blah.com");
+        registrationJson.addProperty("email", "c@s.com");
         registrationJson.addProperty("mobile", "8675309");
         registrationJson.addProperty("photo", "photu");
-        registrationJson.addProperty("password", "blahblah");
+        registrationJson.addProperty("password", "c");
         given().body(registrationJson.toString()).post("/registration/profile");
 
         JsonObject loginJson = new JsonObject();
-        loginJson.addProperty("email", "blah@blah.com");
-        loginJson.addProperty("password", "blahblah");
+        loginJson.addProperty("email", "c@s.com");
+        loginJson.addProperty("password", "c");
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String json = response.getBody().prettyPrint();

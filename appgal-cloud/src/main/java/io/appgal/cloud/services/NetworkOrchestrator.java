@@ -21,14 +21,14 @@ import java.util.*;
 public class NetworkOrchestrator {
     private static Logger logger = LoggerFactory.getLogger(NetworkOrchestrator.class);
 
+    @Inject
     private ActiveNetwork activeNetwork;
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
 
     private Queue<PickupRequest> activeFoodRunnerQueue;
 
     private Map<String, Collection<FoodRunner>> finderResults;
-
-    @Inject
-    private MongoDBJsonStore mongoDBJsonStore;
 
     @PostConstruct
     public void start()

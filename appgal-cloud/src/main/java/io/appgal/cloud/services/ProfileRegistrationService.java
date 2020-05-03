@@ -3,6 +3,7 @@ package io.appgal.cloud.services;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
+import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.slf4j.Logger;
@@ -20,6 +21,9 @@ public class ProfileRegistrationService {
 
     @Inject
     private ActiveNetwork activeNetwork;
+
+    @Inject
+    private NetworkOrchestrator networkOrchestrator;
 
     public JsonObject getProfile(String email)
     {
@@ -46,11 +50,9 @@ public class ProfileRegistrationService {
     public JsonObject login(String email, String password)
     {
         JsonObject reject = new JsonObject();
-        reject.addProperty("statusCode", "401");
+        reject.addProperty("statusCode", 401);
 
-        JsonObject jsonp = this.getProfile(email);
         Profile profile = this.mongoDBJsonStore.getProfile(email);
-        Profile profileP = Profile.parse(jsonp.toString());
         if(profile == null)
         {
             return reject;
@@ -64,12 +66,20 @@ public class ProfileRegistrationService {
             return reject;
         }
 
+        logger.info(registeredEmail);
+        logger.info(email);
+        logger.info(registeredPassword);
+        logger.info(password);
+
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
             JsonObject authResponse = new JsonObject();
             authResponse.addProperty("statusCode", 200);
 
-            FoodRunner foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
+            Location location = new Location(30.25860595703125d, -97.74873352050781d);
+            FoodRunner foodRunner = new FoodRunner(profile, location);
+            this.networkOrchestrator.enterNetwork(foodRunner);
+            foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
             if(foodRunner != null) {
                 authResponse.addProperty("latitude", foodRunner.getLocation().getLatitude());
                 authResponse.addProperty("longitude", foodRunner.getLocation().getLongitude());
