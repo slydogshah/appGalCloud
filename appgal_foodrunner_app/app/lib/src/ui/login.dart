@@ -38,14 +38,9 @@ class LoginScene extends StatelessWidget {
     final cursorColor = Theme.of(context).cursorColor;
     const sizedBoxSpace = SizedBox(height: 24);
     ProfileFunctions profileFunctions = new ProfileFunctions();
-    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
-            dragStartBehavior: DragStartBehavior.down,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                sizedBoxSpace,
-                TextFormField(
+
+    TextFormField email = TextFormField(
+                  controller: TextEditingController(),
                   textCapitalization: TextCapitalization.words,
                   cursorColor: cursorColor,
                   decoration: InputDecoration(
@@ -55,12 +50,34 @@ class LoginScene extends StatelessWidget {
                     labelText:
                         "Email",
                   )
-                ),
+                );
+    TextFormField password = TextFormField(
+                  controller: TextEditingController(),
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.person),
+                    hintText: "Your password",
+                    labelText:
+                        "Password",
+                  )
+                );
+
+    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
+            dragStartBehavior: DragStartBehavior.down,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                 sizedBoxSpace,
-                PasswordField(fieldKey: new Key("0"),
+                email,
+                sizedBoxSpace,
+                /*PasswordField(fieldKey: new Key("0"),
                 hintText: "Password", 
                 labelText: "Password",
-                helperText: "Password", obscureText: "Password",),
+                helperText: "Password", obscureText: "Password",),*/
+                password,
                 sizedBoxSpace,
                 ButtonTheme.bar(
                   child: ButtonBar(
@@ -81,7 +98,7 @@ class LoginScene extends StatelessWidget {
                       child: Text("Login"),
                       onPressed: () 
                       {
-                        profileFunctions.showAlertDialog(context);
+                        profileFunctions.showAlertDialog(context, email.controller.text, password.controller.text);
                       }
                     )
                 )
@@ -246,7 +263,7 @@ class RegistrationScene extends StatelessWidget {
                     child: Text("Register"),
                     onPressed: () 
                     {
-                      profileFunctions.showAlertDialog(context);
+                      profileFunctions.showAlertDialog(context, "", ""); //TODO: FIXME
                     }
                   )
                 ),
@@ -265,7 +282,7 @@ class RegistrationScene extends StatelessWidget {
 
 class ProfileFunctions
 {
-  void showAlertDialog(BuildContext context) 
+  void showAlertDialog(BuildContext context, String email, String password) 
   {
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
@@ -280,9 +297,12 @@ class ProfileFunctions
       },
     );
 
+    print("EMAIL: "+email);
+    print("PASSWORD: "+password);
+
     AuthCredentials credentials = new AuthCredentials();
-    credentials.email = "c@s.com";
-    credentials.password = "c";
+    credentials.email = email;
+    credentials.password = password;
     login(context, credentials);
   }
 
