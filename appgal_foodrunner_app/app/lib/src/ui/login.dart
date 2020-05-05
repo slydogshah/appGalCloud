@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:app/src/context/activeSession.dart';
@@ -51,7 +52,7 @@ class LoginScene extends StatelessWidget {
                         "Email",
                   )
                 );
-    TextFormField password = TextFormField(
+    /*TextField password = TextField(
                   controller: TextEditingController(),
                   textCapitalization: TextCapitalization.words,
                   cursorColor: cursorColor,
@@ -61,8 +62,15 @@ class LoginScene extends StatelessWidget {
                     hintText: "Your password",
                     labelText:
                         "Password",
+                    obscureText: true
                   )
-                );
+                );*/
+
+    TextField password = TextField(
+            controller: TextEditingController(),
+            //this hides the text being edited
+            obscureText: true,
+          );
 
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
@@ -309,9 +317,7 @@ class ProfileFunctions
   void login (BuildContext context, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
-    //Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
     future.then((authCredentials){
-      //Activate the data source related Components (Loading Data from the Cloud)
       ActiveSession activeSession = ActiveSession.getInstance();
       Profile profile = activeSession.getProfile();
       profile.setLatitude(authCredentials.latitude);
@@ -326,20 +332,49 @@ class ProfileFunctions
       Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => new LandingScene()));
-      
-      /*Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => new CardsDemo(ActiveSession.getInstance().getProfile())));*/
-    });
 
-    /*futureP.then((sourceOrgs){
-      Navigator.of(context, rootNavigator: true).pop();
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => FoodRunnerDestination(sourceOrgs)));
-    });*/
+      showCards(context, profile);
+    });
+  }
+
+  void showCards(BuildContext context, Profile profile) {
+    sleep(const Duration(seconds:5));
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    futureP.then((sourceOrgs){
+      Navigator.push(context,
+      MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
+    });
   }  
 }
+
+/*
+//Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+*/
+/*
+//Activate the data source related Components (Loading Data from the Cloud)
+      ActiveSession activeSession = ActiveSession.getInstance();
+      Profile profile = activeSession.getProfile();
+      profile.setLatitude(authCredentials.latitude);
+      profile.setLongitude(authCredentials.longitude);
+
+
+      print(profile.getLatitude());
+      print(profile.getLongitude());
+      
+      Navigator.of(context, rootNavigator: true).pop();
+
+      Navigator.push(context,
+      MaterialPageRoute(builder: (context) => new LandingScene()));
+*/
+
+/*
+void showCards(Profile profile) {
+    const time = const Duration(seconds:5);
+    new Timer.periodic(time, (Timer t) => Navigator.push(context,
+    MaterialPageRoute(builder: (context) => new CardsDemo(profile))));
+  }  
+*/
 
 class DropdownScreen extends StatefulWidget {
   State createState() =>  DropdownScreenState();

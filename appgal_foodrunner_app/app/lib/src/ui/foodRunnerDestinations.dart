@@ -10,6 +10,7 @@ import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/profileRestClient.dart';
+import 'package:app/src/ui/appGalFoodRunnerCards.dart';
 import 'package:app/src/ui/driveToDestination.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -80,16 +81,7 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
                               FlatButton(
                                 child: const Text('Edit', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                  ProfileRestClient profileRestClient = new ProfileRestClient();
-                                  Location location = new Location(30.25860595703125,-97.74873352050781);
-                                  SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",location);
-                                  Profile profile = new Profile("123", "bugs.bunny.shah@gmail.com", "8675309", "");
-                                  FoodRunner foodRunner = new FoodRunner(profile, location);
-                                  DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
-                                  profileRestClient.sendDeliveryNotification(dropOffNotification);
-                                  Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => DriveToDestinationScene(dropOffNotification)));
+                                    handleClick(context);
                                 },
                               ),
                               FlatButton(
@@ -105,6 +97,19 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
         cards.add(card);
     }
     return cards;
+  }
+
+  void handleClick(BuildContext context)
+  {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Location location = new Location(30.25860595703125,-97.74873352050781);
+    SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",location);
+    Profile profile = new Profile("123", "bugs.bunny.shah@gmail.com", "8675309", "");
+    FoodRunner foodRunner = new FoodRunner(profile, location);
+    DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
+    profileRestClient.sendDeliveryNotification(dropOffNotification);
+    //Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene(dropOffNotification)));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => CardsDemo(profile)));
   }
   
   @override
