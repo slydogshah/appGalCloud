@@ -4,6 +4,7 @@
 
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/ui/landingScene.dart';
 import 'package:flutter/material.dart';
 
 class PickupSource extends StatefulWidget {
@@ -85,6 +86,7 @@ class _PickupSourceState extends State<PickupSource> {
 
   void handleClick(BuildContext context)
   {
+    Navigator.push(context,MaterialPageRoute(builder: (context) => LandingScene()));
   }
   
   @override
