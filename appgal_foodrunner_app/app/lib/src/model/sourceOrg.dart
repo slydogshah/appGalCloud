@@ -5,10 +5,10 @@ import 'location.dart';
 class SourceOrg
 {
     String orgId;
-    String orgName;
-    String orgContactEmail;
+    String  orgName;
+    String  orgContactEmail;
 
-    Location location;
+    Location location = new Location(0.0, 0.0);
 
     //private DeliveryPreference deliveryPreference;
     SourceOrg(String orgId, String orgName, String orgContactEmail, Location location)
@@ -16,21 +16,31 @@ class SourceOrg
       this.orgId = orgId;
       this.orgName = orgName;
       this.orgContactEmail = orgContactEmail;
-      this.location = location;
+      if(location != null)
+      {
+        this.location = location;
+      }
     }
 
     SourceOrg.fromJson(Map<String, dynamic> json) :
     this.orgId = json['orgId'],
     this.orgName = json['orgName'],
-    this.orgContactEmail = json['orgContactEmail'];
+    this.orgContactEmail = json['orgContactEmail'],
+    this.location = json['location'];
 
-    Map<String, dynamic> toJson() =>
+    Map<String, String> toJson()
     {
-      "orgId": this.orgId,
-      "orgName": this.orgName,
-      "orgContactEmail": this.orgContactEmail,
-      "location": this.location.toJson()
-    };
+      Map<String, String> json = new Map();
+      if(this.location == null)
+      {
+        this.location = new Location(0.0, 0.0);
+      }
+      json['orgId'] = this.orgId;
+      json['orgName'] = this.orgName;
+      json['orgContactEmail'] = this.orgContactEmail;
+      json['location'] = this.location.toString();
+      return json;
+    }
 
     String toString()
     {

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
@@ -96,6 +98,14 @@ class _PickupSourceState extends State<PickupSource> {
     futureP.then((sourceOrgs){
       Navigator.push(context,
       MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
+      //also send a notification I am on my way
+      Profile profile = ActiveSession.getInstance().getProfile();
+      Location location = new Location(profile.getLatitude(), profile.getLongitude());
+      FoodRunner foodRunner = new FoodRunner(profile, location);
+      Map<String, dynamic> json = sourceOrgs.elementAt(0);
+      SourceOrg sourceOrg = SourceOrg.fromJson(json);
+      DropOffNotification dropOffNotification = DropOffNotification(sourceOrg, location, foodRunner);
+      profileRestClient.sendDeliveryNotification(dropOffNotification);
     });
   }
   
