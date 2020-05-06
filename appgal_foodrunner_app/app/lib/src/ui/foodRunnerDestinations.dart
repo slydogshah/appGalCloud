@@ -1,20 +1,15 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-import 'dart:async';
-
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/profileRestClient.dart';
-import 'package:app/src/ui/appGalFoodRunnerCards.dart';
-import 'package:app/src/ui/driveToDestination.dart';
+import 'package:app/src/ui/pickupSource.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-//import './l10n/gallery_localizations.dart';
 
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
@@ -109,7 +104,7 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
     DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
     profileRestClient.sendDeliveryNotification(dropOffNotification);
     //Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene(dropOffNotification)));
-    Navigator.push(context,MaterialPageRoute(builder: (context) => CardsDemo(profile)));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg)));
   }
   
   @override
