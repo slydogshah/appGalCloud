@@ -1,12 +1,8 @@
-import 'package:app/src/model/authCredentials.dart';
-import 'package:app/src/model/dropOffNotification.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DriveToDestinationScene extends StatefulWidget {
-  DriveToDestinationScene()
-  {
-  }
+  DriveToDestinationScene();
 
   @override
   DriveToDestinationSceneState createState() => DriveToDestinationSceneState();
@@ -16,9 +12,7 @@ class DriveToDestinationSceneState extends State<DriveToDestinationScene> {
   GoogleMapController mapController;
   final LatLng _center = const LatLng(45.521563, -122.677433);
 
-  DriveToDestinationSceneState()
-  {
-  }
+  DriveToDestinationSceneState();
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;

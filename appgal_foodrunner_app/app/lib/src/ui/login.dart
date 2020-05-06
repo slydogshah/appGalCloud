@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
-import 'foodRunnerDestinations.dart';
 import 'landingScene.dart';
 
 class Login extends StatelessWidget
@@ -47,30 +46,23 @@ class LoginScene extends StatelessWidget {
                   decoration: InputDecoration(
                     filled: true,
                     icon: Icon(Icons.person),
-                    hintText: "Your email address",
+                    //hintText: "Your email address",
                     labelText:
                         "Email",
                   )
                 );
-    /*TextField password = TextField(
-                  controller: TextEditingController(),
-                  textCapitalization: TextCapitalization.words,
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.person),
-                    hintText: "Your password",
-                    labelText:
-                        "Password",
-                    obscureText: true
-                  )
-                );*/
 
     TextField password = TextField(
             controller: TextEditingController(),
-            //this hides the text being edited
             obscureText: true,
-          );
+            decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.person),
+                    //hintText: "Your email address",
+                    labelText:
+                        "Password",
+            )
+    );
 
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
@@ -81,10 +73,6 @@ class LoginScene extends StatelessWidget {
                 sizedBoxSpace,
                 email,
                 sizedBoxSpace,
-                /*PasswordField(fieldKey: new Key("0"),
-                hintText: "Password", 
-                labelText: "Password",
-                helperText: "Password", obscureText: "Password",),*/
                 password,
                 sizedBoxSpace,
                 ButtonTheme.bar(
@@ -122,6 +110,145 @@ class LoginScene extends StatelessWidget {
     return scaffold;
   }
 }
+
+class Registration extends StatelessWidget
+{
+  @override
+  Widget build(BuildContext context) {
+   MaterialApp materialApp = new MaterialApp(home: new RegistrationScene());
+   return materialApp;
+  }
+  
+}
+
+class RegistrationScene extends StatelessWidget {
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    final cursorColor = Theme.of(context).cursorColor;
+    const sizedBoxSpace = SizedBox(height: 24);
+    ProfileFunctions profileFunctions = new ProfileFunctions();
+    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
+            dragStartBehavior: DragStartBehavior.down,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                sizedBoxSpace,
+                TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.person),
+                    hintText: "Your email address",
+                    labelText:
+                        "Email",
+                  )
+                ),
+                sizedBoxSpace,
+                PasswordField(fieldKey: new Key("0"),
+                hintText: "Password", 
+                labelText: "Password",
+                helperText: "Password", obscureText: "Password",),
+                sizedBoxSpace,
+                TextFormField(
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.phone),
+                    hintText: "Your mobile number",
+                    labelText:
+                        "Mobile",
+                  )
+                ),
+                sizedBoxSpace,
+                Center(
+                  child: RaisedButton(
+                    child: Text("Register"),
+                    onPressed: () 
+                    {
+                      profileFunctions.showAlertDialog(context, "", ""); //TODO: FIXME
+                    }
+                  )
+                ),
+              ],
+            )
+          )
+    );
+
+    Form form = new Form(child: scrollbar);
+
+    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
+    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
+    return scaffold;
+  }
+}
+
+class ProfileFunctions
+{
+  void showAlertDialog(BuildContext context, String email, String password) 
+  {
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+      children: [CupertinoActivityIndicator()]
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+
+    //print("EMAIL: "+email);
+    //print("PASSWORD: "+password);
+
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = email;
+    credentials.password = password;
+    login(context, credentials);
+  }
+
+  void login (BuildContext context, AuthCredentials authCredentials) {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
+    future.then((authCredentials){
+      ActiveSession activeSession = ActiveSession.getInstance();
+      Profile profile = activeSession.getProfile();
+      profile.setLatitude(authCredentials.latitude);
+      profile.setLongitude(authCredentials.longitude);
+
+
+      print(profile.getLatitude());
+      print(profile.getLongitude());
+      
+      Navigator.of(context, rootNavigator: true).pop();
+
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => new LandingScene()));
+
+      showCards(context, profile);
+    });
+  }
+
+  void showCards(BuildContext context, Profile profile) {
+    sleep(const Duration(seconds:5));
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    futureP.then((sourceOrgs){
+      Map<String, dynamic> json = sourceOrgs.elementAt(0);
+      SourceOrg sourceOrg = SourceOrg.fromJson(json);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => new PickupSource(sourceOrg)));
+    });
+  }  
+}
+
+
 
 class PasswordField extends StatelessWidget {
   const PasswordField({
@@ -176,233 +303,4 @@ class PasswordField extends StatelessWidget {
       ),
     );
   }
-}
-
-class Registration extends StatelessWidget
-{
-  @override
-  Widget build(BuildContext context) {
-   MaterialApp materialApp = new MaterialApp(home: new RegistrationScene());
-   return materialApp;
-  }
-  
-}
-
-class RegistrationScene extends StatelessWidget {
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    final cursorColor = Theme.of(context).cursorColor;
-    const sizedBoxSpace = SizedBox(height: 24);
-    ProfileFunctions profileFunctions = new ProfileFunctions();
-    List<Item> users = <Item>[
-    const Item('Android',Icon(Icons.android,color:  const Color(0xFF167F67),)),
-    const Item('Flutter',Icon(Icons.flag,color:  const Color(0xFF167F67),)),
-    const Item('ReactNative',Icon(Icons.format_indent_decrease,color:  const Color(0xFF167F67),)),
-    const Item('iOS',Icon(Icons.mobile_screen_share,color:  const Color(0xFF167F67),)),
-    ];
-    Item selectedUser;
-    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
-            dragStartBehavior: DragStartBehavior.down,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                sizedBoxSpace,
-                TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.person),
-                    hintText: "Your email address",
-                    labelText:
-                        "Email",
-                  )
-                ),
-                sizedBoxSpace,
-                PasswordField(fieldKey: new Key("0"),
-                hintText: "Password", 
-                labelText: "Password",
-                helperText: "Password", obscureText: "Password",),
-                sizedBoxSpace,
-                TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.phone),
-                    hintText: "Your mobile number",
-                    labelText:
-                        "Mobile",
-                  )
-                ),
-                sizedBoxSpace,
-                Center(
-                  child:  DropdownButton<Item>(
-                    hint:  Text("Select item"),
-                    value: selectedUser,
-                    onChanged: (Item Value) {
-                      /*setState(() {
-                        selectedUser = Value;
-                      });*/
-                    },
-                    items: users.map((Item user) {
-                      return  DropdownMenuItem<Item>(
-                        value: user,
-                        child: Row(
-                          children: <Widget>[
-                            user.icon,
-                            SizedBox(width: 10,),
-                            Text(
-                              user.name,
-                              style:  TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                sizedBoxSpace,
-                Center(
-                  child: RaisedButton(
-                    child: Text("Register"),
-                    onPressed: () 
-                    {
-                      profileFunctions.showAlertDialog(context, "", ""); //TODO: FIXME
-                    }
-                  )
-                ),
-              ],
-            )
-          )
-    );
-
-    Form form = new Form(child: scrollbar);
-
-    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
-    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
-    return scaffold;
-  }
-}
-
-class ProfileFunctions
-{
-  void showAlertDialog(BuildContext context, String email, String password) 
-  {
-    // set up the SimpleDialog
-    SimpleDialog dialog = SimpleDialog(
-      children: [CupertinoActivityIndicator()]
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
-
-    print("EMAIL: "+email);
-    print("PASSWORD: "+password);
-
-    AuthCredentials credentials = new AuthCredentials();
-    credentials.email = email;
-    credentials.password = password;
-    login(context, credentials);
-  }
-
-  void login (BuildContext context, AuthCredentials authCredentials) {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
-    future.then((authCredentials){
-      ActiveSession activeSession = ActiveSession.getInstance();
-      Profile profile = activeSession.getProfile();
-      profile.setLatitude(authCredentials.latitude);
-      profile.setLongitude(authCredentials.longitude);
-
-
-      print(profile.getLatitude());
-      print(profile.getLongitude());
-      
-      Navigator.of(context, rootNavigator: true).pop();
-
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => new LandingScene()));
-
-      showCards(context, profile);
-    });
-  }
-
-  void showCards(BuildContext context, Profile profile) {
-    sleep(const Duration(seconds:5));
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
-    futureP.then((sourceOrgs){
-      Map<String, dynamic> json = sourceOrgs.elementAt(0);
-      SourceOrg sourceOrg = SourceOrg.fromJson(json);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => new PickupSource(sourceOrg)));
-    });
-  }  
-}
-
-class DropdownScreen extends StatefulWidget {
-  State createState() =>  DropdownScreenState();
-}
-class DropdownScreenState extends State<DropdownScreen> {
-  Item selectedUser;
-  List<Item> users = <Item>[
-    const Item('Android',Icon(Icons.android,color:  const Color(0xFF167F67),)),
-    const Item('Flutter',Icon(Icons.flag,color:  const Color(0xFF167F67),)),
-    const Item('ReactNative',Icon(Icons.format_indent_decrease,color:  const Color(0xFF167F67),)),
-    const Item('iOS',Icon(Icons.mobile_screen_share,color:  const Color(0xFF167F67),)),
-  ];
-  @override
-  Widget build(BuildContext context) {
-    return  MaterialApp(
-      home:  Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF167F67),
-          title: Text(
-            'Dropdown options',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        body:  Center(
-          child:  DropdownButton<Item>(
-            hint:  Text("Select item"),
-            value: selectedUser,
-            onChanged: (Item Value) {
-              setState(() {
-                selectedUser = Value;
-              });
-            },
-            items: users.map((Item user) {
-              return  DropdownMenuItem<Item>(
-                value: user,
-                child: Row(
-                  children: <Widget>[
-                    user.icon,
-                    SizedBox(width: 10,),
-                    Text(
-                      user.name,
-                      style:  TextStyle(color: Colors.black),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
-}
-class Item {
-  const Item(this.name,this.icon);
-  final String name;
-  final Icon icon;
 }

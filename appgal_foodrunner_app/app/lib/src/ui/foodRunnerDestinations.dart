@@ -98,17 +98,14 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
   
   @override
   Widget build(BuildContext context) {
-    SourceOrg sourceOrg = null;
+    SourceOrg sourceOrg;
     for(Map<String, dynamic> json in this.json)
     {
       sourceOrg = SourceOrg.fromJson(json);
       Location location = new Location(0.0, 0.0);
       sourceOrg.location = location;
-      print(sourceOrg.toString());
+      //print(sourceOrg.toString());
     }
-    String id = sourceOrg.orgId;
-    String email = sourceOrg.orgName;
-    String mobile = sourceOrg.orgContactEmail;
     Scaffold scaffold = Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,

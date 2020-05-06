@@ -1,5 +1,4 @@
 import 'package:app/src/context/activeSession.dart';
-import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,7 +15,7 @@ class LandingSceneState extends State<LandingScene> {
   LandingSceneState()
   {
     Profile profile = ActiveSession.getInstance().getProfile();
-    print("LANDING"+profile.toString());
+    //print("LANDING"+profile.toString());
     this._center = LatLng(profile.getLatitude(), profile.getLongitude());
   }
 
