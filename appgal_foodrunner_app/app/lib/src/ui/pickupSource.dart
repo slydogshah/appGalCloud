@@ -2,10 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
+import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/landingScene.dart';
 import 'package:flutter/material.dart';
+
+import 'foodRunnerDestinations.dart';
 
 class PickupSource extends StatefulWidget {
   SourceOrg sourceOrg;
@@ -86,7 +91,12 @@ class _PickupSourceState extends State<PickupSource> {
 
   void handleClick(BuildContext context)
   {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => LandingScene()));
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    futureP.then((sourceOrgs){
+      Navigator.push(context,
+      MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
+    });
   }
   
   @override
