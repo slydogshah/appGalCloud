@@ -5,8 +5,8 @@ import 'location.dart';
 class SourceOrg
 {
     String orgId;
-    String  orgName;
-    String  orgContactEmail;
+    String orgName;
+    String orgContactEmail;
 
     Location location = new Location(0.0, 0.0);
 

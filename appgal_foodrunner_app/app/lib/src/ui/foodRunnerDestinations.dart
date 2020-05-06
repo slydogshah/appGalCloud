@@ -1,14 +1,11 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:app/src/model/dropOffNotification.dart';
-import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
-import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
-import 'package:app/src/rest/profileRestClient.dart';
-import 'package:app/src/ui/pickupSource.dart';
 import 'package:flutter/material.dart';
+
+import 'driveToDestination.dart';
 
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
@@ -95,15 +92,8 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
 
   void handleClick(BuildContext context)
   {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Location location = new Location(30.25860595703125,-97.74873352050781);
-    SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",location);
-    Profile profile = new Profile("123", "bugs.bunny.shah@gmail.com", "8675309", "");
-    FoodRunner foodRunner = new FoodRunner(profile, location);
-    DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
-    profileRestClient.sendDeliveryNotification(dropOffNotification);
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene(dropOffNotification)));
-    Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg)));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
+    //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg)));
   }
   
   @override

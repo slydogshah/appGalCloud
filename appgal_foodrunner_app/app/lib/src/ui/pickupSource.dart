@@ -98,6 +98,7 @@ class _PickupSourceState extends State<PickupSource> {
     futureP.then((sourceOrgs){
       Navigator.push(context,
       MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
+      
       //also send a notification I am on my way
       Profile profile = ActiveSession.getInstance().getProfile();
       Location location = new Location(profile.getLatitude(), profile.getLongitude());

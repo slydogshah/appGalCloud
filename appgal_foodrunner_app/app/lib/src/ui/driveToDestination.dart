@@ -4,25 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DriveToDestinationScene extends StatefulWidget {
-  AuthCredentials authCredentials;
-
-  DriveToDestinationScene(DropOffNotification)
+  DriveToDestinationScene()
   {
-    this.authCredentials = authCredentials;
   }
 
   @override
-  DriveToDestinationSceneState createState() => DriveToDestinationSceneState(this.authCredentials);
+  DriveToDestinationSceneState createState() => DriveToDestinationSceneState();
 }
 
 class DriveToDestinationSceneState extends State<DriveToDestinationScene> {
   GoogleMapController mapController;
   final LatLng _center = const LatLng(45.521563, -122.677433);
-  AuthCredentials authCredentials;
 
-  DriveToDestinationSceneState(AuthCredentials authCredentials)
+  DriveToDestinationSceneState()
   {
-    this.authCredentials = authCredentials;
   }
 
   void _onMapCreated(GoogleMapController controller) {

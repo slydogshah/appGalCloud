@@ -11,7 +11,9 @@ import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/profileRestClient.dart';
+import 'package:app/src/ui/pickupSource.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -340,39 +342,12 @@ class ProfileFunctions
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
     futureP.then((sourceOrgs){
-      Navigator.push(context,
-      MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
+      Map<String, dynamic> json = sourceOrgs.elementAt(0);
+      SourceOrg sourceOrg = SourceOrg.fromJson(json);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => new PickupSource(sourceOrg)));
     });
   }  
 }
-
-/*
-//Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
-*/
-/*
-//Activate the data source related Components (Loading Data from the Cloud)
-      ActiveSession activeSession = ActiveSession.getInstance();
-      Profile profile = activeSession.getProfile();
-      profile.setLatitude(authCredentials.latitude);
-      profile.setLongitude(authCredentials.longitude);
-
-
-      print(profile.getLatitude());
-      print(profile.getLongitude());
-      
-      Navigator.of(context, rootNavigator: true).pop();
-
-      Navigator.push(context,
-      MaterialPageRoute(builder: (context) => new LandingScene()));
-*/
-
-/*
-void showCards(Profile profile) {
-    const time = const Duration(seconds:5);
-    new Timer.periodic(time, (Timer t) => Navigator.push(context,
-    MaterialPageRoute(builder: (context) => new CardsDemo(profile))));
-  }  
-*/
 
 class DropdownScreen extends StatefulWidget {
   State createState() =>  DropdownScreenState();
