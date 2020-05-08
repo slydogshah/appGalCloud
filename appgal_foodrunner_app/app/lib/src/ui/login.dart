@@ -12,6 +12,7 @@ import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/pickupSource.dart';
 import 'package:flutter/gestures.dart';
@@ -276,14 +277,14 @@ class ProfileFunctions
       context,
       MaterialPageRoute(builder: (context) => new LandingScene()));
 
-      showCards(context, profile);
+      //showCards(context, profile);
     });
   }
 
   void showCards(BuildContext context, Profile profile) {
     sleep(const Duration(seconds:5));
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
+    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
+    Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
     futureP.then((sourceOrgs){
       Map<String, dynamic> json = sourceOrgs.elementAt(0);
       SourceOrg sourceOrg = SourceOrg.fromJson(json);

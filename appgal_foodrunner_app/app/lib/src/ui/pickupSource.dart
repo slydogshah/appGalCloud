@@ -8,6 +8,7 @@ import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:flutter/material.dart';
 
@@ -92,8 +93,8 @@ class _PickupSourceState extends State<PickupSource> {
 
   void handleClick(BuildContext context)
   {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
+    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
+    Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
     futureP.then((sourceOrgs){
       Navigator.push(context,
       MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
@@ -105,7 +106,7 @@ class _PickupSourceState extends State<PickupSource> {
       Map<String, dynamic> json = sourceOrgs.elementAt(0);
       SourceOrg sourceOrg = SourceOrg.fromJson(json);
       DropOffNotification dropOffNotification = DropOffNotification(sourceOrg, location, foodRunner);
-      profileRestClient.sendDeliveryNotification(dropOffNotification);
+      activeNetworkRestClient.sendDeliveryNotification(dropOffNotification);
     });
   }
   
