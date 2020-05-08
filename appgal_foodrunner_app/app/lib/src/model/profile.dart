@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-import 'package:app/src/model/location.dart';
-
 class Profile {
   String id;
   String email;
   String mobile;
   String photo;
+  String password;
 
   double latitude;
   double longitude;
 
-  Profile(this.id, this.email, this.mobile, this.photo);
+
+  Profile(this.id, this.email, this.mobile, this.photo, this.password);
 
   double getLatitude()
   {
@@ -39,7 +39,8 @@ class Profile {
     mobile = json['mobile'],
     photo = json['photo'],
     latitude = json['latitude'],
-    longitude = json['longitude'];
+    longitude = json['longitude'],
+    password = json['password'];
 
   Map<String, dynamic> toJson() =>
   {
@@ -48,7 +49,8 @@ class Profile {
     "mobile": this.mobile,
     "photo": this.photo,
     "latitude": this.latitude,
-    "longitude": this.longitude
+    "longitude": this.longitude,
+    "password": this.password
   };
 
   String toString()

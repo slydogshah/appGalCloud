@@ -57,7 +57,7 @@ class LoginScene extends StatelessWidget {
             obscureText: true,
             decoration: InputDecoration(
                     filled: true,
-                    icon: Icon(Icons.person),
+                    icon: Icon(Icons.visibility_off),
                     //hintText: "Your email address",
                     labelText:
                         "Password",
@@ -129,31 +129,31 @@ class RegistrationScene extends StatelessWidget {
     final cursorColor = Theme.of(context).cursorColor;
     const sizedBoxSpace = SizedBox(height: 24);
     ProfileFunctions profileFunctions = new ProfileFunctions();
-    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
-            dragStartBehavior: DragStartBehavior.down,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                sizedBoxSpace,
-                TextFormField(
+    TextFormField email = TextFormField(
+                  controller: TextEditingController(),
                   textCapitalization: TextCapitalization.words,
                   cursorColor: cursorColor,
                   decoration: InputDecoration(
                     filled: true,
                     icon: Icon(Icons.person),
-                    hintText: "Your email address",
+                    //hintText: "Your email address",
                     labelText:
                         "Email",
                   )
-                ),
-                sizedBoxSpace,
-                PasswordField(fieldKey: new Key("0"),
-                hintText: "Password", 
-                labelText: "Password",
-                helperText: "Password", obscureText: "Password",),
-                sizedBoxSpace,
-                TextFormField(
+                );
+    TextField password = TextField(
+            controller: TextEditingController(),
+            obscureText: true,
+            decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.visibility_off),
+                    //hintText: "Your email address",
+                    labelText:
+                        "Password",
+            )
+    );
+    TextFormField mobile = TextFormField(
+                  controller: TextEditingController(),
                   textCapitalization: TextCapitalization.words,
                   cursorColor: cursorColor,
                   decoration: InputDecoration(
@@ -163,14 +163,27 @@ class RegistrationScene extends StatelessWidget {
                     labelText:
                         "Mobile",
                   )
-                ),
+                );
+    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
+            dragStartBehavior: DragStartBehavior.down,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                sizedBoxSpace,
+                email,
+                sizedBoxSpace,
+                password,
+                sizedBoxSpace,
+                mobile,
                 sizedBoxSpace,
                 Center(
                   child: RaisedButton(
                     child: Text("Register"),
                     onPressed: () 
                     {
-                      profileFunctions.showAlertDialog(context, "", ""); //TODO: FIXME
+                      profileFunctions.showAlertDialogRegistration(context, email.controller.text, 
+                      password.controller.text,mobile.controller.text);
                     }
                   )
                 ),
@@ -213,6 +226,37 @@ class ProfileFunctions
     login(context, credentials);
   }
 
+  void showAlertDialogRegistration(BuildContext context, String email, String password, String mobile) 
+  {
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+      children: [CupertinoActivityIndicator()]
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+
+    print("EMAIL: "+email);
+    print("PASSWORD: "+password);
+
+    Profile profile = new Profile("", email, mobile, "", password);
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    profileRestClient.register(profile);
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = profile.email;
+    credentials.password = profile.password;
+    login(context, credentials);
+  }
+
+  void register (BuildContext context, Profile profile) {
+    
+  }
+
   void login (BuildContext context, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
@@ -239,7 +283,7 @@ class ProfileFunctions
   void showCards(BuildContext context, Profile profile) {
     sleep(const Duration(seconds:5));
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
     futureP.then((sourceOrgs){
       Map<String, dynamic> json = sourceOrgs.elementAt(0);
       SourceOrg sourceOrg = SourceOrg.fromJson(json);

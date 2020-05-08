@@ -93,7 +93,7 @@ class _PickupSourceState extends State<PickupSource> {
   void handleClick(BuildContext context)
   {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    Future<Iterable> futureP = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
     futureP.then((sourceOrgs){
       Navigator.push(context,
       MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
