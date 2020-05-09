@@ -30,7 +30,10 @@ void main() {
     ActiveNetworkRestClient client = ActiveNetworkRestClient();
     SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
     FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
-    client.sendFoodRequest(foodRequest);
+    Future<String> future = client.sendFoodRequest(foodRequest);
+    future.then((jsonString){
+      print(jsonString);
+    });
   });
 
   /*test('getActiveView', () {

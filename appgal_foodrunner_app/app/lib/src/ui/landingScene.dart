@@ -4,6 +4,7 @@ import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/ui/applicableSources.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -84,7 +85,11 @@ class LandingSceneState extends State<LandingScene> {
               ActiveNetworkRestClient client = ActiveNetworkRestClient();
               SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
               FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
-              client.sendFoodRequest(foodRequest);
+              Future<String> future = client.sendFoodRequest(foodRequest);
+              future.then((jsonString){
+                    print(jsonString);
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => ApplicableSources()));
+              });
             }
           },
         )

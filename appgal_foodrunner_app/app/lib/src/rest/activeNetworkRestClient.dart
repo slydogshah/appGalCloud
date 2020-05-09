@@ -57,7 +57,7 @@ class ActiveNetworkRestClient
     return l;
   }
 
-  void sendFoodRequest(FoodRequest foodRequest) async
+  Future<String> sendFoodRequest(FoodRequest foodRequest) async
   {
     //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/sendFoodRequest/";
     String remoteUrl = "http://localhost:8080/activeNetwork/sendFoodRequest/";
@@ -66,6 +66,7 @@ class ActiveNetworkRestClient
     var response = await http.post(remoteUrl, body: jsonBody);
     String responseJson = response.body;
 
-    print(responseJson);
+    //print(responseJson);
+    return responseJson;
   }
 }

@@ -105,9 +105,12 @@ public class ActiveNetwork {
         FoodRequest foodRequest = FoodRequest.parse(jsonBody);
         String requestId = this.deliveryOrchestrator.sendFoodRequest(foodRequest);
 
+        JsonArray results = this.networkOrchestrator.getLatestResults(requestId);
+
         JsonObject responseJson = new JsonObject();
         responseJson.addProperty("statusCode", "0");
         responseJson.addProperty("foodRequestId", requestId);
+        responseJson.add("results", results);
         return responseJson.toString();
     }
 }

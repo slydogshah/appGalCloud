@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.json.Json;
 import java.util.*;
 
 @ApplicationScoped
@@ -79,6 +80,18 @@ public class NetworkOrchestrator {
         {
             FoodRunner foodRunner = itr.next();
             array.add(foodRunner.toJson());
+        }
+        return array;
+    }
+
+    public JsonArray getLatestResults(String requestId)
+    {
+        JsonArray array = new JsonArray();
+        for(int i=0; i<7; i++)
+        {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("blah", "blah");
+            array.add(jsonObject);
         }
         return array;
     }
