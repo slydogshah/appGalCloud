@@ -37,6 +37,19 @@ public class ActiveNetwork {
         return activeView.toString();
     }
 
+    @Path("pickUpRequest/send")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String sendPickRequest(@RequestBody String jsonBody)
+    {
+        PickupRequest pickupRequest = PickupRequest.parse(jsonBody);
+        this.networkOrchestrator.sendPickUpRequest(pickupRequest);
+
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("statusCode", "0");
+        return responseJson.toString();
+    }
+
     @Path("pickUpRequest/result")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -54,6 +67,7 @@ public class ActiveNetwork {
         Profile profile = this.mongoDBJsonStore.getProfile("bugs.bunny.shah@gmail.com");
         FoodRunner foodRunner = new FoodRunner(profile, new Location(Double.parseDouble("30.25860595703125d"), Double.parseDouble("-97.74873352050781d")));
         this.networkOrchestrator.enterNetwork(foodRunner);
+
         JsonObject responseJson = new JsonObject();
         responseJson.addProperty("statusCode", "0");
         return responseJson.toString();
@@ -77,6 +91,7 @@ public class ActiveNetwork {
     {
         DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
         this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
+
         JsonObject responseJson = new JsonObject();
         responseJson.addProperty("statusCode", "0");
         return responseJson.toString();

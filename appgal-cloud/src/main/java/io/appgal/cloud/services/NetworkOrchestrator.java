@@ -55,6 +55,7 @@ public class NetworkOrchestrator {
     public void sendPickUpRequest(PickupRequest pickupRequest)
     {
         //Place the PickUp Request in the ActiveFoodRunner Queue
+        pickupRequest.setRequestId(UUID.randomUUID().toString());
         this.activeFoodRunnerQueue.add(pickupRequest);
 
         this.runFoodRunnerFinder();

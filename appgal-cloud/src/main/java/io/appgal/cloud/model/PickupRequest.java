@@ -1,6 +1,7 @@
 package io.appgal.cloud.model;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,11 @@ public class PickupRequest implements Serializable {
 
     public String getRequestId() {
         return requestId;
+    }
+
+    public void setRequestId(String requestId)
+    {
+        this.requestId = requestId;
     }
 
     public SourceOrg getSourceOrg() {
@@ -47,5 +53,25 @@ public class PickupRequest implements Serializable {
         }
 
         return jsonObject;
+    }
+
+    public static PickupRequest parse(String jsonBody)
+    {
+        PickupRequest pickupRequest = new PickupRequest();
+        SourceOrg sourceOrg = new SourceOrg();
+        pickupRequest.setSourceOrg(sourceOrg);
+        JsonObject jsonObject = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+        if(jsonObject.has("orgId")) {
+            sourceOrg.setOrgId(jsonObject.get("orgId").getAsString());
+        }
+        if(jsonObject.has("orgName")) {
+            sourceOrg.setOrgName(jsonObject.get("orgName").getAsString());
+        }
+        if(jsonObject.has("orgContactEmail")) {
+            sourceOrg.setOrgContactEmail(jsonObject.get("orgContactEmail").getAsString());
+        }
+
+        return pickupRequest;
     }
 }

@@ -1,9 +1,6 @@
 package io.appgal.cloud.persistence;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import io.appgal.cloud.messaging.MessageWindow;
+import com.google.gson.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
@@ -15,10 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +23,10 @@ public class MongoDBJsonStoreTests {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    private Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
+
     @BeforeEach
     public void setUp()
     {
@@ -39,7 +36,7 @@ public class MongoDBJsonStoreTests {
     @AfterEach
     public void tearDown()
     {
-        //this.mongoDBJsonStore.cleanup();
+        this.mongoDBJsonStore.cleanup();
     }
 
     @Test
@@ -47,14 +44,15 @@ public class MongoDBJsonStoreTests {
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
         this.mongoDBJsonStore.storeDropOffNotification(dropOffNotification);
 
         DropOffNotification stored = this.mongoDBJsonStore.findDropOffNotification("blah");
+        JsonObject object = JsonParser.parseString(stored.toString()).getAsJsonObject();
         logger.info("*******");
-        logger.info(stored.toString());
+        logger.info(this.gson.toJson(object));
         logger.info("*******");
     }
 
@@ -71,7 +69,7 @@ public class MongoDBJsonStoreTests {
     @Test
     public void testStoreProfile()
     {
-        Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
+        Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu","");
         this.mongoDBJsonStore.storeProfile(profile);
 
         Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
@@ -100,8 +98,9 @@ public class MongoDBJsonStoreTests {
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
         List<SourceOrg> stored = this.mongoDBJsonStore.getSourceOrgs();
 
+        JsonArray array = JsonParser.parseString(stored.toString()).getAsJsonArray();
         logger.info("*******");
-        logger.info(stored.toString());
+        logger.info(this.gson.toJson(array));
         logger.info("*******");
         assertNotNull(stored);
     }
@@ -111,7 +110,7 @@ public class MongoDBJsonStoreTests {
     {
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
         Location location = new Location(startLatitude, startLongitude);
         FoodRunner foodRunner = new FoodRunner(profile, location);
 
@@ -121,8 +120,9 @@ public class MongoDBJsonStoreTests {
         this.mongoDBJsonStore.storeActiveNetwork(activeFoodRunners);
 
         ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
         logger.info("*******");
-        logger.info(activeNetwork.toString());
+        logger.info(this.gson.toJson(array));
         logger.info("*******");
     }
 
@@ -130,15 +130,17 @@ public class MongoDBJsonStoreTests {
     public void testDeleteFoodRunner()
     {
         ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
         logger.info("***BEFORE****");
-        logger.info(activeNetwork.toString());
+        logger.info(this.gson.toJson(array));
         logger.info("*******");
 
         this.mongoDBJsonStore.deleteFoodRunner(null);
 
         activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
         logger.info("***AFTER****");
-        logger.info(activeNetwork.toString());
+        logger.info(this.gson.toJson(array));
         logger.info("*******");
     }
 
@@ -147,16 +149,34 @@ public class MongoDBJsonStoreTests {
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
         CompletedTrip completedTrip = new CompletedTrip(foodRunner, dropOffNotification, null);
         this.mongoDBJsonStore.setCompletedTrip(completedTrip);
 
         List<CompletedTrip> completedTrips = this.mongoDBJsonStore.getCompletedTrips();
+        JsonArray array = JsonParser.parseString(completedTrips.toString()).getAsJsonArray();
+        logger.info("*******");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+    }
 
-        logger.info("*******");
-        logger.info(completedTrips.toString());
-        logger.info("*******");
+    @Test
+    public void testSourceOrgProfileRelationship()
+    {
+        SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com");
+        for(int i=0; i<2; i++)
+        {
+            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test");
+            profile.setSourceOrgId(sourceOrg.getOrgId());
+            sourceOrg.getProfiles().add(profile);
+        }
+
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+        List<SourceOrg> sourceOrg1 = this.mongoDBJsonStore.getSourceOrgs();
+        JsonArray array = JsonParser.parseString(sourceOrg1.toString()).getAsJsonArray();
+        logger.info(this.gson.toJson(array));
     }
 }

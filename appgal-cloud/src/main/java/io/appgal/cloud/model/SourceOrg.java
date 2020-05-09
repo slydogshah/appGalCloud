@@ -1,11 +1,16 @@
 package io.appgal.cloud.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 public class SourceOrg implements Serializable {
@@ -19,13 +24,16 @@ public class SourceOrg implements Serializable {
 
     private DeliveryPreference deliveryPreference;
 
+    private List<Profile> profiles;
+
     public SourceOrg()
     {
-
+        this.profiles = new ArrayList<>();
     }
 
     public SourceOrg(String orgId, String orgName, String orgContactEmail)
     {
+        this();
         this.orgId = orgId;
         this.orgName = orgName;
         this.orgContactEmail = orgContactEmail;
@@ -71,6 +79,14 @@ public class SourceOrg implements Serializable {
         this.deliveryPreference = deliveryPreference;
     }
 
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,6 +120,12 @@ public class SourceOrg implements Serializable {
             jsonObject.addProperty("orgContactEmail", this.orgContactEmail);
         }
 
+        if(!this.profiles.isEmpty())
+        {
+            JsonArray jsonArray = JsonParser.parseString(this.profiles.toString()).getAsJsonArray();
+            jsonObject.add("profiles", jsonArray);
+        }
+
         return jsonObject;
     }
 
@@ -121,6 +143,16 @@ public class SourceOrg implements Serializable {
         }
         if(jsonObject.has("orgContactEmail")) {
             sourceOrg.orgContactEmail = jsonObject.get("orgContactEmail").getAsString();
+        }
+        if(jsonObject.has("profiles"))
+        {
+            JsonArray profiles = jsonObject.get("profiles").getAsJsonArray();
+            Iterator<JsonElement> itr = profiles.iterator();
+            while(itr.hasNext())
+            {
+                JsonElement jsonElement = itr.next();
+                sourceOrg.getProfiles().add(Profile.parse(jsonElement.toString()));
+            }
         }
 
         return sourceOrg;

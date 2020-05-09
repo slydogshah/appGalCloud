@@ -111,7 +111,6 @@ public class MongoDBJsonStore {
 
         MongoCollection<Document> collection = database.getCollection("profile");
 
-        //TODO: OPTIMIZE_THIS_QUERY ASSIGNED_TO: @bugs.bunny.shah@gmail.com
         String queryJson = "{\"email\":\""+email+"\"}";
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
@@ -134,6 +133,11 @@ public class MongoDBJsonStore {
 
         Document doc = Document.parse(sourceOrg.toString());
         collection.insertOne(doc);
+
+        for(Profile profile:sourceOrg.getProfiles())
+        {
+            this.storeProfile(profile);
+        }
     }
 
     public List<SourceOrg> getSourceOrgs()
@@ -152,6 +156,7 @@ public class MongoDBJsonStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
+            logger.info(documentJson);
             SourceOrg sourceOrg = SourceOrg.parse(documentJson);
             sourceOrgs.add(sourceOrg);
         }

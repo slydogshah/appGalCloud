@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.UUID;
 
 @ApplicationScoped
 public class ProfileRegistrationService {
@@ -44,6 +45,7 @@ public class ProfileRegistrationService {
     public void register(Profile profile)
     {
         //TODO: Add validation
+        profile.setId(UUID.randomUUID().toString());
         this.mongoDBJsonStore.storeProfile(profile);
     }
 
