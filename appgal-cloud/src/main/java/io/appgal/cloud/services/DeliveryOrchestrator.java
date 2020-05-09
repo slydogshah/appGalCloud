@@ -1,9 +1,6 @@
 package io.appgal.cloud.services;
 
-import io.appgal.cloud.model.ActiveNetwork;
-import io.appgal.cloud.model.DropOffNotification;
-import io.appgal.cloud.model.FoodRunner;
-import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.model.*;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
 public class DeliveryOrchestrator {
@@ -44,5 +42,18 @@ public class DeliveryOrchestrator {
     public void sendDeliveryNotification(DropOffNotification notification)
     {
         this.mongoDBJsonStore.storeDropOffNotification(notification);
+    }
+
+    public String sendFoodRequest(FoodRequest foodRequest)
+    {
+        String requestId = UUID.randomUUID().toString();
+        foodRequest.setId(requestId);
+        this.mongoDBJsonStore.storeFoodRequest(foodRequest);
+        return requestId;
+    }
+
+    public FoodRequest getFoodRequest(String requestId)
+    {
+        return this.mongoDBJsonStore.getFoodRequest(requestId);
     }
 }

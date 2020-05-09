@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
+import io.appgal.cloud.services.DeliveryOrchestrator;
 import io.appgal.cloud.services.NetworkOrchestrator;
 import io.appgal.cloud.services.ProfileRegistrationService;
 import io.quarkus.test.junit.QuarkusTest;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 public class ActiveNetworkTests {
@@ -31,6 +33,9 @@ public class ActiveNetworkTests {
 
     @Inject
     private ProfileRegistrationService profileRegistrationService;
+
+    @Inject
+    private DeliveryOrchestrator deliveryOrchestrator;
 
     private Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -131,5 +136,26 @@ public class ActiveNetworkTests {
         logger.info("****");
         logger.info(jsonString);
         logger.info("****");
+    }
+
+    @Test
+    public void testFoodRequestCycle()
+    {
+        FoodRequest foodRequest = new FoodRequest();
+        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        foodRequest.setFoodType(FoodTypes.VEG);
+        foodRequest.setSourceOrg(sourceOrg1);
+        String jsonBody = foodRequest.toJson().toString();
+
+        Response response = given().body(jsonBody.toString()).when().post("/activeNetwork/sendFoodRequest/").andReturn();
+
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(jsonString);
+        logger.info("****");
+        String foodRequestId = JsonParser.parseString(jsonString).getAsJsonObject().get("foodRequestId").getAsString();
+        FoodRequest storedRequest = this.deliveryOrchestrator.getFoodRequest(foodRequestId);
+        logger.info("****");
+        logger.info(this.gson.toJson(storedRequest.toJson()));
     }
 }

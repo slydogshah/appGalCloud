@@ -96,4 +96,18 @@ public class ActiveNetwork {
         responseJson.addProperty("statusCode", "0");
         return responseJson.toString();
     }
+
+    @Path("/sendFoodRequest")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public String sendFoodRequest(@RequestBody String jsonBody)
+    {
+        FoodRequest foodRequest = FoodRequest.parse(jsonBody);
+        String requestId = this.deliveryOrchestrator.sendFoodRequest(foodRequest);
+
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("statusCode", "0");
+        responseJson.addProperty("foodRequestId", requestId);
+        return responseJson.toString();
+    }
 }
