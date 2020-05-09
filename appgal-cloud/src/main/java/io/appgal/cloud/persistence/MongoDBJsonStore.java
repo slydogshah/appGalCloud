@@ -156,7 +156,6 @@ public class MongoDBJsonStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            logger.info(documentJson);
             SourceOrg sourceOrg = SourceOrg.parse(documentJson);
             sourceOrgs.add(sourceOrg);
         }

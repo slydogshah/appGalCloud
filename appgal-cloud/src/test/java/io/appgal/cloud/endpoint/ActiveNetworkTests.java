@@ -1,5 +1,7 @@
 package io.appgal.cloud.endpoint;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.*;
@@ -29,6 +31,10 @@ public class ActiveNetworkTests {
 
     @Inject
     private ProfileRegistrationService profileRegistrationService;
+
+    private Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
 
     @Test
     public void testGetActiveView() {
@@ -98,17 +104,20 @@ public class ActiveNetworkTests {
     @Test
     public void testSendPickupRequest() {
 
-        Profile profile = new Profile(UUID.randomUUID().toString(), "melinda_gates@microsoft.com", "8675309", "","c");
-        this.profileRegistrationService.register(profile);
-        profile = this.mongoDBJsonStore.getProfile("melinda_gates@microsoft.com");
-        Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        FoodRunner foodRunner = new FoodRunner(profile, location);
-        this.networkOrchestrator.enterNetwork(foodRunner);
+        SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com");
+        for(int i=0; i<2; i++)
+        {
+            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test");
+            profile.setSourceOrgId(sourceOrg.getOrgId());
+            sourceOrg.getProfiles().add(profile);
+        }
+
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
 
         JsonObject json = new JsonObject();
-        json.addProperty("orgId", "CLOUD_ID");
-        json.addProperty("orgName", "blah@blah.com");
-        json.addProperty("orgContactEmail", "8675309");
+        json.addProperty("orgId", "test");
+        json.addProperty("orgName", "TEST");
+        json.addProperty("orgContactEmail", "testing@test.com");
 
         Response response = given().body(json.toString()).when().post("/activeNetwork/pickUpRequest/send/").andReturn();
 

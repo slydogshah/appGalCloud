@@ -43,17 +43,31 @@ class LandingSceneState extends State<LandingScene> {
           items: [
             BottomNavigationBarItem(
               icon: new Icon(Icons.home),
-              title: new Text('Home'),
+              title: new Text('Home')
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.mail),
-              title: new Text('Messages'),
+              title: new Text('PickUp Request'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Text('Profile')
+              icon: Icon(Icons.mail),
+              title: Text('Send Food Request')
             )
           ],
+          onTap: (index){
+            if(index == 0)
+            {
+              print("Home");
+            }
+            else if(index == 1)
+            {
+              print("PickUp Request");
+            }
+            else if(index == 2)
+            {
+              print("Send Food Request");
+            }
+          },
         )
       ),
     );
