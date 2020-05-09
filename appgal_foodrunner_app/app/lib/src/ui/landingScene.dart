@@ -1,4 +1,5 @@
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
@@ -80,6 +81,10 @@ class LandingSceneState extends State<LandingScene> {
             else if(index == 2)
             {
               print("Send Food Request");
+              ActiveNetworkRestClient client = ActiveNetworkRestClient();
+              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
+              client.sendFoodRequest(foodRequest);
             }
           },
         )

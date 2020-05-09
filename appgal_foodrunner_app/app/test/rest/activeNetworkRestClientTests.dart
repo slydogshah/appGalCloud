@@ -1,6 +1,7 @@
 import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/dropOffNotification.dart';
+import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/pickupRequest.dart';
@@ -11,7 +12,7 @@ import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('sendPickupRequest', () {
+  /*test('sendPickupRequest', () {
     ActiveNetworkRestClient client = ActiveNetworkRestClient();
     SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
     PickupRequest pickupRequest = new PickupRequest(sourceOrg);
@@ -23,6 +24,13 @@ void main() {
         print(profile.toString());
       }
     });
+  });*/
+
+  test('sendFoodRequest', () {
+    ActiveNetworkRestClient client = ActiveNetworkRestClient();
+    SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+    FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
+    client.sendFoodRequest(foodRequest);
   });
 
   /*test('getActiveView', () {

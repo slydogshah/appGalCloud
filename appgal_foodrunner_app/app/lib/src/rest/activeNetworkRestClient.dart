@@ -1,3 +1,4 @@
+import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/pickupRequest.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -54,5 +55,17 @@ class ActiveNetworkRestClient
 
     Iterable l = json.decode(responseJson);
     return l;
+  }
+
+  void sendFoodRequest(FoodRequest foodRequest) async
+  {
+    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/sendFoodRequest/";
+    String remoteUrl = "http://localhost:8080/activeNetwork/sendFoodRequest/";
+    String jsonBody = foodRequest.toJson().toString();
+    //print(jsonBody);
+    var response = await http.post(remoteUrl, body: jsonBody);
+    String responseJson = response.body;
+
+    print(responseJson);
   }
 }
