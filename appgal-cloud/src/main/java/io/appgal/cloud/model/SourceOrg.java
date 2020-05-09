@@ -20,11 +20,11 @@ public class SourceOrg implements Serializable {
     private String orgName;
     private String orgContactEmail;
 
-    private Location location;
-
     private DeliveryPreference deliveryPreference;
 
     private List<Profile> profiles;
+
+    private Location location = new Location(0.0d, 0.0d);
 
     public SourceOrg()
     {

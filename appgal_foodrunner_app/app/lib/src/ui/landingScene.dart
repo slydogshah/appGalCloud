@@ -1,5 +1,8 @@
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -62,6 +65,10 @@ class LandingSceneState extends State<LandingScene> {
             else if(index == 1)
             {
               print("PickUp Request");
+              ActiveNetworkRestClient client = ActiveNetworkRestClient();
+              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              PickupRequest pickupRequest = new PickupRequest(sourceOrg);
+              client.sendPickupRequest(pickupRequest);
             }
             else if(index == 2)
             {

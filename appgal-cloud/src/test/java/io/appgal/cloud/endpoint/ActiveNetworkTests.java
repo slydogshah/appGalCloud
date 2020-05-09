@@ -114,6 +114,12 @@ public class ActiveNetworkTests {
 
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
 
+        SourceOrg sourceOrg1 = this.mongoDBJsonStore.getSourceOrgs().get(0);
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Location location = new Location(startLatitude, startLongitude);
+        FoodRunner foodRunner = new FoodRunner(sourceOrg1.getProfiles().get(0), location);
+
         JsonObject json = new JsonObject();
         json.addProperty("orgId", "test");
         json.addProperty("orgName", "TEST");

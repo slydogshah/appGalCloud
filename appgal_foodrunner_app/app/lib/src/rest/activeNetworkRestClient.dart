@@ -1,3 +1,4 @@
+import 'package:app/src/model/pickupRequest.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -17,6 +18,17 @@ class ActiveNetworkRestClient
     return activeView;
   }
 
+  void sendDeliveryNotification(DropOffNotification dropOffNotification) async
+  {
+    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
+    String remoteUrl = "http://localhost:8080/activeNetwork/sendDeliveryNotification/";
+    String jsonBody = dropOffNotification.toString();
+    print(jsonBody);
+    var response = await http.post(remoteUrl, body: jsonBody);
+    String responseJson = response.body;
+    print(responseJson);
+  }
+
   Future<Iterable> findBestDestination(FoodRunner foodRunner) async
   {
     //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
@@ -29,12 +41,12 @@ class ActiveNetworkRestClient
     return l;
   }
 
-  void sendDeliveryNotification(DropOffNotification dropOffNotification) async
+  void sendPickupRequest(PickupRequest pickupRequest) async
   {
-    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
-    String remoteUrl = "http://localhost:8080/activeNetwork/sendDeliveryNotification/";
-    String jsonBody = dropOffNotification.toString();
-    print(jsonBody);
+    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/pickUpRequest/send/";
+    String remoteUrl = "http://localhost:8080/activeNetwork/pickUpRequest/send/";
+    String jsonBody = pickupRequest.toJson().toString();
+    //print(jsonBody);
     var response = await http.post(remoteUrl, body: jsonBody);
     String responseJson = response.body;
     print(responseJson);
