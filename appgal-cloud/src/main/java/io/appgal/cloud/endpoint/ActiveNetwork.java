@@ -43,11 +43,11 @@ public class ActiveNetwork {
     public String sendPickRequest(@RequestBody String jsonBody)
     {
         PickupRequest pickupRequest = PickupRequest.parse(jsonBody);
-        this.networkOrchestrator.sendPickUpRequest(pickupRequest);
+        String requestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
-        return responseJson.toString();
+        JsonArray pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
+
+        return pickRequestResult.toString();
     }
 
     @Path("pickUpRequest/result")

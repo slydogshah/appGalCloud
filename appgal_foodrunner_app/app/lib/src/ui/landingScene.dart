@@ -68,7 +68,14 @@ class LandingSceneState extends State<LandingScene> {
               ActiveNetworkRestClient client = ActiveNetworkRestClient();
               SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
               PickupRequest pickupRequest = new PickupRequest(sourceOrg);
-              client.sendPickupRequest(pickupRequest);
+              Future<Iterable> future = client.sendPickupRequest(pickupRequest);
+              future.then((profiles){
+                for(Map<String, dynamic> json in profiles)
+                {
+                  Profile profile = Profile.fromJson(json);
+                  print(profile.toString());
+                }
+              });
             }
             else if(index == 2)
             {

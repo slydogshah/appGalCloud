@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
-public class PickupRequest implements Serializable {
+public class PickupRequest implements Serializable,Comparable {
     private static Logger logger = LoggerFactory.getLogger(PickupRequest.class);
 
     private String requestId;
@@ -73,5 +73,10 @@ public class PickupRequest implements Serializable {
         }
 
         return pickupRequest;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return 0;
     }
 }

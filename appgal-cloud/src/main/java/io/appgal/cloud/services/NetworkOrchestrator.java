@@ -52,13 +52,16 @@ public class NetworkOrchestrator {
         this.mongoDBJsonStore.deleteFoodRunner(foodRunner);
     }
 
-    public void sendPickUpRequest(PickupRequest pickupRequest)
+    public String sendPickUpRequest(PickupRequest pickupRequest)
     {
         //Place the PickUp Request in the ActiveFoodRunner Queue
-        pickupRequest.setRequestId(UUID.randomUUID().toString());
+        String requestId = UUID.randomUUID().toString();
+        pickupRequest.setRequestId(requestId);
         this.activeFoodRunnerQueue.add(pickupRequest);
 
         this.runFoodRunnerFinder();
+
+        return requestId;
     }
 
     public JsonArray getPickRequestResult(String requestId)

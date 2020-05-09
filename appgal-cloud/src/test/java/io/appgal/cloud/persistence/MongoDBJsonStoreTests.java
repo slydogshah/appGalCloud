@@ -179,4 +179,20 @@ public class MongoDBJsonStoreTests {
         JsonArray array = JsonParser.parseString(sourceOrg1.toString()).getAsJsonArray();
         logger.info(this.gson.toJson(array));
     }
+
+    @Test
+    public void testFoodRequestLifeCycle()
+    {
+        FoodRequest foodRequest = new FoodRequest();
+        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        foodRequest.setFoodType(FoodTypes.VEG);
+        foodRequest.setSourceOrg(sourceOrg1);
+        foodRequest.setId(UUID.randomUUID().toString());
+
+        this.mongoDBJsonStore.storeFoodRequest(foodRequest);
+        FoodRequest storeFoodRequest = this.mongoDBJsonStore.getFoodRequest(foodRequest.getId());
+        logger.info("*******");
+        logger.info(this.gson.toJson(storeFoodRequest.toJson()));
+        logger.info("*******");
+    }
 }

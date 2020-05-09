@@ -317,6 +317,38 @@ public class MongoDBJsonStore {
         return completedTrips;
     }
 
+    public void storeFoodRequest(FoodRequest foodRequest)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("foodrequest");
+
+        Document doc = Document.parse(foodRequest.toString());
+        collection.insertOne(doc);
+    }
+
+    public FoodRequest getFoodRequest(String requestId)
+    {
+        FoodRequest foodRequest = new FoodRequest();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("foodrequest");
+
+        String queryJson = "{\"id\":\""+requestId+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            foodRequest = FoodRequest.parse(documentJson);
+        }
+
+        return foodRequest;
+    }
+
     void cleanup()
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
