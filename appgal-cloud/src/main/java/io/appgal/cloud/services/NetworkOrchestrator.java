@@ -3,11 +3,7 @@ package io.appgal.cloud.services;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.appgal.cloud.model.Location;
-import io.appgal.cloud.model.SourceOrg;
-import io.appgal.cloud.model.ActiveNetwork;
-import io.appgal.cloud.model.FoodRunner;
-import io.appgal.cloud.model.PickupRequest;
+import io.appgal.cloud.model.*;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,14 +82,9 @@ public class NetworkOrchestrator {
 
     public JsonArray getLatestResults(String requestId)
     {
-        JsonArray array = new JsonArray();
-        for(int i=0; i<7; i++)
-        {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("blah", "blah");
-            array.add(jsonObject);
-        }
-        return array;
+        FoodRequest foodRequest = this.mongoDBJsonStore.getFoodRequest(requestId);
+        List<SourceOrg> sourceOrgs = this.activeNetwork.matchSourceOrgs(foodRequest);
+        return JsonParser.parseString(sourceOrgs.toString()).getAsJsonArray();
     }
 
     public JsonObject getActiveView()

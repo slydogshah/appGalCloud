@@ -349,6 +349,43 @@ public class MongoDBJsonStore {
         return foodRequest;
     }
 
+    public void storeResults(List<FoodRunner> results)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("results");
+        List<Document> documents = new ArrayList<>();
+        for(FoodRunner foodRunner:results)
+        {
+            Document doc = Document.parse(foodRunner.toString());
+            documents.add(doc);
+        }
+        collection.insertMany(documents);
+    }
+
+    public List<FoodRunner> getResults()
+    {
+        List<FoodRunner> results = new ArrayList<>();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("results");
+
+        String queryJson = "{}}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            FoodRunner foodRunner = FoodRunner.parse(documentJson);
+            results.add(foodRunner);
+        }
+
+        return results;
+    }
+
     void cleanup()
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");

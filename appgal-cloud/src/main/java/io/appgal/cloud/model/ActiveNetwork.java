@@ -96,6 +96,24 @@ public class ActiveNetwork implements Serializable {
                 result.add(foodRunner);
             }
         }
+        this.mongoDBJsonStore.storeResults(result);
+        return result;
+    }
+
+    public List<SourceOrg> matchSourceOrgs(FoodRequest foodRequest)
+    {
+        DistanceCalculator distanceCalculator = new DistanceCalculator();
+        Location sourceLocation = foodRequest.getSourceOrg().getLocation();
+        List<SourceOrg> result = new ArrayList<>();
+        List<FoodRunner> results = this.mongoDBJsonStore.getResults();
+        for(FoodRunner cour:results) {
+            Location location = cour.getLocation();
+            Double distance = distanceCalculator.calculateDistance(sourceLocation, location);
+            if(distance <= 5.0d)
+            {
+                result.add(cour.getPickUpOrg());
+            }
+        }
         return result;
     }
 

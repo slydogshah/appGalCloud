@@ -13,6 +13,8 @@ public class FoodRunner implements Serializable {
     private Profile profile;
     private Location location;
 
+    private SourceOrg pickUpOrg;
+
     public FoodRunner() {
     }
 
@@ -37,6 +39,14 @@ public class FoodRunner implements Serializable {
         this.profile = profile;
     }
 
+    public SourceOrg getPickUpOrg() {
+        return pickUpOrg;
+    }
+
+    public void setPickUpOrg(SourceOrg pickUpOrg) {
+        this.pickUpOrg = pickUpOrg;
+    }
+
     public JsonObject toJson()
     {
         JsonObject jsonObject = new JsonObject();
@@ -46,6 +56,9 @@ public class FoodRunner implements Serializable {
         }
         if(this.location != null) {
             jsonObject.add("location", this.location.toJson());
+        }
+        if(this.pickUpOrg != null) {
+            jsonObject.add("pickUpOrg", this.pickUpOrg.toJson());
         }
 
         return jsonObject;
@@ -67,6 +80,9 @@ public class FoodRunner implements Serializable {
         if(jsonObject.has("location")) {
             Location location = Location.parse(jsonObject.get("location").toString());
             foodRunner.setLocation(location);
+        }
+        if(jsonObject.has("pickUpOrg")) {
+            foodRunner.setPickUpOrg(SourceOrg.parse(jsonObject.get("pickUpOrg").getAsJsonObject().toString()));
         }
         return foodRunner;
     }
