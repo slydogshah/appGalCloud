@@ -117,6 +117,21 @@ public class ActiveNetwork implements Serializable {
         return result;
     }
 
+    public List<SourceOrg> findSourceOrgs(SourceOrg destination)
+    {
+        List<SourceOrg> result = new ArrayList<>();
+        DistanceCalculator distanceCalculator = new DistanceCalculator();
+        List<SourceOrg> sourceOrgs=this.mongoDBJsonStore.getSourceOrgs();
+        for(SourceOrg cour:sourceOrgs)
+        {
+            Double distance = distanceCalculator.calculateDistance(destination.getLocation(),
+                    cour.getLocation());
+            if(distance == 25d)
+            result.add(cour);
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         Collection<FoodRunner> foodRunners = this.activeFoodRunners.values();

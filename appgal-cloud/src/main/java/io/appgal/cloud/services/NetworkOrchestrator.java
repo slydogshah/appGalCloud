@@ -22,6 +22,8 @@ public class NetworkOrchestrator {
     private ActiveNetwork activeNetwork;
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
+    @Inject
+    private NetworkOrchestrator networkOrchestrator;
 
     private Queue<PickupRequest> activeFoodRunnerQueue;
 
@@ -85,6 +87,11 @@ public class NetworkOrchestrator {
         FoodRequest foodRequest = this.mongoDBJsonStore.getFoodRequest(requestId);
         List<SourceOrg> sourceOrgs = this.activeNetwork.matchSourceOrgs(foodRequest);
         return JsonParser.parseString(sourceOrgs.toString()).getAsJsonArray();
+    }
+
+    public JsonArray getRegistered(SourceOrg destination){
+        List<SourceOrg>registeredSources=this.activeNetwork.findSourceOrgs(destination);
+        return JsonParser.parseString(registeredSources.toString()).getAsJsonArray();
     }
 
     public JsonObject getActiveView()
