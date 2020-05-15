@@ -1,6 +1,6 @@
 package prototype;
 
-import com.mongodb.ClientSessionOptions;
+/*import com.mongodb.ClientSessionOptions;
 import  javax.naming.*;
 
 import com.mongodb.client.*;
@@ -20,17 +20,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 import java.util.List;
 
-import static org.apache.hadoop.metrics2.impl.MsInfo.Context;
+import static org.apache.hadoop.metrics2.impl.MsInfo.Context;*/
 
-@QuarkusTest
+//@QuarkusTest
 public class BlobTests {
-    private Logger logger = LoggerFactory.getLogger(BlobTests.class);
+    //private Logger logger = LoggerFactory.getLogger(BlobTests.class);
 
-    @Test
+    /*@Test
     public void testBlob() throws Exception{
         System.out.println("BLOB");
 
-        /*BsonBinary photu = new BsonBinary("PHOTU".getBytes());
+        BsonBinary photu = new BsonBinary("PHOTU".getBytes());
         CompositeName name = new CompositeName("photu");
         MongoClientFactory mongoClientFactory = new MongoClientFactory();
         Object obj = new CompositeName("photu");
@@ -135,7 +135,7 @@ public class BlobTests {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
         //FindIterable<Document> iterable = database.getCollection("my_coll");
         //FindIterable<Document> iterable = db.getCollection("my_coll").find(query);
-        MongoCollection<Document> collection = database.getCollection("destinationNotifications");*/
-    }
+        MongoCollection<Document> collection = database.getCollection("destinationNotifications");
+    }*/
 
 }
