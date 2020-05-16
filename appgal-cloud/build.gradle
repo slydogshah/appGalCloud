@@ -1,5 +1,7 @@
 plugins {
     id 'application'
+    id 'io.quarkus' version '1.4.2.Final'
+    id 'maven-publish'
 }
 
 repositories {
@@ -24,7 +26,7 @@ repositories {
 
 
 dependencies {
-    implementation 'io.quarkus:quarkus-bom:1.4.2.Final'
+    implementation enforcedPlatform('io.quarkus:quarkus-bom:1.4.2.Final')
     implementation 'io.quarkus:quarkus-resteasy:1.4.2.Final'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.mongodb:mongodb-driver-sync:4.0.3'
@@ -41,13 +43,16 @@ dependencies {
     implementation 'org.locationtech.spatial4j:spatial4j:0.7'
     implementation name: 'jai_imageio-1.1'
     implementation 'org.springframework:spring-web:5.2.1.RELEASE'
-    testImplementation 'junit:junit:4.12'
+    //testImplementation 'org.junit.platform:junit-platform-commons:1.5.2'
+    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation enforcedPlatform('io.quarkus:quarkus-bom:1.4.2.Final')
     testImplementation 'io.quarkus:quarkus-junit5:1.4.2.Final'
     testImplementation 'io.rest-assured:rest-assured:4.3.0'
 }
 
 //application {
-    mainClassName = 'org.gradle.sample.Main'
+   mainClassName = 'org.gradle.sample.Main'
 //}
 
 sourceSets {
@@ -57,22 +62,50 @@ sourceSets {
     }
 }
 
-configurations {
-    integrationTestImplementation.extendsFrom implementation
-    integrationTestRuntimeOnly.extendsFrom runtimeOnly
+test {
+    useJUnitPlatform()
+    filter {
+        //include specific method in any of the tests
+        includeTestsMatching "*Tests"
+
+        //include all tests from package
+        //includeTestsMatching "org.gradle.internal.*"
+
+        //include all integration tests
+        //includeTestsMatching "*IntegTest"
+    }
+    //createPom();
 }
 
-dependencies {
-    integrationTestImplementation 'junit:junit:4.12'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            // augment your pom here if necessary
+        }
+    }
 }
 
-def integrationTest = tasks.register('integrationTest', Test) {
-    description = 'Runs integration tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-    shouldRunAfter('test')
+task createPom(type: Copy) {
+    description 'This is workaround to generate pom.xml, needed for @QuarkusTest tests.'
+    dependsOn('generatePomFileForMavenJavaPublication')
+    from "$buildDir/publications/mavenJava/pom-default.xml"
+    into '.'
+    rename('pom-default.xml', 'pom.xml')
 }
 
-tasks.named('check') { dependsOn(integrationTest) }
+//configurations {
+//    integrationTestImplementation.extendsFrom implementation
+//    integrationTestRuntimeOnly.extendsFrom runtimeOnly
+//}
+
+//def integrationTest = tasks.register('integrationTest', Test) {
+//    description = 'Runs integration tests.'
+//    group = 'verification'
+
+//    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+//    classpath = sourceSets.integrationTest.runtimeClasspath
+//    shouldRunAfter('test')
+//}
+
+//tasks.named('check') { dependsOn(integrationTest) }

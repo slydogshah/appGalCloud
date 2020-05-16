@@ -239,6 +239,25 @@ public class MongoDBJsonStore {
         }
     }
 
+    public SourceOrg getSourceOrg(String orgId)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("customers");
+
+        String queryJson = "{\"orgId\":\""+orgId+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            return SourceOrg.parse(documentJson);
+        }
+        return null;
+    }
+
     public List<SourceOrg> getSourceOrgs()
     {
         List<SourceOrg> sourceOrgs = new ArrayList<>();

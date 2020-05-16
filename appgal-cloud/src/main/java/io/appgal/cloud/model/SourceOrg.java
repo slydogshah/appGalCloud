@@ -24,11 +24,22 @@ public class SourceOrg implements Serializable {
 
     private List<Profile> profiles;
 
-    private Location location = new Location(0.0d, 0.0d);
+    private Location location;
 
     public SourceOrg()
     {
         this.profiles = new ArrayList<>();
+        this.location = new Location(0.0d, 0.0d);
+    }
+
+    public SourceOrg(String orgId, String orgName, String orgContactEmail, DeliveryPreference deliveryPreference, List<Profile> profiles, Location location) {
+        this();
+        this.orgId = orgId;
+        this.orgName = orgName;
+        this.orgContactEmail = orgContactEmail;
+        this.deliveryPreference = deliveryPreference;
+        this.profiles = profiles;
+        this.location = location;
     }
 
     public SourceOrg(String orgId, String orgName, String orgContactEmail)
@@ -37,6 +48,7 @@ public class SourceOrg implements Serializable {
         this.orgId = orgId;
         this.orgName = orgName;
         this.orgContactEmail = orgContactEmail;
+        this.deliveryPreference = new DeliveryPreference();
     }
 
     public String getOrgId() {
@@ -153,6 +165,15 @@ public class SourceOrg implements Serializable {
                 JsonElement jsonElement = itr.next();
                 sourceOrg.getProfiles().add(Profile.parse(jsonElement.toString()));
             }
+        }
+        if(jsonObject.has("deliveryPreference")) {
+            JsonArray jsonArray = jsonObject.getAsJsonArray("deliveryPreference");
+            sourceOrg.deliveryPreference = DeliveryPreference.parse(jsonArray.toString());
+        }
+        if(jsonObject.has("location"))
+        {
+            JsonObject locationJson = jsonObject.getAsJsonObject("location");
+            sourceOrg.location = Location.parse(locationJson.toString());
         }
 
         return sourceOrg;

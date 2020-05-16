@@ -19,7 +19,6 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 public class ActiveNetworkTests {
@@ -120,12 +119,7 @@ public class ActiveNetworkTests {
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
 
         SourceOrg sourceOrg1 = this.mongoDBJsonStore.getSourceOrgs().get(0);
-        double startLatitude = 30.25860595703125d;
-        double startLongitude = -97.74873352050781d;
-        Location location = new Location(startLatitude, startLongitude);
-        FoodRunner foodRunner = new FoodRunner(sourceOrg1.getProfiles().get(0), location);
-
-        JsonObject json = new JsonObject();
+        JsonObject json = sourceOrg1.toJson();
         json.addProperty("orgId", "test");
         json.addProperty("orgName", "TEST");
         json.addProperty("orgContactEmail", "testing@test.com");
