@@ -3,7 +3,7 @@ package io.appgal.cloud.session;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.appgal.cloud.foodRunnerSync.protocol.ProcessIncomingPackets;
+import io.appgal.cloud.services.ProcessIncomingPackets;
 import io.appgal.cloud.messaging.KafkaDaemon;
 import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.model.SourceNotification;

@@ -5,21 +5,52 @@ class Profile {
   String email;
   String mobile;
   String photo;
+  String password;
 
-  Profile(this.id, this.email, this.mobile, this.photo);
+  double latitude;
+  double longitude;
+
+
+  Profile(this.id, this.email, this.mobile, this.photo, this.password);
+
+  double getLatitude()
+  {
+    return this.latitude;
+  }
+
+  double getLongitude()
+  {
+    return this.longitude;
+  }
+
+  void setLatitude(double latitude)
+  {
+    this.latitude = latitude;
+  }
+
+  void setLongitude(double longitude)
+  {
+    this.longitude = longitude;
+  }
 
   Profile.fromJson(Map<String, dynamic> json)
   : id = json['id'],
     email = json['email'],
     mobile = json['mobile'],
-    photo = json['photo'];
+    photo = json['photo'],
+    latitude = json['latitude'],
+    longitude = json['longitude'],
+    password = json['password'];
 
   Map<String, dynamic> toJson() =>
   {
-    'id': id,
-    'email': email,
-    'mobile': mobile,
-    'photo': photo
+    "id": this.id,
+    "email": this.email,
+    "mobile": this.mobile,
+    "photo": this.photo,
+    "latitude": this.latitude,
+    "longitude": this.longitude,
+    "password": this.password
   };
 
   String toString()

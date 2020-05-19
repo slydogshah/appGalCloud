@@ -1,0 +1,111 @@
+plugins {
+    id 'application'
+    id 'io.quarkus' version '1.4.2.Final'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+    google()
+    maven {
+        url "http://download.java.net/maven/2/"
+    }
+    maven {
+        url "http://download.osgeo.org/webdav/geotools/"
+    }
+    maven {
+        url "http://repo.boundlessgeo.com/main/"
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/releases/"
+    }
+    flatDir {
+        dirs 'third-party-libs'
+    }
+}
+
+
+dependencies {
+    implementation enforcedPlatform('io.quarkus:quarkus-bom:1.4.2.Final')
+    implementation 'io.quarkus:quarkus-resteasy:1.4.2.Final'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.mongodb:mongodb-driver-sync:4.0.3'
+    implementation 'org.mongodb:mongodb-driver:3.0.4'
+    implementation 'org.apache.kafka:kafka-clients:2.4.0'
+    implementation 'org.springframework.kafka:spring-kafka:2.4.1.RELEASE'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.10.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.2'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'io.delta:delta-core_2.11:0.5.0'
+    implementation 'org.apache.spark:spark-core_2.12:2.4.5'
+    implementation 'org.apache.spark:spark-sql_2.12:2.4.5'
+    implementation 'org.locationtech.jts:jts-core:1.16.1'
+    implementation 'org.locationtech.spatial4j:spatial4j:0.7'
+    implementation name: 'jai_imageio-1.1'
+    implementation 'org.springframework:spring-web:5.2.1.RELEASE'
+    //testImplementation 'org.junit.platform:junit-platform-commons:1.5.2'
+    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation enforcedPlatform('io.quarkus:quarkus-bom:1.4.2.Final')
+    testImplementation 'io.quarkus:quarkus-junit5:1.4.2.Final'
+    testImplementation 'io.rest-assured:rest-assured:4.3.0'
+}
+
+//application {
+   mainClassName = 'org.gradle.sample.Main'
+//}
+
+sourceSets {
+    integrationTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+test {
+    useJUnitPlatform()
+    filter {
+        //include specific method in any of the tests
+        includeTestsMatching "*Tests"
+
+        //include all tests from package
+        //includeTestsMatching "org.gradle.internal.*"
+
+        //include all integration tests
+        //includeTestsMatching "*IntegTest"
+    }
+    //createPom();
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            // augment your pom here if necessary
+        }
+    }
+}
+
+task createPom(type: Copy) {
+    description 'This is workaround to generate pom.xml, needed for @QuarkusTest tests.'
+    dependsOn('generatePomFileForMavenJavaPublication')
+    from "$buildDir/publications/mavenJava/pom-default.xml"
+    into '.'
+    rename('pom-default.xml', 'pom.xml')
+}
+
+//configurations {
+//    integrationTestImplementation.extendsFrom implementation
+//    integrationTestRuntimeOnly.extendsFrom runtimeOnly
+//}
+
+//def integrationTest = tasks.register('integrationTest', Test) {
+//    description = 'Runs integration tests.'
+//    group = 'verification'
+
+//    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+//    classpath = sourceSets.integrationTest.runtimeClasspath
+//    shouldRunAfter('test')
+//}
+
+//tasks.named('check') { dependsOn(integrationTest) }

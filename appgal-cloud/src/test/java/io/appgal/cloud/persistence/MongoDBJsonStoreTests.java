@@ -1,13 +1,9 @@
 package io.appgal.cloud.persistence;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import io.appgal.cloud.messaging.MessageWindow;
-import io.appgal.cloud.model.ActiveFoodRunnerData;
-import io.appgal.cloud.model.DestinationNotification;
-import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.SourceNotification;
+import com.google.gson.*;
+import io.appgal.cloud.model.*;
+import io.appgal.cloud.model.ActiveNetwork;
+import io.appgal.cloud.model.FoodRunner;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,14 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +23,10 @@ public class MongoDBJsonStoreTests {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    private Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
+
     @BeforeEach
     public void setUp()
     {
@@ -43,56 +36,24 @@ public class MongoDBJsonStoreTests {
     @AfterEach
     public void tearDown()
     {
-
+        this.mongoDBJsonStore.cleanup();
     }
 
     @Test
-    public void testFindDestinationNotifications()
+    public void testDropOffNotificationStorageCycle()
     {
-        List<String> notificationIds = new ArrayList<>();
-        for(int i=0; i<10; i++)
-        {
-            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-            OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-            MessageWindow messageWindow = new MessageWindow(start, end);
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        Location location = new Location(30.25860595703125d,-97.74873352050781d);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+        DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
+        this.mongoDBJsonStore.storeDropOffNotification(dropOffNotification);
 
-            String sourceNotificationId = UUID.randomUUID().toString();
-            SourceNotification sourceNotification = new SourceNotification();
-            sourceNotification.setSourceNotificationId(sourceNotificationId);
-            sourceNotification.setMessageWindow(messageWindow);
-
-            String destinationNotificationId = UUID.randomUUID().toString();
-            DestinationNotification destinationNotification = new DestinationNotification();
-            destinationNotification.setDestinationNotificationId(destinationNotificationId);
-            destinationNotification.setSourceNotification(sourceNotification);
-
-            notificationIds.add(destinationNotificationId);
-
-            this.mongoDBJsonStore.storeDestinationNotifications(destinationNotification);
-        }
-
-
-        JsonArray jsonArray = this.mongoDBJsonStore.findDestinationNotifications(notificationIds);
-
-        //assert
-        assertNotNull(jsonArray);
-
-        logger.info("****");
-        logger.info(jsonArray.toString());
-        logger.info("****");
-
-        Iterator<JsonElement> iterator = jsonArray.iterator();
-        int searchSize = 0;
-        while(iterator.hasNext())
-        {
-            JsonObject local = iterator.next().getAsJsonObject();
-            String localId = local.get("destinationNotificationId").getAsString();
-            if(notificationIds.contains(localId))
-            {
-                searchSize++;
-            }
-        }
-        assertEquals(notificationIds.size(), searchSize);
+        DropOffNotification stored = this.mongoDBJsonStore.findDropOffNotification("blah");
+        JsonObject object = JsonParser.parseString(stored.toString()).getAsJsonObject();
+        logger.info("*******");
+        logger.info(this.gson.toJson(object));
+        logger.info("*******");
     }
 
     @Test
@@ -104,23 +65,11 @@ public class MongoDBJsonStoreTests {
         assertTrue(topics.contains(DestinationNotification.TOPIC));
     }
 
-    @Test
-    public void testStoreActiveFoodRunnerData()
-    {
-        for(int i=0; i<5; i++) {
-            ActiveFoodRunnerData activeFoodRunnerData = new ActiveFoodRunnerData(UUID.randomUUID().toString(), "latitude", "longitude");
-            List<ActiveFoodRunnerData> list = new ArrayList<>();
-            list.add(activeFoodRunnerData);
-            this.mongoDBJsonStore.storeActiveFoodRunnerData(list);
-        }
-
-        //assert
-    }
 
     @Test
     public void testStoreProfile()
     {
-        Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu");
+        Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu","");
         this.mongoDBJsonStore.storeProfile(profile);
 
         Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
@@ -128,5 +77,122 @@ public class MongoDBJsonStoreTests {
         logger.info(storedProfile.toString());
         logger.info("*******");
         assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
+    }
+
+    @Test
+    public void testGetProfile()
+    {
+        Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
+        logger.info("*******");
+        logger.info(storedProfile.toString());
+        logger.info(storedProfile.getEmail());
+        logger.info(storedProfile.getPassword());
+        logger.info("*******");
+        //assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
+    }
+
+    @Test
+    public void testSourceOrgLifecycle()
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+        List<SourceOrg> stored = this.mongoDBJsonStore.getSourceOrgs();
+
+        JsonArray array = JsonParser.parseString(stored.toString()).getAsJsonArray();
+        logger.info("*******");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+        assertNotNull(stored);
+    }
+
+    @Test
+    public void testStoreActiveNetwork()
+    {
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
+        Location location = new Location(startLatitude, startLongitude);
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+
+        Map<String, FoodRunner> activeFoodRunners = new HashMap<>();
+        activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
+
+        this.mongoDBJsonStore.storeActiveNetwork(activeFoodRunners);
+
+        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
+        logger.info("*******");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+    }
+
+    @Test
+    public void testDeleteFoodRunner()
+    {
+        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
+        logger.info("***BEFORE****");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+
+        this.mongoDBJsonStore.deleteFoodRunner(null);
+
+        activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
+        logger.info("***AFTER****");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+    }
+
+    @Test
+    public void testGetCompletedTrips()
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        Location location = new Location(30.25860595703125d,-97.74873352050781d);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+        DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
+        CompletedTrip completedTrip = new CompletedTrip(foodRunner, dropOffNotification, null);
+        this.mongoDBJsonStore.setCompletedTrip(completedTrip);
+
+        List<CompletedTrip> completedTrips = this.mongoDBJsonStore.getCompletedTrips();
+        JsonArray array = JsonParser.parseString(completedTrips.toString()).getAsJsonArray();
+        logger.info("*******");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+    }
+
+    @Test
+    public void testSourceOrgProfileRelationship()
+    {
+        SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com");
+        for(int i=0; i<2; i++)
+        {
+            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test");
+            profile.setSourceOrgId(sourceOrg.getOrgId());
+            sourceOrg.getProfiles().add(profile);
+        }
+
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+        List<SourceOrg> sourceOrg1 = this.mongoDBJsonStore.getSourceOrgs();
+        JsonArray array = JsonParser.parseString(sourceOrg1.toString()).getAsJsonArray();
+        logger.info(this.gson.toJson(array));
+    }
+
+    @Test
+    public void testFoodRequestLifeCycle()
+    {
+        FoodRequest foodRequest = new FoodRequest();
+        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        foodRequest.setFoodType(FoodTypes.VEG);
+        foodRequest.setSourceOrg(sourceOrg1);
+        foodRequest.setId(UUID.randomUUID().toString());
+
+        this.mongoDBJsonStore.storeFoodRequest(foodRequest);
+        FoodRequest storeFoodRequest = this.mongoDBJsonStore.getFoodRequest(foodRequest.getId());
+        logger.info("*******");
+        logger.info(this.gson.toJson(storeFoodRequest.toJson()));
+        logger.info("*******");
     }
 }

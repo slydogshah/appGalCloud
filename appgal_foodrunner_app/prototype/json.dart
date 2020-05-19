@@ -14,6 +14,10 @@ void main(List<String> args)
 
   print('Howdy, ${modelJson['name']}!');
   print('We sent the verification link to ${modelJson['email']}.');
+
+  App app = new App();
+  app.name = "blahblah";
+  print(app.getMap());
 }
 
 class User {
@@ -31,4 +35,16 @@ class User {
       'name': name,
       'email': email,
     };
+}
+
+class App
+{
+  String name;
+
+  Map<String,String> getMap()
+  {
+    Map<String,String> map = new Map();
+    map['name'] = this.name;
+    return map;
+  }
 }

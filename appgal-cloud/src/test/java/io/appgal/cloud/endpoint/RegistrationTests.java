@@ -60,4 +60,46 @@ public class RegistrationTests {
         String statusCode = jsonObject.get("statusCode").getAsString();
         assertEquals("0", statusCode);*/
     }
+
+    @Test
+    public void testLoginSuccess() {
+        JsonObject registrationJson = new JsonObject();
+        registrationJson.addProperty("id", UUID.randomUUID().toString());
+        registrationJson.addProperty("email", "c@s.com");
+        registrationJson.addProperty("mobile", "8675309");
+        registrationJson.addProperty("photo", "photu");
+        registrationJson.addProperty("password", "c");
+        given().body(registrationJson.toString()).post("/registration/profile");
+
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", "c@s.com");
+        loginJson.addProperty("password", "c");
+        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+
+        String json = response.getBody().prettyPrint();
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        assertEquals("200", statusCode);
+    }
+
+    @Test
+    public void testLoginEmpty() {
+        JsonObject json = new JsonObject();
+        json.addProperty("email", "");
+        json.addProperty("password", "");
+
+        Response response = given().body(json.toString()).when().post("/registration/login").andReturn();
+
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(jsonString);
+        logger.info("****");
+
+        //assert the body
+        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        assertEquals("0", statusCode);*/
+    }
 }

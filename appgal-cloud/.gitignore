@@ -37,3 +37,5 @@ release.properties
 *.prj
 *.shp
 *.shx
+/.gradle/
+/build/

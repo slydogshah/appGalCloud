@@ -1,9 +1,6 @@
 package io.appgal.cloud.endpoint;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.appgal.cloud.foodRunnerSync.protocol.ProcessIncomingPackets;
-import io.appgal.cloud.messaging.MessageWindow;
 import io.appgal.cloud.session.FoodRunnerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +8,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 @Path("session")
 public class Session {

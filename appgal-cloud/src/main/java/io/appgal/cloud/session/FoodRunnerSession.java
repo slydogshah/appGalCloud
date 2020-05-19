@@ -60,7 +60,7 @@ public class FoodRunnerSession {
             Iterator<JsonElement> iterator = jsonArray.iterator();
             while (iterator.hasNext()) {
                 JsonObject jsonObject = (JsonObject) iterator.next();
-                SourceNotification sourceNotification = SourceNotification.fromJson(jsonObject);
+                SourceNotification sourceNotification = SourceNotification.parse(jsonObject.toString());
                 sourceNotification.setMessageWindow(messageWindow);
                 sourceNotifications.add(sourceNotification);
             }

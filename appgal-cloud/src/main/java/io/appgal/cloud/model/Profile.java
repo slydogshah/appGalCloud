@@ -1,6 +1,9 @@
 package io.appgal.cloud.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,18 +16,22 @@ public class Profile implements Serializable {
     private String email;
     private String mobile;
     private String photo;
+    private String password;
+
+    private String sourceOrgId;
 
     public Profile()
     {
 
     }
 
-    public Profile(String id, String email, String mobile, String photo)
+    public Profile(String id, String email, String mobile, String photo, String password)
     {
         this.id = id;
         this.email = email;
         this.mobile = mobile;
         this.photo = photo;
+        this.password = password;
     }
 
     public String getId()
@@ -62,32 +69,85 @@ public class Profile implements Serializable {
         return photo;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void setPhoto(String photo)
     {
         this.photo = photo;
     }
 
+    public String getSourceOrgId() {
+        return sourceOrgId;
+    }
+
+    public void setSourceOrgId(String sourceOrgId) {
+        this.sourceOrgId = sourceOrgId;
+    }
+
     @Override
     public String toString()
     {
-        JsonObject jsonObject = new JsonObject();
-
-        jsonObject.addProperty("id", this.id);
-        jsonObject.addProperty("email", this.email);
-        jsonObject.addProperty("mobile", this.mobile);
-        jsonObject.addProperty("photo", this.photo);
-
-        return jsonObject.toString();
+        return this.toJson().toString();
     }
 
-    public static Profile parseProfile(JsonObject jsonObject)
+    public JsonObject toJson()
+    {
+        JsonObject jsonObject = new JsonObject();
+
+        if(this.id != null) {
+            jsonObject.addProperty("id", this.id);
+        }
+        if(this.email != null) {
+            jsonObject.addProperty("email", this.email);
+        }
+        if(this.mobile != null) {
+            jsonObject.addProperty("mobile", this.mobile);
+        }
+        if(this.photo != null) {
+            jsonObject.addProperty("photo", this.photo);
+        }
+        if(this.password != null)
+        {
+            jsonObject.addProperty("password", this.password);
+        }
+        if(this.sourceOrgId != null)
+        {
+            jsonObject.addProperty("sourceOrgId", this.sourceOrgId);
+        }
+
+        return jsonObject;
+    }
+
+    public static Profile parse(String json)
     {
         Profile profile = new Profile();
 
-        profile.id = jsonObject.get("id").getAsString();
-        profile.email = jsonObject.get("email").getAsString();
-        profile.mobile = jsonObject.get("mobile").getAsString();
-        profile.photo = jsonObject.get("photo").getAsString();
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+
+        if(jsonObject.has("id")) {
+            profile.id = jsonObject.get("id").getAsString();
+        }
+        if(jsonObject.has("email")) {
+            profile.email = jsonObject.get("email").getAsString();
+        }
+        if(jsonObject.has("mobile")) {
+            profile.mobile = jsonObject.get("mobile").getAsString();
+        }
+        if(jsonObject.has("photo")) {
+            profile.photo = jsonObject.get("photo").getAsString();
+        }
+        if(jsonObject.has("password")) {
+            profile.password = jsonObject.get("password").getAsString();
+        }
+        if(jsonObject.has("sourceOrgId")) {
+            profile.sourceOrgId = jsonObject.get("sourceOrgId").getAsString();
+        }
 
         return profile;
     }
