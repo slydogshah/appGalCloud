@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.internal.JavaVersion;
 import io.appgal.cloud.model.Profile;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ public class ObjectMapperTests {
 
         Profile profile = mapper.readValue(jsonObject.get("profile").toString(), Profile.class);
 
+        System.out.println(JavaVersion.getMajorJavaVersion());
         System.out.println(profile.toJson().toString());
     }
 }
