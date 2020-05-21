@@ -11,9 +11,10 @@ import 'package:test/test.dart';
 void main() {
   test('getProfile', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
+    Future<Profile> profileFuture = profileRestClient.getProfile("c@s.com");
     profileFuture.then((profile){
       //expect(profile.email, "blah@blah.com");
+      print(profile.toString());
       print(profile.latitude);
     });
   });
