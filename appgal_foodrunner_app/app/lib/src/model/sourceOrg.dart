@@ -28,9 +28,9 @@ class SourceOrg
     this.orgContactEmail = json['orgContactEmail'],
     this.location = json['location'];
 
-    Map<String, String> toJson()
+    Map<String, dynamic> toJson()
     {
-      Map<String, String> json = new Map();
+      Map<String, dynamic> json = new Map();
       if(this.location == null)
       {
         this.location = new Location(0.0, 0.0);
@@ -38,7 +38,7 @@ class SourceOrg
       json['orgId'] = this.orgId;
       json['orgName'] = this.orgName;
       json['orgContactEmail'] = this.orgContactEmail;
-      json['location'] = this.location.toString();
+      json['location'] = this.location;
       return json;
     }
 

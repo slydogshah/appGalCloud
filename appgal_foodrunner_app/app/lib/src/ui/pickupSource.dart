@@ -96,6 +96,11 @@ class _PickupSourceState extends State<PickupSource> {
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
     Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
     futureP.then((sourceOrgs){
+      if(sourceOrgs.length == 0)
+      {
+        return;
+      }
+
       Navigator.push(context,
       MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
       

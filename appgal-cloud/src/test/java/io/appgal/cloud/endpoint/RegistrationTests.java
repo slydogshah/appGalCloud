@@ -77,6 +77,7 @@ public class RegistrationTests {
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String json = response.getBody().prettyPrint();
+        logger.info(json);
 
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/ui/pickupSource.dart';
 import 'package:flutter/material.dart';
 
 import 'driveToDestination.dart';
@@ -63,7 +64,7 @@ class ApplicableSourcesState extends State<ApplicableSources> {
                               FlatButton(
                                 child: const Text('Edit', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleClick(context);
+                                    handleClick(context, sourceOrg);
                                 },
                               ),
                               FlatButton(
@@ -81,10 +82,10 @@ class ApplicableSourcesState extends State<ApplicableSources> {
     return cards;
   }
 
-  void handleClick(BuildContext context)
+  void handleClick(BuildContext context, SourceOrg sourceOrg)
   {
     //Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg)));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg)));
   }
   
   @override

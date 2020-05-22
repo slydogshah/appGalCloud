@@ -11,8 +11,8 @@ import java.util.Objects;
 public class Location implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(Location.class);
 
-    private double latitude;
-    private double longitude;
+    private double latitude = 0.0d;
+    private double longitude = 0.0d;
 
     public Location() {
     }
@@ -56,8 +56,16 @@ public class Location implements Serializable {
         if(jsonObject.has("latitude")) {
             location.latitude = jsonObject.get("latitude").getAsDouble();
         }
+        else
+        {
+            location.latitude = 0.0d;
+        }
         if(jsonObject.has("longitude")) {
             location.longitude = jsonObject.get("longitude").getAsDouble();
+        }
+        else
+        {
+            location.longitude = 0.0d;
         }
 
         return location;

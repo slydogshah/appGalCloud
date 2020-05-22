@@ -34,8 +34,11 @@ class ActiveNetworkRestClient
   {
     String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
     //String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
-    var response = await http.post(remoteUrl, body: foodRunner.toString());
+    String inputJson = foodRunner.toString();
+    print("INPUTJSON: "+inputJson);
+    var response = await http.post(remoteUrl, body: inputJson);
     String responseJson = response.body;
+    print("RESPONSEJSON:"+responseJson);
   
     Iterable l = json.decode(responseJson);
     

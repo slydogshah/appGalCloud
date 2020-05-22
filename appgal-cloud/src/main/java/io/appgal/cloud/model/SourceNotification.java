@@ -17,8 +17,8 @@ public class SourceNotification {
     public static final String TOPIC = "foodRunnerSyncProtocol_source_notification";
 
     private String sourceNotificationId;
-    private String latitude;
-    private String longitude;
+    private String latitude = "0.0";
+    private String longitude = "0.0";
     private MessageWindow messageWindow;
 
     public String getSourceNotificationId() {
@@ -83,10 +83,17 @@ public class SourceNotification {
         if(jsonObject.has("latitude")) {
             sourceNotification.latitude = jsonObject.get("latitude").getAsString();
         }
+        else
+        {
+            sourceNotification.latitude = "0.0";
+        }
         if(jsonObject.has("longitude")) {
             sourceNotification.longitude = jsonObject.get("longitude").getAsString();
         }
-
+        else
+        {
+            sourceNotification.longitude = "0.0";
+        }
         if(jsonObject.has("messageWindow")) {
             Object messageWindowJson = jsonObject.get("messageWindow");
             if (messageWindowJson != null) {
