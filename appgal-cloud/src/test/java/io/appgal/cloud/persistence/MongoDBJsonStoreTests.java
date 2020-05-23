@@ -81,18 +81,6 @@ public class MongoDBJsonStoreTests {
     }
 
     @Test
-    public void testGetProfile()
-    {
-        Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
-        logger.info("*******");
-        logger.info(storedProfile.toString());
-        logger.info(storedProfile.getEmail());
-        logger.info(storedProfile.getPassword());
-        logger.info("*******");
-        //assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
-    }
-
-    @Test
     public void testSourceOrgLifecycle()
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");

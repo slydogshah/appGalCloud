@@ -2,6 +2,7 @@ package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.model.ProfileType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -69,6 +70,7 @@ public class RegistrationTests {
         registrationJson.addProperty("mobile", "8675309");
         registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
         given().body(registrationJson.toString()).post("/registration/profile");
 
         JsonObject loginJson = new JsonObject();
