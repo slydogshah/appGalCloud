@@ -153,7 +153,7 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
             else if(index == 1)
             {
               print("PickUp Request");
-              ActiveNetworkRestClient client = ActiveNetworkRestClient();
+              /*ActiveNetworkRestClient client = ActiveNetworkRestClient();
               SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
               PickupRequest pickupRequest = new PickupRequest(sourceOrg);
               Future<Iterable> future = client.sendPickupRequest(pickupRequest);
@@ -163,7 +163,9 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
                   Profile profile = Profile.fromJson(json);
                   print(profile.toString());
                 }
-              });
+              });*/
+              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg))); 
             }
             else if(index == 2)
             {

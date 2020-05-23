@@ -3,6 +3,7 @@ import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/ui/pickupSource.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -64,7 +65,7 @@ class DriveToDestinationSceneState extends State<DriveToDestinationScene> {
             else if(index == 1)
             {
               print("PickUp Request");
-              ActiveNetworkRestClient client = ActiveNetworkRestClient();
+              /*ActiveNetworkRestClient client = ActiveNetworkRestClient();
               SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
               PickupRequest pickupRequest = new PickupRequest(sourceOrg);
               Future<Iterable> future = client.sendPickupRequest(pickupRequest);
@@ -74,7 +75,9 @@ class DriveToDestinationSceneState extends State<DriveToDestinationScene> {
                   Profile profile = Profile.fromJson(json);
                   print(profile.toString());
                 }
-              });
+              });*/
+              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg))); 
             }
             else if(index == 2)
             {
