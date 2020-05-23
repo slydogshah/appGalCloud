@@ -194,6 +194,10 @@ public class MongoDBJsonStore {
 
     public void storeProfile(Profile profile)
     {
+        if(profile.getProfileType() == null)
+        {
+            throw new RuntimeException("ProfileType: ISNULL");
+        }
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("profile");
@@ -298,6 +302,10 @@ public class MongoDBJsonStore {
         while(iterator.hasNext())
         {
             FoodRunner foodRunner = iterator.next();
+            if(foodRunner.getProfile().getProfileType()==null || !foodRunner.getProfile().getProfileType().equals(ProfileType.FOOD_RUNNER))
+            {
+                continue;
+            }
             String json = foodRunner.toString();
             Document doc = Document.parse(json);
             activeFoodRunnerDocs.add(doc);

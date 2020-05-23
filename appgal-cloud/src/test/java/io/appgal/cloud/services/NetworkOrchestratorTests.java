@@ -64,13 +64,15 @@ public class NetworkOrchestratorTests{
         public void testOrchestration() throws Exception {
             double startLatitude = 30.25860595703125d;
             double startLongitude = -97.74873352050781d;
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "",
+                    ProfileType.FOOD_RUNNER);
             Location location = new Location(startLatitude, startLongitude);
             FoodRunner bugsBunny = new FoodRunner(profile, location);
 
             startLatitude = 44.9441d;
             startLongitude = -93.0852d;
-            profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+            profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", "8675309", "", "",
+                    ProfileType.FOOD_RUNNER);
             location = new Location(startLatitude, startLongitude);
             FoodRunner captain = new FoodRunner(profile, location);
 
