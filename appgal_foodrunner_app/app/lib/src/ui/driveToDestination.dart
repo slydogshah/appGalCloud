@@ -76,14 +76,16 @@ class DriveToDestinationSceneState extends State<DriveToDestinationScene> {
                   print(profile.toString());
                 }
               });*/
-              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              //TODO:REMOVE_MOCK_DATA
+              SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null);
               Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg))); 
             }
             else if(index == 2)
             {
               print("Send Food Request");
               ActiveNetworkRestClient client = ActiveNetworkRestClient();
-              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              //TODO:REMOVE_MOCK_DATA
+              SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null);
               FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
               Future<String> future = client.sendFoodRequest(foodRequest);
               future.then((jsonString){

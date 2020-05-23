@@ -226,6 +226,12 @@ public class MongoDBJsonStore {
 
     public void storeSourceOrg(SourceOrg sourceOrg)
     {
+        if(this.getSourceOrg(sourceOrg.getOrgId()) != null)
+        {
+            //it already exists
+            return;
+        }
+
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("customers");
