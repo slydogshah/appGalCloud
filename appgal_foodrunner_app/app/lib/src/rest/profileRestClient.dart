@@ -23,7 +23,6 @@ class ProfileRestClient
     String remoteUrl = "http://localhost:8080/registration/profile/";
     http.get(remoteUrl).then((response) {
       String profileJson = response.body;
-      print("BEHNCHOD_"+profileJson);
       Map<String, dynamic> map = jsonDecode(profileJson);
       Profile profile = Profile.fromJson(map);
       print(profile.toString());

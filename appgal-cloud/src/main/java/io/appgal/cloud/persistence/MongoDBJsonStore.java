@@ -194,6 +194,10 @@ public class MongoDBJsonStore {
 
     public void storeProfile(Profile profile)
     {
+        if(this.getProfile(profile.getEmail()) != null)
+        {
+            return;
+        }
         if(profile.getProfileType() == null)
         {
             throw new RuntimeException("ProfileType: ISNULL");
@@ -208,7 +212,7 @@ public class MongoDBJsonStore {
 
     public Profile getProfile(String email)
     {
-        Profile profile = new Profile();
+        Profile profile = null;
 
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
@@ -223,9 +227,10 @@ public class MongoDBJsonStore {
             Document document = cursor.next();
             String documentJson = document.toJson();
             profile = Profile.parse(documentJson);
+            return profile;
         }
 
-        return profile;
+        return null;
     }
 
     public void storeSourceOrg(SourceOrg sourceOrg)

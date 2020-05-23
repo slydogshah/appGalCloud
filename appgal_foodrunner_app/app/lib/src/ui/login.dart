@@ -263,21 +263,27 @@ class ProfileFunctions
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
     future.then((authCredentials){
       ActiveSession activeSession = ActiveSession.getInstance();
-      Profile profile = activeSession.getProfile();
+      Profile profile = authCredentials.getProfile();
+      activeSession.setProfile(profile);
       profile.setLatitude(authCredentials.latitude);
       profile.setLongitude(authCredentials.longitude);
+      String profileType = profile.getProfileType();
 
 
       print(profile.getLatitude());
       print(profile.getLongitude());
+      print(profileType);
       
       Navigator.of(context, rootNavigator: true).pop();
 
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => new LandingScene()));
-
-      //showCards(context, profile);
+      if(profileType != "FOOD_RUNNER")
+      {
+        Navigator.push(context,MaterialPageRoute(builder: (context) => new LandingScene()));
+      }
+      else
+      {
+        showCards(context, profile);
+      }
     });
   }
 

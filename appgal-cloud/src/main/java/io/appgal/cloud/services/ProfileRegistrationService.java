@@ -44,7 +44,13 @@ public class ProfileRegistrationService {
 
     public void register(Profile profile)
     {
-        //TODO: Add validation
+        //TODO: Add validation..Add proper response
+        Profile exists = this.mongoDBJsonStore.getProfile(profile.getEmail());
+        if(exists != null)
+        {
+            return;
+        }
+
         profile.setId(UUID.randomUUID().toString());
         this.mongoDBJsonStore.storeProfile(profile);
     }
@@ -91,6 +97,8 @@ public class ProfileRegistrationService {
                 authResponse.addProperty("latitude", 30.25860595703125d);
                 authResponse.addProperty("longitude", -97.74873352050781d);
             }
+
+            authResponse.add("profile", profile.toJson());
 
             return authResponse;
         }

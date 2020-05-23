@@ -10,6 +10,8 @@ class Profile {
   double latitude;
   double longitude;
 
+  String profileType;
+
 
   Profile(this.id, this.email, this.mobile, this.photo, this.password);
 
@@ -33,6 +35,11 @@ class Profile {
     this.longitude = longitude;
   }
 
+  String getProfileType()
+  {
+    return this.profileType;
+  }
+
   Profile.fromJson(Map<String, dynamic> json)
   : id = json['id'],
     email = json['email'],
@@ -40,7 +47,8 @@ class Profile {
     photo = json['photo'],
     latitude = json['latitude'],
     longitude = json['longitude'],
-    password = json['password'];
+    password = json['password'],
+    profileType = json['profileType'];
 
   Map<String, dynamic> toJson() =>
   {
@@ -50,7 +58,8 @@ class Profile {
     "photo": this.photo,
     "latitude": this.latitude,
     "longitude": this.longitude,
-    "password": this.password
+    "password": this.password,
+    "profileType":this.profileType
   };
 
   String toString()

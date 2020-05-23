@@ -1,6 +1,8 @@
 package prototype;
 
 import io.appgal.cloud.model.Location;
+import io.appgal.cloud.model.Profile;
+import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.services.CustomerService;
 import io.appgal.cloud.services.ProfileRegistrationService;
@@ -10,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 @QuarkusTest
 public class SeedData {
@@ -35,5 +38,9 @@ public class SeedData {
         customerService.storeSourceOrg(pickUp2);
         customerService.storeSourceOrg(dropOff1);
         customerService.storeSourceOrg(dropOff2);
+
+        Profile profile = new Profile(UUID.randomUUID().toString(), "c@s.com", "8675309", "", "c",
+                ProfileType.FOOD_RUNNER);
+        this.profileRegistrationService.register(profile);
     }
 }
