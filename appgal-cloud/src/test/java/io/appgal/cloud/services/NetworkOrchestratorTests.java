@@ -4,11 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.appgal.cloud.model.Location;
-import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.SourceOrg;
-import io.appgal.cloud.model.FoodRunner;
-import io.appgal.cloud.model.PickupRequest;
+import io.appgal.cloud.model.*;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -46,7 +42,7 @@ public class NetworkOrchestratorTests{
         public void testBootup() throws Exception {
             double startLatitude = 30.25860595703125d;
             double startLongitude = -97.74873352050781d;
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "");
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
             Location location = new Location(startLatitude, startLongitude);
             FoodRunner foodRunner = new FoodRunner(profile, location);
 
@@ -68,13 +64,13 @@ public class NetworkOrchestratorTests{
         public void testOrchestration() throws Exception {
             double startLatitude = 30.25860595703125d;
             double startLongitude = -97.74873352050781d;
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "");
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
             Location location = new Location(startLatitude, startLongitude);
             FoodRunner bugsBunny = new FoodRunner(profile, location);
 
             startLatitude = 44.9441d;
             startLongitude = -93.0852d;
-            profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", "8675309", "", "");
+            profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
             location = new Location(startLatitude, startLongitude);
             FoodRunner captain = new FoodRunner(profile, location);
 

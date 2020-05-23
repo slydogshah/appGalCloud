@@ -31,7 +31,7 @@ public class DeliveryOrchestratorTests {
     {
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(startLatitude, startLongitude);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
         final List<SourceOrg> bestDestination = this.deliveryOrchestrator.findBestDestination(bugsBunny);
