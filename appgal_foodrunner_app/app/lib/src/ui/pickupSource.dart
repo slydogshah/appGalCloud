@@ -4,14 +4,18 @@
 
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/dropOffNotification.dart';
+import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
+import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:flutter/material.dart';
 
+import 'applicableSources.dart';
+import 'driveToDestination.dart';
 import 'foodRunnerDestinations.dart';
 
 class PickupSource extends StatefulWidget {
@@ -72,14 +76,16 @@ class _PickupSourceState extends State<PickupSource> {
                           child: ButtonBar(
                             children: <Widget>[
                               FlatButton(
-                                child: const Text('Edit', style: TextStyle(color: Colors.white)),
+                                child: const Text('Drop Off', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleClick(context);
+                                    handleDriveToDestination(context);
                                 },
                               ),
                               FlatButton(
-                                child: const Text('Delete', style: TextStyle(color: Colors.white)),
-                                onPressed: () {},
+                                child: const Text('Pick Up', style: TextStyle(color: Colors.white)),
+                                onPressed: () {
+                                  handlePickupSource(context,sourceOrg);
+                                },
                               ),
                             ],
                           ),
@@ -94,7 +100,10 @@ class _PickupSourceState extends State<PickupSource> {
   void handleClick(BuildContext context)
   {
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
+    Profile profile = ActiveSession.getInstance().getProfile();
+    Location location = new Location(profile.getLatitude(), profile.getLongitude());
+    FoodRunner foodRunner = new FoodRunner(profile, location);
+    Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(foodRunner);
     futureP.then((sourceOrgs){
       if(sourceOrgs.length == 0)
       {
@@ -105,14 +114,21 @@ class _PickupSourceState extends State<PickupSource> {
       MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
       
       //also send a notification I am on my way
-      Profile profile = ActiveSession.getInstance().getProfile();
-      Location location = new Location(profile.getLatitude(), profile.getLongitude());
-      FoodRunner foodRunner = new FoodRunner(profile, location);
       Map<String, dynamic> json = sourceOrgs.elementAt(0);
       SourceOrg sourceOrg = SourceOrg.fromJson(json);
       DropOffNotification dropOffNotification = DropOffNotification(sourceOrg, location, foodRunner);
       activeNetworkRestClient.sendDeliveryNotification(dropOffNotification);
     });
+  }
+
+  void handleDriveToDestination(BuildContext context)
+  {
+    Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
+  }
+
+  void handlePickupSource(BuildContext context, SourceOrg sourceOrg)
+  {
+    Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg))); 
   }
   
   @override
@@ -128,6 +144,56 @@ class _PickupSourceState extends State<PickupSource> {
           children: this.getCard(),
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+          currentIndex: 0, // this will be set when a new tab is tapped
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.home),
+              title: new Text('Home')
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.mail),
+              title: new Text('PickUp Request'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.mail),
+              title: Text('Send Food Request')
+            )
+          ],
+          onTap: (index){
+            if(index == 0)
+            {
+              print("Home");
+            }
+            else if(index == 1)
+            {
+              print("PickUp Request");
+              ActiveNetworkRestClient client = ActiveNetworkRestClient();
+              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              PickupRequest pickupRequest = new PickupRequest(sourceOrg);
+              Future<Iterable> future = client.sendPickupRequest(pickupRequest);
+              future.then((profiles){
+                for(Map<String, dynamic> json in profiles)
+                {
+                  Profile profile = Profile.fromJson(json);
+                  print(profile.toString());
+                }
+              });
+            }
+            else if(index == 2)
+            {
+              print("Send Food Request");
+              ActiveNetworkRestClient client = ActiveNetworkRestClient();
+              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
+              Future<String> future = client.sendFoodRequest(foodRequest);
+              future.then((jsonString){
+                    print(jsonString);
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => ApplicableSources()));
+              });
+            }
+          },
+        )
     );
     return scaffold;
   }

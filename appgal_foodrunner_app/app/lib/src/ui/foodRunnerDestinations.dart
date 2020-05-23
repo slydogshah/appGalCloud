@@ -1,10 +1,16 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/location.dart';
+import 'package:app/src/model/pickupRequest.dart';
+import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/ui/pickupSource.dart';
 import 'package:flutter/material.dart';
 
+import 'applicableSources.dart';
 import 'driveToDestination.dart';
 
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
@@ -70,14 +76,16 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
                           child: ButtonBar(
                             children: <Widget>[
                               FlatButton(
-                                child: const Text('Edit', style: TextStyle(color: Colors.white)),
+                                child: const Text('Drop Off', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleClick(context);
+                                    handleDriveToDestination(context);
                                 },
                               ),
                               FlatButton(
-                                child: const Text('Delete', style: TextStyle(color: Colors.white)),
-                                onPressed: () {},
+                                child: const Text('Pick Up', style: TextStyle(color: Colors.white)),
+                                onPressed: () {
+                                  handlePickupSource(context,sourceOrg);
+                                },
                               ),
                             ],
                           ),
@@ -90,10 +98,14 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
     return cards;
   }
 
-  void handleClick(BuildContext context)
+  void handleDriveToDestination(BuildContext context)
   {
     Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg)));
+  }
+
+  void handlePickupSource(BuildContext context, SourceOrg sourceOrg)
+  {
+    Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg))); 
   }
   
   @override
@@ -117,6 +129,56 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
           children: this.getCard(),
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+          currentIndex: 0, // this will be set when a new tab is tapped
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.home),
+              title: new Text('Home')
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.mail),
+              title: new Text('PickUp Request'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.mail),
+              title: Text('Send Food Request')
+            )
+          ],
+          onTap: (index){
+            if(index == 0)
+            {
+              print("Home");
+            }
+            else if(index == 1)
+            {
+              print("PickUp Request");
+              ActiveNetworkRestClient client = ActiveNetworkRestClient();
+              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              PickupRequest pickupRequest = new PickupRequest(sourceOrg);
+              Future<Iterable> future = client.sendPickupRequest(pickupRequest);
+              future.then((profiles){
+                for(Map<String, dynamic> json in profiles)
+                {
+                  Profile profile = Profile.fromJson(json);
+                  print(profile.toString());
+                }
+              });
+            }
+            else if(index == 2)
+            {
+              print("Send Food Request");
+              ActiveNetworkRestClient client = ActiveNetworkRestClient();
+              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
+              FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
+              Future<String> future = client.sendFoodRequest(foodRequest);
+              future.then((jsonString){
+                    print(jsonString);
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => ApplicableSources()));
+              });
+            }
+          },
+        )
     );
     return scaffold;
   }
