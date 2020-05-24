@@ -31,7 +31,7 @@ class ActiveNetworkRestClient
     print(responseJson);
   }
 
-  Future<Iterable> findBestDestination(FoodRunner foodRunner) async
+  Future<List<SourceOrg>> findBestDestination(FoodRunner foodRunner) async
   {
     //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
     String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
@@ -42,8 +42,14 @@ class ActiveNetworkRestClient
     print("RESPONSEJSON:"+responseJson);
   
     Iterable l = json.decode(responseJson);
-    
-    return l;
+
+    List<SourceOrg> sourceOrgs = new List();
+    for(Map<String, dynamic> sourceOrgJson in l)
+    {
+        SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
+        sourceOrgs.add(sourceOrg);
+    }
+    return sourceOrgs;
   }
 
   Future<Iterable> sendPickupRequest(PickupRequest pickupRequest) async
@@ -80,6 +86,7 @@ class ActiveNetworkRestClient
     String remoteUrl = "http://localhost:8080/activeNetwork/sourceOrgs/";
     var response = await http.get(remoteUrl);
     String responseJson = response.body;
+    print(responseJson);
     Iterable l = json.decode(responseJson);
     List<SourceOrg> sourceOrgs = new List();
     for(Map<String, dynamic> sourceOrgJson in l)
@@ -87,6 +94,6 @@ class ActiveNetworkRestClient
         SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
         sourceOrgs.add(sourceOrg);
     }
-    return l;
+    return sourceOrgs;
   }
 }

@@ -1,6 +1,5 @@
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRequest.dart';
-import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
@@ -81,7 +80,9 @@ class LandingSceneState extends State<LandingScene> {
               });*/
               //TODO:REMOVE_MOCK_DATA
               SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null);
-              Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg))); 
+              List<SourceOrg> sourceOrgs = new List();
+              sourceOrgs.add(sourceOrg);
+              Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
             }
             else if(index == 2)
             {

@@ -7,11 +7,9 @@ import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
-import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
-import 'package:app/src/rest/profileRestClient.dart';
 import 'package:flutter/material.dart';
 
 import 'applicableSources.dart';
@@ -19,29 +17,28 @@ import 'driveToDestination.dart';
 import 'foodRunnerDestinations.dart';
 
 class PickupSource extends StatefulWidget {
-  Iterable json;
-  PickupSource(Iterable json)
+  List<SourceOrg> sourceOrgs;
+  PickupSource(List<SourceOrg> sourceOrgs)
   {
-    this.json = json;
+    this.sourceOrgs = sourceOrgs;
   }
 
   @override
-  _PickupSourceState createState() => _PickupSourceState(this.json);
+  _PickupSourceState createState() => _PickupSourceState(this.sourceOrgs);
 }
 
 class _PickupSourceState extends State<PickupSource> {
-  Iterable json;
-  _PickupSourceState(Iterable json)
+  List<SourceOrg> sourceOrgs;
+  _PickupSourceState(List<SourceOrg> sourceOrgs)
   {
-    this.json = json;
+    this.sourceOrgs = sourceOrgs;
   }
 
   List<Card> getCards()
   {
     List<Card> cards = new List();
-    for(Map<String, dynamic> json in this.json)
+    for(SourceOrg sourceOrg in this.sourceOrgs)
     {
-      SourceOrg sourceOrg = SourceOrg.fromJson(json);
       Location location = new Location(0.0, 0.0);
       sourceOrg.location = location;
       Card card = Card(shape: RoundedRectangleBorder(
@@ -52,27 +49,21 @@ class _PickupSourceState extends State<PickupSource> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        const ListTile(
+                        ListTile(
                           leading: Icon(Icons.album, size: 70),
-                          title: Text('Food Runner', style: TextStyle(color: Colors.white)),
-                          subtitle: Text('214 Barton Sprinngs Road', style: TextStyle(color: Colors.white)),
+                          title: Text('Organization', style: TextStyle(color: Colors.white)),
+                          subtitle: Text(sourceOrg.orgName, style: TextStyle(color: Colors.white)),
                         ),
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Food Runner Id: '+json['orgId'],
+                          labelText: 'Organization Id: '+sourceOrg.orgId,
                           ),
                         ),
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Email: '+json['orgName'],
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Mobile: '+json['orgContactEmail'],
+                          labelText: 'Email: '+sourceOrg.orgContactEmail,
                           ),
                         ),
                         ButtonTheme.bar(
@@ -132,7 +123,9 @@ class _PickupSourceState extends State<PickupSource> {
 
   void handlePickupSource(BuildContext context, SourceOrg sourceOrg)
   {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg))); 
+    List<SourceOrg> sourceOrgs = new List();
+    sourceOrgs.add(sourceOrg);
+    Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
   }
   
   @override
@@ -185,7 +178,9 @@ class _PickupSourceState extends State<PickupSource> {
               });*/
               //TODO:REMOVE_MOCK_DATA
               SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null);
-              Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg))); 
+              List<SourceOrg> sourceOrgs = new List();
+              sourceOrgs.add(sourceOrg);
+              Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
             }
             else if(index == 2)
             {
