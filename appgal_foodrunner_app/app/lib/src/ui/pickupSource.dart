@@ -19,29 +19,32 @@ import 'driveToDestination.dart';
 import 'foodRunnerDestinations.dart';
 
 class PickupSource extends StatefulWidget {
-  SourceOrg sourceOrg;
-  PickupSource(SourceOrg sourceOrg)
+  Iterable json;
+  PickupSource(Iterable json)
   {
-    this.sourceOrg = sourceOrg;
+    this.json = json;
   }
 
   @override
-  _PickupSourceState createState() => _PickupSourceState(this.sourceOrg);
+  _PickupSourceState createState() => _PickupSourceState(this.json);
 }
 
 class _PickupSourceState extends State<PickupSource> {
-  SourceOrg sourceOrg;
-  _PickupSourceState(SourceOrg sourceOrg)
+  Iterable json;
+  _PickupSourceState(Iterable json)
   {
-    this.sourceOrg = sourceOrg;
+    this.json = json;
   }
 
-  List<Card> getCard()
+  List<Card> getCards()
   {
     List<Card> cards = new List();
-    Location location = new Location(0.0, 0.0);
-    sourceOrg.location = location;
-    Card card = Card(shape: RoundedRectangleBorder(
+    for(Map<String, dynamic> json in this.json)
+    {
+      SourceOrg sourceOrg = SourceOrg.fromJson(json);
+      Location location = new Location(0.0, 0.0);
+      sourceOrg.location = location;
+      Card card = Card(shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                     color: Colors.pink,
@@ -57,19 +60,19 @@ class _PickupSourceState extends State<PickupSource> {
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Pickup Organization: '+sourceOrg.orgId,
+                          labelText: 'Food Runner Id: '+json['orgId'],
                           ),
                         ),
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Pickup Organization: '+sourceOrg.orgName,
+                          labelText: 'Email: '+json['orgName'],
                           ),
                         ),
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Email: '+sourceOrg.orgContactEmail,
+                          labelText: 'Mobile: '+json['orgContactEmail'],
                           ),
                         ),
                         ButtonTheme.bar(
@@ -93,7 +96,8 @@ class _PickupSourceState extends State<PickupSource> {
                       ],
                     ),
                   );
-    cards.add(card);
+        cards.add(card);
+    }
     return cards;
   }
 
@@ -141,7 +145,7 @@ class _PickupSourceState extends State<PickupSource> {
       body: Scrollbar(
         child: ListView(
           padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-          children: this.getCard(),
+          children: this.getCards(),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

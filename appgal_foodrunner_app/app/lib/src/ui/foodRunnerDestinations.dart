@@ -33,7 +33,7 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
     this.json = json;
   }
 
-  List<Card> getCard()
+  List<Card> getCards()
   {
     List<Card> cards = new List();
     for(Map<String, dynamic> json in this.json)
@@ -126,7 +126,7 @@ class _FoodRunnerDestinationState extends State<FoodRunnerDestination> {
       body: Scrollbar(
         child: ListView(
           padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-          children: this.getCard(),
+          children: this.getCards(),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

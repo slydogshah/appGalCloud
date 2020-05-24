@@ -94,6 +94,11 @@ public class NetworkOrchestrator {
         return JsonParser.parseString(registeredSources.toString()).getAsJsonArray();
     }
 
+    public List<SourceOrg> getSourceOrgs()
+    {
+        return this.mongoDBJsonStore.getSourceOrgs();
+    }
+
     public JsonObject getActiveView()
     {
         JsonObject jsonObject = new JsonObject();

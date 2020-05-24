@@ -294,9 +294,7 @@ class ProfileFunctions
     FoodRunner foodRunner = new FoodRunner(new Profile("0", "ms.dhoni@gmail.com", "8675309", "", ""), new Location(0.0, 0.0));
     Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(foodRunner);
     futureP.then((sourceOrgs){
-      Map<String, dynamic> json = sourceOrgs.elementAt(0);
-      SourceOrg sourceOrg = SourceOrg.fromJson(json);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => new PickupSource(sourceOrg)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => new PickupSource(sourceOrgs)));
     });
   }  
 }

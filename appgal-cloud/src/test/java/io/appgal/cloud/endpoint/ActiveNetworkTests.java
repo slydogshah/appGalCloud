@@ -152,4 +152,20 @@ public class ActiveNetworkTests {
         logger.info("****");
         logger.info(this.gson.toJson(storedRequest.toJson()));
     }
+
+    @Test
+    public void testSourceOrgs() {
+        Response response = given().when().get("/activeNetwork/sourceOrgs/")
+                .andReturn();
+
+        String json = response.getBody().prettyPrint();
+        //logger.info("****");
+        //logger.info(json);
+        //logger.info("****");
+
+        //assert the body
+        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        assertEquals("0", statusCode);*/
+    }
 }

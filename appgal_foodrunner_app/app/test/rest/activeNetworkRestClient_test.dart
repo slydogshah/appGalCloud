@@ -26,7 +26,7 @@ void main() {
     });
   });*/
 
-  test('sendFoodRequest', () {
+  /*test('sendFoodRequest', () {
     ActiveNetworkRestClient client = ActiveNetworkRestClient();
     SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
     FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
@@ -34,6 +34,14 @@ void main() {
     future.then((jsonString){
       print(jsonString);
     });
+  });*/
+
+  test('getSourceOrgs', () {
+    ActiveNetworkRestClient client = ActiveNetworkRestClient();
+    Future<List<SourceOrg>> future = client.getSourceOrgs();
+    future.then((sourceOrgs){
+      print(sourceOrgs.toString());
+    }); 
   });
 
   /*test('getActiveView', () {
