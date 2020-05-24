@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
@@ -288,7 +289,7 @@ class ProfileFunctions
   }
 
   void showCards(BuildContext context, Profile profile) {
-    sleep(const Duration(seconds:5));
+    CloudDataPoller.startPolling();
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
     //TODO:REMOVE_MOCK_DATA
     FoodRunner foodRunner = new FoodRunner(new Profile("0", "ms.dhoni@gmail.com", "8675309", "", ""), new Location(0.0, 0.0));
