@@ -88,6 +88,31 @@ public class RegistrationTests {
     }
 
     @Test
+    public void testLoginSuccessOrg() {
+        JsonObject registrationJson = new JsonObject();
+        registrationJson.addProperty("id", UUID.randomUUID().toString());
+        registrationJson.addProperty("email", "m@s.com");
+        registrationJson.addProperty("mobile", "7675309");
+        registrationJson.addProperty("photo", "photu");
+        registrationJson.addProperty("password", "s");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        given().body(registrationJson.toString()).post("/registration/profile");
+
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", "m@s.com");
+        loginJson.addProperty("password", "s");
+        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+
+        String json = response.getBody().prettyPrint();
+        logger.info(json);
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        assertEquals("200", statusCode);
+    }
+
+    @Test
     public void testLoginEmpty() {
         JsonObject json = new JsonObject();
         json.addProperty("email", "");

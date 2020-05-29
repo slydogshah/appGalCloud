@@ -36,6 +36,12 @@ public class Profile implements Serializable {
         this.profileType = profileType;
     }
 
+    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType, String sourceOrgId)
+    {
+        this(id,email,mobile,photo,password,profileType);
+        this.sourceOrgId = sourceOrgId;
+    }
+
     public String getId()
     {
         return id;

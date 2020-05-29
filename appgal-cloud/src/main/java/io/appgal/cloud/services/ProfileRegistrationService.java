@@ -63,6 +63,7 @@ public class ProfileRegistrationService {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
+            logger.info("PROFILE_NOT_FOUND");
             return reject;
         }
 
@@ -71,6 +72,7 @@ public class ProfileRegistrationService {
 
         if(registeredEmail == null)
         {
+            logger.info("EMAIL_NOT_FOUND");
             return reject;
         }
 
@@ -100,8 +102,11 @@ public class ProfileRegistrationService {
 
             authResponse.add("profile", profile.toJson());
 
+            logger.info("AUTHENTICATION_SUCCESS");
             return authResponse;
         }
+
+        logger.info("AUTHENTICATION_FAILED");
         return reject;
     }
 }

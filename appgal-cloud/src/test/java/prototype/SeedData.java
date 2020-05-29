@@ -42,5 +42,9 @@ public class SeedData {
         Profile profile = new Profile(UUID.randomUUID().toString(), "c@s.com", "8675309", "", "c",
                 ProfileType.FOOD_RUNNER);
         this.profileRegistrationService.register(profile);
+
+        Profile profile2 = new Profile(UUID.randomUUID().toString(), "m@s.com", "7675309", "", "s",
+                ProfileType.ORG, "microsoft");
+        this.profileRegistrationService.register(profile2);
     }
 }
