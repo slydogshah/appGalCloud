@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
@@ -224,7 +225,7 @@ class ProfileFunctions
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
-    login(context, credentials);
+    login(context, dialog, credentials);
   }
 
   void showAlertDialogRegistration(BuildContext context, String email, String password, String mobile) 
@@ -251,45 +252,51 @@ class ProfileFunctions
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = profile.email;
     credentials.password = profile.password;
-    login(context, credentials);
+    login(context, dialog, credentials);
   }
 
   void register (BuildContext context, Profile profile) {
     
   }
 
-  void login (BuildContext context, AuthCredentials authCredentials) {
+  void login (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
     future.then((authCredentials){
+      if(authCredentials.statusCode == 401)
+      {
+          Navigator.pop(context);
+          return;
+      }
+
+
       ActiveSession activeSession = ActiveSession.getInstance();
-      Profile profile = activeSession.getProfile();
+      Profile profile = authCredentials.getProfile();
+      activeSession.setProfile(profile);
       profile.setLatitude(authCredentials.latitude);
       profile.setLongitude(authCredentials.longitude);
+      String profileType = profile.getProfileType();
 
 
       print(profile.getLatitude());
       print(profile.getLongitude());
+      print(profileType);
       
       Navigator.of(context, rootNavigator: true).pop();
 
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => new LandingScene()));
-
-      //showCards(context, profile);
+      if(profileType != "FOOD_RUNNER")
+      {
+        Navigator.push(context,MaterialPageRoute(builder: (context) => new LandingScene()));
+      }
+      else
+      {
+        showCards(context, profile);
+      }
     });
   }
 
   void showCards(BuildContext context, Profile profile) {
-    sleep(const Duration(seconds:5));
-    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone","password"), new Location(0.0, 0.0)));
-    futureP.then((sourceOrgs){
-      Map<String, dynamic> json = sourceOrgs.elementAt(0);
-      SourceOrg sourceOrg = SourceOrg.fromJson(json);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => new PickupSource(sourceOrg)));
-    });
+    CloudDataPoller.startPolling(context);
   }  
 }
 

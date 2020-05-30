@@ -44,7 +44,13 @@ public class ProfileRegistrationService {
 
     public void register(Profile profile)
     {
-        //TODO: Add validation
+        //TODO: Add validation..Add proper response
+        Profile exists = this.mongoDBJsonStore.getProfile(profile.getEmail());
+        if(exists != null)
+        {
+            return;
+        }
+
         profile.setId(UUID.randomUUID().toString());
         this.mongoDBJsonStore.storeProfile(profile);
     }
@@ -57,6 +63,7 @@ public class ProfileRegistrationService {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
+            logger.info("PROFILE_NOT_FOUND");
             return reject;
         }
 
@@ -65,6 +72,7 @@ public class ProfileRegistrationService {
 
         if(registeredEmail == null)
         {
+            logger.info("EMAIL_NOT_FOUND");
             return reject;
         }
 
@@ -92,8 +100,13 @@ public class ProfileRegistrationService {
                 authResponse.addProperty("longitude", -97.74873352050781d);
             }
 
+            authResponse.add("profile", profile.toJson());
+
+            logger.info("AUTHENTICATION_SUCCESS");
             return authResponse;
         }
+
+        logger.info("AUTHENTICATION_FAILED");
         return reject;
     }
 }

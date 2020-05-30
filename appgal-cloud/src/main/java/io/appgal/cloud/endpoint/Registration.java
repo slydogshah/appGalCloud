@@ -52,6 +52,9 @@ public class Registration {
         String email = jsonObject.get("email").getAsString();
         String password = jsonObject.get("password").getAsString();
 
-        return this.profileRegistrationService.login(email, password).toString();
+        JsonObject result = this.profileRegistrationService.login(email, password);
+        String json = result.toString();
+        logger.info(json); //TODO: REMOVE_ME
+        return json;
     }
 }

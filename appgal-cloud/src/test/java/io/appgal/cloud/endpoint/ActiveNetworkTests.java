@@ -92,7 +92,7 @@ public class ActiveNetworkTests {
     public void testSendDeliveryNotification() {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
         JsonObject json = JsonParser.parseString(dropOffNotification.toString()).getAsJsonObject();
@@ -111,7 +111,7 @@ public class ActiveNetworkTests {
         SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com");
         for(int i=0; i<2; i++)
         {
-            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test");
+            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test", ProfileType.ORG);
             profile.setSourceOrgId(sourceOrg.getOrgId());
             sourceOrg.getProfiles().add(profile);
         }
@@ -151,5 +151,21 @@ public class ActiveNetworkTests {
         FoodRequest storedRequest = this.deliveryOrchestrator.getFoodRequest(foodRequestId);
         logger.info("****");
         logger.info(this.gson.toJson(storedRequest.toJson()));
+    }
+
+    @Test
+    public void testSourceOrgs() {
+        Response response = given().when().get("/activeNetwork/sourceOrgs/")
+                .andReturn();
+
+        String json = response.getBody().prettyPrint();
+        //logger.info("****");
+        //logger.info(json);
+        //logger.info("****");
+
+        //assert the body
+        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        assertEquals("0", statusCode);*/
     }
 }

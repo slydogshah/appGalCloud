@@ -1,8 +1,12 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/ui/pickupSource.dart';
+import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 
 import 'driveToDestination.dart';
@@ -61,14 +65,16 @@ class ApplicableSourcesState extends State<ApplicableSources> {
                           child: ButtonBar(
                             children: <Widget>[
                               FlatButton(
-                                child: const Text('Edit', style: TextStyle(color: Colors.white)),
+                                child: const Text('Drop Off', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleClick(context);
+                                    handleDriveToDestination(context);
                                 },
                               ),
                               FlatButton(
-                                child: const Text('Delete', style: TextStyle(color: Colors.white)),
-                                onPressed: () {},
+                                child: const Text('Pick Up', style: TextStyle(color: Colors.white)),
+                                onPressed: () {
+                                  handlePickupSource(context, sourceOrg);
+                                },
                               ),
                             ],
                           ),
@@ -81,10 +87,16 @@ class ApplicableSourcesState extends State<ApplicableSources> {
     return cards;
   }
 
-  void handleClick(BuildContext context)
+  void handleDriveToDestination(BuildContext context)
   {
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrg)));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
+  }
+
+  void handlePickupSource(BuildContext context, SourceOrg sourceOrg)
+  {
+    List<SourceOrg> sourceOrgs = new List();
+    sourceOrgs.add(sourceOrg);
+    Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
   }
   
   @override
@@ -100,6 +112,7 @@ class ApplicableSourcesState extends State<ApplicableSources> {
           children: this.getCards(),
         ),
       ),
+      bottomNavigationBar: UiFunctions.bottomNavigationBar(context)
     );
     return scaffold;
   }

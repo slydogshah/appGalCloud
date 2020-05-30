@@ -44,7 +44,8 @@ public class MongoDBJsonStoreTests {
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","",
+                ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
         this.mongoDBJsonStore.storeDropOffNotification(dropOffNotification);
@@ -69,7 +70,7 @@ public class MongoDBJsonStoreTests {
     @Test
     public void testStoreProfile()
     {
-        Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu","");
+        Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu","", ProfileType.FOOD_RUNNER);
         this.mongoDBJsonStore.storeProfile(profile);
 
         Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
@@ -77,18 +78,6 @@ public class MongoDBJsonStoreTests {
         logger.info(storedProfile.toString());
         logger.info("*******");
         assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
-    }
-
-    @Test
-    public void testGetProfile()
-    {
-        Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
-        logger.info("*******");
-        logger.info(storedProfile.toString());
-        logger.info(storedProfile.getEmail());
-        logger.info(storedProfile.getPassword());
-        logger.info("*******");
-        //assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
     }
 
     @Test
@@ -110,7 +99,7 @@ public class MongoDBJsonStoreTests {
     {
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(startLatitude, startLongitude);
         FoodRunner foodRunner = new FoodRunner(profile, location);
 
@@ -149,7 +138,7 @@ public class MongoDBJsonStoreTests {
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
         CompletedTrip completedTrip = new CompletedTrip(foodRunner, dropOffNotification, null);
@@ -168,7 +157,7 @@ public class MongoDBJsonStoreTests {
         SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com");
         for(int i=0; i<2; i++)
         {
-            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test");
+            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test", ProfileType.ORG);
             profile.setSourceOrgId(sourceOrg.getOrgId());
             sourceOrg.getProfiles().add(profile);
         }

@@ -2,6 +2,7 @@ package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.model.ProfileType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -69,6 +70,7 @@ public class RegistrationTests {
         registrationJson.addProperty("mobile", "8675309");
         registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
         given().body(registrationJson.toString()).post("/registration/profile");
 
         JsonObject loginJson = new JsonObject();
@@ -77,6 +79,32 @@ public class RegistrationTests {
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String json = response.getBody().prettyPrint();
+        logger.info(json);
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String statusCode = jsonObject.get("statusCode").getAsString();
+        assertEquals("200", statusCode);
+    }
+
+    @Test
+    public void testLoginSuccessOrg() {
+        JsonObject registrationJson = new JsonObject();
+        registrationJson.addProperty("id", UUID.randomUUID().toString());
+        registrationJson.addProperty("email", "m@s.com");
+        registrationJson.addProperty("mobile", "7675309");
+        registrationJson.addProperty("photo", "photu");
+        registrationJson.addProperty("password", "s");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        given().body(registrationJson.toString()).post("/registration/profile");
+
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", "m@s.com");
+        loginJson.addProperty("password", "s");
+        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+
+        String json = response.getBody().prettyPrint();
+        logger.info(json);
 
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();

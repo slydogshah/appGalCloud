@@ -19,19 +19,27 @@ public class Profile implements Serializable {
     private String password;
 
     private String sourceOrgId;
+    private ProfileType profileType;
 
     public Profile()
     {
 
     }
 
-    public Profile(String id, String email, String mobile, String photo, String password)
+    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType)
     {
         this.id = id;
         this.email = email;
         this.mobile = mobile;
         this.photo = photo;
         this.password = password;
+        this.profileType = profileType;
+    }
+
+    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType, String sourceOrgId)
+    {
+        this(id,email,mobile,photo,password,profileType);
+        this.sourceOrgId = sourceOrgId;
     }
 
     public String getId()
@@ -90,6 +98,14 @@ public class Profile implements Serializable {
         this.sourceOrgId = sourceOrgId;
     }
 
+    public ProfileType getProfileType() {
+        return profileType;
+    }
+
+    public void setProfileType(ProfileType profileType) {
+        this.profileType = profileType;
+    }
+
     @Override
     public String toString()
     {
@@ -120,6 +136,7 @@ public class Profile implements Serializable {
         {
             jsonObject.addProperty("sourceOrgId", this.sourceOrgId);
         }
+        jsonObject.addProperty("profileType", this.profileType.name());
 
         return jsonObject;
     }
@@ -148,6 +165,8 @@ public class Profile implements Serializable {
         if(jsonObject.has("sourceOrgId")) {
             profile.sourceOrgId = jsonObject.get("sourceOrgId").getAsString();
         }
+        String profileTypeName = jsonObject.get("profileType").getAsString();
+        profile.profileType = ProfileType.valueOf(profileTypeName);
 
         return profile;
     }

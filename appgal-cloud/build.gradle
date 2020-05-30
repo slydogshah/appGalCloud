@@ -2,6 +2,8 @@ plugins {
     id 'application'
     id 'io.quarkus' version '1.4.2.Final'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'java'
 }
 
 repositories {
@@ -77,6 +79,10 @@ test {
     //createPom();
 }
 
+shadowJar {
+    zip64 true
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -94,18 +100,5 @@ task createPom(type: Copy) {
     rename('pom-default.xml', 'pom.xml')
 }
 
-//configurations {
-//    integrationTestImplementation.extendsFrom implementation
-//    integrationTestRuntimeOnly.extendsFrom runtimeOnly
-//}
-
-//def integrationTest = tasks.register('integrationTest', Test) {
-//    description = 'Runs integration tests.'
-//    group = 'verification'
-
-//    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-//    classpath = sourceSets.integrationTest.runtimeClasspath
-//    shouldRunAfter('test')
-//}
-
-//tasks.named('check') { dependsOn(integrationTest) }
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'

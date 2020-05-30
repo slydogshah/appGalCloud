@@ -10,8 +10,8 @@ public class ActiveFoodRunnerData {
     public static final String TOPIC = "foodRunnerSyncProtocol_active_food_runner_session";
 
     private String foodRunnerId;
-    private String latitude;
-    private String longitude;
+    private String latitude = "0.0";
+    private String longitude = "0.0";
 
     public ActiveFoodRunnerData(String foodRunnerId, String latitude, String longitude) {
         this.foodRunnerId = foodRunnerId;
@@ -59,8 +59,16 @@ public class ActiveFoodRunnerData {
         if(this.latitude != null) {
             jsonObject.addProperty("latitude", this.latitude);
         }
+        else
+        {
+            jsonObject.addProperty("latitude", "0.0");
+        }
         if(this.longitude != null) {
             jsonObject.addProperty("longitude", this.longitude);
+        }
+        else
+        {
+            jsonObject.addProperty("longitude", "0.0");
         }
 
         return jsonObject;

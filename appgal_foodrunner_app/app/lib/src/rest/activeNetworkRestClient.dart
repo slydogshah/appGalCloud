@@ -1,5 +1,7 @@
 import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/pickupRequest.dart';
+import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/urlFunctions.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -11,8 +13,7 @@ class ActiveNetworkRestClient
 {
   Future<ActiveView> getActiveView() async
   {
-    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/activeView/";
-    String remoteUrl = "http://localhost:8080/activeNetwork/activeView/";
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/activeView/';
     var response = await http.get(remoteUrl);
     String activeViewJson = response.body;
     ActiveView activeView = ActiveView.fromJson(jsonDecode(activeViewJson));
@@ -21,8 +22,7 @@ class ActiveNetworkRestClient
 
   void sendDeliveryNotification(DropOffNotification dropOffNotification) async
   {
-    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
-    String remoteUrl = "http://localhost:8080/activeNetwork/sendDeliveryNotification/";
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/findBestDestination/';
     String jsonBody = dropOffNotification.toString();
     print(jsonBody);
     var response = await http.post(remoteUrl, body: jsonBody);
@@ -30,22 +30,27 @@ class ActiveNetworkRestClient
     print(responseJson);
   }
 
-  Future<Iterable> findBestDestination(FoodRunner foodRunner) async
+  Future<List<SourceOrg>> findBestDestination(FoodRunner foodRunner) async
   {
-    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/findBestDestination/";
-    String remoteUrl = "http://localhost:8080/activeNetwork/findBestDestination/";
-    var response = await http.post(remoteUrl, body: foodRunner.toString());
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/findBestDestination/';
+    String inputJson = foodRunner.toString();
+    var response = await http.post(remoteUrl, body: inputJson);
     String responseJson = response.body;
   
     Iterable l = json.decode(responseJson);
-    
-    return l;
+
+    List<SourceOrg> sourceOrgs = new List();
+    for(Map<String, dynamic> sourceOrgJson in l)
+    {
+        SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
+        sourceOrgs.add(sourceOrg);
+    }
+    return sourceOrgs;
   }
 
   Future<Iterable> sendPickupRequest(PickupRequest pickupRequest) async
   {
-    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/pickUpRequest/send/";
-    String remoteUrl = "http://localhost:8080/activeNetwork/pickUpRequest/send/";
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/pickUpRequest/send/';
     String jsonBody = pickupRequest.toJson().toString();
     //print(jsonBody);
     var response = await http.post(remoteUrl, body: jsonBody);
@@ -59,8 +64,7 @@ class ActiveNetworkRestClient
 
   Future<String> sendFoodRequest(FoodRequest foodRequest) async
   {
-    //String remoteUrl = "http://10.0.2.2:8080/activeNetwork/sendFoodRequest/";
-    String remoteUrl = "http://localhost:8080/activeNetwork/sendFoodRequest/";
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/sendFoodRequest/';
     String jsonBody = foodRequest.toJson().toString();
     //print(jsonBody);
     var response = await http.post(remoteUrl, body: jsonBody);
@@ -68,5 +72,21 @@ class ActiveNetworkRestClient
 
     //print(responseJson);
     return responseJson;
+  }
+
+  Future<List<SourceOrg>> getSourceOrgs() async
+  {
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/sourceOrgs/';
+    var response = await http.get(remoteUrl);
+    String responseJson = response.body;
+    print(responseJson);
+    Iterable l = json.decode(responseJson);
+    List<SourceOrg> sourceOrgs = new List();
+    for(Map<String, dynamic> sourceOrgJson in l)
+    {
+        SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
+        sourceOrgs.add(sourceOrg);
+    }
+    return sourceOrgs;
   }
 }

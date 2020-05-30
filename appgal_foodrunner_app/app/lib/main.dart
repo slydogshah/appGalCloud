@@ -11,9 +11,6 @@ import './src/context/activeSession.dart';
 
 void main() 
 {
-  ActiveSession activeSession = ActiveSession.getInstance();
-  activeSession.activate();
-
   //Launch the App
   runApp(new Login());
 

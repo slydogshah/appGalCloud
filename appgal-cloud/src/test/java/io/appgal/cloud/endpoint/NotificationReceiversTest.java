@@ -56,7 +56,7 @@ public class NotificationReceiversTest {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         String statusCode = jsonObject.get("statusCode").getAsString();
 
-        assertEquals("0", statusCode);
+        assertEquals("1", statusCode);
     }
 
     @Test

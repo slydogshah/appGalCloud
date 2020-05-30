@@ -113,4 +113,13 @@ public class ActiveNetwork {
         responseJson.add("results", results);
         return responseJson.toString();
     }
+
+    @Path("sourceOrgs")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getSourceOrgs()
+    {
+        List<SourceOrg> sourceOrgs = this.networkOrchestrator.getSourceOrgs();
+        return sourceOrgs.toString();
+    }
 }
