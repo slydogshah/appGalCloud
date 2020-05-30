@@ -92,7 +92,8 @@ public class ActiveNetworkTests {
     public void testSendDeliveryNotification() {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
+                "8675309", "", "", ProfileType.FOOD_RUNNER, location);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
         JsonObject json = JsonParser.parseString(dropOffNotification.toString()).getAsJsonObject();
@@ -111,8 +112,8 @@ public class ActiveNetworkTests {
         SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com");
         for(int i=0; i<2; i++)
         {
-            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test", ProfileType.ORG);
-            profile.setSourceOrgId(sourceOrg.getOrgId());
+            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "",
+                    "test", ProfileType.ORG, sourceOrg.getOrgId());
             sourceOrg.getProfiles().add(profile);
         }
 

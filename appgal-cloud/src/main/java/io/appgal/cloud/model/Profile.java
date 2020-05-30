@@ -20,6 +20,7 @@ public class Profile implements Serializable {
 
     private String sourceOrgId;
     private ProfileType profileType;
+    private Location location;
 
     public Profile()
     {
@@ -40,6 +41,20 @@ public class Profile implements Serializable {
     {
         this(id,email,mobile,photo,password,profileType);
         this.sourceOrgId = sourceOrgId;
+    }
+
+    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType, String sourceOrgId,
+                   Location location)
+    {
+        this(id,email,mobile,photo,password,profileType, sourceOrgId);
+        this.location = location;
+    }
+
+    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType,
+                   Location location)
+    {
+        this(id,email,mobile,photo,password,profileType);
+        this.location = location;
     }
 
     public String getId()
@@ -106,6 +121,14 @@ public class Profile implements Serializable {
         this.profileType = profileType;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     @Override
     public String toString()
     {
@@ -138,6 +161,10 @@ public class Profile implements Serializable {
         }
         jsonObject.addProperty("profileType", this.profileType.name());
 
+        if(this.location != null) {
+            jsonObject.add("location", this.location.toJson());
+        }
+
         return jsonObject;
     }
 
@@ -164,6 +191,9 @@ public class Profile implements Serializable {
         }
         if(jsonObject.has("sourceOrgId")) {
             profile.sourceOrgId = jsonObject.get("sourceOrgId").getAsString();
+        }
+        if(jsonObject.has("location")) {
+            profile.location = Location.parse(jsonObject.get("location").getAsJsonObject().toString());
         }
         String profileTypeName = jsonObject.get("profileType").getAsString();
         profile.profileType = ProfileType.valueOf(profileTypeName);
