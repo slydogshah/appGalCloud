@@ -1,5 +1,6 @@
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRequest.dart';
+import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
@@ -10,19 +11,25 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LandingScene extends StatefulWidget {
+  Profile profile;
+
+  LandingScene(Profile profile)
+  {
+    this.profile = profile;
+  }
+
   @override
-  LandingSceneState createState() => LandingSceneState();
+  LandingSceneState createState() => LandingSceneState(this.profile);
 }
 
 class LandingSceneState extends State<LandingScene> {
   GoogleMapController mapController;
   LatLng _center;
 
-  LandingSceneState()
+  LandingSceneState(Profile profile)
   {
-    Profile profile = ActiveSession.getInstance().getProfile();
-    //print("LANDING"+profile.toString());
-    this._center = LatLng(profile.getLatitude(), profile.getLongitude());
+    Location location = profile.getLocation();
+    this._center = LatLng(location.latitude, location.longitude);
   }
 
   void _onMapCreated(GoogleMapController controller) {

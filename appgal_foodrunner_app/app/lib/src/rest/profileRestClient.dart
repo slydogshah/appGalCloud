@@ -40,7 +40,7 @@ class ProfileRestClient
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/login/';
     var response = await http.post(remoteUrl, body: credentials.toString());
     String responseJson = response.body;
-    print(responseJson);
+    print("BANDCHOD[original]:"+responseJson);
     Map<String, dynamic> json  = jsonDecode(responseJson);
     if(json['statusCode'] == 401)
     {
@@ -50,6 +50,7 @@ class ProfileRestClient
     }
 
     AuthCredentials authResponse = AuthCredentials.fromJson(json);
+    print("BANDCHOD[pre]:"+authResponse.getProfile().toString());
     return authResponse;
   }
 }

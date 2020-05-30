@@ -7,20 +7,18 @@ class AuthCredentials
   String email;
   String password;
   int statusCode;
-  double latitude;
-  double longitude;
 
   Profile profile;
 
   AuthCredentials();
 
   AuthCredentials.fromJson(Map<String, dynamic> json)
-  : email = json['email'],
-    password = json['password'],
-    statusCode = json['statusCode'],
-    latitude = json['latitude'],
-    longitude = json['longitude'],
-    profile = Profile.fromJson(json['profile']);
+  {
+    email = json['email'];
+    password = json['password'];
+    statusCode = json['statusCode'];
+    this.profile = Profile.fromJson(json['profile']);
+  }
 
   Map<String, dynamic> toJson() =>
   {
@@ -38,6 +36,7 @@ class AuthCredentials
 
   Profile getProfile()
   {
+    print("BANDCHOD:[before]"+this.profile.toString());
     return this.profile;
   }
 }

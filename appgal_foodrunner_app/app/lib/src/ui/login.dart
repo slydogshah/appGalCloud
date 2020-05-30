@@ -263,30 +263,29 @@ class ProfileFunctions
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
     future.then((authCredentials){
+      //Navigator.of(context, rootNavigator: true).pop();
+      Navigator.pop(context);
+
       if(authCredentials.statusCode == 401)
       {
-          Navigator.pop(context);
           return;
       }
 
 
       ActiveSession activeSession = ActiveSession.getInstance();
-      Profile profile = authCredentials.getProfile();
-      activeSession.setProfile(profile);
-      profile.setLatitude(authCredentials.latitude);
-      profile.setLongitude(authCredentials.longitude);
+      activeSession.setProfile(authCredentials.getProfile());
+
+      Profile profile = activeSession.getProfile();
       String profileType = profile.getProfileType();
 
-
-      print(profile.getLatitude());
-      print(profile.getLongitude());
-      print(profileType);
-      
-      Navigator.of(context, rootNavigator: true).pop();
+      print("*******");
+      print("BANDCHOD:[after]"+profile.toString());
+      print("MADARCHOD_KI_AULAD_GOD: "+profile.getLocation().toString());
+      print("*******");
 
       if(profileType != "FOOD_RUNNER")
       {
-        Navigator.push(context,MaterialPageRoute(builder: (context) => new LandingScene()));
+        Navigator.push(context,MaterialPageRoute(builder: (context) => new LandingScene(profile)));
       }
       else
       {

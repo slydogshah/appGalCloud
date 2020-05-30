@@ -1,39 +1,29 @@
 import 'dart:convert';
 
+import 'package:app/src/model/location.dart';
+
 class Profile {
   String id;
   String email;
   String mobile;
   String photo;
   String password;
-
-  double latitude;
-  double longitude;
-
   String profileType;
+  Location location;
 
 
   Profile(this.id, this.email, this.mobile, this.photo, this.password);
 
-  double getLatitude()
+  Location getLocation()
   {
-    return this.latitude;
+    return this.location;
   }
 
-  double getLongitude()
+  setLocation(Location location)
   {
-    return this.longitude;
+    this.location = location;
   }
 
-  void setLatitude(double latitude)
-  {
-    this.latitude = latitude;
-  }
-
-  void setLongitude(double longitude)
-  {
-    this.longitude = longitude;
-  }
 
   String getProfileType()
   {
@@ -46,8 +36,7 @@ class Profile {
     email = json['email'];
     mobile = json['mobile'];
     photo = json['photo'];
-    latitude = json['latitude'];
-    longitude = json['longitude'];
+    this.location = Location.fromJson(json['location']);
     password = json['password'];
     profileType = json['profileType'];
   }
@@ -58,8 +47,7 @@ class Profile {
     "email": this.email,
     "mobile": this.mobile,
     "photo": this.photo,
-    "latitude": this.latitude,
-    "longitude": this.longitude,
+    "location": this.location.toJson(),
     "password": this.password,
     "profileType":this.profileType
   };
