@@ -41,14 +41,16 @@ class Profile {
   }
 
   Profile.fromJson(Map<String, dynamic> json)
-  : id = json['id'],
-    email = json['email'],
-    mobile = json['mobile'],
-    photo = json['photo'],
-    latitude = json['latitude'],
-    longitude = json['longitude'],
-    password = json['password'],
+  {
+    id = json['id'];
+    email = json['email'];
+    mobile = json['mobile'];
+    photo = json['photo'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
+    password = json['password'];
     profileType = json['profileType'];
+  }
 
   Map<String, dynamic> toJson() =>
   {

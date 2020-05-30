@@ -225,7 +225,7 @@ class ProfileFunctions
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
-    login(context, credentials);
+    login(context, dialog, credentials);
   }
 
   void showAlertDialogRegistration(BuildContext context, String email, String password, String mobile) 
@@ -252,17 +252,24 @@ class ProfileFunctions
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = profile.email;
     credentials.password = profile.password;
-    login(context, credentials);
+    login(context, dialog, credentials);
   }
 
   void register (BuildContext context, Profile profile) {
     
   }
 
-  void login (BuildContext context, AuthCredentials authCredentials) {
+  void login (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<AuthCredentials> future = profileRestClient.login(authCredentials);
     future.then((authCredentials){
+      if(authCredentials.statusCode == 401)
+      {
+          Navigator.pop(context);
+          return;
+      }
+
+
       ActiveSession activeSession = ActiveSession.getInstance();
       Profile profile = authCredentials.getProfile();
       activeSession.setProfile(profile);

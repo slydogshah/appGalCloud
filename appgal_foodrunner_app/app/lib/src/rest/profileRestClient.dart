@@ -41,7 +41,15 @@ class ProfileRestClient
     var response = await http.post(remoteUrl, body: credentials.toString());
     String responseJson = response.body;
     print(responseJson);
-    AuthCredentials authResponse = AuthCredentials.fromJson(jsonDecode(responseJson));
+    Map<String, dynamic> json  = jsonDecode(responseJson);
+    if(json['statusCode'] == 401)
+    {
+        AuthCredentials authCredentials = new AuthCredentials();
+        authCredentials.statusCode = 401;
+        return authCredentials;
+    }
+
+    AuthCredentials authResponse = AuthCredentials.fromJson(json);
     return authResponse;
   }
 }

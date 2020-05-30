@@ -11,6 +11,13 @@ class CloudDataPoller
 {
   static void startPolling(BuildContext context)
   {
+    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
+      //TODO:REMOVE_MOCK_DATA
+      FoodRunner foodRunner = new FoodRunner(new Profile("0", "ms.dhoni@gmail.com", "8675309", "", ""), new Location(0.0, 0.0));
+      Future<List<SourceOrg>> futureP = activeNetworkRestClient.findBestDestination(foodRunner);
+      futureP.then((sourceOrgs){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => new PickupSource(sourceOrgs)));
+      });
     const oneSec = const Duration(seconds:30);
     new Timer.periodic(oneSec, (Timer t) {
       print(new DateTime.now().millisecondsSinceEpoch);
