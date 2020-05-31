@@ -5,17 +5,26 @@ import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('getProfile', () {
+  test('profileNotFound', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Profile> profileFuture = profileRestClient.getProfile("c@s.com");
+    Future<Profile> profileFuture = profileRestClient.getProfile("notFound@blah.com");
+        profileFuture.catchError((cbe){
+          CloudBusinessException cloudBusinessException = cbe;
+          expect(cloudBusinessException.statusCode, 404);
+    });
+  });
+
+  test('profileSuccess', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
     profileFuture.then((profile){
-      //expect(profile.email, "blah@blah.com");
-      print(profile.toString());
-      print(profile.latitude);
+      expect(profile.email, "blah@blah.com");
+      //print(profile.toString());
     });
   });
 

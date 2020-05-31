@@ -36,21 +36,30 @@ class Profile {
     email = json['email'];
     mobile = json['mobile'];
     photo = json['photo'];
-    this.location = Location.fromJson(json['location']);
+    if(json['location'] != null)
+    {
+      this.location = Location.fromJson(json['location']);
+    }
     password = json['password'];
     profileType = json['profileType'];
   }
 
-  Map<String, dynamic> toJson() =>
+  Map<String, dynamic> toJson()
   {
-    "id": this.id,
-    "email": this.email,
-    "mobile": this.mobile,
-    "photo": this.photo,
-    "location": this.location.toJson(),
-    "password": this.password,
-    "profileType":this.profileType
-  };
+    Map<String, dynamic> json = new Map();
+    json['id'] = this.id;
+    json['email'] = this.email;
+    json['mobile'] = this.mobile;
+    json['photo'] =  this.photo;
+    if(this.location != null)
+    {
+      json['location'] = this.location.toJson();
+    }
+    json['password'] = this.password;
+    json['profileType'] = this.profileType;
+
+    return json;
+  }
 
   String toString()
   {

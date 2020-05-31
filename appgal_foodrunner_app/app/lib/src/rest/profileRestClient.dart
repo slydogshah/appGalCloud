@@ -1,3 +1,4 @@
+import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -10,9 +11,14 @@ class ProfileRestClient
 {
   Future<Profile> getProfile(String email) async
   {
-    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/profile/';
+    String remoteUrl = Uri.encodeFull('http://'+UrlFunctions.resolveHost()+':8080/registration/profile/?email='+email);
     var response = await http.get(remoteUrl);
+    if(response.statusCode != 200)
+    {
+      throw new CloudBusinessException(response.statusCode, response.body);
+    }
     String profileJson = response.body;
+    print(profileJson);
     Profile profile = Profile.fromJson(jsonDecode(profileJson));
     return profile;
   }

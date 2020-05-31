@@ -26,20 +26,10 @@ public class ProfileRegistrationService {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
-    public JsonObject getProfile(String email)
+    public Profile getProfile(String email)
     {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
-
-        FoodRunner foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
-
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("profile", profile.toJson());
-        if(foodRunner != null) {
-            jsonObject.addProperty("latitude", foodRunner.getLocation().getLatitude());
-            jsonObject.addProperty("longitude", foodRunner.getLocation().getLongitude());
-        }
-
-        return jsonObject;
+        return profile;
     }
 
     public void register(Profile profile)

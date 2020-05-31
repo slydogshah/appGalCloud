@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.Serializable;
 
 @Path("registration")
 public class Registration {
@@ -22,30 +24,37 @@ public class Registration {
     @Path("profile")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getProfile(@QueryParam("email") String email)
+    public Response getProfile(@QueryParam("email") String email)
     {
-        JsonObject profile = this.profileRegistrationService.getProfile(email);
-        return profile.toString();
+        Profile profile = this.profileRegistrationService.getProfile(email);
+        if(profile == null)
+        {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("message", "profile_not_found");
+            jsonObject.addProperty("email", email);
+            return Response.status(404).entity(jsonObject.toString()).build();
+        }
+        return Response.ok(profile.toString()).build();
     }
 
     @Path("profile")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String register(@RequestBody String profileJson)
+    public Serializable register(@RequestBody String profileJson)
     {
         JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
         Profile profile = Profile.parse(jsonObject.toString());
         this.profileRegistrationService.register(profile);
 
         JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
+        responseJson.addProperty("statusCode", 200);
         return responseJson.toString();
     }
 
     @Path("login")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String login(@RequestBody String credentialsJson)
+    public Serializable login(@RequestBody String credentialsJson)
     {
         JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
 

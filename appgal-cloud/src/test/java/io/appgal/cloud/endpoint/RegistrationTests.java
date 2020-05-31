@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,13 +28,27 @@ public class RegistrationTests {
     private static Logger logger = LoggerFactory.getLogger(RegistrationTests.class);
 
     @Test
-    public void testGetRegistration() {
-        Response response = given().when().get("/registration/profile")
+    public void testRegister() throws Exception{
+        JsonObject json = new JsonObject();
+        json.addProperty("id", UUID.randomUUID().toString());
+        json.addProperty("email", "blah@blah.com");
+        json.addProperty("mobile", "8675309");
+        json.addProperty("photo", "photu");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(jsonString);
+        logger.info("****");
+
+        response = given().when().get("/registration/profile?email=blah@blah.com")
                 .andReturn();
 
-        String json = response.getBody().prettyPrint();
+        jsonString = response.getBody().prettyPrint();
         logger.info("****");
-        logger.info(json);
+        logger.info(jsonString);
         logger.info("****");
 
         //assert the body
@@ -42,17 +58,13 @@ public class RegistrationTests {
     }
 
     @Test
-    public void testRegister() {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", "CLOUD_ID");
-        json.addProperty("email", "blah@blah.com");
-        json.addProperty("mobile", "8675309");
-        json.addProperty("photo", "photu");
-
-        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+    public void testGetProfileNotFound() throws Exception{
+        Response response = given().when().get("/registration/profile?email=xyz")
+                .andReturn();
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
+        logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
 
