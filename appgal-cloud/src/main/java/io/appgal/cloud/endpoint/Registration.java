@@ -2,6 +2,7 @@ package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.services.AuthenticationException;
 import io.appgal.cloud.services.ProfileRegistrationService;
 import io.appgal.cloud.model.Profile;
 import org.slf4j.Logger;
@@ -54,16 +55,21 @@ public class Registration {
     @Path("login")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Serializable login(@RequestBody String credentialsJson)
+    public Response login(@RequestBody String credentialsJson)
     {
         JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
 
         String email = jsonObject.get("email").getAsString();
         String password = jsonObject.get("password").getAsString();
 
-        JsonObject result = this.profileRegistrationService.login(email, password);
-        String json = result.toString();
-        logger.info(json); //TODO: REMOVE_ME
-        return json;
+        try {
+            JsonObject result = this.profileRegistrationService.login(email, password);
+            String json = result.toString();
+            return Response.ok(json).build();
+        }
+        catch(AuthenticationException authenticationException)
+        {
+            return Response.status(401).entity(authenticationException.toString()).build();
+        }
     }
 }

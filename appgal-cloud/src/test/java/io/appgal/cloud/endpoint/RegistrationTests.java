@@ -2,6 +2,8 @@ package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.model.Location;
+import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -40,21 +42,30 @@ public class RegistrationTests {
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
+        logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
+
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        int statusCode = jsonObject.get("statusCode").getAsInt();
+        assertEquals(200, statusCode);
 
         response = given().when().get("/registration/profile?email=blah@blah.com")
                 .andReturn();
 
         jsonString = response.getBody().prettyPrint();
         logger.info("****");
+        logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
 
         //assert the body
-        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String statusCode = jsonObject.get("statusCode").getAsString();
-        assertEquals("0", statusCode);*/
+        jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        assertNotNull(jsonObject.get("id").getAsString());
+        assertEquals(jsonObject.get("email").getAsString(), "blah@blah.com");
+        assertEquals(jsonObject.get("mobile").getAsString(), "8675309");
+        assertEquals(jsonObject.get("photo").getAsString(), "photu");
+        assertEquals(jsonObject.get("profileType").getAsString(), "FOOD_RUNNER");
     }
 
     @Test
@@ -69,9 +80,10 @@ public class RegistrationTests {
         logger.info("****");
 
         //assert the body
-        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String statusCode = jsonObject.get("statusCode").getAsString();
-        assertEquals("0", statusCode);*/
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        assertEquals(404, response.getStatusCode());
+        assertEquals(jsonObject.get("email").getAsString(), "xyz");
+        assertEquals(jsonObject.get("message").getAsString(), "profile_not_found");
     }
 
     @Test
@@ -90,13 +102,28 @@ public class RegistrationTests {
         loginJson.addProperty("password", "c");
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
-        String json = response.getBody().prettyPrint();
-        logger.info(json);
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
 
         //assert the body
-        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String statusCode = jsonObject.get("statusCode").getAsString();
-        assertEquals("200", statusCode);
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        int statusCode = jsonObject.get("statusCode").getAsInt();
+        assertEquals(200, statusCode);
+        assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
+        assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
+        Profile profile = Profile.parse(jsonObject.get("profile").toString());
+        assertNotNull(profile.getId());
+        assertEquals(profile.getEmail(), "c@s.com");
+        assertEquals(profile.getMobile(), "8675309");
+        assertEquals(profile.getPhoto(), "photu");
+        assertEquals(profile.getPassword(), "c");
+        assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
+        assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
+        assertEquals(profile.getLocation().getLongitude(), -97.74873352050781d);
+
     }
 
     @Test
@@ -115,13 +142,27 @@ public class RegistrationTests {
         loginJson.addProperty("password", "s");
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
-        String json = response.getBody().prettyPrint();
-        logger.info(json);
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
 
         //assert the body
-        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String statusCode = jsonObject.get("statusCode").getAsString();
-        assertEquals("200", statusCode);
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        int statusCode = jsonObject.get("statusCode").getAsInt();
+        assertEquals(200, statusCode);
+        assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
+        assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
+        Profile profile = Profile.parse(jsonObject.get("profile").toString());
+        assertNotNull(profile.getId());
+        assertEquals(profile.getEmail(), "m@s.com");
+        assertEquals(profile.getMobile(), "7675309");
+        assertEquals(profile.getPhoto(), "photu");
+        assertEquals(profile.getPassword(), "s");
+        assertEquals(profile.getProfileType().name(), "ORG");
+        assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
+        assertEquals(profile.getLocation().getLongitude(), -97.74873352050781d);
     }
 
     @Test
@@ -134,12 +175,13 @@ public class RegistrationTests {
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
+        logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
 
         //assert the body
-        /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String statusCode = jsonObject.get("statusCode").getAsString();
-        assertEquals("0", statusCode);*/
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        assertEquals(401, response.getStatusCode());
+        assertEquals(jsonObject.get("email").getAsString(), "");
     }
 }

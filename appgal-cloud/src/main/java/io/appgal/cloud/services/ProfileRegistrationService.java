@@ -45,16 +45,13 @@ public class ProfileRegistrationService {
         this.mongoDBJsonStore.storeProfile(profile);
     }
 
-    public JsonObject login(String email, String password)
+    public JsonObject login(String email, String password) throws AuthenticationException
     {
-        JsonObject reject = new JsonObject();
-        reject.addProperty("statusCode", 401);
-
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
             logger.info("PROFILE_NOT_FOUND");
-            return reject;
+            throw new AuthenticationException(email);
         }
 
         String registeredEmail = profile.getEmail();
@@ -63,7 +60,7 @@ public class ProfileRegistrationService {
         if(registeredEmail == null)
         {
             logger.info("EMAIL_NOT_FOUND");
-            return reject;
+            throw new AuthenticationException(email);
         }
 
         logger.info(registeredEmail);
@@ -99,6 +96,6 @@ public class ProfileRegistrationService {
         }
 
         logger.info("AUTHENTICATION_FAILED");
-        return reject;
+        throw new AuthenticationException(email);
     }
 }
