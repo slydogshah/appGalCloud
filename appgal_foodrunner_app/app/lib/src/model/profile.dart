@@ -30,9 +30,17 @@ class Profile {
     return this.profileType;
   }
 
+  void setProfileType(String profileType)
+  {
+    this.profileType = profileType;
+  }
+
   Profile.fromJson(Map<String, dynamic> json)
   {
-    id = json['id'];
+    if(json['id'] != null)
+    {
+      id = json['id'];
+    }
     email = json['email'];
     mobile = json['mobile'];
     photo = json['photo'];
@@ -47,7 +55,10 @@ class Profile {
   Map<String, dynamic> toJson()
   {
     Map<String, dynamic> json = new Map();
-    json['id'] = this.id;
+    if(this.id != null)
+    {
+      json['id'] = this.id;
+    }
     json['email'] = this.email;
     json['mobile'] = this.mobile;
     json['photo'] =  this.photo;

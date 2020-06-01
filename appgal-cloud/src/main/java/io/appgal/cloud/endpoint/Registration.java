@@ -41,15 +41,16 @@ public class Registration {
     @Path("profile")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Serializable register(@RequestBody String profileJson)
+    public Response register(@RequestBody String profileJson)
     {
+        logger.info(profileJson);
         JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
         Profile profile = Profile.parse(jsonObject.toString());
         this.profileRegistrationService.register(profile);
 
         JsonObject responseJson = new JsonObject();
         responseJson.addProperty("statusCode", 200);
-        return responseJson.toString();
+        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("login")

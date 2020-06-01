@@ -63,10 +63,10 @@ public class ProfileRegistrationService {
             throw new AuthenticationException(email);
         }
 
-        logger.info(registeredEmail);
-        logger.info(email);
-        logger.info(registeredPassword);
-        logger.info(password);
+        //logger.info(registeredEmail);
+        //logger.info(email);
+        //logger.info(registeredPassword);
+        //logger.info(password);
 
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
@@ -91,7 +91,7 @@ public class ProfileRegistrationService {
             profile.setLocation(location);
             authResponse.add("profile", profile.toJson());
 
-            logger.info("AUTHENTICATION_SUCCESS");
+            //logger.info("AUTHENTICATION_SUCCESS");
             return authResponse;
         }
 

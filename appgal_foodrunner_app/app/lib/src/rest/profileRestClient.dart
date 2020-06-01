@@ -18,27 +18,18 @@ class ProfileRestClient
       throw new CloudBusinessException(response.statusCode, response.body);
     }
     String profileJson = response.body;
-    print(profileJson);
     Profile profile = Profile.fromJson(jsonDecode(profileJson));
     return profile;
-  }
-
-  void setProfile(ActiveSession activeSession) async
-  {
-    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/profile/';
-    http.get(remoteUrl).then((response) {
-      String profileJson = response.body;
-      Map<String, dynamic> map = jsonDecode(profileJson);
-      Profile profile = Profile.fromJson(map);
-      print(profile.toString());
-      activeSession.setProfile(profile);
-    });
   }
 
   void register(Profile profile) async
   {
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/profile/';
-    http.post(remoteUrl, body: profile.toString());
+    var response = await http.post(remoteUrl, body: profile.toString());
+    if(response.statusCode != 200)
+    {
+      throw new CloudBusinessException(response.statusCode, response.body);
+    }
   }
 
   Future<AuthCredentials> login(AuthCredentials credentials) async

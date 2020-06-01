@@ -1,3 +1,4 @@
+import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/dropOffNotification.dart';
@@ -39,6 +40,24 @@ void main() {
       print(profile.toString());
       expect(profile.email, "m@s.com");
     });
+  });
+
+  test('loginFail', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = "m@s.com";
+    credentials.password = "c";
+    Future<AuthCredentials> future = profileRestClient.login(credentials);
+    future.then((authCredentials){
+      expect(authCredentials.statusCode, 401);
+    });
+  });
+
+  test('registerFlow', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Profile profile = new Profile(null,"testsuite@blah.com","8675309","photu","password");
+    profile.setProfileType("FOOD_RUNNER");
+    profileRestClient.register(profile);
   });
 
   /*test('getActiveView', () {

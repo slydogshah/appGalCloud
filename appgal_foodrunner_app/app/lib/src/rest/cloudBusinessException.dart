@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class CloudBusinessException implements Exception
 {
   int statusCode;
@@ -7,5 +9,14 @@ class CloudBusinessException implements Exception
   {
     this.statusCode = statusCode;
     this.message = message;
+  }
+
+  String toString()
+  {
+    Map<String, dynamic> json = new Map();
+    json['statusCode'] = statusCode;
+    json['message'] = message;
+    String jsonString = jsonEncode(json);
+    return jsonString;
   }
 }
