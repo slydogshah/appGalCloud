@@ -21,10 +21,23 @@ void main() {
 
   test('profileSuccess', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Profile> profileFuture = profileRestClient.getProfile("blah@blah.com");
+    Future<Profile> profileFuture = profileRestClient.getProfile("m@s.com");
     profileFuture.then((profile){
-      expect(profile.email, "blah@blah.com");
-      //print(profile.toString());
+      print(profile.toString());
+      expect(profile.email, "m@s.com");
+    });
+  });
+
+  test('loginSuccess', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = "m@s.com";
+    credentials.password = "s";
+    Future<AuthCredentials> future = profileRestClient.login(credentials);
+    future.then((authCredentials){
+      Profile profile = authCredentials.getProfile();
+      print(profile.toString());
+      expect(profile.email, "m@s.com");
     });
   });
 
@@ -33,17 +46,6 @@ void main() {
     Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
     activeViewFuture.then((activeView){
       print(activeView);
-    });
-  });*/
-
-  /*test('login', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    AuthCredentials credentials = new AuthCredentials();
-    credentials.email = "blah@blah.com";
-    credentials.password = "blahblah";
-    Future<AuthCredentials> future = profileRestClient.login(credentials);
-    future.then((authCredentials){
-      print(authCredentials.toString());
     });
   });*/
 

@@ -36,7 +36,6 @@ class AuthCredentials
 
   Profile getProfile()
   {
-    print("BANDCHOD:[before]"+this.profile.toString());
     return this.profile;
   }
 }

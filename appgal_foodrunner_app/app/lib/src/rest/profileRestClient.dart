@@ -46,17 +46,20 @@ class ProfileRestClient
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/login/';
     var response = await http.post(remoteUrl, body: credentials.toString());
     String responseJson = response.body;
-    print("BANDCHOD[original]:"+responseJson);
     Map<String, dynamic> json  = jsonDecode(responseJson);
-    if(json['statusCode'] == 401)
+    if(response.statusCode == 401)
     {
         AuthCredentials authCredentials = new AuthCredentials();
         authCredentials.statusCode = 401;
         return authCredentials;
     }
+    else if(response.statusCode != 200)
+    {
+      throw new CloudBusinessException(response.statusCode, response.body);
+    }
+
 
     AuthCredentials authResponse = AuthCredentials.fromJson(json);
-    print("BANDCHOD[pre]:"+authResponse.getProfile().toString());
     return authResponse;
   }
 }
