@@ -12,6 +12,18 @@ import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
 
 void main() {
+
+test('getActiveView', () {
+    ActiveNetworkRestClient profileRestClient = new ActiveNetworkRestClient();
+    Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
+    activeViewFuture.then((activeView){
+      print(activeView);
+      expect((activeView.activeFoodRunners)!=null, true);
+      expect((activeView.activeFoodRunnerQueue)!=null, true);
+      expect((activeView.finderResults)!=null, true);
+    });
+  });
+
   /*test('sendPickupRequest', () {
     ActiveNetworkRestClient client = ActiveNetworkRestClient();
     SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
@@ -36,20 +48,12 @@ void main() {
     });
   });*/
 
-  test('getSourceOrgs', () {
+  /*test('getSourceOrgs', () {
     ActiveNetworkRestClient client = ActiveNetworkRestClient();
     Future<List<SourceOrg>> future = client.getSourceOrgs();
     future.then((sourceOrgs){
       print(sourceOrgs.toString());
     }); 
-  });
-
-  /*test('getActiveView', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
-    activeViewFuture.then((activeView){
-      print(activeView);
-    });
   });*/
 
   /*test('login', () {

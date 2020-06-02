@@ -20,8 +20,10 @@ public class NetworkOrchestrator {
 
     @Inject
     private ActiveNetwork activeNetwork;
+
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
+
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
