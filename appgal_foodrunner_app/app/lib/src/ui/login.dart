@@ -22,6 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
 import 'landingScene.dart';
+import 'marker_icons.dart';
 
 class Login extends StatelessWidget
 {
@@ -285,7 +286,11 @@ class ProfileFunctions
 
       if(profileType != "FOOD_RUNNER")
       {
-        Navigator.push(context,MaterialPageRoute(builder: (context) => new LandingScene(profile)));
+        /*LandingScene landingScene = new LandingScene(profile);
+        Navigator.push(context,MaterialPageRoute(builder: (context) => landingScene));
+        LandingSceneState landingSceneState = landingScene.getLandingSceneState();
+        landingSceneState.map();*/
+        Navigator.push(context,MaterialPageRoute(builder: (context) => MarkerIconsPage()));
       }
       else
       {
