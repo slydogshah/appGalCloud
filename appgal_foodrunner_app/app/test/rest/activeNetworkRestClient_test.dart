@@ -29,11 +29,8 @@ test('getActiveView', () {
   test('sendDeliveryNotification', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    Location location = new Location(30.25860595703125,-97.74873352050781);
-
     Future<Profile> profileFuture = profileRestClient.getProfile("m@s.com");
     profileFuture.then((profile){
-      profile.setLocation(location);
       FoodRunner foodRunner = new FoodRunner(profile);
       Future<List<SourceOrg>> future = activeNetworkRestClient.getSourceOrgs();
         future.then((sourceOrgs){
@@ -49,10 +46,29 @@ test('getActiveView', () {
           DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, foodRunner);
           Future<String> status = activeNetworkRestClient.sendDeliveryNotification(dropOffNotification);
           status.then((value) {
+            print(value);
             Map<String,dynamic> json = jsonDecode(value);
             expect(200,json['statusCode']);
           });
       }); 
+    });
+  });
+
+  test('findBestDestination', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
+    //Future<Iterable> future = activeNetworkRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
+    Future<Profile> profileFuture = profileRestClient.getProfile("m@s.com");
+    profileFuture.then((profile){
+      FoodRunner foodRunner = new FoodRunner(profile);
+      Future<Iterable> future = activeNetworkRestClient.findBestDestination(foodRunner);
+      future.then((sourceOrgs){
+        expect(true, sourceOrgs.length > 0);
+        for(SourceOrg sourceOrg in sourceOrgs)
+        {
+          print(sourceOrg.toString());
+        }
+      });
     });
   });
 
