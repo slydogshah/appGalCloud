@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/dropOffNotification.dart';
@@ -14,13 +16,43 @@ import 'package:test/test.dart';
 void main() {
 
 test('getActiveView', () {
-    ActiveNetworkRestClient profileRestClient = new ActiveNetworkRestClient();
-    Future<ActiveView> activeViewFuture = profileRestClient.getActiveView();
+    ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+    Future<ActiveView> activeViewFuture = activeNetworkClient.getActiveView();
     activeViewFuture.then((activeView){
       print(activeView);
       expect((activeView.activeFoodRunners)!=null, true);
       expect((activeView.activeFoodRunnerQueue)!=null, true);
       expect((activeView.finderResults)!=null, true);
+    });
+  });
+
+  test('sendDeliveryNotification', () {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
+    Location location = new Location(30.25860595703125,-97.74873352050781);
+
+    Future<Profile> profileFuture = profileRestClient.getProfile("m@s.com");
+    profileFuture.then((profile){
+      profile.setLocation(location);
+      FoodRunner foodRunner = new FoodRunner(profile);
+      Future<List<SourceOrg>> future = activeNetworkRestClient.getSourceOrgs();
+        future.then((sourceOrgs){
+          SourceOrg sourceOrg;
+          for(SourceOrg cour in sourceOrgs)
+          {
+            if(cour.orgId == "microsoft")
+            {
+              sourceOrg = cour;
+              break;
+            }
+          }
+          DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, foodRunner);
+          Future<String> status = activeNetworkRestClient.sendDeliveryNotification(dropOffNotification);
+          status.then((value) {
+            Map<String,dynamic> json = jsonDecode(value);
+            expect(200,json['statusCode']);
+          });
+      }); 
     });
   });
 
@@ -84,15 +116,5 @@ test('getActiveView', () {
         print(sourceOrg.toString());
       }
     });
-  });*/
-
-  /*test('sendDeliveryNotification', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Location location = new Location(30.25860595703125,-97.74873352050781);
-    SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",location);
-    Profile profile = new Profile("123", "bugs.bunny.shah@gmail.com", "8675309", "");
-    FoodRunner foodRunner = new FoodRunner(profile, location);
-    DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
-    profileRestClient.sendDeliveryNotification(dropOffNotification);
   });*/
 }

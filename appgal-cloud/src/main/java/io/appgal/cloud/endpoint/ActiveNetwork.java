@@ -99,14 +99,14 @@ public class ActiveNetwork {
     @Path("/sendDeliveryNotification")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String sendDeliveryNotification(@RequestBody String jsonBody)
+    public Response sendDeliveryNotification(@RequestBody String jsonBody)
     {
         DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
         this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
 
         JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
-        return responseJson.toString();
+        responseJson.addProperty("statusCode", 200);
+        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("/sendFoodRequest")

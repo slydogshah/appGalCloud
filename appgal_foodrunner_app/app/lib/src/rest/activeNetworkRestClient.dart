@@ -20,14 +20,12 @@ class ActiveNetworkRestClient
     return activeView;
   }
 
-  void sendDeliveryNotification(DropOffNotification dropOffNotification) async
+  Future<String> sendDeliveryNotification(DropOffNotification dropOffNotification) async
   {
-    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/findBestDestination/';
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/sendDeliveryNotification/';
     String jsonBody = dropOffNotification.toString();
-    print(jsonBody);
     var response = await http.post(remoteUrl, body: jsonBody);
-    String responseJson = response.body;
-    print(responseJson);
+    return response.body;
   }
 
   Future<List<SourceOrg>> findBestDestination(FoodRunner foodRunner) async
