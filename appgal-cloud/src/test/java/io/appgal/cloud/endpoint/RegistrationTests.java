@@ -118,7 +118,6 @@ public class RegistrationTests {
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), "c@s.com");
         assertEquals(profile.getMobile(), "8675309");
-        assertEquals(profile.getPhoto(), "photu");
         assertEquals(profile.getPassword(), "c");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
         assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
@@ -158,7 +157,6 @@ public class RegistrationTests {
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), "m@s.com");
         assertEquals(profile.getMobile(), "7675309");
-        assertEquals(profile.getPhoto(), "photu");
         assertEquals(profile.getPassword(), "s");
         assertEquals(profile.getProfileType().name(), "ORG");
         assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
