@@ -96,7 +96,9 @@ public class ActiveNetwork implements Serializable {
                 result.add(foodRunner);
             }
         }
-        this.mongoDBJsonStore.storeResults(result);
+        if(!result.isEmpty()) {
+            this.mongoDBJsonStore.storeResults(result);
+        }
         return result;
     }
 

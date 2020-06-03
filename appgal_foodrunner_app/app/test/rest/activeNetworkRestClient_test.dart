@@ -72,19 +72,29 @@ test('getActiveView', () {
     });
   });
 
-  /*test('sendPickupRequest', () {
-    ActiveNetworkRestClient client = ActiveNetworkRestClient();
-    SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
-    PickupRequest pickupRequest = new PickupRequest(sourceOrg);
-    Future<Iterable> future = client.sendPickupRequest(pickupRequest);
-    future.then((profiles){
-      for(Map<String, dynamic> json in profiles)
+  test('sendPickupRequest', () {
+    ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
+    Future<List<SourceOrg>> future = activeNetworkRestClient.getSourceOrgs();
+    future.then((sourceOrgs){
+      SourceOrg sourceOrg;
+      for(SourceOrg cour in sourceOrgs)
       {
-        Profile profile = Profile.fromJson(json);
-        print(profile.toString());
+        if(cour.orgId == "microsoft")
+        {
+          sourceOrg = cour;
+          break;
+        }
       }
+      PickupRequest pickupRequest = new PickupRequest(sourceOrg);
+      Future<Iterable> requestResponse = activeNetworkRestClient.sendPickupRequest(pickupRequest);
+      requestResponse.then((list) {
+        for(Map<String,dynamic> cour in list)
+        {
+          print(cour.toString());
+        }
+      });
     });
-  });*/
+  });
 
   /*test('sendFoodRequest', () {
     ActiveNetworkRestClient client = ActiveNetworkRestClient();
