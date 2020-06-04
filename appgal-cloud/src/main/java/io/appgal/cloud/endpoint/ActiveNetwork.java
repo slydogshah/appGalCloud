@@ -112,7 +112,7 @@ public class ActiveNetwork {
     @Path("/sendFoodRequest")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String sendFoodRequest(@RequestBody String jsonBody)
+    public Response sendFoodRequest(@RequestBody String jsonBody)
     {
         FoodRequest foodRequest = FoodRequest.parse(jsonBody);
         String requestId = this.deliveryOrchestrator.sendFoodRequest(foodRequest);
@@ -120,10 +120,10 @@ public class ActiveNetwork {
         JsonArray results = this.networkOrchestrator.getLatestResults(requestId);
 
         JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
+        responseJson.addProperty("statusCode", 200);
         responseJson.addProperty("foodRequestId", requestId);
         responseJson.add("results", results);
-        return responseJson.toString();
+        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("sourceOrgs")

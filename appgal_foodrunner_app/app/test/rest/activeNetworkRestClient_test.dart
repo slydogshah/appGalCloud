@@ -96,51 +96,36 @@ test('getActiveView', () {
     });
   });
 
-  /*test('sendFoodRequest', () {
-    ActiveNetworkRestClient client = ActiveNetworkRestClient();
-    SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
-    FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
-    Future<String> future = client.sendFoodRequest(foodRequest);
-    future.then((jsonString){
-      print(jsonString);
+  test('sendFoodRequest', () {
+    ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
+    Future<List<SourceOrg>> future = activeNetworkRestClient.getSourceOrgs();
+    future.then((sourceOrgs){
+      SourceOrg sourceOrg;
+      for(SourceOrg cour in sourceOrgs)
+      {
+        if(cour.orgId == "microsoft")
+        {
+          sourceOrg = cour;
+          break;
+        }
+      }
+      FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
+      Future<String> future = activeNetworkRestClient.sendFoodRequest(foodRequest);
+      future.then((jsonString){
+        print(jsonString);
+        Map<String,dynamic> json = jsonDecode(jsonString);
+        expect(200,json['statusCode']);
+        expect(true, json['foodRequestId'] != null);
+      });
     });
-  });*/
+  });
 
-  /*test('getSourceOrgs', () {
-    ActiveNetworkRestClient client = ActiveNetworkRestClient();
-    Future<List<SourceOrg>> future = client.getSourceOrgs();
+  test('getSourceOrgs', () {
+    ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
+    Future<List<SourceOrg>> future = activeNetworkRestClient.getSourceOrgs();
     future.then((sourceOrgs){
       print(sourceOrgs.toString());
+      expect(true, sourceOrgs.length > 0);
     }); 
-  });*/
-
-  /*test('login', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    AuthCredentials credentials = new AuthCredentials();
-    credentials.email = "blah@blah.com";
-    credentials.password = "blahblah";
-    Future<AuthCredentials> future = profileRestClient.login(credentials);
-    future.then((authCredentials){
-      print(authCredentials.toString());
-    });
-  });*/
-
-  /*test('String.trim() removes surrounding whitespace', () {
-    var string = '  foo ';
-    expect(string.trim(), equals('foo'));
-  });*/
-
-  /*test('findBestDestination', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Iterable> future = profileRestClient.findBestDestination(new FoodRunner(new Profile("id","email","mobile","phone"), new Location(0.0, 0.0)));
-    future.then((sourceOrgs){
-      for(Map<String, dynamic> json in sourceOrgs)
-      {
-        SourceOrg sourceOrg = SourceOrg.fromJson(json);
-        Location location = new Location(0.0, 0.0);
-        sourceOrg.location = location;
-        print(sourceOrg.toString());
-      }
-    });
-  });*/
+  });
 }
