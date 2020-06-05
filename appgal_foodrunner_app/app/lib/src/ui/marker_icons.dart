@@ -10,11 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'page.dart';
 
-class MarkerIconsPage extends GoogleMapExampleAppPage {
-  MarkerIconsPage() : super(const Icon(Icons.map), '');
-  
-  //super(const Icon(Icons.image), 'Marker icons');
-
+class MarkerIconsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MarkerIconsBody();
@@ -73,13 +69,13 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Future<void> _createMarkerImageFromAsset(BuildContext context) async {
-    if (_markerIcon == null) {
+    /*if (_markerIcon == null) {
       final ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context);
       BitmapDescriptor.fromAssetImage(
-              imageConfiguration, 'assets/red_square.png')
+              imageConfiguration, 'assets/maps/icon.png')
           .then(_updateBitmap);
-    }
+    }*/
   }
 
   void _updateBitmap(BitmapDescriptor bitmap) {

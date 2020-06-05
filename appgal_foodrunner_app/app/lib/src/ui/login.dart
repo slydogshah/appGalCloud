@@ -286,11 +286,11 @@ class ProfileFunctions
 
       if(profileType != "FOOD_RUNNER")
       {
-        /*LandingScene landingScene = new LandingScene(profile);
+        LandingScene landingScene = new LandingScene(profile);
         Navigator.push(context,MaterialPageRoute(builder: (context) => landingScene));
         LandingSceneState landingSceneState = landingScene.getLandingSceneState();
-        landingSceneState.map();*/
-        Navigator.push(context,MaterialPageRoute(builder: (context) => MarkerIconsPage()));
+        //landingSceneState.map();
+        //Navigator.push(context,MaterialPageRoute(builder: (context) => MarkerIconsPage()));
       }
       else
       {

@@ -35,6 +35,7 @@ flutter:
     - assets/crane/logo/
     - assets/crane/destinations/
     - assets/fortnightly/
+    - assets/maps/
 
   fonts:
     - family: GalleryIcons
