@@ -5,6 +5,7 @@
 // ignore_for_file: public_member_api_docs
 // ignore_for_file: unawaited_futures
 
+import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -33,7 +34,8 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   @override
   Widget build(BuildContext context) {
     _createMarkerImageFromAsset(context);
-    return Column(
+
+    /*return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -52,6 +54,24 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
           ),
         )
       ],
+    );*/
+
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Maps Sample App'),
+          backgroundColor: Colors.green[700],
+        ),
+        body: GoogleMap(
+              initialCameraPosition: const CameraPosition(
+                target: _kMapCenter,
+                zoom: 7.0,
+              ),
+              markers: _createMarker(),
+              onMapCreated: _onMapCreated,
+        ),
+        bottomNavigationBar: UiFunctions.bottomNavigationBar(context)
+      ),
     );
   }
 
@@ -69,13 +89,13 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Future<void> _createMarkerImageFromAsset(BuildContext context) async {
-    /*if (_markerIcon == null) {
+    if (_markerIcon == null) {
       final ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context);
       BitmapDescriptor.fromAssetImage(
               imageConfiguration, 'assets/maps/icon.png')
           .then(_updateBitmap);
-    }*/
+    }
   }
 
   void _updateBitmap(BitmapDescriptor bitmap) {
