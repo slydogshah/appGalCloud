@@ -45,6 +45,10 @@ dependencies {
     implementation 'org.locationtech.spatial4j:spatial4j:0.7'
     implementation name: 'jai_imageio-1.1'
     implementation 'org.springframework:spring-web:5.2.1.RELEASE'
+
+
+    implementation name: 'machineLearningPipelinePrototype'
+
     //testImplementation 'org.junit.platform:junit-platform-commons:1.5.2'
     //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
