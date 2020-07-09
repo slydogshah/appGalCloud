@@ -186,7 +186,7 @@ class RegistrationScene extends StatelessWidget {
                     onPressed: () 
                     {
                       profileFunctions.showAlertDialogRegistration(context, email.controller.text, 
-                      password.controller.text,mobile.controller.text);
+                      password.controller.text,mobile.controller.text, "FOOD_RUNNER");
                     }
                   )
                 ),
@@ -229,7 +229,8 @@ class ProfileFunctions
     login(context, dialog, credentials);
   }
 
-  void showAlertDialogRegistration(BuildContext context, String email, String password, String mobile) 
+  void showAlertDialogRegistration(BuildContext context, String email, String password, String mobile,
+  String profileType) 
   {
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
@@ -246,18 +247,16 @@ class ProfileFunctions
 
     print("EMAIL: "+email);
     print("PASSWORD: "+password);
+    print("PROFILE_TYPE: "+profileType);
 
     Profile profile = new Profile("", email, mobile, "", password);
+    profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
     profileRestClient.register(profile);
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = profile.email;
     credentials.password = profile.password;
     login(context, dialog, credentials);
-  }
-
-  void register (BuildContext context, Profile profile) {
-    
   }
 
   void login (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
@@ -284,7 +283,7 @@ class ProfileFunctions
       print("MADARCHOD_KI_AULAD_GOD: "+profile.getLocation().toString());
       print("*******");
 
-      if(profileType != "FOOD_RUNNER")
+      if(profileType == "FOOD_RUNNER")
       {
         //LandingScene landingScene = new LandingScene(profile);
         //Navigator.push(context,MaterialPageRoute(builder: (context) => landingScene));
