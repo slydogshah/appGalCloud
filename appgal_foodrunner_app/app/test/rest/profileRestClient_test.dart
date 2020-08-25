@@ -12,7 +12,7 @@ import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
 
 void main() {
-  /*test('profileNotFound', () {
+  test('profileNotFound', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Profile> profileFuture = profileRestClient.getProfile("notFound@blah.com");
         profileFuture.catchError((cbe){
@@ -54,7 +54,7 @@ void main() {
       AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
       expect(authCredentials.statusCode, 401);
     });
-  });*/
+  });
 
   test('register', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
