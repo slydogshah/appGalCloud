@@ -23,6 +23,7 @@ import 'package:flutter/rendering.dart';
 
 import 'landingScene.dart';
 import 'marker_icons.dart';
+import 'uiFunctions.dart';
 
 class Login extends StatelessWidget
 {
@@ -78,19 +79,19 @@ class LoginScene extends StatelessWidget {
                 sizedBoxSpace,
                 password,
                 sizedBoxSpace,
-                ButtonTheme.bar(
-                  child: ButtonBar(
-                    children: <Widget>[
-                      FlatButton(
-                        child: const Text('Register', style: TextStyle(color: Colors.black)),
-                        onPressed: () {
-                          Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                sizedBoxSpace,
+                //ButtonTheme.bar(
+                  //child: ButtonBar(
+                  //  children: <Widget>[
+                  //    FlatButton(
+                  //      child: const Text('Register', style: TextStyle(color: Colors.black)),
+                  //      onPressed: () {
+                  //        Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
+                  //      },
+                  //    ),
+                  //  ],
+                  //),
+                //),
+                //sizedBoxSpace,
                 Center(
                   child:
                     RaisedButton(
@@ -109,7 +110,9 @@ class LoginScene extends StatelessWidget {
     Form form = new Form(child: scrollbar);
 
     AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Login"),);
-    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
+    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,
+      bottomNavigationBar: ProfileOptions.bottomNavigationBar(context)
+    );
     return scaffold;
   }
 }
@@ -271,17 +274,11 @@ class ProfileFunctions
           return;
       }
 
-
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(authCredentials.getProfile());
 
       Profile profile = activeSession.getProfile();
       String profileType = profile.getProfileType();
-
-      print("*******");
-      print("BANDCHOD:[after]"+profile.toString());
-      print("MADARCHOD_KI_AULAD_GOD: "+profile.getLocation().toString());
-      print("*******");
 
       if(profileType == "FOOD_RUNNER")
       {
@@ -357,5 +354,35 @@ class PasswordField extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class ProfileOptions{
+  static BottomNavigationBar bottomNavigationBar(BuildContext context)
+  {
+    BottomNavigationBar bottomNavigationBar = new BottomNavigationBar(
+          currentIndex: 0, // this will be set when a new tab is tapped
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.apps),
+              title: new Text('')
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.mail),
+              title: new Text('Register'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.apps),
+              title: Text('')
+            )
+          ],
+          onTap: (index){
+            if(index == 1)
+            {
+              Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
+            }
+          },
+        );
+    return bottomNavigationBar;
   }
 }
