@@ -72,7 +72,7 @@ test {
     useJUnitPlatform()
     filter {
         //include specific method in any of the tests
-        includeTestsMatching "*Tests"
+        includeTestsMatching "*Tests,*Test"
 
         //include all tests from package
         //includeTestsMatching "org.gradle.internal.*"
