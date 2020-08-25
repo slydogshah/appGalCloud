@@ -1,17 +1,21 @@
 package io.appgal.cloud.services;
 
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
+import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.UUID;
+import java.util.List;
 
 @ApplicationScoped
 public class ProfileRegistrationService {
@@ -25,6 +29,9 @@ public class ProfileRegistrationService {
 
     @Inject
     private NetworkOrchestrator networkOrchestrator;
+
+    @Inject
+    private DeliveryOrchestrator deliveryOrchestrator;
 
     public Profile getProfile(String email)
     {
@@ -90,6 +97,14 @@ public class ProfileRegistrationService {
 
             profile.setLocation(location);
             authResponse.add("profile", profile.toJson());
+
+            List<SourceOrg> match = this.activeNetwork.matchFoodRunner(foodRunner);
+            JsonArray matchArray = new JsonArray();
+            for(SourceOrg sourceOrg:match)
+            {
+                matchArray.add(sourceOrg.toJson());
+            }
+            authResponse.add("sourceOrgs", matchArray);
 
             //logger.info("AUTHENTICATION_SUCCESS");
             return authResponse;

@@ -1,13 +1,17 @@
 package prototype;
 
+import com.google.gson.*;
+
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.services.CustomerService;
 import io.appgal.cloud.services.ProfileRegistrationService;
+
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +19,8 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 @QuarkusTest
-public class SeedData {
-    private static Logger logger = LoggerFactory.getLogger(SeedData.class);
+public class SeedDataTests {
+    private static Logger logger = LoggerFactory.getLogger(SeedDataTests.class);
 
     @Inject
     private CustomerService customerService;
@@ -46,5 +50,10 @@ public class SeedData {
         Profile profile2 = new Profile(UUID.randomUUID().toString(), "m@s.com", "7675309", "", "s",
                 ProfileType.ORG, "microsoft");
         this.profileRegistrationService.register(profile2);
+
+        JsonObject auth = this.profileRegistrationService.login("c@s.com","c");
+        logger.info("****************");
+        logger.info(auth.toString());
+        logger.info("****************");
     }
 }

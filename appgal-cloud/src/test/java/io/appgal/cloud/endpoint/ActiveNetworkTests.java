@@ -1,11 +1,14 @@
 package io.appgal.cloud.endpoint;
 
 import com.google.gson.*;
+
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import io.appgal.cloud.services.DeliveryOrchestrator;
 import io.appgal.cloud.services.NetworkOrchestrator;
 import io.appgal.cloud.services.ProfileRegistrationService;
+
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.UUID;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +37,9 @@ public class ActiveNetworkTests {
 
     @Inject
     private DeliveryOrchestrator deliveryOrchestrator;
+
+    @Inject
+    private ActiveNetwork activeNetwork;
 
     private Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -193,5 +200,15 @@ public class ActiveNetworkTests {
         /*JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         String statusCode = jsonObject.get("statusCode").getAsString();
         assertEquals("0", statusCode);*/
+    }
+
+    @Test
+    public void testMatchFoodRunner()
+    {
+       List<SourceOrg> match = this.activeNetwork.matchFoodRunner(new FoodRunner());
+
+       logger.info("****************");
+       logger.info(match.toString());
+       logger.info("****************");
     }
 }
