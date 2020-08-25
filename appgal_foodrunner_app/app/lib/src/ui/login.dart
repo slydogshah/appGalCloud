@@ -16,6 +16,7 @@ import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/pickupSource.dart';
+import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -264,8 +265,10 @@ class ProfileFunctions
 
   void login (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
-    future.then((authCredentials){
+    Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
+    future.then((FoodRunnerLoginData){
+      AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
+
       //Navigator.of(context, rootNavigator: true).pop();
       Navigator.pop(context);
 
@@ -286,7 +289,7 @@ class ProfileFunctions
         //Navigator.push(context,MaterialPageRoute(builder: (context) => landingScene));
         //LandingSceneState landingSceneState = landingScene.getLandingSceneState();
         //landingSceneState.map();
-        Navigator.push(context,MaterialPageRoute(builder: (context) => MarkerIconsPage()));
+        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(FoodRunnerLoginData.sourceOrgs)));
       }
       else
       {

@@ -1,6 +1,7 @@
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
+import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
@@ -34,8 +35,9 @@ void main() {
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = "m@s.com";
     credentials.password = "s";
-    Future<AuthCredentials> future = profileRestClient.login(credentials);
-    future.then((authCredentials){
+    Future<FoodRunnerLoginData> future = profileRestClient.login(credentials);
+    future.then((foodRunnerLoginData){
+      AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
       Profile profile = authCredentials.getProfile();
       print(profile.toString());
       expect(profile.email, "m@s.com");
@@ -47,8 +49,9 @@ void main() {
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = "m@s.com";
     credentials.password = "c";
-    Future<AuthCredentials> future = profileRestClient.login(credentials);
-    future.then((authCredentials){
+    Future<FoodRunnerLoginData> future = profileRestClient.login(credentials);
+    future.then((foodRunnerLoginData){
+      AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
       expect(authCredentials.statusCode, 401);
     });
   });
