@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.services.AuthenticationException;
 import io.appgal.cloud.services.ProfileRegistrationService;
+import io.appgal.cloud.services.ResourceExistsException;
 import io.appgal.cloud.model.Profile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +44,21 @@ public class Registration {
     @Produces(MediaType.APPLICATION_JSON)
     public Response register(@RequestBody String profileJson)
     {
-        logger.info(profileJson);
-        JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
-        Profile profile = Profile.parse(jsonObject.toString());
-        this.profileRegistrationService.register(profile);
+        try {
+            logger.info(profileJson);
+            JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
+            Profile profile = Profile.parse(jsonObject.toString());
+            this.profileRegistrationService.register(profile);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", 200);
-        return Response.ok(responseJson.toString()).build();
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("statusCode", 200);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(ResourceExistsException rxe)
+        {
+            logger.info(rxe.getMessage());
+            return Response.status(409).build();
+        }
     }
 
     @Path("login")

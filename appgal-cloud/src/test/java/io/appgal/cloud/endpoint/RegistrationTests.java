@@ -69,6 +69,25 @@ public class RegistrationTests {
     }
 
     @Test
+    public void testRegisterResourceExists() throws Exception{
+        JsonObject json = new JsonObject();
+        String uuid = UUID.randomUUID().toString();
+        json.addProperty("id", uuid);
+        json.addProperty("email", "resource.exists."+uuid+"@blah.com");
+        json.addProperty("mobile", "8675309");
+        json.addProperty("photo", "photu");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        given().body(json.toString()).when().post("/registration/profile").andReturn();
+
+        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info("****");
+        assertEquals(409,response.getStatusCode());
+    }
+
+    @Test
     public void testGetProfileNotFound() throws Exception{
         Response response = given().when().get("/registration/profile?email=xyz")
                 .andReturn();

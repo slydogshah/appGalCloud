@@ -39,13 +39,16 @@ public class ProfileRegistrationService {
         return profile;
     }
 
-    public void register(Profile profile)
+    public void register(Profile profile) throws ResourceExistsException
     {
         //TODO: Add validation..Add proper response
-        Profile exists = this.mongoDBJsonStore.getProfile(profile.getEmail());
+        String email = profile.getEmail();
+        Profile exists = this.mongoDBJsonStore.getProfile(email);
         if(exists != null)
         {
-            return;
+            JsonObject message = new JsonObject();
+            message.addProperty("email",email);
+            throw new ResourceExistsException(message.toString());
         }
 
         profile.setId(UUID.randomUUID().toString());
