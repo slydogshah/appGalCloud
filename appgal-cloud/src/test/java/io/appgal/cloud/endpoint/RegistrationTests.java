@@ -40,7 +40,7 @@ public class RegistrationTests {
 
         Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
 
-        String jsonString = response.getBody().prettyPrint();
+        String jsonString = response.getBody().asString();
         logger.info("****");
         logger.info(response.getStatusLine());
         logger.info(jsonString);
@@ -53,7 +53,7 @@ public class RegistrationTests {
         response = given().when().get("/registration/profile?email=blah@blah.com")
                 .andReturn();
 
-        jsonString = response.getBody().prettyPrint();
+        jsonString = response.getBody().asString();
         logger.info("****");
         logger.info(response.getStatusLine());
         logger.info(jsonString);
