@@ -43,15 +43,16 @@ public class SeedDataTests {
         customerService.storeSourceOrg(dropOff1);
         customerService.storeSourceOrg(dropOff2);
 
-        Profile profile = new Profile(UUID.randomUUID().toString(), "c@s.com", "8675309", "", "c",
+        String uuid = UUID.randomUUID().toString();
+        Profile profile = new Profile(UUID.randomUUID().toString(), "c."+uuid+"@s.com", "8675309", "", "c",
                 ProfileType.FOOD_RUNNER);
         this.profileRegistrationService.register(profile);
 
-        Profile profile2 = new Profile(UUID.randomUUID().toString(), "m@s.com", "7675309", "", "s",
+        Profile profile2 = new Profile(UUID.randomUUID().toString(), "m."+uuid+"@s.com", "7675309", "", "s",
                 ProfileType.ORG, "microsoft");
         this.profileRegistrationService.register(profile2);
 
-        JsonObject auth = this.profileRegistrationService.login("c@s.com","c");
+        JsonObject auth = this.profileRegistrationService.login("c."+uuid+"@s.com","c");
         logger.info("****************");
         logger.info(auth.toString());
         logger.info("****************");

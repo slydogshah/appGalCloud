@@ -6,6 +6,7 @@ import io.appgal.cloud.services.AuthenticationException;
 import io.appgal.cloud.services.ProfileRegistrationService;
 import io.appgal.cloud.services.ResourceExistsException;
 import io.appgal.cloud.model.Profile;
+import io.appgal.cloud.model.SourceOrg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +50,28 @@ public class Registration {
             JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
             Profile profile = Profile.parse(jsonObject.toString());
             this.profileRegistrationService.register(profile);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("statusCode", 200);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(ResourceExistsException rxe)
+        {
+            logger.info(rxe.getMessage());
+            return Response.status(409).build();
+        }
+    }
+
+    @Path("profileSourceOrg")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerSourceOrg(@RequestBody String sourceOrgJson)
+    {
+        try {
+            logger.info(sourceOrgJson);
+            JsonObject jsonObject = JsonParser.parseString(sourceOrgJson).getAsJsonObject();
+            SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
+            this.profileRegistrationService.registerSourceOrg(sourceOrg);
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("statusCode", 200);
