@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 @QuarkusTest
 public class NetworkOrchestratorTests{
@@ -100,20 +102,25 @@ public class NetworkOrchestratorTests{
 
         @Test
         public void testGetRequest() {
-            double startLatitude = 30.25860595703125d;
-            double startLongitude = -97.74873352050781d;
-            Location location = new Location(startLatitude, startLongitude);
-
-            startLatitude = 44.9441d;
-            startLongitude = -93.0852d;
-            location = new Location(startLatitude, startLongitude);
+            JsonObject registrationJson = new JsonObject();
+            registrationJson.addProperty("id", UUID.randomUUID().toString());
+            registrationJson.addProperty("email", "c@s.com");
+            registrationJson.addProperty("mobile", "8675309");
+            registrationJson.addProperty("photo", "photu");
+            registrationJson.addProperty("password", "c");
+            registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+            given().body(registrationJson.toString()).post("/registration/profile");
+            given().when().post("/activeNetwork/enterNetwork/?email=c@s.com").andReturn();
 
             SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
             pickUp1.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
             SourceOrg pickUp2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com");
+            pickUp2.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
 
             SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com");
+            dropOff1.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
             SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
+            dropOff2.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
 
             PickupRequest pickupRequest = new PickupRequest(UUID.randomUUID().toString(), pickUp1);
             this.networkOrchestrator.sendPickUpRequest(pickupRequest);

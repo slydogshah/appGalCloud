@@ -16,12 +16,15 @@ import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/pickupSource.dart';
+import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
 import 'landingScene.dart';
+import 'marker_icons.dart';
+import 'uiFunctions.dart';
 
 class Login extends StatelessWidget
 {
@@ -77,19 +80,19 @@ class LoginScene extends StatelessWidget {
                 sizedBoxSpace,
                 password,
                 sizedBoxSpace,
-                ButtonTheme.bar(
-                  child: ButtonBar(
-                    children: <Widget>[
-                      FlatButton(
-                        child: const Text('Register', style: TextStyle(color: Colors.black)),
-                        onPressed: () {
-                          Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                sizedBoxSpace,
+                //ButtonTheme.bar(
+                  //child: ButtonBar(
+                  //  children: <Widget>[
+                  //    FlatButton(
+                  //      child: const Text('Register', style: TextStyle(color: Colors.black)),
+                  //      onPressed: () {
+                  //        Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
+                  //      },
+                  //    ),
+                  //  ],
+                  //),
+                //),
+                //sizedBoxSpace,
                 Center(
                   child:
                     RaisedButton(
@@ -108,7 +111,9 @@ class LoginScene extends StatelessWidget {
     Form form = new Form(child: scrollbar);
 
     AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Login"),);
-    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
+    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,
+      bottomNavigationBar: ProfileOptions.bottomNavigationBar(context)
+    );
     return scaffold;
   }
 }
@@ -185,7 +190,7 @@ class RegistrationScene extends StatelessWidget {
                     onPressed: () 
                     {
                       profileFunctions.showAlertDialogRegistration(context, email.controller.text, 
-                      password.controller.text,mobile.controller.text);
+                      password.controller.text,mobile.controller.text, "FOOD_RUNNER");
                     }
                   )
                 ),
@@ -228,7 +233,8 @@ class ProfileFunctions
     login(context, dialog, credentials);
   }
 
-  void showAlertDialogRegistration(BuildContext context, String email, String password, String mobile) 
+  void showAlertDialogRegistration(BuildContext context, String email, String password, String mobile,
+  String profileType) 
   {
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
@@ -245,8 +251,10 @@ class ProfileFunctions
 
     print("EMAIL: "+email);
     print("PASSWORD: "+password);
+    print("PROFILE_TYPE: "+profileType);
 
     Profile profile = new Profile("", email, mobile, "", password);
+    profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
     profileRestClient.register(profile);
     AuthCredentials credentials = new AuthCredentials();
@@ -255,38 +263,33 @@ class ProfileFunctions
     login(context, dialog, credentials);
   }
 
-  void register (BuildContext context, Profile profile) {
-    
-  }
-
   void login (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<AuthCredentials> future = profileRestClient.login(authCredentials);
-    future.then((authCredentials){
+    Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
+    future.then((FoodRunnerLoginData){
+      AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
+
+      //Navigator.of(context, rootNavigator: true).pop();
+      Navigator.pop(context);
+
       if(authCredentials.statusCode == 401)
       {
-          Navigator.pop(context);
           return;
       }
 
-
       ActiveSession activeSession = ActiveSession.getInstance();
-      Profile profile = authCredentials.getProfile();
-      activeSession.setProfile(profile);
-      profile.setLatitude(authCredentials.latitude);
-      profile.setLongitude(authCredentials.longitude);
+      activeSession.setProfile(authCredentials.getProfile());
+
+      Profile profile = activeSession.getProfile();
       String profileType = profile.getProfileType();
 
-
-      print(profile.getLatitude());
-      print(profile.getLongitude());
-      print(profileType);
-      
-      Navigator.of(context, rootNavigator: true).pop();
-
-      if(profileType != "FOOD_RUNNER")
+      if(profileType == "FOOD_RUNNER")
       {
-        Navigator.push(context,MaterialPageRoute(builder: (context) => new LandingScene()));
+        //LandingScene landingScene = new LandingScene(profile);
+        //Navigator.push(context,MaterialPageRoute(builder: (context) => landingScene));
+        //LandingSceneState landingSceneState = landingScene.getLandingSceneState();
+        //landingSceneState.map();
+        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(FoodRunnerLoginData.sourceOrgs)));
       }
       else
       {
@@ -354,5 +357,35 @@ class PasswordField extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class ProfileOptions{
+  static BottomNavigationBar bottomNavigationBar(BuildContext context)
+  {
+    BottomNavigationBar bottomNavigationBar = new BottomNavigationBar(
+          currentIndex: 0, // this will be set when a new tab is tapped
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.apps),
+              title: new Text('')
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.mail),
+              title: new Text('Register'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.apps),
+              title: Text('')
+            )
+          ],
+          onTap: (index){
+            if(index == 1)
+            {
+              Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
+            }
+          },
+        );
+    return bottomNavigationBar;
   }
 }

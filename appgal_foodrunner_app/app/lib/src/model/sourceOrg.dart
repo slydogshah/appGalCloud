@@ -26,7 +26,7 @@ class SourceOrg
     this.orgId = json['orgId'],
     this.orgName = json['orgName'],
     this.orgContactEmail = json['orgContactEmail'],
-    this.location = json['location'];
+    this.location = Location.fromJson(json['location']);
 
     Map<String, dynamic> toJson()
     {

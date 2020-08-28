@@ -19,11 +19,8 @@ public class SourceOrg implements Serializable {
     private String orgId;
     private String orgName;
     private String orgContactEmail;
-
     private DeliveryPreference deliveryPreference;
-
     private List<Profile> profiles;
-
     private Location location;
 
     public SourceOrg()
@@ -136,6 +133,12 @@ public class SourceOrg implements Serializable {
         {
             JsonArray jsonArray = JsonParser.parseString(this.profiles.toString()).getAsJsonArray();
             jsonObject.add("profiles", jsonArray);
+        }
+
+        if(this.location != null)
+        {
+            JsonObject json = this.location.toJson();
+            jsonObject.add("location", json);
         }
 
         return jsonObject;

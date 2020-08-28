@@ -2,8 +2,11 @@ package io.appgal.cloud.endpoint;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.services.AuthenticationException;
 import io.appgal.cloud.services.ProfileRegistrationService;
+import io.appgal.cloud.services.ResourceExistsException;
 import io.appgal.cloud.model.Profile;
+import io.appgal.cloud.model.SourceOrg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.Serializable;
 
 @Path("registration")
 public class Registration {
@@ -22,39 +27,81 @@ public class Registration {
     @Path("profile")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getProfile(@QueryParam("email") String email)
+    public Response getProfile(@QueryParam("email") String email)
     {
-        JsonObject profile = this.profileRegistrationService.getProfile(email);
-        return profile.toString();
+        Profile profile = this.profileRegistrationService.getProfile(email);
+        if(profile == null)
+        {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("message", "profile_not_found");
+            jsonObject.addProperty("email", email);
+            return Response.status(404).entity(jsonObject.toString()).build();
+        }
+        return Response.ok(profile.toString()).build();
     }
 
     @Path("profile")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String register(@RequestBody String profileJson)
+    public Response register(@RequestBody String profileJson)
     {
-        JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
-        Profile profile = Profile.parse(jsonObject.toString());
-        this.profileRegistrationService.register(profile);
+        try {
+            logger.info(profileJson);
+            JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
+            Profile profile = Profile.parse(jsonObject.toString());
+            this.profileRegistrationService.register(profile);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
-        return responseJson.toString();
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("statusCode", 200);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(ResourceExistsException rxe)
+        {
+            logger.info(rxe.getMessage());
+            return Response.status(409).build();
+        }
+    }
+
+    @Path("profileSourceOrg")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerSourceOrg(@RequestBody String sourceOrgJson)
+    {
+        try {
+            logger.info(sourceOrgJson);
+            JsonObject jsonObject = JsonParser.parseString(sourceOrgJson).getAsJsonObject();
+            SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
+            this.profileRegistrationService.registerSourceOrg(sourceOrg);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("statusCode", 200);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(ResourceExistsException rxe)
+        {
+            logger.info(rxe.getMessage());
+            return Response.status(409).build();
+        }
     }
 
     @Path("login")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String login(@RequestBody String credentialsJson)
+    public Response login(@RequestBody String credentialsJson)
     {
         JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
 
         String email = jsonObject.get("email").getAsString();
         String password = jsonObject.get("password").getAsString();
 
-        JsonObject result = this.profileRegistrationService.login(email, password);
-        String json = result.toString();
-        logger.info(json); //TODO: REMOVE_ME
-        return json;
+        try {
+            JsonObject result = this.profileRegistrationService.login(email, password);
+            String json = result.toString();
+            return Response.ok(json).build();
+        }
+        catch(AuthenticationException authenticationException)
+        {
+            return Response.status(401).entity(authenticationException.toString()).build();
+        }
     }
 }

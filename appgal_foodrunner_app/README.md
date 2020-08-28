@@ -1,1 +1,1 @@
-# appgal_foodrunner_app
+# AppGal FoodRunner App

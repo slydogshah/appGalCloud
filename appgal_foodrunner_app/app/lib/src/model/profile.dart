@@ -1,68 +1,76 @@
 import 'dart:convert';
 
+import 'package:app/src/model/location.dart';
+
 class Profile {
   String id;
   String email;
   String mobile;
   String photo;
   String password;
-
-  double latitude;
-  double longitude;
-
   String profileType;
+  Location location;
 
 
   Profile(this.id, this.email, this.mobile, this.photo, this.password);
 
-  double getLatitude()
+  Location getLocation()
   {
-    return this.latitude;
+    return this.location;
   }
 
-  double getLongitude()
+  setLocation(Location location)
   {
-    return this.longitude;
+    this.location = location;
   }
 
-  void setLatitude(double latitude)
-  {
-    this.latitude = latitude;
-  }
-
-  void setLongitude(double longitude)
-  {
-    this.longitude = longitude;
-  }
 
   String getProfileType()
   {
     return this.profileType;
   }
 
+  void setProfileType(String profileType)
+  {
+    this.profileType = profileType;
+  }
+
   Profile.fromJson(Map<String, dynamic> json)
   {
-    id = json['id'];
+    if(json['id'] != null)
+    {
+      id = json['id'];
+    }
     email = json['email'];
     mobile = json['mobile'];
     photo = json['photo'];
-    latitude = json['latitude'];
-    longitude = json['longitude'];
+    if(json['location'] != null)
+    {
+      this.location = Location.fromJson(json['location']);
+    }
     password = json['password'];
     profileType = json['profileType'];
   }
 
-  Map<String, dynamic> toJson() =>
+  Map<String, dynamic> toJson()
   {
-    "id": this.id,
-    "email": this.email,
-    "mobile": this.mobile,
-    "photo": this.photo,
-    "latitude": this.latitude,
-    "longitude": this.longitude,
-    "password": this.password,
-    "profileType":this.profileType
-  };
+    Map<String, dynamic> json = new Map();
+    if(this.id != null)
+    {
+      json['id'] = this.id;
+    }
+    json['email'] = this.email;
+    json['mobile'] = this.mobile;
+    json['photo'] =  this.photo;
+    if(this.location != null)
+    {
+      json['location'] = this.location.toJson();
+    }
+    json['password'] = this.password;
+    json['profileType'] = this.profileType;
+
+    return json;
+  }
 
   String toString()
   {

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("activeNetwork")
@@ -31,10 +32,35 @@ public class ActiveNetwork {
     @Path("activeView")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getActiveView()
+    public Response getActiveView()
     {
         JsonObject activeView = this.networkOrchestrator.getActiveView();
-        return activeView.toString();
+        return Response.ok(activeView.toString()).build();
+    }
+
+    @Path("/enterNetwork")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response enterNetwork(@QueryParam("email") String email)
+    {
+        Profile profile = this.mongoDBJsonStore.getProfile(email);
+        if(profile == null)
+        {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("message", "BAD_REQUEST: \"+email+\" is not a registered user");
+            jsonObject.addProperty("email", email);
+            return Response.status(400).entity(jsonObject.toString()).build();
+        }
+
+        //TODO: PLEASE_REMOVE_THIS
+        Location location = new Location(30.25860595703125d, -97.74873352050781d);
+
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+        this.networkOrchestrator.enterNetwork(foodRunner);
+
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("statusCode", 200);
+        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("pickUpRequest/send")
@@ -59,20 +85,6 @@ public class ActiveNetwork {
         return pickRequestResult.toString();
     }
 
-    @Path("/enterNetwork")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public String enterNetwork(@RequestBody String jsonBody)
-    {
-        Profile profile = this.mongoDBJsonStore.getProfile("bugs.bunny.shah@gmail.com");
-        FoodRunner foodRunner = new FoodRunner(profile, new Location(Double.parseDouble("30.25860595703125d"), Double.parseDouble("-97.74873352050781d")));
-        this.networkOrchestrator.enterNetwork(foodRunner);
-
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
-        return responseJson.toString();
-    }
-
     @Path("/findBestDestination")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -87,20 +99,20 @@ public class ActiveNetwork {
     @Path("/sendDeliveryNotification")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String sendDeliveryNotification(@RequestBody String jsonBody)
+    public Response sendDeliveryNotification(@RequestBody String jsonBody)
     {
         DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
         this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
 
         JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
-        return responseJson.toString();
+        responseJson.addProperty("statusCode", 200);
+        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("/sendFoodRequest")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String sendFoodRequest(@RequestBody String jsonBody)
+    public Response sendFoodRequest(@RequestBody String jsonBody)
     {
         FoodRequest foodRequest = FoodRequest.parse(jsonBody);
         String requestId = this.deliveryOrchestrator.sendFoodRequest(foodRequest);
@@ -108,10 +120,10 @@ public class ActiveNetwork {
         JsonArray results = this.networkOrchestrator.getLatestResults(requestId);
 
         JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
+        responseJson.addProperty("statusCode", 200);
         responseJson.addProperty("foodRequestId", requestId);
         responseJson.add("results", results);
-        return responseJson.toString();
+        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("sourceOrgs")

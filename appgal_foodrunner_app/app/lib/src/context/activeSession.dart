@@ -32,14 +32,6 @@ class ActiveSession
     this.location = location;
   }
 
-  void activate()
-  {
-      ProfileRestClient profileRestClient = new ProfileRestClient();
-      profileRestClient.setProfile(this);
-      //print(this.profile.getLatitude());
-  }
-
-
   static ActiveSession getInstance()
   {
     return ActiveSession.singleton;

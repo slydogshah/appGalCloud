@@ -18,8 +18,13 @@ public class FoodRunner implements Serializable {
     public FoodRunner() {
     }
 
-    public FoodRunner(Profile profile, Location location) {
+    public FoodRunner(Profile profile) {
+        this();
         this.profile = profile;
+    }
+
+    public FoodRunner(Profile profile, Location location) {
+        this(profile);
         this.location = location;
     }
 

@@ -1,17 +1,21 @@
 package io.appgal.cloud.services;
 
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
+import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.UUID;
+import java.util.List;
 
 @ApplicationScoped
 public class ProfileRegistrationService {
@@ -26,45 +30,53 @@ public class ProfileRegistrationService {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
-    public JsonObject getProfile(String email)
+    @Inject
+    private DeliveryOrchestrator deliveryOrchestrator;
+
+    public Profile getProfile(String email)
     {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
-
-        FoodRunner foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
-
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("profile", profile.toJson());
-        if(foodRunner != null) {
-            jsonObject.addProperty("latitude", foodRunner.getLocation().getLatitude());
-            jsonObject.addProperty("longitude", foodRunner.getLocation().getLongitude());
-        }
-
-        return jsonObject;
+        return profile;
     }
 
-    public void register(Profile profile)
+    public void register(Profile profile) throws ResourceExistsException
     {
         //TODO: Add validation..Add proper response
-        Profile exists = this.mongoDBJsonStore.getProfile(profile.getEmail());
+        String email = profile.getEmail();
+        Profile exists = this.mongoDBJsonStore.getProfile(email);
         if(exists != null)
         {
-            return;
+            JsonObject message = new JsonObject();
+            message.addProperty("email",email);
+            throw new ResourceExistsException(message.toString());
         }
 
         profile.setId(UUID.randomUUID().toString());
         this.mongoDBJsonStore.storeProfile(profile);
     }
 
-    public JsonObject login(String email, String password)
+    public void registerSourceOrg(SourceOrg sourceOrg) throws ResourceExistsException
     {
-        JsonObject reject = new JsonObject();
-        reject.addProperty("statusCode", 401);
+        //TODO: Add validation..Add proper response
+        String sourceOrgId = sourceOrg.getOrgId();
+        SourceOrg exists = this.mongoDBJsonStore.getSourceOrg(sourceOrgId);
+        if(exists != null)
+        {
+            JsonObject message = new JsonObject();
+            message.addProperty("sourceOrgId",sourceOrgId);
+            throw new ResourceExistsException(message.toString());
+        }
 
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+    }
+
+    public JsonObject login(String email, String password) throws AuthenticationException
+    {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
             logger.info("PROFILE_NOT_FOUND");
-            return reject;
+            throw new AuthenticationException(email);
         }
 
         String registeredEmail = profile.getEmail();
@@ -73,19 +85,20 @@ public class ProfileRegistrationService {
         if(registeredEmail == null)
         {
             logger.info("EMAIL_NOT_FOUND");
-            return reject;
+            throw new AuthenticationException(email);
         }
 
-        logger.info(registeredEmail);
-        logger.info(email);
-        logger.info(registeredPassword);
-        logger.info(password);
+        //logger.info(registeredEmail);
+        //logger.info(email);
+        //logger.info(registeredPassword);
+        //logger.info(password);
 
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
             JsonObject authResponse = new JsonObject();
             authResponse.addProperty("statusCode", 200);
 
+            //TODO: Unmock
             Location location = new Location(30.25860595703125d, -97.74873352050781d);
             FoodRunner foodRunner = new FoodRunner(profile, location);
             this.networkOrchestrator.enterNetwork(foodRunner);
@@ -100,13 +113,22 @@ public class ProfileRegistrationService {
                 authResponse.addProperty("longitude", -97.74873352050781d);
             }
 
+            profile.setLocation(location);
             authResponse.add("profile", profile.toJson());
 
-            logger.info("AUTHENTICATION_SUCCESS");
+            List<SourceOrg> match = this.activeNetwork.matchFoodRunner(foodRunner);
+            JsonArray matchArray = new JsonArray();
+            for(SourceOrg sourceOrg:match)
+            {
+                matchArray.add(sourceOrg.toJson());
+            }
+            authResponse.add("sourceOrgs", matchArray);
+
+            //logger.info("AUTHENTICATION_SUCCESS");
             return authResponse;
         }
 
         logger.info("AUTHENTICATION_FAILED");
-        return reject;
+        throw new AuthenticationException(email);
     }
 }

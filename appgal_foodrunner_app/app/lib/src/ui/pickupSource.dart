@@ -97,8 +97,7 @@ class _PickupSourceState extends State<PickupSource> {
   {
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
     Profile profile = ActiveSession.getInstance().getProfile();
-    Location location = new Location(profile.getLatitude(), profile.getLongitude());
-    FoodRunner foodRunner = new FoodRunner(profile, location);
+    FoodRunner foodRunner = new FoodRunner(profile);
     Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(foodRunner);
     futureP.then((sourceOrgs){
       if(sourceOrgs.length == 0)
@@ -112,7 +111,7 @@ class _PickupSourceState extends State<PickupSource> {
       //also send a notification I am on my way
       Map<String, dynamic> json = sourceOrgs.elementAt(0);
       SourceOrg sourceOrg = SourceOrg.fromJson(json);
-      DropOffNotification dropOffNotification = DropOffNotification(sourceOrg, location, foodRunner);
+      DropOffNotification dropOffNotification = DropOffNotification(sourceOrg, foodRunner);
       activeNetworkRestClient.sendDeliveryNotification(dropOffNotification);
     });
   }
