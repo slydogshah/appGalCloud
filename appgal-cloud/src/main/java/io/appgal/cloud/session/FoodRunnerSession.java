@@ -22,8 +22,8 @@ import java.util.*;
 public class FoodRunnerSession {
     private static Logger logger = LoggerFactory.getLogger(FoodRunnerSession.class);
 
-    private String foodRunnerId;
-    private String foodRunnerSessionId;
+    //private String foodRunnerId;
+    //private String foodRunnerSessionId;
     private Map<String, List<SourceNotification>> sourceNotifications; //foodRunnerSessionId -> SourceNotications Map
 
     public FoodRunnerSession()
@@ -35,7 +35,7 @@ public class FoodRunnerSession {
         return sourceNotifications;
     }
 
-    public String getFoodRunnerId() {
+    /*public String getFoodRunnerId() {
         return foodRunnerId;
     }
 
@@ -49,7 +49,7 @@ public class FoodRunnerSession {
 
     public void setFoodRunnerSessionId(String foodRunnerSessionId) {
         this.foodRunnerSessionId = foodRunnerSessionId;
-    }
+    }*/
 
     public void receiveNotifications(MessageWindow messageWindow)
     {

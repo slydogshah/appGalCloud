@@ -55,6 +55,8 @@ dependencies {
 
     implementation name: 'machineLearningPipelinePrototype'
 
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+
     testImplementation enforcedPlatform('io.quarkus:quarkus-bom:1.7.0.Final')
     testImplementation 'io.quarkus:quarkus-junit5:1.7.0.Final'
     testImplementation 'io.rest-assured:rest-assured:4.3.0'

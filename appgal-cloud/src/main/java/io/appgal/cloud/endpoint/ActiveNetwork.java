@@ -6,6 +6,7 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import io.appgal.cloud.services.DeliveryOrchestrator;
 import io.appgal.cloud.services.NetworkOrchestrator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -133,5 +134,14 @@ public class ActiveNetwork {
     {
         List<SourceOrg> sourceOrgs = this.networkOrchestrator.getSourceOrgs();
         return sourceOrgs.toString();
+    }
+
+    @Path("/schedulePickUp")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response schedulePickUp(@RequestBody String jsonBody)
+    {
+        JsonObject responseJson = new JsonObject();
+        return Response.ok(responseJson.toString()).build();
     }
 }

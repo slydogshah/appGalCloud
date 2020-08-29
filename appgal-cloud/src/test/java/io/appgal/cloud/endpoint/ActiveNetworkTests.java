@@ -211,4 +211,16 @@ public class ActiveNetworkTests {
        logger.info(match.toString());
        logger.info("****************");
     }
+
+    @Test
+    public void testSchedulePickUp() {
+        Response response = given().body("{}").when().post("/activeNetwork/schedulePickUp/")
+                .andReturn();
+
+        String json = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(json);
+        logger.info("****");
+    }
 }
