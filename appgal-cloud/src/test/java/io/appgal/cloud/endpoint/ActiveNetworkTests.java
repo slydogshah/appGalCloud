@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.List;
 
@@ -214,13 +216,27 @@ public class ActiveNetworkTests {
 
     @Test
     public void testSchedulePickUp() {
-        Response response = given().body("{}").when().post("/activeNetwork/schedulePickUp/")
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
+        Location location = new Location(0.0d, 0.0d);
+        FoodRunner bugsBunny = new FoodRunner(profile, location);
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        long epochSecond = start.toEpochSecond();
+
+        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
+        schedulePickUpNotification.setSourceOrg(sourceOrg);
+        schedulePickUpNotification.setFoodRunner(bugsBunny);
+        schedulePickUpNotification.setStart(start);
+
+        String json = schedulePickUpNotification.toJson().toString();
+
+        Response response = given().body(json).when().post("/activeNetwork/schedulePickUp/")
                 .andReturn();
 
-        String json = response.getBody().prettyPrint();
+        String responseJson = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
-        logger.info(json);
+        logger.info(responseJson);
         logger.info("****");
     }
 }

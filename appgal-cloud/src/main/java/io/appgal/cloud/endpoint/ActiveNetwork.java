@@ -141,6 +141,9 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public Response schedulePickUp(@RequestBody String jsonBody)
     {
+        SchedulePickUpNotification schedulePickUpNotification = SchedulePickUpNotification.parse(jsonBody);
+
+
         JsonObject responseJson = new JsonObject();
         return Response.ok(responseJson.toString()).build();
     }

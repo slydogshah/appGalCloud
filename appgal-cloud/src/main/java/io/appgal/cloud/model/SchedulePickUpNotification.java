@@ -1,7 +1,9 @@
 package io.appgal.cloud.model;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,8 +16,8 @@ public class SchedulePickUpNotification implements Serializable
     private static Logger logger = LoggerFactory.getLogger(SchedulePickUpNotification.class);
 
     private SourceOrg sourceOrg;
-    private OffsetDateTime start;
     private FoodRunner foodRunner;
+    private OffsetDateTime start;
 
     public SchedulePickUpNotification()
     {
@@ -55,7 +57,17 @@ public class SchedulePickUpNotification implements Serializable
         if(jsonObject.has("sourceOrg"))
         {
             JsonObject sourceOrgJson = jsonObject.get("sourceOrg").getAsJsonObject();
-            schedulePickUpNotification.sourceOrg = SourceOrg.parse(sourceOrgJson.getAsString());
+            schedulePickUpNotification.sourceOrg = SourceOrg.parse(sourceOrgJson.toString());
+        }
+        if(jsonObject.has("foodRunner"))
+        {
+            JsonObject foodRunnerJson = jsonObject.get("foodRunner").getAsJsonObject();
+            schedulePickUpNotification.foodRunner = FoodRunner.parse(foodRunnerJson.toString());
+        }
+        if(jsonObject.has("start"))
+        {
+            long startEpochSecond = jsonObject.get("start").getAsLong();
+            schedulePickUpNotification.start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(startEpochSecond),ZoneOffset.UTC);
         }
 
         return schedulePickUpNotification;
@@ -65,8 +77,22 @@ public class SchedulePickUpNotification implements Serializable
     {
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        if(this.sourceOrg != null) {
+            jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        }
+        if(this.foodRunner != null) {
+            jsonObject.add("foodRunner", this.foodRunner.toJson());
+        }
+        if(this.start != null)
+        {
+            jsonObject.addProperty("start", this.start.toEpochSecond());
+        }
 
         return jsonObject;
+    }
+
+    @Override
+    public String toString() {
+        return this.toJson().toString();
     }
 }
