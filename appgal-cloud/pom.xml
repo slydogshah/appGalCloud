@@ -135,6 +135,7 @@
       <artifactId>spark-sql_2.12</artifactId>
       <version>2.4.5</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
@@ -156,6 +157,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+    -->
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_imageio</artifactId>

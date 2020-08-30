@@ -1,10 +1,6 @@
 package io.appgal.cloud.geospatial;
 
 import org.locationtech.spatial4j.distance.DistanceUtils;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.spatial4j.distance.DistanceUtils;
 
 import io.appgal.cloud.model.Location;
 
