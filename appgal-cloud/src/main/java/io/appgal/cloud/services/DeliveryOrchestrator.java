@@ -4,10 +4,12 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -55,5 +57,11 @@ public class DeliveryOrchestrator {
     public FoodRequest getFoodRequest(String requestId)
     {
         return this.mongoDBJsonStore.getFoodRequest(requestId);
+    }
+
+    public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
+    {
+        logger.info("***********************");
+        logger.info("***********************");
     }
 }

@@ -62,4 +62,10 @@ public class DeliveryOrchestratorTests {
         logger.info("*******");
         logger.info(this.gson.toJson(sent.toJson()));
     }
+
+    @Test
+    public void testSchedulePickUp() throws Exception
+    {
+        this.deliveryOrchestrator.schedulePickUp(null);
+    }
 }

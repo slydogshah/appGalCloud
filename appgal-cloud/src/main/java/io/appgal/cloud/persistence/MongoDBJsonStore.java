@@ -542,4 +542,14 @@ public class MongoDBJsonStore {
         collection = database.getCollection("profile");
         collection.deleteMany(Document.parse("{}"));
     }
+
+    public void storeScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        Document doc = Document.parse(schedulePickUpNotification.toString());
+        collection.insertOne(doc);
+    }
 }
