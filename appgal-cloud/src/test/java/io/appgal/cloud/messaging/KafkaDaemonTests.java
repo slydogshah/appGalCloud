@@ -3,10 +3,12 @@ package io.appgal.cloud.messaging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DataSetFromBegginningOffset;
 import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
+
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -18,7 +20,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 public class KafkaDaemonTests {
@@ -39,6 +41,8 @@ public class KafkaDaemonTests {
                 break;
             }
         }
+
+        assertTrue(this.kafkaDaemon.getActive());
 
         logger.info("****");
         logger.info("ABOUT_TO_PRODUCE_DATA");

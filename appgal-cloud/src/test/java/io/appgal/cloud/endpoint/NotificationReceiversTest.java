@@ -48,15 +48,15 @@ public class NotificationReceiversTest {
                 .andReturn();
 
         String json = response.getBody().prettyPrint();
-        //logger.info("****");
-        //logger.info(json);
-        //logger.info("****");
+        logger.info("****");
+        logger.info(json);
+        logger.info("****");
 
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         String statusCode = jsonObject.get("statusCode").getAsString();
 
-        assertEquals("1", statusCode);
+        assertEquals("0", statusCode);
     }
 
     @Test
