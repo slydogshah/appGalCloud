@@ -22,6 +22,7 @@ public class SourceNotificationEmitter {
     public void emit(SourceNotification sourceNotification)
     {
         MessageWindow messageWindow = sourceNotification.getMessageWindow();
+        messageWindow.setTopic(SourceNotification.TOPIC);
 
         //find the SourceNotifications with this time window
         JsonArray jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);

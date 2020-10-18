@@ -259,13 +259,19 @@ public class KafkaDaemon {
     private JsonArray readLogByWindow(MessageWindow messageWindow)
     {
         OffsetDateTime start = messageWindow.getStart();
+        String topic = messageWindow.getTopic();
 
         //Construct the parameters to read the Kafka Log
         Map<TopicPartition, Long> partitionParameter = new HashMap<>();
         long time = start.toInstant().toEpochMilli();
-        List<TopicPartition> currentTopicPartitions = topicPartitions.get(messageWindow.getTopic());
+        List<TopicPartition> currentTopicPartitions = topicPartitions.get(topic);
+        TopicPartition chosenPartion = null;
         for (TopicPartition topicPartition : currentTopicPartitions) {
             partitionParameter.put(topicPartition, time);
+            if(topicPartition.topic().equals(topic))
+            {
+                chosenPartion = topicPartition;
+            }
         }
 
         //
@@ -274,9 +280,13 @@ public class KafkaDaemon {
         Object[] array = entrySet.toArray();
         Map.Entry<TopicPartition, OffsetAndTimestamp> lastEntry = (Map.Entry<TopicPartition, OffsetAndTimestamp>)array[entrySet.size()-1];
         OffsetAndTimestamp offsetAndTimestamp = lastEntry.getValue();
-        kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
-        ConsumerRecords<String,String> records = kafkaConsumer.poll(Duration.of(20, ChronoUnit.SECONDS));
         JsonArray jsonArray = new JsonArray();
+        if(offsetAndTimestamp == null)
+        {
+            return jsonArray;
+        }
+        kafkaConsumer.seek(chosenPartion, offsetAndTimestamp.offset());
+        ConsumerRecords<String,String> records = kafkaConsumer.poll(Duration.of(20, ChronoUnit.SECONDS));
         for(ConsumerRecord<String, String> record:records)
         {
             jsonArray.add(JsonParser.parseString(record.value()).getAsJsonObject());
