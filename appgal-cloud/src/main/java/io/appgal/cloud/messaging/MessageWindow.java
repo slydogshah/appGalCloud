@@ -9,12 +9,19 @@ public class MessageWindow {
     private OffsetDateTime start;
     private OffsetDateTime end;
     private JsonArray messages;
+    private String topic;
 
-    public MessageWindow(OffsetDateTime start, OffsetDateTime end)
+    public MessageWindow()
+    {
+
+    }
+
+    public MessageWindow(String topic, OffsetDateTime start, OffsetDateTime end)
     {
         this.start = start;
         this.end = end;
         this.messages = new JsonArray();
+        this.topic = topic;
     }
 
     public OffsetDateTime getStart() {
@@ -27,6 +34,22 @@ public class MessageWindow {
 
     public JsonArray getMessages() {
         return messages;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public void setStart(OffsetDateTime start) {
+        this.start = start;
+    }
+
+    public void setEnd(OffsetDateTime end) {
+        this.end = end;
     }
 
     public synchronized JsonArray getCopyOfMessages()

@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 
 import io.appgal.cloud.model.ActiveFoodRunnerData;
 import io.appgal.cloud.model.DataSetFromBegginningOffset;
+import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import io.appgal.cloud.persistence.MongoDBJsonStore;
 import io.appgal.cloud.util.MapUtils;
@@ -106,6 +107,8 @@ public class KafkaDaemon {
             KafkaRebalanceListener rebalanceListener = new KafkaRebalanceListener(this.kafkaConsumer, this.readNotificationsQueue, this.topics,
                     this.topicPartitions);
             this.kafkaConsumer.subscribe(this.topics, rebalanceListener);
+
+            kafkaConsumer.poll(Duration.of(20, ChronoUnit.SECONDS));
         }
 
         if(this.kafkaProducer == null) {
@@ -124,14 +127,6 @@ public class KafkaDaemon {
                 throw new RuntimeException(e);
             }
         }
-
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                findNotifications();
-            }
-        });
-        t.start();
     }
 
     @PreDestroy
@@ -173,6 +168,7 @@ public class KafkaDaemon {
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
         NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
+        messageWindow.setTopic(topic);
         readNotificationsQueue.add(notificationContext);
         NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext, this.lookupTable);
         this.commonPool.execute(notificationFinderTask);
@@ -184,7 +180,9 @@ public class KafkaDaemon {
         for(ActiveFoodRunnerData local:activeFoodRunnerData) {
             OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
             OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC);
-            MessageWindow messageWindow = new MessageWindow(start,end);
+            MessageWindow messageWindow = new MessageWindow();
+            messageWindow.setStart(start);
+            messageWindow.setEnd(end);
             NotificationContext notificationContext = new NotificationContext(topic,messageWindow);
             readNotificationsQueue.add(notificationContext);
             ProducerTask producerTask = new ProducerTask(this.kafkaProducer, topic, local.toJson());
@@ -243,71 +241,8 @@ public class KafkaDaemon {
         return jsonArray;
     }
 
-    private void findNotifications()
-    {
-        try {
-            do {
-                logger.debug("Start Long Poll");
-                ConsumerRecords<String, String> records = kafkaConsumer.poll(20000);
-                records.forEach(record -> process(record));
 
-                //TODO: Read multiple NotificationContexts during this run
-                //printNotificationsQueue();
-                if (readNotificationsQueue.isEmpty()) {
-                    logger.debug("NO_ACTIVE_READS_IN_PROGRESS");
-                    continue;
-                }
-                this.processNotifications(records);
-            } while (true);
-        }
-        catch(Exception ie)
-        {
-            logger.error(ie.getMessage(), ie);
-            throw new RuntimeException(ie);
-        }
-    }
-
-    private void processNotifications(ConsumerRecords<String, String> records)
-    {
-        NotificationContext notificationContext = readNotificationsQueue.poll();
-        MessageWindow messageWindow = notificationContext.getMessageWindow();
-
-        String topic = notificationContext.getTopic();
-        try {
-            for (ConsumerRecord<String, String> record : records) {
-                String jsonValue = record.value();
-
-                JsonObject jsonObject = JsonParser.parseString(jsonValue).getAsJsonObject();
-                messageWindow.addMessage(jsonObject);
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-
-        String lookupTableIndex = messageWindow.getLookupTableIndex();
-        JsonArray copyOfMessages = messageWindow.getCopyOfMessages();
-        Map<String, JsonArray> topicTable = lookupTable.get(topic);
-        if(topicTable == null)
-        {
-            topicTable = new HashMap<>();
-            lookupTable.put(topic, topicTable);
-            topicTable.put(lookupTableIndex, copyOfMessages);
-        }
-        topicTable.put(lookupTableIndex, copyOfMessages);
-        logger.info(copyOfMessages.toString());
-
-        if(daemonListener != null)
-        {
-            daemonListener.receiveNotifications(messageWindow);
-        }
-
-        logger.info("*********KAFKA_DAEMON***********");
-        logger.info("END_READ_NOTIFICATIONS");
-        logger.info("********************");
-
-        this.readLogForTopicFromTheBeginning(messageWindow, topic);
-    }
-
+    //TODO: Investigate if this method should be synchronized because of poll invocation
     private void readLogForTopicFromTheBeginning(MessageWindow messageWindow, String topic)
     {
         logger.info("*******************");
@@ -371,20 +306,7 @@ public class KafkaDaemon {
         }
     }
 
-    private void process(ConsumerRecord<String, String> record) {
-
-        //logger.info("CONSUME_DATA");
-        //logger.info("RECORD_OFFSET: "+record.offset());
-        //logger.info("RECORD_KEY: "+record.key());
-        //logger.info("RECORD_VALUE: "+record.value());
-        //logger.info("....");
-        JsonArray jsonArray = new JsonArray();
-        jsonArray.add(record.value());
-        DataSetFromBegginningOffset dataSetFromBegginningOffset = new DataSetFromBegginningOffset(jsonArray);
-        this.dataSetFromQueue.add(dataSetFromBegginningOffset);
-    }
-
-    private synchronized void printNotificationsQueue()
+    void printNotificationsQueue()
     {
         logger.info("******************");
         logger.info("Queue Size: "+readNotificationsQueue.size());
@@ -393,6 +315,8 @@ public class KafkaDaemon {
         {
             NotificationContext notificationContext = iterator.next();
             logger.info("NotificationContextId: "+notificationContext.getMessageWindow().getStart());
+            MessageWindow messageWindow = notificationContext.getMessageWindow();
+            this.readLogForTopicFromTheBeginning(messageWindow, DestinationNotification.TOPIC);
         }
         logger.info("**********************");
     }

@@ -63,7 +63,9 @@ public class SessionNetworkTests {
         LocalDateTime startOfLocalDateInUtc = LocalDate.now(ZoneOffset.UTC).atStartOfDay();
         OffsetDateTime startTime = OffsetDateTime.of(startOfLocalDateInUtc, ZoneOffset.UTC);
         OffsetDateTime endTime = OffsetDateTime.now(ZoneOffset.UTC);
-        MessageWindow messageWindow = new MessageWindow(startTime, endTime);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(startTime);
+        messageWindow.setEnd(endTime);
         JsonArray jsonArray = new JsonArray();
         for(int i=0; i<1; i++)
         {
@@ -85,7 +87,9 @@ public class SessionNetworkTests {
             startOfLocalDateInUtc = LocalDate.now(ZoneOffset.UTC).atStartOfDay();
             startTime = OffsetDateTime.of(startOfLocalDateInUtc, ZoneOffset.UTC);
             endTime = OffsetDateTime.now(ZoneOffset.UTC);
-            messageWindow = new MessageWindow(startTime, endTime);
+            messageWindow = new MessageWindow();
+            messageWindow.setStart(startTime);
+            messageWindow.setEnd(endTime);
 
             jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
             logger.info(jsonArray.toString());

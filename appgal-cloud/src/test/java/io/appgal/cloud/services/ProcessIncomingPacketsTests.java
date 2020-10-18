@@ -51,7 +51,9 @@ public class ProcessIncomingPacketsTests {
     {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
         this.processIncomingPackets.processSourceNotification(messageWindow);
 
         JsonArray jsonArray = messageWindow.getMessages();
@@ -66,7 +68,9 @@ public class ProcessIncomingPacketsTests {
         sourceNotification.setSourceNotificationId("92ed655a-99a2-438b-8eeb-05d12a2d8a1b");
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
         sourceNotification.setMessageWindow(messageWindow);
         JsonArray json = this.processIncomingPackets.processNotificationForPickup(sourceNotification);
 

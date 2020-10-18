@@ -31,7 +31,9 @@ public class NotificationReceiver {
     {
         OffsetDateTime start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(startTimestamp)), ZoneOffset.UTC);
         OffsetDateTime end = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTimestamp)), ZoneOffset.UTC);
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
 
         this.processIncomingPackets.processSourceNotification(messageWindow);
 
@@ -47,7 +49,9 @@ public class NotificationReceiver {
     {
         OffsetDateTime start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(startTimestamp)), ZoneOffset.UTC);
         OffsetDateTime end = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTimestamp)), ZoneOffset.UTC);
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
         JsonArray destinationNotifications = this.processIncomingPackets.readDestinationNotifications(messageWindow);
 
         JsonObject jsonObject = new JsonObject();

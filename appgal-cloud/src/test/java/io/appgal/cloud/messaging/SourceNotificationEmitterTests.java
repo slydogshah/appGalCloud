@@ -44,7 +44,9 @@ public class SourceNotificationEmitterTests {
     {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
         String sourceNotificationId = UUID.randomUUID().toString();
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(sourceNotificationId);

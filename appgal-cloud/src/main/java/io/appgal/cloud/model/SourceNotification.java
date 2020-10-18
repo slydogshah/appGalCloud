@@ -101,7 +101,11 @@ public class SourceNotification {
                 long end = jsonObject.get("end").getAsLong();
                 JsonArray messages = jsonObject.get("messages").getAsJsonArray();
 
-                MessageWindow messageWindow = new MessageWindow(OffsetDateTime.parse("" + start), OffsetDateTime.parse("" + end));
+                OffsetDateTime startTime = OffsetDateTime.parse("" + start);
+                OffsetDateTime endTime = OffsetDateTime.parse("" + end);
+                MessageWindow messageWindow = new MessageWindow();
+                messageWindow.setStart(startTime);
+                messageWindow.setEnd(endTime);
                 Iterator<JsonElement> iterator = messages.iterator();
                 while (iterator.hasNext()) {
                     messageWindow.addMessage((JsonObject) iterator.next());

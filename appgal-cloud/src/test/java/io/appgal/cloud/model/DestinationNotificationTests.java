@@ -26,7 +26,9 @@ public class DestinationNotificationTests {
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         long startTimestamp = start.toEpochSecond();
         long endTimestamp = end.toEpochSecond();
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
 
         String sourceNotificationId = UUID.randomUUID().toString();
         SourceNotification sourceNotification = new SourceNotification();

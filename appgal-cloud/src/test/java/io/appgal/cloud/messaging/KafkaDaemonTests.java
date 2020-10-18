@@ -51,7 +51,9 @@ public class KafkaDaemonTests {
         List<String> notificationIds = new ArrayList<>();
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
         JsonArray jsonArray = new JsonArray();
         for(int i=0; i<10; i++)
         {
@@ -83,6 +85,8 @@ public class KafkaDaemonTests {
         assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
 
+        kafkaDaemon.printNotificationsQueue();
+
         Thread.sleep(30000);
     }
 
@@ -105,7 +109,9 @@ public class KafkaDaemonTests {
         List<String> notificationIds = new ArrayList<>();
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
         JsonArray jsonArray = new JsonArray();
         for(int i=0; i<10; i++)
         {
@@ -165,7 +171,9 @@ public class KafkaDaemonTests {
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC);
-        MessageWindow messageWindow = new MessageWindow(start, end);
+        MessageWindow messageWindow = new MessageWindow();
+        messageWindow.setStart(start);
+        messageWindow.setEnd(end);
         String sourceNotificationId = UUID.randomUUID().toString();
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(sourceNotificationId);
