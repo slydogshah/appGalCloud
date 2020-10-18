@@ -1,7 +1,6 @@
 package io.appgal.cloud.messaging;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -16,7 +15,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 
 import org.slf4j.Logger;
@@ -30,10 +32,8 @@ import javax.inject.Inject;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -161,18 +161,31 @@ public class KafkaDaemon {
 
     public void produceData(String topic, JsonObject jsonObject)
     {
-        ProducerTask producerTask = new ProducerTask(this.kafkaProducer,topic, jsonObject);
-        this.commonPool.execute(producerTask);
+        //ProducerTask producerTask = new ProducerTask(this.kafkaProducer,topic, jsonObject);
+        //this.commonPool.execute(producerTask);
+        final ProducerRecord<String, String> record = new ProducerRecord<>(topic,
+                topic, jsonObject.toString());
+
+        this.kafkaProducer.send(record, new Callback() {
+            public void onCompletion(RecordMetadata metadata, Exception e) {
+                if (e != null) {
+                    logger.error("Send failed for record {}", record, e);
+                }
+                else
+                {
+                    logger.info("******************************************");
+                    //logger.info("PRODUCE_DATA");
+                    logger.info("RECORD_META_DATA: "+metadata.timestamp());
+                    logger.info("******************************************");
+                }
+            }
+        });
     }
 
     public JsonArray readNotifications(String topic, MessageWindow messageWindow)
     {
-        NotificationContext notificationContext = new NotificationContext(topic, messageWindow);
         messageWindow.setTopic(topic);
-        readNotificationsQueue.add(notificationContext);
-        NotificationFinderTask notificationFinderTask = new NotificationFinderTask(notificationContext, this.lookupTable);
-        this.commonPool.execute(notificationFinderTask);
-        return notificationFinderTask.join();
+        return this.readLogByWindow(messageWindow);
     }
 
     public void produceActiveFoodRunnerData(String topic, List<ActiveFoodRunnerData> activeFoodRunnerData)
@@ -243,38 +256,14 @@ public class KafkaDaemon {
 
 
     //TODO: Investigate if this method should be synchronized because of poll invocation
-    private void readLogForTopicFromTheBeginning(MessageWindow messageWindow, String topic)
+    private JsonArray readLogByWindow(MessageWindow messageWindow)
     {
-        logger.info("*******************");
-        logger.info("readLogForTopicFromTheBeginning invoked");
-        logger.info("*******************");
-
-        /*java.util.Map<TopicPartition,java.lang.Long> offsets = this.kafkaConsumer.beginningOffsets(currentTopicPartitions);
-        Set<Map.Entry<TopicPartition,java.lang.Long>> entrySet = offsets.entrySet();
-        for(Map.Entry<TopicPartition,java.lang.Long> entry:entrySet)
-        {
-            logger.info("BEGINNING_OFFSET: "+entry.getValue()+"");
-            this.kafkaConsumer.seek(entry.getKey(),entry.getValue());
-            ConsumerRecords<String,String> records = kafkaConsumer.poll(Duration.of(20, ChronoUnit.SECONDS));
-            logger.info("RECORDS_FOUND: "+records.count());
-            for(ConsumerRecord<String, String> record:records)
-            {
-                logger.info(record.value());
-                //JsonArray jsonArray = new JsonArray();
-                //jsonArray.add(record.value());
-                //DataSetFromBegginningOffset dataSetFromBegginningOffset = new DataSetFromBegginningOffset(jsonArray);
-                //this.dataSetFromQueue.add(dataSetFromBegginningOffset);
-            }
-        }*/
-
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime start = messageWindow.getStart();
 
         //Construct the parameters to read the Kafka Log
         Map<TopicPartition, Long> partitionParameter = new HashMap<>();
-        //long time = (new Date()).getTime();
-        //long time = start.toInstant().toEpochMilli();
-        long time = 1602994656474l;
-        List<TopicPartition> currentTopicPartitions = topicPartitions.get(topic);
+        long time = start.toInstant().toEpochMilli();
+        List<TopicPartition> currentTopicPartitions = topicPartitions.get(messageWindow.getTopic());
         for (TopicPartition topicPartition : currentTopicPartitions) {
             partitionParameter.put(topicPartition, time);
         }
@@ -288,36 +277,20 @@ public class KafkaDaemon {
             logger.info("******************");
             logger.info("Criteria: "+time);
             logger.info("Offset: "+offsetAndTimestamp);
-            //logger.info("Timestamp: "+offsetAndTimestamp.timestamp());
             logger.info("******************");
         }
 
 
         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
         ConsumerRecords<String,String> records = kafkaConsumer.poll(Duration.of(20, ChronoUnit.SECONDS));
-        logger.info("RECORDS_FOUND: "+records.count());
+        JsonArray jsonArray = new JsonArray();
         for(ConsumerRecord<String, String> record:records)
         {
             logger.info(record.value());
-            JsonArray jsonArray = new JsonArray();
-            jsonArray.add(record.value());
+            jsonArray.add(JsonParser.parseString(record.value()).getAsJsonObject());
             DataSetFromBegginningOffset dataSetFromBegginningOffset = new DataSetFromBegginningOffset(jsonArray);
             this.dataSetFromQueue.add(dataSetFromBegginningOffset);
         }
-    }
-
-    void printNotificationsQueue()
-    {
-        logger.info("******************");
-        logger.info("Queue Size: "+readNotificationsQueue.size());
-        Iterator<NotificationContext> iterator = readNotificationsQueue.iterator();
-        while(iterator.hasNext())
-        {
-            NotificationContext notificationContext = iterator.next();
-            logger.info("NotificationContextId: "+notificationContext.getMessageWindow().getStart());
-            MessageWindow messageWindow = notificationContext.getMessageWindow();
-            this.readLogForTopicFromTheBeginning(messageWindow, DestinationNotification.TOPIC);
-        }
-        logger.info("**********************");
+        return jsonArray;
     }
 }

@@ -31,30 +31,12 @@ public class KafkaDaemonTests {
 
     @Test
     public void testAddingDestinationNotifications() throws InterruptedException {
-        this.kafkaDaemon.logStartUp();
-
-        int counter=0;
-        while(!this.kafkaDaemon.getActive()) {
-            Thread.sleep(5000);
-            if(counter++ == 3)
-            {
-                break;
-            }
-        }
-
-        assertTrue(this.kafkaDaemon.getActive());
-
-        logger.info("****");
-        logger.info("ABOUT_TO_PRODUCE_DATA");
-        logger.info("****");
-
         List<String> notificationIds = new ArrayList<>();
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
         MessageWindow messageWindow = new MessageWindow();
         messageWindow.setStart(start);
         messageWindow.setEnd(end);
-        JsonArray jsonArray = new JsonArray();
         for(int i=0; i<10; i++)
         {
             String sourceNotificationId = UUID.randomUUID().toString();
@@ -76,18 +58,10 @@ public class KafkaDaemonTests {
 
         Thread.sleep(15000);
 
-        logger.info("****");
-        logger.info("ABOUT_TO_ASSERT_DATA");
-        logger.info("****");
-
-        jsonArray = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
+        JsonArray jsonArray = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
         logger.info("TIME_TO_ASSERT_DESTINATION_NOTIFICATION");
-        assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
-
-        kafkaDaemon.printNotificationsQueue();
-
-        Thread.sleep(30000);
+        assertEquals(10, jsonArray.size());
     }
 
     @Test
