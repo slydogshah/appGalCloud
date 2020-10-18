@@ -271,25 +271,15 @@ public class KafkaDaemon {
         //
         Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
         Set<Map.Entry<TopicPartition, OffsetAndTimestamp>> entrySet = topicPartitionOffsetAndTimestampMap.entrySet();
-        OffsetAndTimestamp offsetAndTimestamp=null;
-        for(Map.Entry<TopicPartition, OffsetAndTimestamp> entry:entrySet) {
-            offsetAndTimestamp = entry.getValue();
-            logger.info("******************");
-            logger.info("Criteria: "+time);
-            logger.info("Offset: "+offsetAndTimestamp);
-            logger.info("******************");
-        }
-
-
+        Object[] array = entrySet.toArray();
+        Map.Entry<TopicPartition, OffsetAndTimestamp> lastEntry = (Map.Entry<TopicPartition, OffsetAndTimestamp>)array[entrySet.size()-1];
+        OffsetAndTimestamp offsetAndTimestamp = lastEntry.getValue();
         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
         ConsumerRecords<String,String> records = kafkaConsumer.poll(Duration.of(20, ChronoUnit.SECONDS));
         JsonArray jsonArray = new JsonArray();
         for(ConsumerRecord<String, String> record:records)
         {
-            logger.info(record.value());
             jsonArray.add(JsonParser.parseString(record.value()).getAsJsonObject());
-            DataSetFromBegginningOffset dataSetFromBegginningOffset = new DataSetFromBegginningOffset(jsonArray);
-            this.dataSetFromQueue.add(dataSetFromBegginningOffset);
         }
         return jsonArray;
     }
