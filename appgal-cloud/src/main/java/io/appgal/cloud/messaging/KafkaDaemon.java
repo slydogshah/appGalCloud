@@ -27,8 +27,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import java.net.InetAddress;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -301,31 +305,65 @@ public class KafkaDaemon {
         logger.info("END_READ_NOTIFICATIONS");
         logger.info("********************");
 
-        this.readLogForTopicFromTheBeginning(topic);
+        this.readLogForTopicFromTheBeginning(messageWindow, topic);
     }
 
-    private void readLogForTopicFromTheBeginning(String topic)
+    private void readLogForTopicFromTheBeginning(MessageWindow messageWindow, String topic)
     {
+        logger.info("*******************");
+        logger.info("readLogForTopicFromTheBeginning invoked");
+        logger.info("*******************");
+
+        /*java.util.Map<TopicPartition,java.lang.Long> offsets = this.kafkaConsumer.beginningOffsets(currentTopicPartitions);
+        Set<Map.Entry<TopicPartition,java.lang.Long>> entrySet = offsets.entrySet();
+        for(Map.Entry<TopicPartition,java.lang.Long> entry:entrySet)
+        {
+            logger.info("BEGINNING_OFFSET: "+entry.getValue()+"");
+            this.kafkaConsumer.seek(entry.getKey(),entry.getValue());
+            ConsumerRecords<String,String> records = kafkaConsumer.poll(Duration.of(20, ChronoUnit.SECONDS));
+            logger.info("RECORDS_FOUND: "+records.count());
+            for(ConsumerRecord<String, String> record:records)
+            {
+                logger.info(record.value());
+                //JsonArray jsonArray = new JsonArray();
+                //jsonArray.add(record.value());
+                //DataSetFromBegginningOffset dataSetFromBegginningOffset = new DataSetFromBegginningOffset(jsonArray);
+                //this.dataSetFromQueue.add(dataSetFromBegginningOffset);
+            }
+        }*/
+
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
 
         //Construct the parameters to read the Kafka Log
         Map<TopicPartition, Long> partitionParameter = new HashMap<>();
+        //long time = (new Date()).getTime();
+        //long time = start.toInstant().toEpochMilli();
+        long time = 1602994656474l;
         List<TopicPartition> currentTopicPartitions = topicPartitions.get(topic);
         for (TopicPartition topicPartition : currentTopicPartitions) {
-            partitionParameter.put(topicPartition, start.toEpochSecond());
-            partitionParameter.put(topicPartition, start.toEpochSecond());
+            partitionParameter.put(topicPartition, time);
         }
 
         //
         Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = kafkaConsumer.offsetsForTimes(partitionParameter);
-        kafkaConsumer.poll(100);
+        Set<Map.Entry<TopicPartition, OffsetAndTimestamp>> entrySet = topicPartitionOffsetAndTimestampMap.entrySet();
+        OffsetAndTimestamp offsetAndTimestamp=null;
+        for(Map.Entry<TopicPartition, OffsetAndTimestamp> entry:entrySet) {
+            offsetAndTimestamp = entry.getValue();
+            logger.info("******************");
+            logger.info("Criteria: "+time);
+            logger.info("Offset: "+offsetAndTimestamp);
+            //logger.info("Timestamp: "+offsetAndTimestamp.timestamp());
+            logger.info("******************");
+        }
 
-        //Make sure only unique data gets put in the Queue
-        OffsetAndTimestamp offsetAndTimestamp = topicPartitionOffsetAndTimestampMap.values().iterator().next();
+
         kafkaConsumer.seek(currentTopicPartitions.get(0), offsetAndTimestamp.offset());
-        ConsumerRecords<String,String> records = kafkaConsumer.poll(100);
+        ConsumerRecords<String,String> records = kafkaConsumer.poll(Duration.of(20, ChronoUnit.SECONDS));
+        logger.info("RECORDS_FOUND: "+records.count());
         for(ConsumerRecord<String, String> record:records)
         {
+            logger.info(record.value());
             JsonArray jsonArray = new JsonArray();
             jsonArray.add(record.value());
             DataSetFromBegginningOffset dataSetFromBegginningOffset = new DataSetFromBegginningOffset(jsonArray);

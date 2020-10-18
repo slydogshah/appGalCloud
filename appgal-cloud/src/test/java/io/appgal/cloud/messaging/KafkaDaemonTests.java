@@ -82,6 +82,8 @@ public class KafkaDaemonTests {
         logger.info("TIME_TO_ASSERT_DESTINATION_NOTIFICATION");
         assertNotNull(jsonArray);
         logger.info(jsonArray.toString());
+
+        Thread.sleep(30000);
     }
 
     @Test
