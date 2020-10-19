@@ -56,9 +56,10 @@ public class ProcessIncomingPacketsTests {
         messageWindow.setEnd(end);
         this.processIncomingPackets.processSourceNotification(messageWindow);
 
-        JsonArray jsonArray = messageWindow.getMessages();
-        //assertNotNull(jsonArray);
-        //logger.info("NUMBER_OF_NOTIFICATIONS: "+jsonArray.size());
+        JsonArray jsonArray = kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
+        logger.info(jsonArray.toString());
+        assertNotNull(jsonArray);
+        logger.info("NUMBER_OF_NOTIFICATIONS: "+jsonArray.size());
     }
 
     @Test

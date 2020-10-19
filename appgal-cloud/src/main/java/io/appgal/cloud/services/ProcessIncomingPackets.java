@@ -35,6 +35,7 @@ public class ProcessIncomingPackets {
     {
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(UUID.randomUUID().toString());
+        messageWindow.setTopic(SourceNotification.TOPIC);
         sourceNotification.setMessageWindow(messageWindow);
 
         this.sourceNotificationReceiver.receive(sourceNotification);
