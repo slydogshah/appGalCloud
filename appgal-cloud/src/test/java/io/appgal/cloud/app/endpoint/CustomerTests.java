@@ -1,6 +1,5 @@
-package io.appgal.cloud.endpoint;
+package io.appgal.cloud.app.endpoint;
 
-import com.google.gson.JsonObject;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;

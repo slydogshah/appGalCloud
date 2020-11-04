@@ -1,13 +1,11 @@
-package io.appgal.cloud.session;
+package io.appgal.cloud.network.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.appgal.cloud.network.services.ProcessIncomingPackets;
 import io.appgal.cloud.infrastructure.messaging.KafkaDaemon;
 import io.appgal.cloud.infrastructure.messaging.MessageWindow;
 import io.appgal.cloud.model.SourceNotification;
-import io.appgal.cloud.network.services.SessionNetwork;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

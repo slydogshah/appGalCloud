@@ -1,4 +1,4 @@
-package io.appgal.cloud.session;
+package io.appgal.cloud.network.services;
 
 /*import com.google.gson.JsonObject;
 import io.appgal.cloud.infrastructure.messaging.MessageWindow;

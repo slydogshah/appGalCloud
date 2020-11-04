@@ -1,9 +1,8 @@
-package io.appgal.cloud.services;
+package io.appgal.cloud.network.services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.appgal.cloud.model.*;
-import io.appgal.cloud.network.services.DeliveryOrchestrator;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 

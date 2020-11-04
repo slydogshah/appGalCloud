@@ -1,6 +1,5 @@
-package io.appgal.cloud.services;
+package io.appgal.cloud.network.services;
 
-import io.appgal.cloud.network.services.FoodRunnerMessaging;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

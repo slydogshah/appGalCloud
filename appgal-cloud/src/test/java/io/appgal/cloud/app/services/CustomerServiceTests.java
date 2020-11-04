@@ -1,8 +1,7 @@
-package io.appgal.cloud.services;
+package io.appgal.cloud.app.services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.appgal.cloud.app.services.CustomerService;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.quarkus.test.junit.QuarkusTest;
