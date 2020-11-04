@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.appgal.cloud.messaging.MessageWindow;
+import io.appgal.cloud.infrastructure.messaging.MessageWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

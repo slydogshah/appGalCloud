@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.appgal.cloud.messaging.KafkaDaemon;
+import io.appgal.cloud.infrastructure.messaging.KafkaDaemon;
 import io.appgal.cloud.model.SourceNotification;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;

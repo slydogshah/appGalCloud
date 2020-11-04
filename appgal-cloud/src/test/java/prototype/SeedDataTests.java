@@ -6,8 +6,8 @@ import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
-import io.appgal.cloud.services.CustomerService;
-import io.appgal.cloud.services.ProfileRegistrationService;
+import io.appgal.cloud.app.services.CustomerService;
+import io.appgal.cloud.app.services.ProfileRegistrationService;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;

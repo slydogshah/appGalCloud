@@ -4,10 +4,10 @@ import com.google.gson.*;
 
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
-import io.appgal.cloud.persistence.MongoDBJsonStore;
-import io.appgal.cloud.services.DeliveryOrchestrator;
-import io.appgal.cloud.services.NetworkOrchestrator;
-import io.appgal.cloud.services.ProfileRegistrationService;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.network.services.DeliveryOrchestrator;
+import io.appgal.cloud.network.services.NetworkOrchestrator;
+import io.appgal.cloud.app.services.ProfileRegistrationService;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;

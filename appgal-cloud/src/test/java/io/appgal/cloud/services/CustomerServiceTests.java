@@ -2,8 +2,9 @@ package io.appgal.cloud.services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.appgal.cloud.app.services.CustomerService;
 import io.appgal.cloud.model.SourceOrg;
-import io.appgal.cloud.persistence.MongoDBJsonStore;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

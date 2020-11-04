@@ -15,7 +15,7 @@ import 'package:test/test.dart';
 
 void main() {
 
-test('getActiveView', () {
+/*est('getActiveView', () {
     ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
     Future<ActiveView> activeViewFuture = activeNetworkClient.getActiveView();
     activeViewFuture.then((activeView){
@@ -70,9 +70,9 @@ test('getActiveView', () {
         }
       });
     });
-  });
+  });*/
 
-  test('sendPickupRequest', () {
+  /*test('sendPickupRequest', () {
     ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
     Future<List<SourceOrg>> future = activeNetworkRestClient.getSourceOrgs();
     future.then((sourceOrgs){
@@ -94,21 +94,15 @@ test('getActiveView', () {
         }
       });
     });
-  });
+  });*/
 
   test('sendFoodRequest', () {
     ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
     Future<List<SourceOrg>> future = activeNetworkRestClient.getSourceOrgs();
+    //print(future);
     future.then((sourceOrgs){
-      SourceOrg sourceOrg;
-      for(SourceOrg cour in sourceOrgs)
-      {
-        if(cour.orgId == "microsoft")
-        {
-          sourceOrg = cour;
-          break;
-        }
-      }
+      //print("HELLO: "+sourceOrgs.toString());
+      SourceOrg sourceOrg = sourceOrgs.first;
       FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
       Future<String> future = activeNetworkRestClient.sendFoodRequest(foodRequest);
       future.then((jsonString){
@@ -118,14 +112,15 @@ test('getActiveView', () {
         expect(true, json['foodRequestId'] != null);
       });
     });
+    //print("HELLO_WORLD");
   });
 
-  test('getSourceOrgs', () {
+  /*test('getSourceOrgs', () {
     ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
     Future<List<SourceOrg>> future = activeNetworkRestClient.getSourceOrgs();
     future.then((sourceOrgs){
       print(sourceOrgs.toString());
       expect(true, sourceOrgs.length > 0);
     }); 
-  });
+  });*/
 }

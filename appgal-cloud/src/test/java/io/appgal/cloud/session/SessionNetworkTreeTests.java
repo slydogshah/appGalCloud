@@ -1,7 +1,7 @@
 package io.appgal.cloud.session;
 
 /*import com.google.gson.JsonObject;
-import io.appgal.cloud.messaging.MessageWindow;
+import io.appgal.cloud.infrastructure.messaging.MessageWindow;
 import io.appgal.cloud.model.SourceNotification;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;

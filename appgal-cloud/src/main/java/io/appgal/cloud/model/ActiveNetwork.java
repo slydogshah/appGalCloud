@@ -1,8 +1,8 @@
 package io.appgal.cloud.model;
 
 import com.google.gson.JsonArray;
-import io.appgal.cloud.geospatial.DistanceCalculator;
-import io.appgal.cloud.persistence.MongoDBJsonStore;
+import io.appgal.cloud.network.geospatial.DistanceCalculator;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
