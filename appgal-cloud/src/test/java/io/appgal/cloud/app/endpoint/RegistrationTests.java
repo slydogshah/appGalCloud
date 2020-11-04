@@ -24,25 +24,29 @@ public class RegistrationTests {
     @Test
     public void testRegister() throws Exception{
         JsonObject json = new JsonObject();
-        json.addProperty("id", UUID.randomUUID().toString());
-        json.addProperty("email", "blah@blah.com");
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        json.addProperty("id", id);
+        json.addProperty("email", email);
         json.addProperty("mobile", "8675309");
         json.addProperty("photo", "photu");
         json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
 
-        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+        logger.info("******NEW_PROFILE******");
+        logger.info(json.toString());
+        logger.info("***********************");
 
+        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
         String jsonString = response.getBody().asString();
         logger.info("****");
         logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
-
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         int statusCode = jsonObject.get("statusCode").getAsInt();
         assertEquals(200, statusCode);
 
-        response = given().when().get("/registration/profile?email=blah@blah.com")
+        response = given().when().get("/registration/profile?email="+email)
                 .andReturn();
 
         jsonString = response.getBody().asString();
@@ -54,7 +58,7 @@ public class RegistrationTests {
         //assert the body
         jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         assertNotNull(jsonObject.get("id").getAsString());
-        assertEquals(jsonObject.get("email").getAsString(), "blah@blah.com");
+        assertEquals(jsonObject.get("email").getAsString(), email);
         assertEquals(jsonObject.get("mobile").getAsString(), "8675309");
         assertEquals(jsonObject.get("photo").getAsString(), "photu");
         assertEquals(jsonObject.get("profileType").getAsString(), "FOOD_RUNNER");

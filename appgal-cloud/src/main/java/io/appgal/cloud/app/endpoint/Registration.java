@@ -45,7 +45,6 @@ public class Registration {
     public Response register(@RequestBody String profileJson)
     {
         try {
-            logger.info(profileJson);
             JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
             Profile profile = Profile.parse(jsonObject.toString());
             this.profileRegistrationService.register(profile);
@@ -67,7 +66,6 @@ public class Registration {
     public Response registerSourceOrg(@RequestBody String sourceOrgJson)
     {
         try {
-            logger.info(sourceOrgJson);
             JsonObject jsonObject = JsonParser.parseString(sourceOrgJson).getAsJsonObject();
             SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
             this.profileRegistrationService.registerSourceOrg(sourceOrg);
