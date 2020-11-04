@@ -59,9 +59,7 @@ public class ActiveNetwork {
         FoodRunner foodRunner = new FoodRunner(profile, location);
         this.networkOrchestrator.enterNetwork(foodRunner);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", 200);
-        return Response.ok(responseJson.toString()).build();
+        return Response.ok().build();
     }
 
     @Path("pickUpRequest/send")
@@ -105,9 +103,7 @@ public class ActiveNetwork {
         DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
         this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", 200);
-        return Response.ok(responseJson.toString()).build();
+        return Response.ok().build();
     }
 
     @Path("/sendFoodRequest")
@@ -122,7 +118,6 @@ public class ActiveNetwork {
         JsonArray results = this.networkOrchestrator.getLatestResults(requestId);
 
         JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", 200);
         responseJson.addProperty("foodRequestId", requestId);
         responseJson.add("results", results);
         return Response.ok(responseJson.toString()).build();
@@ -145,7 +140,7 @@ public class ActiveNetwork {
         SchedulePickUpNotification schedulePickUpNotification = SchedulePickUpNotification.parse(jsonBody);
 
 
-        JsonObject responseJson = new JsonObject();
+        JsonObject responseJson = schedulePickUpNotification.toJson();
         return Response.ok(responseJson.toString()).build();
     }
 }

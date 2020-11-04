@@ -197,40 +197,4 @@ public class RegistrationTests {
         assertEquals(401, response.getStatusCode());
         assertEquals(jsonObject.get("email").getAsString(), "");
     }
-
-    @Test
-    public void testRegisterSourceOrg() throws Exception{
-        String uuid = UUID.randomUUID().toString();
-        SourceOrg sourceOrg = new SourceOrg("church2/"+uuid, "SUBURB_CHURCH", "suburb.church."+uuid+"@gmail.com");
-        JsonObject json = sourceOrg.toJson();
-
-        Response response = given().body(json.toString()).when().post("/registration/profileSourceOrg").andReturn();
-
-        String jsonString = response.getBody().asString();
-        logger.info("****");
-        logger.info(response.getStatusLine());
-        logger.info(jsonString);
-        logger.info("****");
-
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        int statusCode = jsonObject.get("statusCode").getAsInt();
-        assertEquals(200, statusCode);
-
-        /*response = given().when().get("/registration/profile?email=blah@blah.com")
-                .andReturn();
-
-        jsonString = response.getBody().asString();
-        logger.info("****");
-        logger.info(response.getStatusLine());
-        logger.info(jsonString);
-        logger.info("****");
-
-        //assert the body
-        jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        assertNotNull(jsonObject.get("id").getAsString());
-        assertEquals(jsonObject.get("email").getAsString(), "blah@blah.com");
-        assertEquals(jsonObject.get("mobile").getAsString(), "8675309");
-        assertEquals(jsonObject.get("photo").getAsString(), "photu");
-        assertEquals(jsonObject.get("profileType").getAsString(), "FOOD_RUNNER");*/
-    }
 }

@@ -32,15 +32,10 @@ public class Customer {
     @Produces(MediaType.APPLICATION_JSON)
     public String saveCustomer(@RequestBody String customerJson)
     {
-        logger.info("*******");
-        logger.info(customerJson);
-        logger.info("*******");
-
         SourceOrg sourceOrg = SourceOrg.parse(customerJson);
         this.customerService.storeSourceOrg(sourceOrg);
 
         JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("statusCode", "0");
         return responseJson.toString();
     }
 }

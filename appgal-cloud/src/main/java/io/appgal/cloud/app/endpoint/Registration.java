@@ -60,27 +60,6 @@ public class Registration {
         }
     }
 
-    @Path("profileSourceOrg")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response registerSourceOrg(@RequestBody String sourceOrgJson)
-    {
-        try {
-            JsonObject jsonObject = JsonParser.parseString(sourceOrgJson).getAsJsonObject();
-            SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
-            this.profileRegistrationService.registerSourceOrg(sourceOrg);
-
-            JsonObject responseJson = new JsonObject();
-            responseJson.addProperty("statusCode", 200);
-            return Response.ok(responseJson.toString()).build();
-        }
-        catch(ResourceExistsException rxe)
-        {
-            logger.info(rxe.getMessage());
-            return Response.status(409).build();
-        }
-    }
-
     @Path("login")
     @POST
     @Produces(MediaType.APPLICATION_JSON)

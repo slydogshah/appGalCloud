@@ -83,12 +83,8 @@ public class ActiveNetworkTests {
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
-        logger.info(jsonString);
         logger.info("****");
-
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         assertEquals(200, response.getStatusCode());
-        assertEquals(200, jsonObject.get("statusCode").getAsInt());
     }
 
     @Test
