@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("session")
 public class Session {
@@ -19,13 +20,11 @@ public class Session {
     @Path("list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String listSessions()
+    public Response listSessions()
     {
         //TODO: Re-Implement this @bugs.bunny.shah@gmail.com
         //this.foodRunnerSession.start();
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("statusCode", "0");
-        return jsonObject.toString();
+        return Response.ok().build();
     }
 }

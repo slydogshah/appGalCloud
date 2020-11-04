@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -27,7 +28,7 @@ public class NotificationReceiver {
     @Path("receive")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String receiveSourceNotification(@QueryParam("startTimestamp") String startTimestamp,@QueryParam("endTimestamp") String endTimestamp)
+    public Response receiveSourceNotification(@QueryParam("startTimestamp") String startTimestamp, @QueryParam("endTimestamp") String endTimestamp)
     {
         OffsetDateTime start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(startTimestamp)), ZoneOffset.UTC);
         OffsetDateTime end = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTimestamp)), ZoneOffset.UTC);
@@ -37,15 +38,13 @@ public class NotificationReceiver {
 
         this.processIncomingPackets.processSourceNotification(messageWindow);
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("statusCode", "0");
-        return jsonObject.toString();
+        return Response.ok().build();
     }
 
     @Path("readDestinationNotifications")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String readDestinationNotifications(@QueryParam("startTimestamp") String startTimestamp,@QueryParam("endTimestamp") String endTimestamp)
+    public Response readDestinationNotifications(@QueryParam("startTimestamp") String startTimestamp,@QueryParam("endTimestamp") String endTimestamp)
     {
         OffsetDateTime start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(startTimestamp)), ZoneOffset.UTC);
         OffsetDateTime end = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTimestamp)), ZoneOffset.UTC);
@@ -55,33 +54,31 @@ public class NotificationReceiver {
         JsonArray destinationNotifications = this.processIncomingPackets.readDestinationNotifications(messageWindow);
 
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("statusCode", "0");
         jsonObject.add("destinationNotifications", destinationNotifications);
-        return jsonObject.toString();
+        return Response.ok(jsonObject.toString()).build();
     }
 
     @Path("receiveNotificationForPickup/{sourceNotificationId}")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String receiveNotificationForPickup(@PathParam("sourceNotificationId") String sourceNotificationId)
+    public Response receiveNotificationForPickup(@PathParam("sourceNotificationId") String sourceNotificationId)
     {
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(sourceNotificationId);
         JsonArray response = this.processIncomingPackets.processNotificationForPickup(sourceNotification);
-        return response.toString();
+        return Response.ok(response.toString()).build();
     }
 
     @Path("getOutstandingFoodRunnerNotification")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getOutstandingFoodRunnerNotification()
+    public Response getOutstandingFoodRunnerNotification()
     {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("statusCode", "0");
 
         OutstandingFoodRunnerNotification outstandingFoodRunnerNotification = new OutstandingFoodRunnerNotification();
         outstandingFoodRunnerNotification.setFoodRunnerId(UUID.randomUUID().toString());
         jsonObject.addProperty("foodRunnerId", outstandingFoodRunnerNotification.getFoodRunnerId());
-        return jsonObject.toString();
+        return Response.ok(jsonObject.toString()).build();
     }
 }

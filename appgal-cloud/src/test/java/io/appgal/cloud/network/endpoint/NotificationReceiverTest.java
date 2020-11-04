@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.UUID;
 
 @QuarkusTest
-public class NotificationReceiversTest {
-    private static Logger logger = LoggerFactory.getLogger(NotificationReceiversTest.class);
+public class NotificationReceiverTest {
+    private static Logger logger = LoggerFactory.getLogger(NotificationReceiverTest.class);
 
     @Inject
     private KafkaDaemon kafkaDaemon;
