@@ -1,4 +1,4 @@
-package io.appgal.cloud.network.endpoint;
+package io.appgal.cloud.app.endpoint;
 
 import com.google.gson.*;
 
