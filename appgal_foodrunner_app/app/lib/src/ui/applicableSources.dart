@@ -1,17 +1,13 @@
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/sourceOrg.dart';
-import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/ui/pickupSource.dart';
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 
 import 'driveToDestination.dart';
-
-const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
 class ApplicableSources extends StatefulWidget {
   @override
@@ -19,10 +15,6 @@ class ApplicableSources extends StatefulWidget {
 }
 
 class ApplicableSourcesState extends State<ApplicableSources> {
-  ApplicableSources()
-  {
-  }
-
   List<Card> getCards()
   {
     List<Card> cards = new List();

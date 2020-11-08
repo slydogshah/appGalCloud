@@ -4,7 +4,6 @@
 
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/dropOffNotification.dart';
-import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
@@ -13,7 +12,6 @@ import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 
-import 'applicableSources.dart';
 import 'driveToDestination.dart';
 import 'foodRunnerDestinations.dart';
 

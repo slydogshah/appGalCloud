@@ -1,12 +1,6 @@
-import 'package:app/src/model/foodRequest.dart';
-import 'package:app/src/model/sourceOrg.dart';
-import 'package:app/src/rest/activeNetworkRestClient.dart';
-import 'package:app/src/ui/pickupSource.dart';
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'applicableSources.dart';
 
 class DriveToDestinationScene extends StatefulWidget {
   DriveToDestinationScene();
