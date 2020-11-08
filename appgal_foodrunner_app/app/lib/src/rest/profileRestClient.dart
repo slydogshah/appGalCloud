@@ -6,9 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:app/src/model/authCredentials.dart';
-import 'package:app/src/model/foodRunnerLoginData.dart';
 import '../model/profile.dart';
-import '../context/activeSession.dart';
 
 class ProfileRestClient
 {

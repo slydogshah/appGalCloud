@@ -1,7 +1,6 @@
 import 'package:app/src/model/location.dart';
 
 import '../model/profile.dart';
-import '../rest/profileRestClient.dart';
 
 class ActiveSession
 {
