@@ -1,7 +1,5 @@
 import 'package:http/http.dart' as http;
 
-import 'model/outstandingFoodRunnerNotification.dart';
-
 class FoodRunnerNotificationReceiver
 {
   void getNotification()

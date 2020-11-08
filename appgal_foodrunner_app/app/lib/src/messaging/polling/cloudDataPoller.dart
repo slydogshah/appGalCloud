@@ -5,7 +5,6 @@ import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/ui/pickupSource.dart';
-import 'package:app/src/model/location.dart';
 import 'package:flutter/material.dart';
 
 class CloudDataPoller
