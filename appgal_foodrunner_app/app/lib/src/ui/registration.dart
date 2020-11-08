@@ -1,25 +1,21 @@
-// Copyright 2019 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import 'package:app/src/ui/profileOptions.dart';
+import 'package:app/src/ui/profileFunctions.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
-import 'profileFunctions.dart';
 
-class Login extends StatelessWidget
+class Registration extends StatelessWidget
 {
   @override
   Widget build(BuildContext context) {
-   MaterialApp materialApp = new MaterialApp(home: new LoginScene());
+   MaterialApp materialApp = new MaterialApp(home: new RegistrationScene());
    return materialApp;
   }
+  
 }
 
-class LoginScene extends StatelessWidget {
+class RegistrationScene extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
@@ -27,7 +23,6 @@ class LoginScene extends StatelessWidget {
     final cursorColor = Theme.of(context).cursorColor;
     const sizedBoxSpace = SizedBox(height: 24);
     ProfileFunctions profileFunctions = new ProfileFunctions();
-
     TextFormField email = TextFormField(
                   controller: TextEditingController(),
                   textCapitalization: TextCapitalization.words,
@@ -40,7 +35,6 @@ class LoginScene extends StatelessWidget {
                         "Email",
                   )
                 );
-
     TextField password = TextField(
             controller: TextEditingController(),
             obscureText: true,
@@ -52,7 +46,18 @@ class LoginScene extends StatelessWidget {
                         "Password",
             )
     );
-
+    TextFormField mobile = TextFormField(
+                  controller: TextEditingController(),
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: cursorColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    icon: Icon(Icons.phone),
+                    hintText: "Your mobile number",
+                    labelText:
+                        "Mobile",
+                  )
+                );
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -64,29 +69,18 @@ class LoginScene extends StatelessWidget {
                 sizedBoxSpace,
                 password,
                 sizedBoxSpace,
-                //ButtonTheme.bar(
-                  //child: ButtonBar(
-                  //  children: <Widget>[
-                  //    FlatButton(
-                  //      child: const Text('Register', style: TextStyle(color: Colors.black)),
-                  //      onPressed: () {
-                  //        Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
-                  //      },
-                  //    ),
-                  //  ],
-                  //),
-                //),
-                //sizedBoxSpace,
+                mobile,
+                sizedBoxSpace,
                 Center(
-                  child:
-                    RaisedButton(
-                      child: Text("Login"),
-                      onPressed: () 
-                      {
-                        profileFunctions.showAlertDialog(context, email.controller.text, password.controller.text);
-                      }
-                    )
-                )
+                  child: RaisedButton(
+                    child: Text("Register"),
+                    onPressed: () 
+                    {
+                      profileFunctions.showAlertDialogRegistration(context, email.controller.text, 
+                      password.controller.text,mobile.controller.text, "FOOD_RUNNER");
+                    }
+                  )
+                ),
               ],
             )
           )
@@ -94,10 +88,8 @@ class LoginScene extends StatelessWidget {
 
     Form form = new Form(child: scrollbar);
 
-    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Login"),);
-    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,
-      bottomNavigationBar: ProfileOptions.bottomNavigationBar(context)
-    );
+    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
+    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
     return scaffold;
   }
 }
