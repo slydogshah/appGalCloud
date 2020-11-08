@@ -1,18 +1,11 @@
 import 'dart:async';
 
-import 'package:app/src/context/activeSession.dart';
-import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
-import 'package:app/src/model/sourceOrg.dart';
-import 'package:app/src/rest/activeNetworkRestClient.dart';
-import 'package:app/src/ui/applicableSources.dart';
-import 'package:app/src/ui/pickupSource.dart';
+import 'package:app/src/ui/map_icons.dart';
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'marker_icons.dart';
 
 class LandingScene extends StatefulWidget {
   Profile profile;
