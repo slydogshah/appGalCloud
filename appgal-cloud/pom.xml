@@ -167,6 +167,24 @@
       <artifactId>spring-security-oauth2-autoconfigure</artifactId>
       <version>2.0.1.RELEASE</version>
     </dependency>
+
+    <!-- dataStorage/dataHistory related dependencies -->
+    <!--
+    <dependency>
+      <groupId>io.appgallabs.aiplatform</groupId>
+      <artifactId>braineous</artifactId>
+      <version>SNAPSHOT</version>
+      <systemPath>${project.basedir}/third-party-libs/braineous-SNAPSHOT.jar</systemPath>
+      <scope>system</scope>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>io.appgallabs.aiplatform</groupId>
+      <artifactId>braineous-dataIngestion</artifactId>
+      <version>SNAPSHOT</version>
+      <systemPath>${project.basedir}/third-party-libs/braineous-dataIngestion-SNAPSHOT.jar</systemPath>
+      <scope>system</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

@@ -23,8 +23,8 @@ public class NetworkOrchestrator {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
-    @Inject
-    private NetworkOrchestrator networkOrchestrator;
+    //@Inject
+    //private NetworkOrchestrator networkOrchestrator;
 
     private Queue<PickupRequest> activeFoodRunnerQueue;
 
