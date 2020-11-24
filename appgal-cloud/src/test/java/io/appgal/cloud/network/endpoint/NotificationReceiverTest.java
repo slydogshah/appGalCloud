@@ -42,7 +42,7 @@ public class NotificationReceiverTest {
         }
     }
 
-    @Test
+    //@Test
     public void testReceiveSourceNotification() {
         Response response = given().when().post("/notification/receive/?startTimestamp=1581392859&endTimestamp=1581393459")
                 .andReturn();
@@ -50,7 +50,7 @@ public class NotificationReceiverTest {
         response.getBody().prettyPrint();
     }
 
-    @Test
+    //@Test
     public void testReadDestinationNotifications() {
         given().when().post("/notification/receive/?startTimestamp=1581392859&endTimestamp=1581393459")
                 .andReturn();
@@ -65,7 +65,7 @@ public class NotificationReceiverTest {
         assertNotNull(destinationNotifications);
     }
 
-    @Test
+    //@Test
     public void testReceiveNotificationForPickup() {
         Response response = given().when().post("/notification/receiveNotificationForPickup/92ed655a-99a2-438b-8eeb-05d12a2d8a1b")
                 .andReturn();
@@ -82,7 +82,7 @@ public class NotificationReceiverTest {
         assertEquals("92ed655a-99a2-438b-8eeb-05d12a2d8a1b", sourceNotificationId);
     }
 
-    @Test
+    //@Test
     public void testGetOutstandingFoodRunnerNotification() {
         Response response = given().when().get("/notification/getOutstandingFoodRunnerNotification").andReturn();
 

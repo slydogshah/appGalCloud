@@ -46,7 +46,7 @@ public class ProcessIncomingPacketsTests {
         }
     }
 
-    @Test
+    //@Test
     public void testProcessSourceNotification()
     {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
@@ -62,7 +62,7 @@ public class ProcessIncomingPacketsTests {
         logger.info("NUMBER_OF_NOTIFICATIONS: "+jsonArray.size());
     }
 
-    @Test
+    //@Test
     public void testProcessSourceNotificationForPickup()
     {
         SourceNotification sourceNotification = new SourceNotification();

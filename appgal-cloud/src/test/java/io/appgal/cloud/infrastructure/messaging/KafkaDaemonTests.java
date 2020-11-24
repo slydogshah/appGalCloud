@@ -28,7 +28,7 @@ public class KafkaDaemonTests {
     @Inject
     private KafkaDaemon kafkaDaemon;
 
-    @Test
+    //@Test
     public void testAddingDestinationNotifications() throws InterruptedException {
         List<String> notificationIds = new ArrayList<>();
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
@@ -63,7 +63,7 @@ public class KafkaDaemonTests {
         assertTrue(jsonArray.size()>0);
     }
 
-    @Test
+    //@Test
     public void testAddingSourceNotifications() throws InterruptedException {
         this.kafkaDaemon.logStartUp();
         int counter=0;
@@ -112,7 +112,7 @@ public class KafkaDaemonTests {
         logger.info(jsonArray.toString());
     }
 
-    @Test
+    //@Test
     public void testProduceActiveFoodRunnerData() throws InterruptedException {
         this.kafkaDaemon.logStartUp();
         int counter=0;
