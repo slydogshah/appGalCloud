@@ -28,10 +28,12 @@ public class SourceNotificationTests {
         messageWindow.setStart(start);
         messageWindow.setEnd(end);
 
+        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         String sourceNotificationId = UUID.randomUUID().toString();
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(sourceNotificationId);
         sourceNotification.setMessageWindow(messageWindow);
+        sourceNotification.setSourceOrg(sourceOrg1);
 
         JsonObject json = JsonParser.parseString(sourceNotification.toString()).getAsJsonObject();
         //logger.info("****");
