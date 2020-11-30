@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.time.OffsetDateTime;
 import java.util.Iterator;
 
-import io.appgal.cloud.infrastructure.messaging.MessageWindow;
-
 public class SourceNotification {
     private static Logger logger = LoggerFactory.getLogger(SourceNotification.class);
 

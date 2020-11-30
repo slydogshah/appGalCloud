@@ -1,4 +1,4 @@
-package io.appgal.cloud.infrastructure.messaging;
+package io.appgal.cloud.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

@@ -3,7 +3,7 @@ package io.appgal.cloud.network.endpoint;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.network.services.ProcessIncomingPackets;
-import io.appgal.cloud.infrastructure.messaging.MessageWindow;
+import io.appgal.cloud.model.MessageWindow;
 import io.appgal.cloud.model.OutstandingFoodRunnerNotification;
 import io.appgal.cloud.model.SourceNotification;
 import org.slf4j.Logger;
