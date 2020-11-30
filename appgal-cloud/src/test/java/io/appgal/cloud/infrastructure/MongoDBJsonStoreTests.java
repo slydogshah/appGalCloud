@@ -50,6 +50,9 @@ public class MongoDBJsonStoreTests {
                 ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
+
+        logger.info(dropOffNotification.toJson().toString());
+
         this.mongoDBJsonStore.storeDropOffNotification(dropOffNotification);
 
         DropOffNotification stored = this.mongoDBJsonStore.findDropOffNotification("blah");
