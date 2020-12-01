@@ -80,10 +80,4 @@ public class DeliveryOrchestrator {
     {
         return this.mongoDBJsonStore.getFoodRequest(requestId);
     }
-
-    public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
-    {
-        logger.info("***********************");
-        logger.info("***********************");
-    }
 }

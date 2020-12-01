@@ -97,7 +97,7 @@ public class DeliveryOrchestratorTests extends BaseTest {
         }
     }
 
-    //@Test
+    @Test
     public void testFoodRequestCycle()
     {
         FoodRequest foodRequest = new FoodRequest();
@@ -112,11 +112,5 @@ public class DeliveryOrchestratorTests extends BaseTest {
 
         logger.info("*******");
         logger.info(this.gson.toJson(sent.toJson()));
-    }
-
-    //@Test
-    public void testSchedulePickUp() throws Exception
-    {
-        this.deliveryOrchestrator.schedulePickUp(null);
     }
 }

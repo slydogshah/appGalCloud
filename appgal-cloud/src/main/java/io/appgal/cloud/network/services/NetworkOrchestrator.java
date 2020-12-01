@@ -138,6 +138,12 @@ public class NetworkOrchestrator {
         return jsonObject;
     }
 
+    public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
+    {
+        logger.info("***********************");
+        logger.info("***********************");
+    }
+
     private void runFoodRunnerFinder()
     {
         PickupRequest pickupRequest = this.activeFoodRunnerQueue.remove();
