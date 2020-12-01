@@ -12,7 +12,6 @@ public class FoodRunner implements Serializable {
 
     private Profile profile;
     private Location location;
-
     private SourceOrg pickUpOrg;
 
     public FoodRunner() {

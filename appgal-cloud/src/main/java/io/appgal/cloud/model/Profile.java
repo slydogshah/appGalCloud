@@ -22,6 +22,8 @@ public class Profile implements Serializable {
     private ProfileType profileType;
     private Location location;
 
+    private String chainId;
+
     public Profile()
     {
 
@@ -129,6 +131,14 @@ public class Profile implements Serializable {
         this.location = location;
     }
 
+    public String getChainId() {
+        return chainId;
+    }
+
+    public void setChainId(String chainId) {
+        this.chainId = chainId;
+    }
+
     @Override
     public String toString()
     {
@@ -165,6 +175,10 @@ public class Profile implements Serializable {
             jsonObject.add("location", this.location.toJson());
         }
 
+        if(this.chainId != null) {
+            jsonObject.addProperty("chainId", this.chainId);
+        }
+
         return jsonObject;
     }
 
@@ -197,6 +211,10 @@ public class Profile implements Serializable {
         }
         String profileTypeName = jsonObject.get("profileType").getAsString();
         profile.profileType = ProfileType.valueOf(profileTypeName);
+
+        if(jsonObject.has("chainId")) {
+            profile.chainId = jsonObject.get("chainId").getAsString();
+        }
 
         return profile;
     }

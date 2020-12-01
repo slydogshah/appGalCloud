@@ -63,16 +63,6 @@ public class MongoDBJsonStoreTests {
     }
 
     @Test
-    public void testFindKafakaDaemonBootstrapData()
-    {
-        List<String> topics = this.mongoDBJsonStore.findKafakaDaemonBootstrapData();
-
-        assertTrue(topics.contains(SourceNotification.TOPIC));
-        assertTrue(topics.contains(DestinationNotification.TOPIC));
-    }
-
-
-    @Test
     public void testStoreProfile()
     {
         Profile profile = new Profile("CLOUD_ID","blah@blah.com","8675309","photu","", ProfileType.FOOD_RUNNER);

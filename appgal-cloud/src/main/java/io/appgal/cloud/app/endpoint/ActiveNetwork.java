@@ -100,8 +100,9 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendDeliveryNotification(@RequestBody String jsonBody)
     {
-        DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
-        this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
+        //TODO
+        //DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
+        //this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
 
         return Response.ok().build();
     }
