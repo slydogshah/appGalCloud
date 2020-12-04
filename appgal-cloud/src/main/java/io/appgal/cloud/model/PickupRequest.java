@@ -16,11 +16,6 @@ public class PickupRequest implements Serializable,Comparable {
     public PickupRequest() {
     }
 
-    public PickupRequest(String requestId, SourceOrg sourceOrg) {
-        this.requestId = requestId;
-        this.sourceOrg = sourceOrg;
-    }
-
     public String getRequestId() {
         return requestId;
     }

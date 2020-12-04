@@ -23,9 +23,6 @@ public class NetworkOrchestrator {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
-    //@Inject
-    //private NetworkOrchestrator networkOrchestrator;
-
     private Queue<PickupRequest> activeFoodRunnerQueue;
 
     private Map<String, Collection<FoodRunner>> finderResults;
@@ -71,7 +68,9 @@ public class NetworkOrchestrator {
         pickUp1.setLocation(new Location(30.25860595703125d,-97.74873352050781d));
 
 
-        PickupRequest pickupRequest = new PickupRequest(requestId, pickUp1);
+        PickupRequest pickupRequest = new PickupRequest();
+        pickupRequest.setRequestId(requestId);
+        pickupRequest.setSourceOrg(pickUp1);
         Collection<FoodRunner> foodRunners = this.activeNetwork.findFoodRunners(pickupRequest);
         Iterator<FoodRunner> itr = foodRunners.iterator();
         JsonArray array = new JsonArray();

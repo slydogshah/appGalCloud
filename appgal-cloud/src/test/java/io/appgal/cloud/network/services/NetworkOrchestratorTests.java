@@ -121,7 +121,9 @@ public class NetworkOrchestratorTests{
             SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
             dropOff2.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
 
-            PickupRequest pickupRequest = new PickupRequest(UUID.randomUUID().toString(), pickUp1);
+            PickupRequest pickupRequest = new PickupRequest();
+            pickupRequest.setRequestId(UUID.randomUUID().toString());
+            pickupRequest.setSourceOrg(pickUp1);
             this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
             logger.info("*******");
@@ -131,5 +133,20 @@ public class NetworkOrchestratorTests{
             logger.info("*******");
             logger.info(this.gson.toJson(result));
             logger.info("*******");
+        }
+
+        @Test
+        public void testSendPickUpRequest() throws Exception
+        {
+            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+
+            PickupRequest pickupRequest = new PickupRequest();
+            pickupRequest.setSourceOrg(sourceOrg);
+
+            String result = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
+
+            logger.info("***************************************************************");
+            logger.info("RequestId: "+result);
+            logger.info("***************************************************************");
         }
 }
