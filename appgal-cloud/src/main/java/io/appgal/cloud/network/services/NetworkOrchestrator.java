@@ -46,7 +46,8 @@ public class NetworkOrchestrator {
     public void leaveNetwork(FoodRunner foodRunner)
     {
         this.activeNetwork.removeFoodRunner(foodRunner);
-        this.mongoDBJsonStore.deleteFoodRunner(foodRunner);
+        //this.mongoDBJsonStore.deleteFoodRunner(foodRunner);
+        this.mongoDBJsonStore.storeActiveNetwork(this.activeNetwork.getActiveFoodRunners());
     }
 
     public String sendPickUpRequest(PickupRequest pickupRequest)

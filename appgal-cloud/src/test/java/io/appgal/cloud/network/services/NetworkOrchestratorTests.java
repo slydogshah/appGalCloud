@@ -18,8 +18,11 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @QuarkusTest
 public class NetworkOrchestratorTests{
+    private static Logger logger = LoggerFactory.getLogger(NetworkOrchestratorTests.class);
 
     @Inject
     private MongoDBJsonStore mongoDBStore;
@@ -31,16 +34,13 @@ public class NetworkOrchestratorTests{
             .create();
 
 
-
-        private Logger logger = LoggerFactory.getLogger(DeliveryOrchestratorTests.class);
-
         //@Inject
         //private MongoDBJsonStore mongoDBJsonStore;
         //@Inject
         //private NetworkOrchestrator networkOrchestrator;
 
         @Test
-        public void testBootup() throws Exception {
+        public void testEnterNetwork() throws Exception {
             double startLatitude = 30.25860595703125d;
             double startLongitude = -97.74873352050781d;
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
@@ -60,6 +60,45 @@ public class NetworkOrchestratorTests{
             assertNotNull(runnerProfile);
             logger.info(runnerProfile.toString());
         }
+
+    @Test
+    public void testLeaveNetwork() throws Exception {
+            try {
+                //logger.info(this.networkOrchestrator.getActiveView().toString());
+
+                double startLatitude = 30.25860595703125d;
+                double startLongitude = -97.74873352050781d;
+                Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+                Location location = new Location(startLatitude, startLongitude);
+                FoodRunner foodRunner = new FoodRunner(profile, location);
+
+                this.networkOrchestrator.enterNetwork(foodRunner);
+
+                JsonObject activeView = this.networkOrchestrator.getActiveView();
+                logger.info("*******");
+                logger.info(activeView.toString());
+                logger.info("*******");
+
+                JsonArray activeFoodRunners = activeView.getAsJsonArray("activeFoodRunners");
+                JsonObject activeFoodRunner = activeFoodRunners.get(0).getAsJsonObject();
+                JsonObject runnerProfile = activeFoodRunner.getAsJsonObject("profile");
+                assertNotNull(runnerProfile);
+                logger.info(runnerProfile.toString());
+
+                this.networkOrchestrator.leaveNetwork(foodRunner);
+                activeView = this.networkOrchestrator.getActiveView();
+                logger.info("****************************************************");
+                logger.info(activeView.toString());
+                JsonArray allRunners = activeView.get("activeFoodRunners").getAsJsonArray();
+
+                //assertTrue(activeView.get("activeFoodRunners").getAsJsonArray().size() == 0);
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
+    }
 
         @Test
         public void testOrchestration() throws Exception {

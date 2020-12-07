@@ -145,6 +145,11 @@ public class MongoDBJsonStore {
 
     public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
     {
+        if(activeFoodRunners.isEmpty())
+        {
+            return;
+        }
+        
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
