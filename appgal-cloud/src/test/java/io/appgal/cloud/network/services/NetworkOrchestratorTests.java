@@ -1,9 +1,6 @@
 package io.appgal.cloud.network.services;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.quarkus.test.junit.QuarkusTest;
@@ -13,12 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 public class NetworkOrchestratorTests{
@@ -68,7 +65,8 @@ public class NetworkOrchestratorTests{
 
                 double startLatitude = 30.25860595703125d;
                 double startLongitude = -97.74873352050781d;
-                Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+                String profileId = UUID.randomUUID().toString();
+                Profile profile = new Profile(profileId, "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
                 Location location = new Location(startLatitude, startLongitude);
                 FoodRunner foodRunner = new FoodRunner(profile, location);
 
@@ -90,8 +88,18 @@ public class NetworkOrchestratorTests{
                 logger.info("****************************************************");
                 logger.info(activeView.toString());
                 JsonArray allRunners = activeView.get("activeFoodRunners").getAsJsonArray();
-
-                //assertTrue(activeView.get("activeFoodRunners").getAsJsonArray().size() == 0);
+                Iterator<JsonElement> iterator = allRunners.iterator();
+                boolean found = false;
+                while(iterator.hasNext())
+                {
+                    JsonObject cour = iterator.next().getAsJsonObject();
+                    FoodRunner local = FoodRunner.parse(cour.toString());
+                    if(local.getProfile().getId().equals(profileId))
+                    {
+                        found = true;
+                    }
+                }
+                assertFalse(found);
             }
             catch (Exception e)
             {
