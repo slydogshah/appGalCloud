@@ -404,4 +404,36 @@ public class MongoDBJsonStore {
         Document doc = Document.parse(schedulePickUpNotification.toString());
         collection.insertOne(doc);
     }
+
+    public void storePickUpRequest(PickupRequest pickupRequest)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("pickuprequest");
+
+        Document doc = Document.parse(pickupRequest.toString());
+        collection.insertOne(doc);
+    }
+
+    public PickupRequest getPickupRequest(String requestId)
+    {
+        PickupRequest pickupRequest = new PickupRequest();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("pickuprequest");
+
+        String queryJson = "{\"requestId\":\""+requestId+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            pickupRequest = PickupRequest.parse(documentJson);
+        }
+
+        return pickupRequest;
+    }
 }

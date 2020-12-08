@@ -46,41 +46,29 @@ public class NetworkOrchestrator {
     public void leaveNetwork(FoodRunner foodRunner)
     {
         this.activeNetwork.removeFoodRunner(foodRunner);
-        //this.mongoDBJsonStore.deleteFoodRunner(foodRunner);
         this.mongoDBJsonStore.storeActiveNetwork(this.activeNetwork.getActiveFoodRunners());
     }
 
     public String sendPickUpRequest(PickupRequest pickupRequest)
     {
-        //Place the PickUp Request in the ActiveFoodRunner Queue
         String requestId = UUID.randomUUID().toString();
         pickupRequest.setRequestId(requestId);
-        this.activeFoodRunnerQueue.add(pickupRequest);
+
+        this.mongoDBJsonStore.storePickUpRequest(pickupRequest);
 
         this.runFoodRunnerFinder();
 
         return requestId;
     }
 
-    public JsonArray getPickRequestResult(String requestId)
+    public JsonObject getPickRequestResult(String requestId)
     {
-        //TODO: unmock this beautiful dataset @bugs.bunny.shah@gmail.com
-        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
-        pickUp1.setLocation(new Location(30.25860595703125d,-97.74873352050781d));
-
-
-        PickupRequest pickupRequest = new PickupRequest();
-        pickupRequest.setRequestId(requestId);
-        pickupRequest.setSourceOrg(pickUp1);
-        Collection<FoodRunner> foodRunners = this.activeNetwork.findFoodRunners(pickupRequest);
-        Iterator<FoodRunner> itr = foodRunners.iterator();
-        JsonArray array = new JsonArray();
-        while(itr.hasNext())
+        PickupRequest pickupRequest = this.mongoDBJsonStore.getPickupRequest(requestId);
+        if(pickupRequest == null)
         {
-            FoodRunner foodRunner = itr.next();
-            array.add(foodRunner.toJson());
+            return new JsonObject();
         }
-        return array;
+        return pickupRequest.toJson();
     }
 
     public JsonArray getLatestResults(String requestId)
@@ -146,8 +134,8 @@ public class NetworkOrchestrator {
 
     private void runFoodRunnerFinder()
     {
-        PickupRequest pickupRequest = this.activeFoodRunnerQueue.remove();
-        Collection<FoodRunner> findResults = this.activeNetwork.findFoodRunners(pickupRequest);
-        this.finderResults.put(pickupRequest.getRequestId(), findResults);
+        //PickupRequest pickupRequest = this.activeFoodRunnerQueue.remove();
+        //Collection<FoodRunner> findResults = this.activeNetwork.findFoodRunners(pickupRequest);
+        //this.finderResults.put(pickupRequest.getRequestId(), findResults);
     }
 }

@@ -70,7 +70,7 @@ public class ActiveNetwork {
         PickupRequest pickupRequest = PickupRequest.parse(jsonBody);
         String requestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
-        JsonArray pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
+        JsonObject pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
 
         return pickRequestResult.toString();
     }
@@ -80,7 +80,7 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public String getPickRequestResult(@PathParam("") String requestId)
     {
-        JsonArray pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
+        JsonObject pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
         return pickRequestResult.toString();
     }
 

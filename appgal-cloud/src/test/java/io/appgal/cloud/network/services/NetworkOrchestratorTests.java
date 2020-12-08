@@ -108,6 +108,26 @@ public class NetworkOrchestratorTests{
             }
     }
 
+    @Test
+    public void testSendPickUpRequestLifeCycle() throws Exception
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+
+        PickupRequest pickupRequest = new PickupRequest();
+        pickupRequest.setSourceOrg(sourceOrg);
+
+        String pickupRequestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
+
+        logger.info("***************************************************************");
+        logger.info("RequestId: "+pickupRequestId);
+        logger.info("***************************************************************");
+
+        JsonObject request = this.networkOrchestrator.getPickRequestResult(pickupRequestId);
+        logger.info("***************************************************************");
+        logger.info(request.toString());
+        logger.info("***************************************************************");
+    }
+
         @Test
         public void testOrchestration() throws Exception {
             double startLatitude = 30.25860595703125d;
@@ -175,25 +195,10 @@ public class NetworkOrchestratorTests{
 
             logger.info("*******");
 
-            JsonArray result = this.networkOrchestrator.getPickRequestResult(pickupRequest.getRequestId());
+            JsonObject result = this.networkOrchestrator.getPickRequestResult(pickupRequest.getRequestId());
             assertNotNull(result);
             logger.info("*******");
             logger.info(this.gson.toJson(result));
             logger.info("*******");
-        }
-
-        @Test
-        public void testSendPickUpRequest() throws Exception
-        {
-            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
-
-            PickupRequest pickupRequest = new PickupRequest();
-            pickupRequest.setSourceOrg(sourceOrg);
-
-            String result = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
-
-            logger.info("***************************************************************");
-            logger.info("RequestId: "+result);
-            logger.info("***************************************************************");
         }
 }

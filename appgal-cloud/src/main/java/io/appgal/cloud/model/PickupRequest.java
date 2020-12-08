@@ -43,6 +43,7 @@ public class PickupRequest implements Serializable,Comparable {
     {
         JsonObject jsonObject = new JsonObject();
 
+        jsonObject.addProperty("requestId", this.requestId);
         if(this.sourceOrg != null) {
             jsonObject.add("sourceOrg", this.sourceOrg.toJson());
         }
@@ -66,6 +67,8 @@ public class PickupRequest implements Serializable,Comparable {
         if(jsonObject.has("orgContactEmail")) {
             sourceOrg.setOrgContactEmail(jsonObject.get("orgContactEmail").getAsString());
         }
+
+        pickupRequest.setRequestId(jsonObject.get("requestId").getAsString());
 
         return pickupRequest;
     }
