@@ -1,4 +1,4 @@
-# appgal-cloud project
+#Jen: Food Recovery Optimization Repository, by AppGal Labs
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
