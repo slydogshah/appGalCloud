@@ -96,21 +96,4 @@ public class DeliveryOrchestratorTests extends BaseTest {
             throw new RuntimeException(e);
         }
     }
-
-    @Test
-    public void testFoodRequestCycle()
-    {
-        FoodRequest foodRequest = new FoodRequest();
-        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
-        foodRequest.setFoodType(FoodTypes.VEG);
-        foodRequest.setSourceOrg(sourceOrg1);
-
-        String requestId = this.deliveryOrchestrator.sendFoodRequest(foodRequest);
-        FoodRequest sent = this.deliveryOrchestrator.getFoodRequest(requestId);
-
-        assertEquals(sent.getId(), requestId);
-
-        logger.info("*******");
-        logger.info(this.gson.toJson(sent.toJson()));
-    }
 }

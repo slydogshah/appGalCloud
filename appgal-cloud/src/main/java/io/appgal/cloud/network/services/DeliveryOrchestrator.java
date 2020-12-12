@@ -67,17 +67,4 @@ public class DeliveryOrchestrator {
             this.dataReplayService.addToDiffChain(chainId, modelChain);
         }
     }
-
-    public String sendFoodRequest(FoodRequest foodRequest)
-    {
-        String requestId = UUID.randomUUID().toString();
-        foodRequest.setId(requestId);
-        this.mongoDBJsonStore.storeFoodRequest(foodRequest);
-        return requestId;
-    }
-
-    public FoodRequest getFoodRequest(String requestId)
-    {
-        return this.mongoDBJsonStore.getFoodRequest(requestId);
-    }
 }

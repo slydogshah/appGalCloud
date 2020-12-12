@@ -166,7 +166,7 @@ public class ActiveNetworkTests {
     @Test
     public void testFoodRequestCycle()
     {
-        FoodRequest foodRequest = new FoodRequest();
+        PickupRequest foodRequest = new PickupRequest();
         SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         foodRequest.setFoodType(FoodTypes.VEG);
         foodRequest.setSourceOrg(sourceOrg1);
@@ -178,10 +178,6 @@ public class ActiveNetworkTests {
         logger.info("****");
         logger.info(jsonString);
         logger.info("****");
-        String foodRequestId = JsonParser.parseString(jsonString).getAsJsonObject().get("foodRequestId").getAsString();
-        FoodRequest storedRequest = this.deliveryOrchestrator.getFoodRequest(foodRequestId);
-        logger.info("****");
-        logger.info(this.gson.toJson(storedRequest.toJson()));
     }
 
     @Test

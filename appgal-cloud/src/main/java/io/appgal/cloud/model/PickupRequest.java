@@ -12,6 +12,7 @@ public class PickupRequest implements Serializable,Comparable {
 
     private String requestId;
     private SourceOrg sourceOrg;
+    private Enum<FoodTypes> foodType;
 
     public PickupRequest() {
     }
@@ -33,6 +34,14 @@ public class PickupRequest implements Serializable,Comparable {
         this.sourceOrg = sourceOrg;
     }
 
+    public Enum<FoodTypes> getFoodType() {
+        return foodType;
+    }
+
+    public void setFoodType(Enum<FoodTypes> foodType) {
+        this.foodType = foodType;
+    }
+
     @Override
     public String toString()
     {
@@ -46,6 +55,9 @@ public class PickupRequest implements Serializable,Comparable {
         jsonObject.addProperty("requestId", this.requestId);
         if(this.sourceOrg != null) {
             jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        }
+        if(this.foodType != null) {
+            jsonObject.addProperty("foodType", this.foodType.name());
         }
 
         return jsonObject;
@@ -69,6 +81,11 @@ public class PickupRequest implements Serializable,Comparable {
         }
 
         pickupRequest.setRequestId(jsonObject.get("requestId").getAsString());
+
+        if(jsonObject.has("foodType")) {
+            String foodTypeValue = jsonObject.get("foodType").getAsString();
+            pickupRequest.foodType = FoodTypes.valueOf(foodTypeValue);
+        }
 
         return pickupRequest;
     }

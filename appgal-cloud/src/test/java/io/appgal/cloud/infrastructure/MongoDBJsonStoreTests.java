@@ -165,22 +165,6 @@ public class MongoDBJsonStoreTests {
     }
 
     @Test
-    public void testFoodRequestLifeCycle()
-    {
-        FoodRequest foodRequest = new FoodRequest();
-        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
-        foodRequest.setFoodType(FoodTypes.VEG);
-        foodRequest.setSourceOrg(sourceOrg1);
-        foodRequest.setId(UUID.randomUUID().toString());
-
-        this.mongoDBJsonStore.storeFoodRequest(foodRequest);
-        FoodRequest storeFoodRequest = this.mongoDBJsonStore.getFoodRequest(foodRequest.getId());
-        logger.info("*******");
-        logger.info(this.gson.toJson(storeFoodRequest.toJson()));
-        logger.info("*******");
-    }
-
-    @Test
     public void testStoreScheduledPickUpNotification() throws Exception
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");

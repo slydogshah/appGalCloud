@@ -113,8 +113,8 @@ public class ActiveNetwork {
     public Response sendFoodRequest(@RequestBody String jsonBody)
     {
         logger.info(jsonBody.toString());
-        FoodRequest foodRequest = FoodRequest.parse(jsonBody);
-        String requestId = this.deliveryOrchestrator.sendFoodRequest(foodRequest);
+        PickupRequest pickupRequest = PickupRequest.parse(jsonBody);
+        String requestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
         JsonArray results = this.networkOrchestrator.getLatestResults(requestId);
 
