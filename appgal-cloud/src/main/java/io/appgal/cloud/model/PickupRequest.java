@@ -66,21 +66,12 @@ public class PickupRequest implements Serializable,Comparable {
     public static PickupRequest parse(String jsonBody)
     {
         PickupRequest pickupRequest = new PickupRequest();
-        SourceOrg sourceOrg = new SourceOrg();
-        pickupRequest.setSourceOrg(sourceOrg);
         JsonObject jsonObject = JsonParser.parseString(jsonBody).getAsJsonObject();
 
-        if(jsonObject.has("orgId")) {
-            sourceOrg.setOrgId(jsonObject.get("orgId").getAsString());
-        }
-        if(jsonObject.has("orgName")) {
-            sourceOrg.setOrgName(jsonObject.get("orgName").getAsString());
-        }
-        if(jsonObject.has("orgContactEmail")) {
-            sourceOrg.setOrgContactEmail(jsonObject.get("orgContactEmail").getAsString());
-        }
-
         pickupRequest.setRequestId(jsonObject.get("requestId").getAsString());
+
+        SourceOrg sourceOrg = SourceOrg.parse(jsonObject.get("sourceOrg").getAsJsonObject().toString());
+        pickupRequest.setSourceOrg(sourceOrg);
 
         if(jsonObject.has("foodType")) {
             String foodTypeValue = jsonObject.get("foodType").getAsString();

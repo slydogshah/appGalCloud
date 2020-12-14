@@ -74,8 +74,8 @@ public class NetworkOrchestrator {
     public JsonArray getLatestResults(String requestId)
     {
         PickupRequest pickupRequest = this.mongoDBJsonStore.getPickupRequest(requestId);
-        List<SourceOrg> sourceOrgs = this.activeNetwork.matchSourceOrgs(pickupRequest);
-        return JsonParser.parseString(sourceOrgs.toString()).getAsJsonArray();
+        List<FoodRunner> foodRunners = this.activeNetwork.matchSourceOrgs(pickupRequest);
+        return JsonParser.parseString(foodRunners.toString()).getAsJsonArray();
     }
 
     public JsonArray getRegistered(SourceOrg destination){

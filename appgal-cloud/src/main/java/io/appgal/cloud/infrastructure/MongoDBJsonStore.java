@@ -320,49 +320,6 @@ public class MongoDBJsonStore {
         collection.insertMany(documents);
     }
 
-    public List<FoodRunner> getResults()
-    {
-        List<FoodRunner> results = new ArrayList<>();
-
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("results");
-
-        String queryJson = "{}}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            FoodRunner foodRunner = FoodRunner.parse(documentJson);
-            results.add(foodRunner);
-        }
-
-        return results;
-    }
-
-    void cleanup()
-    {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-        collection.deleteMany(Document.parse("{}"));
-
-        collection = database.getCollection("customers");
-        collection.deleteMany(Document.parse("{}"));
-
-        collection = database.getCollection("dropOffNotifications");
-        collection.deleteMany(Document.parse("{}"));
-
-        collection = database.getCollection("kafkaDaemonBootstrapData");
-        collection.deleteMany(Document.parse("{}"));
-
-        collection = database.getCollection("profile");
-        collection.deleteMany(Document.parse("{}"));
-    }
-
     public void storeScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
@@ -403,5 +360,25 @@ public class MongoDBJsonStore {
         }
 
         return pickupRequest;
+    }
+
+    void cleanup()
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("customers");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("dropOffNotifications");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("kafkaDaemonBootstrapData");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("profile");
+        collection.deleteMany(Document.parse("{}"));
     }
 }

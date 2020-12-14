@@ -98,62 +98,37 @@ public class NetworkOrchestratorTests {
 
     @Test
     public void testSendPickUpRequestLifeCycle() throws Exception {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+        Location location = new Location(startLatitude, startLongitude);
+        FoodRunner foodRunner = new FoodRunner(profile, location);
 
+        this.networkOrchestrator.enterNetwork(foodRunner);
+
+
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        sourceOrg.setLocation(location);
         PickupRequest pickupRequest = new PickupRequest();
         pickupRequest.setSourceOrg(sourceOrg);
 
+
         String pickupRequestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
-        logger.info("***************************************************************");
+        logger.info("************************REQUEST_ID***************************************");
         logger.info("RequestId: " + pickupRequestId);
         logger.info("***************************************************************");
 
         JsonObject request = this.networkOrchestrator.getPickRequestResult(pickupRequestId);
-        logger.info("***************************************************************");
+        logger.info("*********************PICKUP_REQUEST******************************************");
         logger.info(request.toString());
         logger.info("***************************************************************");
 
         JsonArray latestResults = this.networkOrchestrator.getLatestResults(pickupRequestId);
-        logger.info("***************************************************************");
+        logger.info("********************RESULTS*******************************************");
         logger.info(latestResults.toString());
+        logger.info("NUMBER: "+ latestResults.size());
         logger.info("***************************************************************");
-    }
-
-    @Test
-    public void testGetRequest() {
-        JsonObject registrationJson = new JsonObject();
-        registrationJson.addProperty("id", UUID.randomUUID().toString());
-        registrationJson.addProperty("email", "c@s.com");
-        registrationJson.addProperty("mobile", "8675309");
-        registrationJson.addProperty("photo", "photu");
-        registrationJson.addProperty("password", "c");
-        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
-        given().body(registrationJson.toString()).post("/registration/profile");
-        given().when().post("/activeNetwork/enterNetwork/?email=c@s.com").andReturn();
-
-        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
-        pickUp1.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
-        SourceOrg pickUp2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com");
-        pickUp2.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
-
-        SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com");
-        dropOff1.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
-        SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
-        dropOff2.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
-
-        PickupRequest pickupRequest = new PickupRequest();
-        pickupRequest.setRequestId(UUID.randomUUID().toString());
-        pickupRequest.setSourceOrg(pickUp1);
-        this.networkOrchestrator.sendPickUpRequest(pickupRequest);
-
-        logger.info("*******");
-
-        JsonObject result = this.networkOrchestrator.getPickRequestResult(pickupRequest.getRequestId());
-        assertNotNull(result);
-        logger.info("*******");
-        logger.info(this.gson.toJson(result));
-        logger.info("*******");
     }
 
     @Test
