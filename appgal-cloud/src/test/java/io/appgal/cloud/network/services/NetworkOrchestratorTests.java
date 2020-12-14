@@ -187,6 +187,7 @@ public class NetworkOrchestratorTests {
         logger.info(latestResults1.toString());
         logger.info("NUMBER: "+ latestResults1.size());
         logger.info("***************************************************************");
+        assertEquals(1, latestResults1.size());
 
 
         JsonArray latestResults2 = this.networkOrchestrator.getLatestResults(pickupRequestId2);
@@ -194,5 +195,6 @@ public class NetworkOrchestratorTests {
         logger.info(latestResults2.toString());
         logger.info("NUMBER: "+ latestResults2.size());
         logger.info("***************************************************************");
+        assertEquals(1, latestResults2.size());
     }
 }
