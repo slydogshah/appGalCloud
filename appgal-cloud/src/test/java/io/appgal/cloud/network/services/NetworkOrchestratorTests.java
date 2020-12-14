@@ -135,7 +135,7 @@ public class NetworkOrchestratorTests {
         assertEquals(numberOfFoodRunners, latestResults.size());
     }
 
-    //@Test
+    @Test
     public void testOrchestration() throws Exception {
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
@@ -155,21 +155,44 @@ public class NetworkOrchestratorTests {
         this.networkOrchestrator.enterNetwork(captain);
 
         JsonObject activeView = this.networkOrchestrator.getActiveView();
-        logger.info("*******");
+        logger.info("***ACTIVE_VIEW****");
         logger.info(activeView.toString());
-        logger.info("*******");
+        logger.info("******************");
 
         List<SourceOrg> sourceOrgs = new ArrayList<>();
+        Location dropLocation1 = new Location(30.25860595703125d, -97.74873352050781d);
+        Location dropLocation2 = new Location(44.9441d, -93.0852d);
 
-        SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com");
+        SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH",
+                "downtown.church@gmail.com");
+        dropOff1.setLocation(dropLocation1);
         SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
+        dropOff2.setLocation(dropLocation2);
+        sourceOrgs.add(dropOff1);
+        sourceOrgs.add(dropOff2);
 
 
-        JsonArray result = this.networkOrchestrator.getRegistered(
-                dropOff1);
-        assertNotNull(result);
-        logger.info("*******");
-        logger.info(result.toString());
-        logger.info("*******");
+        PickupRequest pickupRequest1 = new PickupRequest();
+        pickupRequest1.setSourceOrg(dropOff1);
+
+        PickupRequest pickupRequest2 = new PickupRequest();
+        pickupRequest2.setSourceOrg(dropOff2);
+
+        String pickupRequestId1 = this.networkOrchestrator.sendPickUpRequest(pickupRequest1);
+        String pickupRequestId2 = this.networkOrchestrator.sendPickUpRequest(pickupRequest2);
+
+
+        JsonArray latestResults1 = this.networkOrchestrator.getLatestResults(pickupRequestId1);
+        logger.info("********************RESULTS*******************************************");
+        logger.info(latestResults1.toString());
+        logger.info("NUMBER: "+ latestResults1.size());
+        logger.info("***************************************************************");
+
+
+        JsonArray latestResults2 = this.networkOrchestrator.getLatestResults(pickupRequestId2);
+        logger.info("********************RESULTS*******************************************");
+        logger.info(latestResults2.toString());
+        logger.info("NUMBER: "+ latestResults2.size());
+        logger.info("***************************************************************");
     }
 }
