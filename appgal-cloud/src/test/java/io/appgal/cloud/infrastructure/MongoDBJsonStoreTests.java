@@ -38,7 +38,6 @@ public class MongoDBJsonStoreTests {
     @AfterEach
     public void tearDown()
     {
-        this.mongoDBJsonStore.cleanup();
     }
 
     @Test

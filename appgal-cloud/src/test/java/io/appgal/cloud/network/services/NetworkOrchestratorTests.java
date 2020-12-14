@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +45,8 @@ public class NetworkOrchestratorTests {
         JsonObject runnerProfile = activeFoodRunner.getAsJsonObject("profile");
         assertNotNull(runnerProfile);
         logger.info(runnerProfile.toString());
+
+        this.networkOrchestrator.leaveNetwork(foodRunner);
     }
 
     @Test
@@ -98,20 +97,24 @@ public class NetworkOrchestratorTests {
 
     @Test
     public void testSendPickUpRequestLifeCycle() throws Exception {
-        double startLatitude = 30.25860595703125d;
-        double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+        int numberOfFoodRunners = 10;
+        double startLatitude = 0.0d;
+        double startLongitude = 0.0d;
         Location location = new Location(startLatitude, startLongitude);
-        FoodRunner foodRunner = new FoodRunner(profile, location);
-
-        this.networkOrchestrator.enterNetwork(foodRunner);
-
-
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         sourceOrg.setLocation(location);
         PickupRequest pickupRequest = new PickupRequest();
         pickupRequest.setSourceOrg(sourceOrg);
+        for(int i=0; i<numberOfFoodRunners; i++) {
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
+                    "8675309", "", "", ProfileType.FOOD_RUNNER);
+            FoodRunner foodRunner = new FoodRunner(profile, location);
+            logger.info("************************FOODRUNNER***************************************");
+            logger.info("FoodRunner: " + foodRunner.getProfile().getId());
+            logger.info("***************************************************************");
 
+            this.networkOrchestrator.enterNetwork(foodRunner);
+        }
 
         String pickupRequestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
@@ -129,9 +132,10 @@ public class NetworkOrchestratorTests {
         logger.info(latestResults.toString());
         logger.info("NUMBER: "+ latestResults.size());
         logger.info("***************************************************************");
+        assertEquals(numberOfFoodRunners, latestResults.size());
     }
 
-    @Test
+    //@Test
     public void testOrchestration() throws Exception {
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;

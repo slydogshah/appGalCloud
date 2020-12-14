@@ -362,7 +362,7 @@ public class MongoDBJsonStore {
         return pickupRequest;
     }
 
-    void cleanup()
+    /*void cleanup()
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
@@ -380,5 +380,5 @@ public class MongoDBJsonStore {
 
         collection = database.getCollection("profile");
         collection.deleteMany(Document.parse("{}"));
-    }
+    }*/
 }
