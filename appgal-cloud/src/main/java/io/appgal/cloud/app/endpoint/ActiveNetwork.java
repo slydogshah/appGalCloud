@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.network.services.DeliveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 
 import org.slf4j.Logger;
@@ -23,9 +22,6 @@ public class ActiveNetwork {
 
     @Inject
     private NetworkOrchestrator networkOrchestrator;
-
-    @Inject
-    private DeliveryOrchestrator deliveryOrchestrator;
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
@@ -91,7 +87,7 @@ public class ActiveNetwork {
     {
         Profile profile = this.mongoDBJsonStore.getProfile("bugs.bunny.shah@gmail.com");
         FoodRunner foodRunner = new FoodRunner(profile, new Location(Double.parseDouble("30.25860595703125d"), Double.parseDouble("-97.74873352050781d")));
-        List<SourceOrg> sourceOrgs = this.deliveryOrchestrator.findBestDestination(foodRunner);
+        List<SourceOrg> sourceOrgs = this.networkOrchestrator.findBestDestination(foodRunner);
         return sourceOrgs.toString();
     }
 

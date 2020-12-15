@@ -5,7 +5,6 @@ import com.google.gson.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.network.services.DeliveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 
@@ -37,9 +36,6 @@ public class ActiveNetworkTests extends BaseTest {
 
     @Inject
     private ProfileRegistrationService profileRegistrationService;
-
-    @Inject
-    private DeliveryOrchestrator deliveryOrchestrator;
 
     @Inject
     private ActiveNetwork activeNetwork;
