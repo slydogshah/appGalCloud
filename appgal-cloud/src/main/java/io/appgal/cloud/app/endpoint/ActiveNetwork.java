@@ -129,7 +129,7 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public String getSourceOrgs()
     {
-        List<SourceOrg> sourceOrgs = this.networkOrchestrator.getSourceOrgs();
+        List<SourceOrg> sourceOrgs = this.mongoDBJsonStore.getSourceOrgs();
         return sourceOrgs.toString();
     }
 

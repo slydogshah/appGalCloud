@@ -78,16 +78,6 @@ public class NetworkOrchestrator {
         return JsonParser.parseString(foodRunners.toString()).getAsJsonArray();
     }
 
-    public JsonArray getRegistered(SourceOrg destination){
-        List<SourceOrg>registeredSources=this.activeNetwork.findSourceOrgs(destination);
-        return JsonParser.parseString(registeredSources.toString()).getAsJsonArray();
-    }
-
-    public List<SourceOrg> getSourceOrgs()
-    {
-        return this.mongoDBJsonStore.getSourceOrgs();
-    }
-
     public JsonObject getActiveView()
     {
         JsonObject jsonObject = new JsonObject();
@@ -130,6 +120,11 @@ public class NetworkOrchestrator {
     {
         logger.info("***********************");
         logger.info("***********************");
+    }
+
+    public JsonArray getRegistered(SourceOrg destination){
+        List<SourceOrg>registeredSources=this.activeNetwork.findSourceOrgs(destination);
+        return JsonParser.parseString(registeredSources.toString()).getAsJsonArray();
     }
 
     private void runFoodRunnerFinder()
