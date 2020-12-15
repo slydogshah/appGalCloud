@@ -39,6 +39,42 @@ public class MongoDBJsonStore {
         this.mongoClient.close();
     }
 
+    public List<FoodRunner> getAllFoodRunners()
+    {
+        List<FoodRunner> foodRunners = new ArrayList<>();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        FindIterable<Document> iterable = collection.find();
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            Profile profile = Profile.parse(documentJson);
+            if(profile.getProfileType() == ProfileType.FOOD_RUNNER)
+            {
+                FoodRunner foodRunner = new FoodRunner(profile);
+                foodRunners.add(foodRunner);
+            }
+        }
+
+        return foodRunners;
+    }
+
+    public void clearAllProfiles()
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        String json = "{}";
+
+        collection.deleteMany(new Document());
+    }
+
     public void storeProfile(Profile profile)
     {
         if(this.getProfile(profile.getEmail()) != null)
@@ -200,12 +236,19 @@ public class MongoDBJsonStore {
     public void deleteFoodRunner(FoodRunner foodRunner)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+        collection.deleteMany(new Document());
+    }
+
+    public void clearActiveNetwork()
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
         String json = "{}";
 
-        collection.deleteMany(Document.parse(json));
+        collection.deleteMany(new Document());
     }
 
     public void storeDropOffNotification(DropOffNotification dropOffNotification)
@@ -362,7 +405,7 @@ public class MongoDBJsonStore {
         return pickupRequest;
     }
 
-    /*void cleanup()
+    public void cleanup()
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
@@ -380,5 +423,5 @@ public class MongoDBJsonStore {
 
         collection = database.getCollection("profile");
         collection.deleteMany(Document.parse("{}"));
-    }*/
+    }
 }

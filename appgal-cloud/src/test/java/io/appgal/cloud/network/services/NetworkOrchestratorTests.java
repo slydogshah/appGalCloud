@@ -3,7 +3,9 @@ package io.appgal.cloud.network.services;
 import com.google.gson.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class NetworkOrchestratorTests {
+public class NetworkOrchestratorTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(NetworkOrchestratorTests.class);
 
     @Inject
@@ -23,7 +25,16 @@ public class NetworkOrchestratorTests {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
+    @Inject
+    private ActiveNetwork activeNetwork;
+
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    @AfterEach
+    public void tearDown() throws Exception
+    {
+
+    }
 
     @Test
     public void testEnterNetwork() throws Exception {
@@ -137,6 +148,12 @@ public class NetworkOrchestratorTests {
 
     @Test
     public void testOrchestration() throws Exception {
+        this.activeNetwork.clearActiveNetwork();
+
+        List<FoodRunner> foodRunners = this.mongoDBStore.getAllFoodRunners();
+        logger.info(foodRunners.toString());
+
+
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "",
@@ -156,7 +173,7 @@ public class NetworkOrchestratorTests {
 
         JsonObject activeView = this.networkOrchestrator.getActiveView();
         logger.info("***ACTIVE_VIEW****");
-        logger.info(activeView.toString());
+        logger.info(gson.toJson(activeView));
         logger.info("******************");
 
         List<SourceOrg> sourceOrgs = new ArrayList<>();

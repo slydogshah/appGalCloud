@@ -58,6 +58,13 @@ public class ActiveNetwork implements Serializable {
         this.activeFoodRunners.remove(foodRunner.getProfile().getId());
     }
 
+    public void clearActiveNetwork()
+    {
+        this.mongoDBJsonStore.clearActiveNetwork();
+        this.activeFoodRunners.clear();
+        this.sourceOrgs.clear();
+    }
+
     public FoodRunner findFoodRunner(String foodRunnerId)
     {
         return this.activeFoodRunners.get(foodRunnerId);

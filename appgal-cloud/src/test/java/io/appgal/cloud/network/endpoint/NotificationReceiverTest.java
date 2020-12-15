@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import io.appgal.cloud.model.SourceNotification;
+import io.bugsbunny.test.components.BaseTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @QuarkusTest
-public class NotificationReceiverTest {
+public class NotificationReceiverTest extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(NotificationReceiverTest.class);
 
     @BeforeEach

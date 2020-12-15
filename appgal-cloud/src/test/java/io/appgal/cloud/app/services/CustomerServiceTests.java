@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 @QuarkusTest
-public class CustomerServiceTests {
+public class CustomerServiceTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(CustomerServiceTests.class);
 
     @Inject

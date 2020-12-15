@@ -3,6 +3,7 @@ package io.appgal.cloud.model;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import io.bugsbunny.test.components.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

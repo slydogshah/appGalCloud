@@ -4,6 +4,7 @@ import com.google.gson.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class MongoDBJsonStoreTests {
+public class MongoDBJsonStoreTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(MongoDBJsonStoreTests.class);
 
     @Inject
@@ -38,6 +39,12 @@ public class MongoDBJsonStoreTests {
     @AfterEach
     public void tearDown()
     {
+    }
+
+    @Test
+    public void testGetAllFoodRunners()
+    {
+        this.mongoDBJsonStore.getAllFoodRunners();
     }
 
     @Test

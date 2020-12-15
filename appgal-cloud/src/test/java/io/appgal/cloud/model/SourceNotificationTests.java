@@ -3,6 +3,7 @@ package io.appgal.cloud.model;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import io.bugsbunny.test.components.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
-public class SourceNotificationTests {
+public class SourceNotificationTests  {
     private static Logger logger = LoggerFactory.getLogger(SourceNotificationTests.class);
 
     @Test

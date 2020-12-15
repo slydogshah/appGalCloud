@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.MessageWindow;
 import io.appgal.cloud.model.SourceNotification;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 @QuarkusTest
-public class SessionNetworkTests {
+public class SessionNetworkTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(SessionNetworkTests.class);
 
     @Inject
@@ -29,13 +30,13 @@ public class SessionNetworkTests {
     private ProcessIncomingPackets processIncomingPackets;
 
     @BeforeEach
-    private void setUp()
+    public void setUp()
     {
         this.sessionNetwork.start();
     }
 
     @AfterEach
-    private void tearDown()
+    public void tearDown()
     {
         this.sessionNetwork.stop();
     }

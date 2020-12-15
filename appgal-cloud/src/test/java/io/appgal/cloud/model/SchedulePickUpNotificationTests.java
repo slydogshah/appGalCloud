@@ -3,6 +3,7 @@ package io.appgal.cloud.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
-public class SchedulePickUpNotificationTests {
+public class SchedulePickUpNotificationTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(SchedulePickUpNotificationTests.class);
 
     private Gson gson = new GsonBuilder()

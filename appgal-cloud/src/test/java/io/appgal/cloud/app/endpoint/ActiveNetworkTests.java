@@ -9,6 +9,7 @@ import io.appgal.cloud.network.services.DeliveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
-public class ActiveNetworkTests {
+public class ActiveNetworkTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(ActiveNetworkTests.class);
 
     @Inject
@@ -71,14 +72,14 @@ public class ActiveNetworkTests {
     public void testEnterNetwork() {
         JsonObject registrationJson = new JsonObject();
         registrationJson.addProperty("id", UUID.randomUUID().toString());
-        registrationJson.addProperty("email", "c@s.com");
+        registrationJson.addProperty("email", "bugs.bunny.shah@gmail.com");
         registrationJson.addProperty("mobile", "8675309");
         registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
         registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
         given().body(registrationJson.toString()).post("/registration/profile");
 
-        Response response = given().when().post("/activeNetwork/enterNetwork/?email=c@s.com").andReturn();
+        Response response = given().when().post("/activeNetwork/enterNetwork/?email=bugs.bunny.shah@gmail.com").andReturn();
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
