@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.network.services.DeliveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 
 import org.slf4j.Logger;
@@ -23,9 +22,6 @@ public class ActiveNetwork {
 
     @Inject
     private NetworkOrchestrator networkOrchestrator;
-
-    @Inject
-    private DeliveryOrchestrator deliveryOrchestrator;
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
@@ -70,7 +66,7 @@ public class ActiveNetwork {
         PickupRequest pickupRequest = PickupRequest.parse(jsonBody);
         String requestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
-        JsonArray pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
+        JsonObject pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
 
         return pickRequestResult.toString();
     }
@@ -80,7 +76,7 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public String getPickRequestResult(@PathParam("") String requestId)
     {
-        JsonArray pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
+        JsonObject pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
         return pickRequestResult.toString();
     }
 
@@ -91,7 +87,7 @@ public class ActiveNetwork {
     {
         Profile profile = this.mongoDBJsonStore.getProfile("bugs.bunny.shah@gmail.com");
         FoodRunner foodRunner = new FoodRunner(profile, new Location(Double.parseDouble("30.25860595703125d"), Double.parseDouble("-97.74873352050781d")));
-        List<SourceOrg> sourceOrgs = this.deliveryOrchestrator.findBestDestination(foodRunner);
+        List<SourceOrg> sourceOrgs = this.networkOrchestrator.findBestDestination(foodRunner);
         return sourceOrgs.toString();
     }
 
@@ -100,8 +96,9 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendDeliveryNotification(@RequestBody String jsonBody)
     {
-        DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
-        this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
+        //TODO
+        //DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
+        //this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
 
         return Response.ok().build();
     }
@@ -112,8 +109,8 @@ public class ActiveNetwork {
     public Response sendFoodRequest(@RequestBody String jsonBody)
     {
         logger.info(jsonBody.toString());
-        FoodRequest foodRequest = FoodRequest.parse(jsonBody);
-        String requestId = this.deliveryOrchestrator.sendFoodRequest(foodRequest);
+        PickupRequest pickupRequest = PickupRequest.parse(jsonBody);
+        String requestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
 
         JsonArray results = this.networkOrchestrator.getLatestResults(requestId);
 
@@ -128,7 +125,7 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public String getSourceOrgs()
     {
-        List<SourceOrg> sourceOrgs = this.networkOrchestrator.getSourceOrgs();
+        List<SourceOrg> sourceOrgs = this.mongoDBJsonStore.getSourceOrgs();
         return sourceOrgs.toString();
     }
 

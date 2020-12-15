@@ -3,13 +3,12 @@ package io.appgal.cloud.network.services;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.appgal.cloud.infrastructure.messaging.KafkaDaemon;
-import io.appgal.cloud.infrastructure.messaging.MessageWindow;
+import io.appgal.cloud.model.MessageWindow;
 import io.appgal.cloud.model.SourceNotification;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 @QuarkusTest
-public class SessionNetworkTests {
+public class SessionNetworkTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(SessionNetworkTests.class);
 
     @Inject
@@ -30,33 +29,22 @@ public class SessionNetworkTests {
     @Inject
     private ProcessIncomingPackets processIncomingPackets;
 
-    @Inject
-    private KafkaDaemon kafkaDaemon;
-
     @BeforeEach
-    private void setUp()
+    public void setUp()
     {
         this.sessionNetwork.start();
     }
 
     @AfterEach
-    private void tearDown()
+    public void tearDown()
     {
         this.sessionNetwork.stop();
     }
 
-    @Test
+    //@Test
     public void testStart() throws Exception
     {
-        this.kafkaDaemon.logStartUp();
         int counter=0;
-        while(!this.kafkaDaemon.getActive()) {
-            Thread.sleep(5000);
-            if(counter++ == 15)
-            {
-                break;
-            }
-        }
 
         List<String> notificationIds = new ArrayList<>();
         LocalDateTime startOfLocalDateInUtc = LocalDate.now(ZoneOffset.UTC).atStartOfDay();
@@ -76,8 +64,6 @@ public class SessionNetworkTests {
             notificationIds.add(sourceNotificationId);
 
             JsonObject jsonObject = JsonParser.parseString(sourceNotification.toString()).getAsJsonObject();
-
-            this.kafkaDaemon.produceData(SourceNotification.TOPIC, jsonObject);
         }
 
         for(int i=0; i<1; i++)
@@ -90,7 +76,6 @@ public class SessionNetworkTests {
             messageWindow.setStart(startTime);
             messageWindow.setEnd(endTime);
 
-            jsonArray = this.kafkaDaemon.readNotifications(SourceNotification.TOPIC, messageWindow);
             logger.info(jsonArray.toString());
         }
 

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.bugsbunny.data.history.service.DataReplayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class NetworkOrchestrator {
     private MongoDBJsonStore mongoDBJsonStore;
 
     @Inject
-    private NetworkOrchestrator networkOrchestrator;
+    private DataReplayService dataReplayService;
 
     private Queue<PickupRequest> activeFoodRunnerQueue;
 
@@ -49,55 +50,36 @@ public class NetworkOrchestrator {
     public void leaveNetwork(FoodRunner foodRunner)
     {
         this.activeNetwork.removeFoodRunner(foodRunner);
-        this.mongoDBJsonStore.deleteFoodRunner(foodRunner);
+        this.mongoDBJsonStore.storeActiveNetwork(this.activeNetwork.getActiveFoodRunners());
     }
 
     public String sendPickUpRequest(PickupRequest pickupRequest)
     {
-        //Place the PickUp Request in the ActiveFoodRunner Queue
         String requestId = UUID.randomUUID().toString();
         pickupRequest.setRequestId(requestId);
-        this.activeFoodRunnerQueue.add(pickupRequest);
+
+        this.mongoDBJsonStore.storePickUpRequest(pickupRequest);
 
         this.runFoodRunnerFinder();
 
         return requestId;
     }
 
-    public JsonArray getPickRequestResult(String requestId)
+    public JsonObject getPickRequestResult(String requestId)
     {
-        //TODO: unmock this beautiful dataset @bugs.bunny.shah@gmail.com
-        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
-        pickUp1.setLocation(new Location(30.25860595703125d,-97.74873352050781d));
-
-
-        PickupRequest pickupRequest = new PickupRequest(requestId, pickUp1);
-        Collection<FoodRunner> foodRunners = this.activeNetwork.findFoodRunners(pickupRequest);
-        Iterator<FoodRunner> itr = foodRunners.iterator();
-        JsonArray array = new JsonArray();
-        while(itr.hasNext())
+        PickupRequest pickupRequest = this.mongoDBJsonStore.getPickupRequest(requestId);
+        if(pickupRequest == null)
         {
-            FoodRunner foodRunner = itr.next();
-            array.add(foodRunner.toJson());
+            return new JsonObject();
         }
-        return array;
+        return pickupRequest.toJson();
     }
 
     public JsonArray getLatestResults(String requestId)
     {
-        FoodRequest foodRequest = this.mongoDBJsonStore.getFoodRequest(requestId);
-        List<SourceOrg> sourceOrgs = this.activeNetwork.matchSourceOrgs(foodRequest);
-        return JsonParser.parseString(sourceOrgs.toString()).getAsJsonArray();
-    }
-
-    public JsonArray getRegistered(SourceOrg destination){
-        List<SourceOrg>registeredSources=this.activeNetwork.findSourceOrgs(destination);
-        return JsonParser.parseString(registeredSources.toString()).getAsJsonArray();
-    }
-
-    public List<SourceOrg> getSourceOrgs()
-    {
-        return this.mongoDBJsonStore.getSourceOrgs();
+        PickupRequest pickupRequest = this.mongoDBJsonStore.getPickupRequest(requestId);
+        List<FoodRunner> foodRunners = this.activeNetwork.matchSourceOrgs(pickupRequest);
+        return JsonParser.parseString(foodRunners.toString()).getAsJsonArray();
     }
 
     public JsonObject getActiveView()
@@ -138,10 +120,52 @@ public class NetworkOrchestrator {
         return jsonObject;
     }
 
+    public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
+    {
+        logger.info("***********************");
+        logger.info("***********************");
+    }
+
+    public JsonArray getRegistered(SourceOrg destination){
+        List<SourceOrg>registeredSources=this.activeNetwork.findSourceOrgs(destination);
+        return JsonParser.parseString(registeredSources.toString()).getAsJsonArray();
+    }
+
     private void runFoodRunnerFinder()
     {
-        PickupRequest pickupRequest = this.activeFoodRunnerQueue.remove();
-        Collection<FoodRunner> findResults = this.activeNetwork.findFoodRunners(pickupRequest);
-        this.finderResults.put(pickupRequest.getRequestId(), findResults);
+        //PickupRequest pickupRequest = this.activeFoodRunnerQueue.remove();
+        //Collection<FoodRunner> findResults = this.activeNetwork.findFoodRunners(pickupRequest);
+        //this.finderResults.put(pickupRequest.getRequestId(), findResults);
+    }
+
+    public List<SourceOrg> findBestDestination(FoodRunner foodRunner)
+    {
+        List<SourceOrg> sourceOrgs = this.activeNetwork.getSourceOrgs();
+        return sourceOrgs;
+    }
+
+    public void sendDeliveryNotification(DestinationNotification destinationNotification)
+    {
+        JsonObject jsonObject = JsonParser.parseString(destinationNotification.toString()).getAsJsonObject();
+
+        FoodRunner foodRunner = destinationNotification.getDropOffNotification().getFoodRunner();
+        String chainId = foodRunner.getProfile().getChainId();
+
+        if(chainId == null) {
+            Random random = new Random();
+            JsonObject modelChain = new JsonObject();
+            modelChain.addProperty("modelId", random.nextLong());
+            modelChain.add("payload", jsonObject);
+            chainId = this.dataReplayService.generateDiffChain(modelChain);
+            foodRunner.getProfile().setChainId(chainId);
+        }
+        else
+        {
+            String modelId = chainId.substring(chainId.lastIndexOf("/"));
+            JsonObject modelChain = new JsonObject();
+            modelChain.addProperty("modelId", modelId);
+            modelChain.add("payload", jsonObject);
+            this.dataReplayService.addToDiffChain(chainId, modelChain);
+        }
     }
 }

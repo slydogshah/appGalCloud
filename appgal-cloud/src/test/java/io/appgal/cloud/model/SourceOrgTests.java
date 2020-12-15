@@ -1,5 +1,6 @@
 package io.appgal.cloud.model;
 
+import io.bugsbunny.test.components.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class SourceOrgTests {
+public class SourceOrgTests  {
     private static Logger logger = LoggerFactory.getLogger(SourceOrgTests.class);
 
     @Test

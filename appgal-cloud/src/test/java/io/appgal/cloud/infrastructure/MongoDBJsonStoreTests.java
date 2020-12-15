@@ -4,6 +4,7 @@ import com.google.gson.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class MongoDBJsonStoreTests {
+public class MongoDBJsonStoreTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(MongoDBJsonStoreTests.class);
 
     @Inject
@@ -38,7 +39,12 @@ public class MongoDBJsonStoreTests {
     @AfterEach
     public void tearDown()
     {
-        this.mongoDBJsonStore.cleanup();
+    }
+
+    @Test
+    public void testGetAllFoodRunners()
+    {
+        this.mongoDBJsonStore.getAllFoodRunners();
     }
 
     @Test
@@ -50,6 +56,9 @@ public class MongoDBJsonStoreTests {
                 ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
+
+        logger.info(dropOffNotification.toJson().toString());
+
         this.mongoDBJsonStore.storeDropOffNotification(dropOffNotification);
 
         DropOffNotification stored = this.mongoDBJsonStore.findDropOffNotification("blah");
@@ -58,16 +67,6 @@ public class MongoDBJsonStoreTests {
         logger.info(this.gson.toJson(object));
         logger.info("*******");
     }
-
-    @Test
-    public void testFindKafakaDaemonBootstrapData()
-    {
-        List<String> topics = this.mongoDBJsonStore.findKafakaDaemonBootstrapData();
-
-        assertTrue(topics.contains(SourceNotification.TOPIC));
-        assertTrue(topics.contains(DestinationNotification.TOPIC));
-    }
-
 
     @Test
     public void testStoreProfile()
@@ -169,22 +168,6 @@ public class MongoDBJsonStoreTests {
         List<SourceOrg> sourceOrg1 = this.mongoDBJsonStore.getSourceOrgs();
         JsonArray array = JsonParser.parseString(sourceOrg1.toString()).getAsJsonArray();
         logger.info(this.gson.toJson(array));
-    }
-
-    @Test
-    public void testFoodRequestLifeCycle()
-    {
-        FoodRequest foodRequest = new FoodRequest();
-        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
-        foodRequest.setFoodType(FoodTypes.VEG);
-        foodRequest.setSourceOrg(sourceOrg1);
-        foodRequest.setId(UUID.randomUUID().toString());
-
-        this.mongoDBJsonStore.storeFoodRequest(foodRequest);
-        FoodRequest storeFoodRequest = this.mongoDBJsonStore.getFoodRequest(foodRequest.getId());
-        logger.info("*******");
-        logger.info(this.gson.toJson(storeFoodRequest.toJson()));
-        logger.info("*******");
     }
 
     @Test

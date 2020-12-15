@@ -1,6 +1,7 @@
 package io.appgal.cloud.network.geospatial;
 
 
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 
 import org.slf4j.Logger;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import io.appgal.cloud.model.Location;
 
 @QuarkusTest
-public class DistanceCalculatorTests {
+public class DistanceCalculatorTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(DistanceCalculatorTests.class);
 
     @Test

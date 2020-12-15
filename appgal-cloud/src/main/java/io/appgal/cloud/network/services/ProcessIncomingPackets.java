@@ -2,10 +2,7 @@ package io.appgal.cloud.network.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.appgal.cloud.infrastructure.messaging.KafkaDaemon;
-import io.appgal.cloud.infrastructure.messaging.MessageWindow;
-import io.appgal.cloud.infrastructure.messaging.SourceNotificationEmitter;
-import io.appgal.cloud.infrastructure.messaging.SourceNotificationReceiver;
+import io.appgal.cloud.model.MessageWindow;
 import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import org.slf4j.Logger;
@@ -22,15 +19,6 @@ import java.util.UUID;
 public class ProcessIncomingPackets {
     private static Logger logger = LoggerFactory.getLogger(ProcessIncomingPackets.class);
 
-    @Inject
-    private SourceNotificationReceiver sourceNotificationReceiver;
-
-    @Inject
-    private SourceNotificationEmitter sourceNotificationEmitter;
-
-    @Inject
-    private KafkaDaemon kafkaDaemon;
-
     public void processSourceNotification(MessageWindow messageWindow)
     {
         SourceNotification sourceNotification = new SourceNotification();
@@ -38,17 +26,19 @@ public class ProcessIncomingPackets {
         messageWindow.setTopic(SourceNotification.TOPIC);
         sourceNotification.setMessageWindow(messageWindow);
 
-        this.sourceNotificationReceiver.receive(sourceNotification);
+        //this.sourceNotificationReceiver.receive(sourceNotification);
 
         //Emit this instance of SourceNotification to the FoodRunner Network
-        this.sourceNotificationEmitter.emit(sourceNotification);
+        //this.sourceNotificationEmitter.emit(sourceNotification);
     }
 
     public JsonArray readDestinationNotifications(MessageWindow messageWindow)
     {
-        JsonArray destinationNotifications = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
+        //JsonArray destinationNotifications = this.kafkaDaemon.readNotifications(DestinationNotification.TOPIC, messageWindow);
 
-        return destinationNotifications;
+        //return destinationNotifications;
+
+        return null;
     }
 
     public JsonArray processNotificationForPickup(SourceNotification sourceNotification)
@@ -60,7 +50,7 @@ public class ProcessIncomingPackets {
         messageWindow.setEnd(end);
         sourceNotification.setMessageWindow(messageWindow);
         JsonObject json = sourceNotification.toJson();
-        this.kafkaDaemon.produceData(SourceNotification.TOPIC, json);
+        //this.kafkaDaemon.produceData(SourceNotification.TOPIC, json);
 
         JsonArray response = new JsonArray();
         response.add(json);

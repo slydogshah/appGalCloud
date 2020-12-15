@@ -3,7 +3,7 @@ package io.appgal.cloud.model;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.appgal.cloud.infrastructure.messaging.MessageWindow;
+import io.bugsbunny.test.components.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
-public class SourceNotificationTests {
+public class SourceNotificationTests  {
     private static Logger logger = LoggerFactory.getLogger(SourceNotificationTests.class);
 
     @Test
@@ -29,10 +29,12 @@ public class SourceNotificationTests {
         messageWindow.setStart(start);
         messageWindow.setEnd(end);
 
+        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
         String sourceNotificationId = UUID.randomUUID().toString();
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(sourceNotificationId);
         sourceNotification.setMessageWindow(messageWindow);
+        sourceNotification.setSourceOrg(sourceOrg1);
 
         JsonObject json = JsonParser.parseString(sourceNotification.toString()).getAsJsonObject();
         //logger.info("****");

@@ -1,8 +1,6 @@
 package io.appgal.cloud.network.services;
 
-import io.appgal.cloud.infrastructure.messaging.KafkaDaemon;
-import io.appgal.cloud.infrastructure.messaging.KafkaDaemonListener;
-import io.appgal.cloud.infrastructure.messaging.MessageWindow;
+import io.appgal.cloud.model.MessageWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,14 +11,11 @@ import javax.inject.Inject;
 import java.util.TreeMap;
 
 @ApplicationScoped
-public class SessionNetwork implements KafkaDaemonListener {
+public class SessionNetwork  {
     private static Logger logger = LoggerFactory.getLogger(SessionNetwork.class);
 
     @Inject
     private FoodRunnerSession foodRunnerSession;
-
-    @Inject
-    private KafkaDaemon kafkaDaemon;
 
     private TreeMap<String, FoodRunnerSession> foodRunnerSessions; //foodRunnerSessionId -> foodRunnerSession
 
@@ -36,7 +31,6 @@ public class SessionNetwork implements KafkaDaemonListener {
     @PostConstruct
     public void start()
     {
-        this.kafkaDaemon.registerDaemonListener(this);
         logger.info("****");
         logger.info("SESSION_NETWORK_START: (SUCCESS)");
         logger.info("****");
@@ -50,7 +44,6 @@ public class SessionNetwork implements KafkaDaemonListener {
         logger.info("****");
     }
 
-    @Override
     public void receiveNotifications(MessageWindow messageWindow) {
         logger.info("****KAFKA_DAEMON_LISTENER*********");
         if(messageWindow.getMessages() != null) {

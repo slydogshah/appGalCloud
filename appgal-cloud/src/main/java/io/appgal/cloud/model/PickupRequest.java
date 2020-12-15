@@ -12,13 +12,9 @@ public class PickupRequest implements Serializable,Comparable {
 
     private String requestId;
     private SourceOrg sourceOrg;
+    private Enum<FoodTypes> foodType;
 
     public PickupRequest() {
-    }
-
-    public PickupRequest(String requestId, SourceOrg sourceOrg) {
-        this.requestId = requestId;
-        this.sourceOrg = sourceOrg;
     }
 
     public String getRequestId() {
@@ -38,6 +34,14 @@ public class PickupRequest implements Serializable,Comparable {
         this.sourceOrg = sourceOrg;
     }
 
+    public Enum<FoodTypes> getFoodType() {
+        return foodType;
+    }
+
+    public void setFoodType(Enum<FoodTypes> foodType) {
+        this.foodType = foodType;
+    }
+
     @Override
     public String toString()
     {
@@ -48,8 +52,12 @@ public class PickupRequest implements Serializable,Comparable {
     {
         JsonObject jsonObject = new JsonObject();
 
+        jsonObject.addProperty("requestId", this.requestId);
         if(this.sourceOrg != null) {
             jsonObject.add("sourceOrg", this.sourceOrg.toJson());
+        }
+        if(this.foodType != null) {
+            jsonObject.addProperty("foodType", this.foodType.name());
         }
 
         return jsonObject;
@@ -58,18 +66,16 @@ public class PickupRequest implements Serializable,Comparable {
     public static PickupRequest parse(String jsonBody)
     {
         PickupRequest pickupRequest = new PickupRequest();
-        SourceOrg sourceOrg = new SourceOrg();
-        pickupRequest.setSourceOrg(sourceOrg);
         JsonObject jsonObject = JsonParser.parseString(jsonBody).getAsJsonObject();
 
-        if(jsonObject.has("orgId")) {
-            sourceOrg.setOrgId(jsonObject.get("orgId").getAsString());
-        }
-        if(jsonObject.has("orgName")) {
-            sourceOrg.setOrgName(jsonObject.get("orgName").getAsString());
-        }
-        if(jsonObject.has("orgContactEmail")) {
-            sourceOrg.setOrgContactEmail(jsonObject.get("orgContactEmail").getAsString());
+        pickupRequest.setRequestId(jsonObject.get("requestId").getAsString());
+
+        SourceOrg sourceOrg = SourceOrg.parse(jsonObject.get("sourceOrg").getAsJsonObject().toString());
+        pickupRequest.setSourceOrg(sourceOrg);
+
+        if(jsonObject.has("foodType")) {
+            String foodTypeValue = jsonObject.get("foodType").getAsString();
+            pickupRequest.foodType = FoodTypes.valueOf(foodTypeValue);
         }
 
         return pickupRequest;

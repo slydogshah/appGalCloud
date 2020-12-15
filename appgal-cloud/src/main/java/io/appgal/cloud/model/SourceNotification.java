@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.appgal.cloud.infrastructure.messaging.MessageWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +19,7 @@ public class SourceNotification {
     private String latitude = "0.0";
     private String longitude = "0.0";
     private MessageWindow messageWindow;
+    private SourceOrg sourceOrg;
 
     public String getSourceNotificationId() {
         return sourceNotificationId;
@@ -53,6 +53,14 @@ public class SourceNotification {
         this.longitude = longitude;
     }
 
+    public SourceOrg getSourceOrg() {
+        return sourceOrg;
+    }
+
+    public void setSourceOrg(SourceOrg sourceOrg) {
+        this.sourceOrg = sourceOrg;
+    }
+
     @Override
     public String toString()
     {
@@ -68,6 +76,7 @@ public class SourceNotification {
         jsonObject.addProperty("endTimestamp", messageWindow.getEnd().toEpochSecond());
         jsonObject.addProperty("latitude", this.latitude);
         jsonObject.addProperty("longitude", this.longitude);
+        jsonObject.add("sourceOrg", this.sourceOrg.toJson());
 
         return jsonObject;
     }
@@ -112,6 +121,11 @@ public class SourceNotification {
                 }
                 sourceNotification.messageWindow = messageWindow;
             }
+        }
+        if(jsonObject.has("sourceOrg"))
+        {
+            JsonObject sourceOrgJson = jsonObject.get("sourceOrg").getAsJsonObject();
+            sourceNotification.sourceOrg = SourceOrg.parse(sourceOrgJson.toString());
         }
 
         return sourceNotification;

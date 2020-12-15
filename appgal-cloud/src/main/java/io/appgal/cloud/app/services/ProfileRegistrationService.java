@@ -9,7 +9,6 @@ import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 
-import io.appgal.cloud.network.services.DeliveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +30,6 @@ public class ProfileRegistrationService {
 
     @Inject
     private NetworkOrchestrator networkOrchestrator;
-
-    @Inject
-    private DeliveryOrchestrator deliveryOrchestrator;
 
     public Profile getProfile(String email)
     {

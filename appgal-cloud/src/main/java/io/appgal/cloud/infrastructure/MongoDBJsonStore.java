@@ -39,154 +39,40 @@ public class MongoDBJsonStore {
         this.mongoClient.close();
     }
 
-    public JsonArray findDestinationNotifications(List<String> notificationIds)
+    public List<FoodRunner> getAllFoodRunners()
     {
-        JsonArray destinationNotifications = new JsonArray();
+        List<FoodRunner> foodRunners = new ArrayList<>();
 
-        MongoClient mongoClient = new MongoClient() {
-            @Override
-            public MongoDatabase getDatabase(String s) {
-                return null;
-            }
-
-            @Override
-            public ClientSession startSession() {
-                return null;
-            }
-
-            @Override
-            public ClientSession startSession(ClientSessionOptions clientSessionOptions) {
-                return null;
-            }
-
-            @Override
-            public void close() {
-
-            }
-
-            @Override
-            public MongoIterable<String> listDatabaseNames() {
-                return null;
-            }
-
-            @Override
-            public MongoIterable<String> listDatabaseNames(ClientSession clientSession) {
-                return null;
-            }
-
-            @Override
-            public ListDatabasesIterable<Document> listDatabases() {
-                return null;
-            }
-
-            @Override
-            public ListDatabasesIterable<Document> listDatabases(ClientSession clientSession) {
-                return null;
-            }
-
-            @Override
-            public <TResult> ListDatabasesIterable<TResult> listDatabases(Class<TResult> aClass) {
-                return null;
-            }
-
-            @Override
-            public <TResult> ListDatabasesIterable<TResult> listDatabases(ClientSession clientSession, Class<TResult> aClass) {
-                return null;
-            }
-
-            @Override
-            public ChangeStreamIterable<Document> watch() {
-                return null;
-            }
-
-            @Override
-            public <TResult> ChangeStreamIterable<TResult> watch(Class<TResult> aClass) {
-                return null;
-            }
-
-            @Override
-            public ChangeStreamIterable<Document> watch(List<? extends Bson> list) {
-                return null;
-            }
-
-            @Override
-            public <TResult> ChangeStreamIterable<TResult> watch(List<? extends Bson> list, Class<TResult> aClass) {
-                return null;
-            }
-
-            @Override
-            public ChangeStreamIterable<Document> watch(ClientSession clientSession) {
-                return null;
-            }
-
-            @Override
-            public <TResult> ChangeStreamIterable<TResult> watch(ClientSession clientSession, Class<TResult> aClass) {
-                return null;
-            }
-
-            @Override
-            public ChangeStreamIterable<Document> watch(ClientSession clientSession, List<? extends Bson> list) {
-                return null;
-            }
-
-            @Override
-            public <TResult> ChangeStreamIterable<TResult> watch(ClientSession clientSession, List<? extends Bson> list, Class<TResult> aClass) {
-                return null;
-            }
-
-            @Override
-            public ClusterDescription getClusterDescription() {
-                return null;
-            }
-        };
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
-        MongoCollection<Document> collection = database.getCollection("destinationNotifications");
+        MongoCollection<Document> collection = database.getCollection("profile");
 
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
+        FindIterable<Document> iterable = collection.find();
         MongoCursor<Document> cursor = iterable.cursor();
         while(cursor.hasNext())
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            JsonObject jsonObject = JsonParser.parseString(documentJson).getAsJsonObject();
-            destinationNotifications.add(jsonObject);
+            Profile profile = Profile.parse(documentJson);
+            if(profile.getProfileType() == ProfileType.FOOD_RUNNER)
+            {
+                FoodRunner foodRunner = new FoodRunner(profile);
+                foodRunners.add(foodRunner);
+            }
         }
 
-        return destinationNotifications;
+        return foodRunners;
     }
 
-    public void storeDestinationNotifications(DestinationNotification destinationNotification)
+    public void clearAllProfiles()
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
-        MongoCollection<Document> collection = database.getCollection("destinationNotifications");
+        MongoCollection<Document> collection = database.getCollection("profile");
 
-        String json = destinationNotification.toString();
-        Document doc = Document.parse(json);
+        String json = "{}";
 
-        collection.insertOne(doc);
-    }
-
-    public List<String> findKafakaDaemonBootstrapData()
-    {
-        List<String> topics = new ArrayList<>();
-        topics.add(SourceNotification.TOPIC);
-        topics.add(DestinationNotification.TOPIC);
-        topics.add(ActiveFoodRunnerData.TOPIC);
-
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("kafkaDaemonBootstrapData");
-
-        Document document = new Document();
-        document.put("topics", topics);
-
-        collection.insertOne(document);
-
-        return topics;
+        collection.deleteMany(new Document());
     }
 
     public void storeProfile(Profile profile)
@@ -295,6 +181,11 @@ public class MongoDBJsonStore {
 
     public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
     {
+        if(activeFoodRunners.isEmpty())
+        {
+            return;
+        }
+        
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
@@ -345,12 +236,19 @@ public class MongoDBJsonStore {
     public void deleteFoodRunner(FoodRunner foodRunner)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+        collection.deleteMany(new Document());
+    }
+
+    public void clearActiveNetwork()
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
         String json = "{}";
 
-        collection.deleteMany(Document.parse(json));
+        collection.deleteMany(new Document());
     }
 
     public void storeDropOffNotification(DropOffNotification dropOffNotification)
@@ -451,38 +349,6 @@ public class MongoDBJsonStore {
         return completedTrips;
     }
 
-    public void storeFoodRequest(FoodRequest foodRequest)
-    {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("foodrequest");
-
-        Document doc = Document.parse(foodRequest.toString());
-        collection.insertOne(doc);
-    }
-
-    public FoodRequest getFoodRequest(String requestId)
-    {
-        FoodRequest foodRequest = new FoodRequest();
-
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("foodrequest");
-
-        String queryJson = "{\"id\":\""+requestId+"\"}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            foodRequest = FoodRequest.parse(documentJson);
-        }
-
-        return foodRequest;
-    }
-
     public void storeResults(List<FoodRunner> results)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
@@ -497,15 +363,35 @@ public class MongoDBJsonStore {
         collection.insertMany(documents);
     }
 
-    public List<FoodRunner> getResults()
+    public void storeScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
-        List<FoodRunner> results = new ArrayList<>();
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        Document doc = Document.parse(schedulePickUpNotification.toString());
+        collection.insertOne(doc);
+    }
+
+    public void storePickUpRequest(PickupRequest pickupRequest)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("pickuprequest");
+
+        Document doc = Document.parse(pickupRequest.toString());
+        collection.insertOne(doc);
+    }
+
+    public PickupRequest getPickupRequest(String requestId)
+    {
+        PickupRequest pickupRequest = new PickupRequest();
 
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
-        MongoCollection<Document> collection = database.getCollection("results");
+        MongoCollection<Document> collection = database.getCollection("pickuprequest");
 
-        String queryJson = "{}}";
+        String queryJson = "{\"requestId\":\""+requestId+"\"}";
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -513,14 +399,13 @@ public class MongoDBJsonStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            FoodRunner foodRunner = FoodRunner.parse(documentJson);
-            results.add(foodRunner);
+            pickupRequest = PickupRequest.parse(documentJson);
         }
 
-        return results;
+        return pickupRequest;
     }
 
-    void cleanup()
+    public void cleanup()
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
@@ -538,15 +423,5 @@ public class MongoDBJsonStore {
 
         collection = database.getCollection("profile");
         collection.deleteMany(Document.parse("{}"));
-    }
-
-    public void storeScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
-    {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        Document doc = Document.parse(schedulePickUpNotification.toString());
-        collection.insertOne(doc);
     }
 }

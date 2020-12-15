@@ -3,6 +3,7 @@ package io.appgal.cloud.app.endpoint;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.SourceOrg;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
-public class CustomerTests {
+public class CustomerTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(CustomerTests.class);
 
     @Test

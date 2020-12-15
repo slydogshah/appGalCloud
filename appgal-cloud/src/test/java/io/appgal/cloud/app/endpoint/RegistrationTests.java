@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @QuarkusTest
-public class RegistrationTests {
+public class RegistrationTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(RegistrationTests.class);
 
     @Test
@@ -105,7 +106,7 @@ public class RegistrationTests {
     public void testLoginSuccess() {
         JsonObject registrationJson = new JsonObject();
         registrationJson.addProperty("id", UUID.randomUUID().toString());
-        registrationJson.addProperty("email", "c@s.com");
+        registrationJson.addProperty("email", "bugs.bunny.shah@gmail.com");
         registrationJson.addProperty("mobile", "8675309");
         registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
@@ -113,7 +114,7 @@ public class RegistrationTests {
         given().body(registrationJson.toString()).post("/registration/profile");
 
         JsonObject loginJson = new JsonObject();
-        loginJson.addProperty("email", "c@s.com");
+        loginJson.addProperty("email", "bugs.bunny.shah@gmail.com");
         loginJson.addProperty("password", "c");
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
@@ -131,7 +132,7 @@ public class RegistrationTests {
         assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
         assertNotNull(profile.getId());
-        assertEquals(profile.getEmail(), "c@s.com");
+        assertEquals(profile.getEmail(), "bugs.bunny.shah@gmail.com");
         assertEquals(profile.getMobile(), "8675309");
         assertEquals(profile.getPassword(), "c");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
