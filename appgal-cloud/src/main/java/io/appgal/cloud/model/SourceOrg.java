@@ -149,6 +149,11 @@ public class SourceOrg implements Serializable {
         SourceOrg sourceOrg = new SourceOrg();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        if(!jsonObject.has("orgName") || !jsonObject.has("orgId")
+        || !jsonObject.has("orgContactEmail")) {
+            throw new IllegalStateException("INVALID_DATA: "+json);
+        }
+
 
         if(jsonObject.has("orgId")) {
             sourceOrg.orgId = jsonObject.get("orgId").getAsString();

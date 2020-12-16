@@ -17,6 +17,6 @@ public abstract class BaseTest
     public void setUp() throws Exception
     {
         this.securityTokenMockComponent.start();
-        this.mongoDBJsonStore.cleanup();
+        //this.mongoDBJsonStore.cleanup();
     }
 }

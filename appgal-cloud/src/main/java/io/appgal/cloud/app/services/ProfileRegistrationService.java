@@ -73,7 +73,7 @@ public class ProfileRegistrationService {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
-            logger.info("PROFILE_NOT_FOUND");
+            logger.info("PROFILE_NOT_FOUND: "+email);
             throw new AuthenticationException(email);
         }
 
@@ -114,6 +114,7 @@ public class ProfileRegistrationService {
             profile.setLocation(location);
             authResponse.add("profile", profile.toJson());
 
+            this.networkOrchestrator.enterNetwork(foodRunner);
             List<SourceOrg> match = this.activeNetwork.matchFoodRunner(foodRunner);
             JsonArray matchArray = new JsonArray();
             for(SourceOrg sourceOrg:match)

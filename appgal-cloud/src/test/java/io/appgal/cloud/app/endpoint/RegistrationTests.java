@@ -198,4 +198,43 @@ public class RegistrationTests extends BaseTest {
         assertEquals(401, response.getStatusCode());
         assertEquals(jsonObject.get("email").getAsString(), "");
     }
+
+    @Test
+    public void testLoginValidationFail() {
+        JsonObject registrationJson = new JsonObject();
+        registrationJson.addProperty("id", UUID.randomUUID().toString());
+        registrationJson.addProperty("email", "Cv");
+        registrationJson.addProperty("mobile", "Cv");
+        registrationJson.addProperty("photo", "photu");
+        registrationJson.addProperty("password", "cv");
+        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+        given().body(registrationJson.toString()).post("/registration/profile");
+
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", "Cv");
+        loginJson.addProperty("password", "cv");
+        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        int statusCode = jsonObject.get("statusCode").getAsInt();
+        assertEquals(200, statusCode);
+        assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
+        assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
+        Profile profile = Profile.parse(jsonObject.get("profile").toString());
+        assertNotNull(profile.getId());
+        assertEquals(profile.getEmail(), "Cv");
+        assertEquals(profile.getMobile(), "Cv");
+        assertEquals(profile.getPassword(), "cv");
+        assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
+        assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
+        assertEquals(profile.getLocation().getLongitude(), -97.74873352050781d);
+
+    }
 }
