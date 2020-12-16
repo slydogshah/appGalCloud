@@ -11,8 +11,8 @@ class CloudDataPoller
 {
   static void startPolling(BuildContext context)
   {
-    pollData(context);
-    const oneSec = const Duration(seconds:30);
+    //pollData(context);
+    const oneSec = const Duration(seconds:60);
     new Timer.periodic(oneSec, (Timer t) {
       print(new DateTime.now().millisecondsSinceEpoch);
       pollData(context);

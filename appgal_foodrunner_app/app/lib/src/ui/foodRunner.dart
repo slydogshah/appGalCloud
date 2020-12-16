@@ -76,29 +76,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     return cards;
   }
 
-  void handleClick(BuildContext context)
-  {
-    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    Profile profile = ActiveSession.getInstance().getProfile();
-    FoodRunner foodRunner = new FoodRunner(profile);
-    Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(foodRunner);
-    futureP.then((sourceOrgs){
-      if(sourceOrgs.length == 0)
-      {
-        return;
-      }
-
-      Navigator.push(context,
-      MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
-      
-      //also send a notification I am on my way
-      Map<String, dynamic> json = sourceOrgs.elementAt(0);
-      SourceOrg sourceOrg = SourceOrg.fromJson(json);
-      DropOffNotification dropOffNotification = DropOffNotification(sourceOrg, foodRunner);
-      activeNetworkRestClient.sendDeliveryNotification(dropOffNotification);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     Scaffold scaffold = Scaffold(
@@ -120,12 +97,5 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
   void handleDriveToDestination(BuildContext context)
   {
     Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
-  }
-
-  void handlePickupSource(BuildContext context, SourceOrg sourceOrg)
-  {
-    List<SourceOrg> sourceOrgs = new List();
-    sourceOrgs.add(sourceOrg);
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
   }
 }
