@@ -119,7 +119,9 @@ public class ProfileRegistrationService {
             JsonArray matchArray = new JsonArray();
             for(SourceOrg sourceOrg:match)
             {
-                matchArray.add(sourceOrg.toJson());
+                if(sourceOrg.isProducer()) {
+                    matchArray.add(sourceOrg.toJson());
+                }
             }
             authResponse.add("sourceOrgs", matchArray);
 

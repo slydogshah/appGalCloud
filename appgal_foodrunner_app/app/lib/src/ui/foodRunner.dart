@@ -35,11 +35,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     List<Card> cards = new List();
     for(SourceOrg sourceOrg in this.sourceOrgs)
     {
-
-      print("GAAND_MAAR......");
-      print(sourceOrg.orgName);
-      print("GAAND_MAAR......");
-
       Location location = new Location(0.0, 0.0);
       sourceOrg.location = location;
       Card card = Card(shape: RoundedRectangleBorder(
