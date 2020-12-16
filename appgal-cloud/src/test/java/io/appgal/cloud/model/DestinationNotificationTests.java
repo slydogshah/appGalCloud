@@ -31,6 +31,7 @@ public class DestinationNotificationTests {
         messageWindow.setEnd(end);
 
         SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        sourceOrg1.setProducer(true);
         String sourceNotificationId = UUID.randomUUID().toString();
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(sourceNotificationId);
@@ -42,6 +43,7 @@ public class DestinationNotificationTests {
         destinationNotification.setDestinationNotificationId(destinationNotificationId);
         destinationNotification.setSourceNotification(sourceNotification);
         SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        destinationOrg.setProducer(true);
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
                 "8675309", "", "", ProfileType.FOOD_RUNNER, location);

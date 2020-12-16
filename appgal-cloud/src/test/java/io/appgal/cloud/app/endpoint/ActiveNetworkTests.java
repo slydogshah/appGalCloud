@@ -118,6 +118,7 @@ public class ActiveNetworkTests extends BaseTest {
     @Test
     public void testSendDeliveryNotification() {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        sourceOrg.setProducer(true);
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
                 "8675309", "", "", ProfileType.FOOD_RUNNER, location);
@@ -137,6 +138,7 @@ public class ActiveNetworkTests extends BaseTest {
     public void testSendPickupRequest() {
 
         SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com");
+        sourceOrg.setProducer(true);
         for(int i=0; i<2; i++)
         {
             Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "",
@@ -165,6 +167,7 @@ public class ActiveNetworkTests extends BaseTest {
     {
         PickupRequest foodRequest = new PickupRequest();
         SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        sourceOrg1.setProducer(true);
         foodRequest.setFoodType(FoodTypes.VEG);
         foodRequest.setSourceOrg(sourceOrg1);
         String jsonBody = foodRequest.toJson().toString();
@@ -206,6 +209,7 @@ public class ActiveNetworkTests extends BaseTest {
     @Test
     public void testSchedulePickUp() {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        sourceOrg.setProducer(true);
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(0.0d, 0.0d);
         FoodRunner bugsBunny = new FoodRunner(profile, location);

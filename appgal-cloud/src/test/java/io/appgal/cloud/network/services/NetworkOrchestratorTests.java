@@ -116,6 +116,7 @@ public class NetworkOrchestratorTests extends BaseTest {
         double startLongitude = 0.0d;
         Location location = new Location(startLatitude, startLongitude);
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        sourceOrg.setProducer(true);
         sourceOrg.setLocation(location);
         PickupRequest pickupRequest = new PickupRequest();
         pickupRequest.setSourceOrg(sourceOrg);
@@ -213,8 +214,10 @@ public class NetworkOrchestratorTests extends BaseTest {
 
         SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH",
                 "downtown.church@gmail.com");
+        dropOff1.setProducer(false);
         dropOff1.setLocation(dropLocation1);
         SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
+        dropOff2.setProducer(true);
         dropOff2.setLocation(dropLocation2);
         sourceOrgs.add(dropOff1);
         sourceOrgs.add(dropOff2);
@@ -270,6 +273,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             messageWindow.setStart(start);
             messageWindow.setEnd(end);
             SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+            sourceOrg1.setProducer(true);
             String sourceNotificationId = UUID.randomUUID().toString();
             SourceNotification sourceNotification = new SourceNotification();
             sourceNotification.setSourceNotificationId(sourceNotificationId);
@@ -281,6 +285,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             destinationNotification.setDestinationNotificationId(destinationNotificationId);
             destinationNotification.setSourceNotification(sourceNotification);
             SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+            destinationOrg.setProducer(true);
             Location location = new Location(30.25860595703125d, -97.74873352050781d);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
                     "8675309", "", "", ProfileType.FOOD_RUNNER, location);

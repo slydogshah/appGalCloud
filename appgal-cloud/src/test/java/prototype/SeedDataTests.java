@@ -32,8 +32,10 @@ public class SeedDataTests {
     public void testSeedData() throws Exception
     {
         SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        pickUp1.setProducer(true);
         pickUp1.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
         SourceOrg pickUp2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com");
+        pickUp2.setProducer(true);
 
         SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com");
         SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");

@@ -53,12 +53,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Organization Id: '+sourceOrg.orgId,
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
                           labelText: 'Email: '+sourceOrg.orgContactEmail,
                           ),
                         ),
@@ -66,15 +60,9 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                           child: ButtonBar(
                             children: <Widget>[
                               FlatButton(
-                                child: const Text('Drop Off', style: TextStyle(color: Colors.white)),
+                                child: const Text('Schedule Pickup', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
                                     handleDriveToDestination(context);
-                                },
-                              ),
-                              FlatButton(
-                                child: const Text('Pick Up', style: TextStyle(color: Colors.white)),
-                                onPressed: () {
-                                  handlePickupSource(context,sourceOrg);
                                 },
                               ),
                             ],
@@ -111,18 +99,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     });
   }
 
-  void handleDriveToDestination(BuildContext context)
-  {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
-  }
-
-  void handlePickupSource(BuildContext context, SourceOrg sourceOrg)
-  {
-    List<SourceOrg> sourceOrgs = new List();
-    sourceOrgs.add(sourceOrg);
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
-  }
-  
   @override
   Widget build(BuildContext context) {
     Scaffold scaffold = Scaffold(
@@ -139,5 +115,17 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
       bottomNavigationBar: UiFunctions.bottomNavigationBar(context)
     );
     return scaffold;
+  }
+
+  void handleDriveToDestination(BuildContext context)
+  {
+    Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
+  }
+
+  void handlePickupSource(BuildContext context, SourceOrg sourceOrg)
+  {
+    List<SourceOrg> sourceOrgs = new List();
+    sourceOrgs.add(sourceOrg);
+    //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
   }
 }

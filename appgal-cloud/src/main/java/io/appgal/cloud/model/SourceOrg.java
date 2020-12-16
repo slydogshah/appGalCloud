@@ -22,6 +22,7 @@ public class SourceOrg implements Serializable {
     private DeliveryPreference deliveryPreference;
     private List<Profile> profiles;
     private Location location;
+    private boolean isProducer;
 
     public SourceOrg()
     {
@@ -29,7 +30,8 @@ public class SourceOrg implements Serializable {
         this.location = new Location(0.0d, 0.0d);
     }
 
-    public SourceOrg(String orgId, String orgName, String orgContactEmail, DeliveryPreference deliveryPreference, List<Profile> profiles, Location location) {
+    public SourceOrg(String orgId, String orgName, String orgContactEmail, DeliveryPreference deliveryPreference,
+                     List<Profile> profiles, Location location, boolean isProducer) {
         this();
         this.orgId = orgId;
         this.orgName = orgName;
@@ -37,6 +39,7 @@ public class SourceOrg implements Serializable {
         this.deliveryPreference = deliveryPreference;
         this.profiles = profiles;
         this.location = location;
+        this.isProducer = isProducer;
     }
 
     public SourceOrg(String orgId, String orgName, String orgContactEmail)
@@ -96,6 +99,14 @@ public class SourceOrg implements Serializable {
         this.profiles = profiles;
     }
 
+    public boolean isProducer() {
+        return isProducer;
+    }
+
+    public void setProducer(boolean producer) {
+        isProducer = producer;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -141,6 +152,8 @@ public class SourceOrg implements Serializable {
             jsonObject.add("location", json);
         }
 
+        jsonObject.addProperty("producer", this.isProducer);
+
         return jsonObject;
     }
 
@@ -183,6 +196,8 @@ public class SourceOrg implements Serializable {
             JsonObject locationJson = jsonObject.getAsJsonObject("location");
             sourceOrg.location = Location.parse(locationJson.toString());
         }
+
+        sourceOrg.isProducer = jsonObject.get("producer").getAsBoolean();
 
         return sourceOrg;
     }
