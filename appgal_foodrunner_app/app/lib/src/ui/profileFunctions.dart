@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
@@ -50,29 +52,35 @@ class ProfileFunctions
       },
     );
 
-    print("EMAIL: "+email);
-    print("PASSWORD: "+password);
-    print("PROFILE_TYPE: "+profileType);
+    //print("EMAIL: "+email);
+    //print("PASSWORD: "+password);
+    //print("PROFILE_TYPE: "+profileType);
 
     Profile profile = new Profile("", email, mobile, "", password);
     profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    profileRestClient.register(profile);
-    AuthCredentials credentials = new AuthCredentials();
-    credentials.email = profile.email;
-    credentials.password = profile.password;
-    login(context, dialog, credentials);
+    Future<Profile> future = profileRestClient.register(profile);
+    future.then((profile){
+      AuthCredentials credentials = new AuthCredentials();
+      credentials.email = profile.email;
+      credentials.password = profile.password;
+      login(context, dialog, credentials);
+    });
   }
 
   void login (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
     future.then((FoodRunnerLoginData){
+      Navigator.of(context, rootNavigator: true).pop();
+
+      print("*************************************");
+      print(FoodRunnerLoginData.authCredentials);
+      print(FoodRunnerLoginData.sourceOrgs);
+      print("*************************************");
+
+
       AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
-
-      //Navigator.of(context, rootNavigator: true).pop();
-      Navigator.pop(context);
-
       if(authCredentials.statusCode == 401)
       {
           return;
@@ -82,20 +90,8 @@ class ProfileFunctions
       activeSession.setProfile(authCredentials.getProfile());
 
       Profile profile = activeSession.getProfile();
-      String profileType = profile.getProfileType();
-
-      if(profileType == "FOOD_RUNNER")
-      {
-        //LandingScene landingScene = new LandingScene(profile);
-        //Navigator.push(context,MaterialPageRoute(builder: (context) => landingScene));
-        //LandingSceneState landingSceneState = landingScene.getLandingSceneState();
-        //landingSceneState.map();
-        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(FoodRunnerLoginData.sourceOrgs)));
-      }
-      else
-      {
-        showCards(context, profile);
-      }
+      Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(FoodRunnerLoginData.sourceOrgs)));
+      showCards(context, profile);
     });
   }
 
