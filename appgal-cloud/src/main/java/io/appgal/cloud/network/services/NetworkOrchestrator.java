@@ -140,7 +140,7 @@ public class NetworkOrchestrator {
 
     public List<SourceOrg> findBestDestination(FoodRunner foodRunner)
     {
-        List<SourceOrg> sourceOrgs = this.activeNetwork.getSourceOrgs();
+        List<SourceOrg> sourceOrgs = this.activeNetwork.matchFoodRunner(foodRunner);
         return sourceOrgs;
     }
 
