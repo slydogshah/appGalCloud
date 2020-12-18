@@ -96,6 +96,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
 
   void handleSchedulePickup(BuildContext context, SourceOrg sourceOrg)
   {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => CupertinoPickerDemo(sourceOrg)));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => SchedulePickup(sourceOrg)));
   }
 }
