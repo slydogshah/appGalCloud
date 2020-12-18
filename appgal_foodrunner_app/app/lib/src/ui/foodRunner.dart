@@ -62,7 +62,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                               FlatButton(
                                 child: const Text('Schedule Pickup', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleSchedulePickup(context);
+                                    handleSchedulePickup(context, sourceOrg);
                                 },
                               ),
                             ],
@@ -94,8 +94,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     return scaffold;
   }
 
-  void handleSchedulePickup(BuildContext context)
+  void handleSchedulePickup(BuildContext context, SourceOrg sourceOrg)
   {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => SchedulePickupScene()));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => CupertinoPickerDemo(sourceOrg)));
   }
 }
