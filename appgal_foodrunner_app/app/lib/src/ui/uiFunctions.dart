@@ -1,10 +1,7 @@
 import 'package:app/src/model/foodRequest.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
-import 'package:app/src/ui/pickupSource.dart';
 import 'package:flutter/material.dart';
-
-import 'applicableSources.dart';
 
 class UiFunctions{
   static BottomNavigationBar bottomNavigationBar(BuildContext context)
@@ -48,7 +45,7 @@ class UiFunctions{
               SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null);
               List<SourceOrg> sourceOrgs = new List();
               sourceOrgs.add(sourceOrg);
-              Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
+              //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
             }
             else if(index == 2)
             {
@@ -60,7 +57,7 @@ class UiFunctions{
               Future<String> future = client.sendFoodRequest(foodRequest);
               future.then((jsonString){
                     print(jsonString);
-                    Navigator.push(context,MaterialPageRoute(builder: (context) => ApplicableSources()));
+                    //Navigator.push(context,MaterialPageRoute(builder: (context) => ApplicableSources()));
               });
             }
           },

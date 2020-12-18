@@ -201,7 +201,7 @@ class SchedulePickupState extends State<SchedulePickup> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         automaticallyImplyLeading: false,
-        middle: Text("Pickers"),
+        middle: Text("Schedule Pickup"),
       ), 
       child: DefaultTextStyle(
         style: CupertinoTheme.of(context).textTheme.textStyle,
