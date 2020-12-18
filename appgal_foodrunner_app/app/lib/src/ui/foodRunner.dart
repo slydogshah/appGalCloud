@@ -9,7 +9,7 @@ import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 
-import 'driveToDestination.dart';
+import 'schedulePickup.dart';
 import 'foodRunnerDestinations.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
@@ -62,7 +62,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                               FlatButton(
                                 child: const Text('Schedule Pickup', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleDriveToDestination(context);
+                                    handleSchedulePickup(context);
                                 },
                               ),
                             ],
@@ -94,8 +94,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     return scaffold;
   }
 
-  void handleDriveToDestination(BuildContext context)
+  void handleSchedulePickup(BuildContext context)
   {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => SchedulePickupScene()));
   }
 }
