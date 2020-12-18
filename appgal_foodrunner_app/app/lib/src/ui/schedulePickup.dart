@@ -103,17 +103,39 @@ import 'package:intl/intl.dart';
 
 import '../model/sourceOrg.dart';
 
+import 'package:app/src/ui/uiFunctions.dart';
+import 'package:flutter/material.dart';
+
+import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/dropOffNotification.dart';
+import 'package:app/src/model/foodRunner.dart';
+import 'package:app/src/model/location.dart';
+import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
+
+import 'schedulePickup.dart';
+import 'foodRunnerDestinations.dart';
+
 class CupertinoPickerDemo extends StatefulWidget {
+  SourceOrg sourceOrg;
   CupertinoPickerDemo(SourceOrg sourceOrg)
   {
-    
+      this.sourceOrg = sourceOrg;
   }
 
   @override
-  _CupertinoPickerDemoState createState() => _CupertinoPickerDemoState();
+  _CupertinoPickerDemoState createState() => _CupertinoPickerDemoState(sourceOrg);
 }
 
 class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
+  SourceOrg sourceOrg;
+  _CupertinoPickerDemoState(SourceOrg sourceOrg)
+  {
+    this.sourceOrg = sourceOrg;
+  }
+
+
   Duration timer = const Duration();
 
   // Value that is shown in the date picker in date mode.
@@ -264,16 +286,39 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
 
   @override
   Widget build(BuildContext context) {
+    Card card = Card(shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    color: Colors.pink,
+                    elevation: 10,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          leading: Icon(Icons.album, size: 70),
+                          title: Text('Organization', style: TextStyle(color: Colors.white)),
+                          subtitle: Text(sourceOrg.orgName, style: TextStyle(color: Colors.white)),
+                        ),
+                        TextField(
+                          decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Email: '+sourceOrg.orgContactEmail,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         automaticallyImplyLeading: false,
         middle: Text("Pickers"),
-      ),
+      ), 
       child: DefaultTextStyle(
         style: CupertinoTheme.of(context).textTheme.textStyle,
         child: ListView(
           children: [
             const SizedBox(height: 32),
+            card,
             _buildDatePicker(context),
             _buildTimePicker(context),
             _buildDateAndTimePicker(context),
