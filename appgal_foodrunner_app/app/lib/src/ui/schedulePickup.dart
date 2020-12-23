@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 
 import 'package:app/src/model/sourceOrg.dart';
 
+import '../rest/activeNetworkRestClient.dart';
+import 'package:app/src/model/schedulePickupNotification.dart';
+
 class SchedulePickup extends StatefulWidget {
   SourceOrg sourceOrg;
   SchedulePickup(SourceOrg sourceOrg)
@@ -213,10 +216,32 @@ class SchedulePickupState extends State<SchedulePickup> {
             _buildTimePicker(context),
             _buildDateAndTimePicker(context),
             _buildCountdownTimerPicker(context),
+            Center(
+                  child: RaisedButton(
+                    child: Text("Schedule Pickup"),
+                    onPressed: () 
+                    {
+                      SchedulePickupNotification schedulePickupNotification = new SchedulePickupNotification(sourceOrg, null, null);
+                      schedulePickup(context, schedulePickupNotification);
+                    }
+                  )
+                ),
           ],
         ),
       ),
     );
+  }
+
+  void schedulePickup (BuildContext context, SchedulePickupNotification notification) {
+    ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
+    Future<String> future = activeNetworkRestClient.sendSchedulePickupNotification(notification);
+    print("HELLO");
+    //print(future);
+    future.then((response){
+      print("*********RESPONSE****************");
+      print(response);
+      print("*************************");
+    });
   }
 }
 

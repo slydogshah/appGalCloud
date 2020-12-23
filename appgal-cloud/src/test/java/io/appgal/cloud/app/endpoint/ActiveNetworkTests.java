@@ -222,6 +222,7 @@ public class ActiveNetworkTests extends BaseTest {
         schedulePickUpNotification.setStart(start);
 
         String json = schedulePickUpNotification.toJson().toString();
+        logger.info(gson.toJson(schedulePickUpNotification.toJson()));
 
         Response response = given().body(json).when().post("/activeNetwork/schedulePickUp/")
                 .andReturn();

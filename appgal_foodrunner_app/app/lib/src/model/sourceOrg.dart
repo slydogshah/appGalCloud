@@ -7,11 +7,12 @@ class SourceOrg
     String orgId;
     String orgName;
     String orgContactEmail;
+    bool isProducer=false;
 
     Location location = new Location(0.0, 0.0);
 
     //private DeliveryPreference deliveryPreference;
-    SourceOrg(String orgId, String orgName, String orgContactEmail, Location location)
+    SourceOrg(String orgId, String orgName, String orgContactEmail, Location location, bool isProducer)
     {
       this.orgId = orgId;
       this.orgName = orgName;
@@ -20,13 +21,15 @@ class SourceOrg
       {
         this.location = location;
       }
+      this.isProducer = isProducer;
     }
 
     SourceOrg.fromJson(Map<String, dynamic> json) :
     this.orgId = json['orgId'],
     this.orgName = json['orgName'],
     this.orgContactEmail = json['orgContactEmail'],
-    this.location = Location.fromJson(json['location']);
+    this.isProducer = json['producer'],
+    this.location = Location.fromJson(json['location'],);
 
     Map<String, dynamic> toJson()
     {
@@ -39,6 +42,7 @@ class SourceOrg
       json['orgName'] = this.orgName;
       json['orgContactEmail'] = this.orgContactEmail;
       json['location'] = this.location;
+      json['producer'] = this.isProducer;
       return json;
     }
 

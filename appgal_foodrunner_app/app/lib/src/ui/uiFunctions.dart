@@ -42,7 +42,7 @@ class UiFunctions{
                 }
               });*/
               //TODO:REMOVE_MOCK_DATA
-              SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null);
+              SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null, true);
               List<SourceOrg> sourceOrgs = new List();
               sourceOrgs.add(sourceOrg);
               //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
@@ -52,7 +52,7 @@ class UiFunctions{
               print("Send Food Request");
               ActiveNetworkRestClient client = ActiveNetworkRestClient();
               //TODO:REMOVE_MOCK_DATA
-              SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null);
+              SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null, true);
               FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
               Future<String> future = client.sendFoodRequest(foodRequest);
               future.then((jsonString){
