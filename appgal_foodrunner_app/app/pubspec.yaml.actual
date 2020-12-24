@@ -1,11 +1,9 @@
-#name: gallery
-#description: A resource to help developers evaluate and use Flutter.
-#repository: https://github.com/flutter/gallery
-#version: 2.6.0+020600
 name: app
 description: AppGal Labs, Food Recovery Optimization Network (FutureGeniuses)
 version: 1.0.0+1
 
+#environment:
+#  sdk: ">=2.2.0 <3.0.0"
 environment:
   sdk: ">=2.6.0 <3.0.0"
 
@@ -14,9 +12,10 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl: ^0.16.1
-  flutter_localized_locales: ^1.1.1
-  cupertino_icons: ^1.0.0
+  intl:
+  intl_translation:
+  flutter_localized_locales: ^1.1.0
+  cupertino_icons: ^0.1.2
   rally_assets: ^2.0.0
   meta: ^1.1.8
   scoped_model: ^1.0.1
@@ -36,7 +35,21 @@ dependencies:
   adaptive_breakpoints: ^0.0.2
   google_maps_flutter: 0.5.24+1
   http: ^0.12.0+4
+  #test: ^1.14.0
+  #gallery: ^0.0.1
 
+#dev_dependencies:
+#  flutter_test:
+#    sdk: flutter
+#  flutter_driver:
+#    sdk: flutter
+#  test:
+#  path:
+#  args:
+#  grinder: ^0.8.0
+#  intl_translation:
+#  pedantic: ^1.9.0
+#  string_scanner: ^1.0.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -49,6 +62,29 @@ dev_dependencies:
   intl_translation:
   pedantic: ^1.9.0
   string_scanner: ^1.0.5
+
+#flutter:
+#  uses-material-design: true
+#  assets:
+#    - fonts/google_fonts/
+#    - assets/demos/
+#    - assets/studies/
+#    - assets/icons/cupertino/
+#    - assets/icons/material/
+#   - assets/icons/reference/
+#    - assets/icons/settings/
+#    - assets/logo/
+#    - assets/splash_effects/
+#    - assets/crane/logo/
+#    - assets/crane/destinations/
+#    - assets/fortnightly/
+#    - assets/maps/
+
+#  fonts:
+#    - family: GalleryIcons
+#      fonts:
+#        - asset: fonts/GalleryIcons.ttf
+
 
 flutter:
   assets:
@@ -252,5 +288,3 @@ flutter:
   fonts:
     - family: GalleryIcons
       fonts:
-        - asset: packages/flutter_gallery_assets/fonts/GalleryIcons.ttf
-

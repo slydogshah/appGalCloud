@@ -134,6 +134,13 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public Response schedulePickUp(@RequestBody String jsonBody)
     {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         SchedulePickUpNotification schedulePickUpNotification = SchedulePickUpNotification.parse(jsonBody);
 
 
