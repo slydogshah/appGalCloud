@@ -55,7 +55,9 @@ public class ActiveNetwork {
         FoodRunner foodRunner = new FoodRunner(profile, location);
         this.networkOrchestrator.enterNetwork(foodRunner);
 
-        return Response.ok().build();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("success", true);
+        return Response.ok(jsonObject.toString()).build();
     }
 
     @Path("pickUpRequest/send")
