@@ -50,7 +50,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void testDropOffNotificationStorageCycle()
     {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","",
                 ProfileType.FOOD_RUNNER);
@@ -84,7 +84,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void testSourceOrgLifecycle()
     {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
         List<SourceOrg> stored = this.mongoDBJsonStore.getSourceOrgs();
 
@@ -137,7 +137,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void testGetCompletedTrips()
     {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
@@ -155,7 +155,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void testSourceOrgProfileRelationship()
     {
-        SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com");
+        SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com",true);
         for(int i=0; i<2; i++)
         {
             Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "", "test", ProfileType.ORG);
@@ -173,7 +173,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void testStoreScheduledPickUpNotification() throws Exception
     {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(0.0d, 0.0d);
         FoodRunner bugsBunny = new FoodRunner(profile, location);

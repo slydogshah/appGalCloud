@@ -31,14 +31,14 @@ public class SeedDataTests {
     @Test
     public void testSeedData() throws Exception
     {
-        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
         pickUp1.setProducer(true);
         pickUp1.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
-        SourceOrg pickUp2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com");
+        SourceOrg pickUp2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com",true);
         pickUp2.setProducer(true);
 
-        SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com");
-        SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
+        SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com",false);
+        SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com",false);
 
         customerService.storeSourceOrg(pickUp1);
         customerService.storeSourceOrg(pickUp2);

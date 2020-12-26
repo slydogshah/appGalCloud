@@ -115,7 +115,7 @@ public class NetworkOrchestratorTests extends BaseTest {
         double startLatitude = 0.0d;
         double startLongitude = 0.0d;
         Location location = new Location(startLatitude, startLongitude);
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
         sourceOrg.setProducer(true);
         sourceOrg.setLocation(location);
         PickupRequest pickupRequest = new PickupRequest();
@@ -213,10 +213,10 @@ public class NetworkOrchestratorTests extends BaseTest {
         Location dropLocation2 = new Location(44.9441d, -93.0852d);
 
         SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH",
-                "downtown.church@gmail.com");
+                "downtown.church@gmail.com",false);
         dropOff1.setProducer(false);
         dropOff1.setLocation(dropLocation1);
-        SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
+        SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com",true);
         dropOff2.setProducer(true);
         dropOff2.setLocation(dropLocation2);
         sourceOrgs.add(dropOff1);
@@ -272,7 +272,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             MessageWindow messageWindow = new MessageWindow();
             messageWindow.setStart(start);
             messageWindow.setEnd(end);
-            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
             sourceOrg1.setProducer(true);
             String sourceNotificationId = UUID.randomUUID().toString();
             SourceNotification sourceNotification = new SourceNotification();
@@ -284,7 +284,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             DestinationNotification destinationNotification = new DestinationNotification();
             destinationNotification.setDestinationNotificationId(destinationNotificationId);
             destinationNotification.setSourceNotification(sourceNotification);
-            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
             destinationOrg.setProducer(true);
             Location location = new Location(30.25860595703125d, -97.74873352050781d);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",

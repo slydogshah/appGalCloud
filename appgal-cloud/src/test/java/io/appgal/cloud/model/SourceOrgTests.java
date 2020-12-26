@@ -14,9 +14,9 @@ public class SourceOrgTests  {
     @Test
     public void testEquals()
     {
-        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
         sourceOrg1.setProducer(true);
-        SourceOrg sourceOrg2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com");
+        SourceOrg sourceOrg2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com",true);
         sourceOrg2.setProducer(true);
 
         assertFalse(sourceOrg1.equals(sourceOrg2));

@@ -44,7 +44,7 @@ public class DataStorageTests extends BaseTest {
         Random random = new Random();
         for(int i=0; i<10; i++)
         {
-            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
             sourceOrg1.setProducer(true);
 
             String sourceNotificationId = UUID.randomUUID().toString();
@@ -57,7 +57,7 @@ public class DataStorageTests extends BaseTest {
             DestinationNotification destinationNotification = new DestinationNotification();
             destinationNotification.setDestinationNotificationId(destinationNotificationId);
             destinationNotification.setSourceNotification(sourceNotification);
-            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
             destinationOrg.setProducer(true);
             Location location = new Location(30.25860595703125d,-97.74873352050781d);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",

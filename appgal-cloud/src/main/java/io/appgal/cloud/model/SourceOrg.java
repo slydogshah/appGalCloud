@@ -27,7 +27,6 @@ public class SourceOrg implements Serializable {
     public SourceOrg()
     {
         this.profiles = new ArrayList<>();
-        this.location = new Location(0.0d, 0.0d);
     }
 
     public SourceOrg(String orgId, String orgName, String orgContactEmail, DeliveryPreference deliveryPreference,
@@ -42,13 +41,14 @@ public class SourceOrg implements Serializable {
         this.isProducer = isProducer;
     }
 
-    public SourceOrg(String orgId, String orgName, String orgContactEmail)
+    public SourceOrg(String orgId, String orgName, String orgContactEmail, boolean isProducer)
     {
         this();
         this.orgId = orgId;
         this.orgName = orgName;
         this.orgContactEmail = orgContactEmail;
         this.deliveryPreference = new DeliveryPreference();
+        this.isProducer = isProducer;
     }
 
     public String getOrgId() {
@@ -159,6 +159,10 @@ public class SourceOrg implements Serializable {
 
     public static SourceOrg parse(String json)
     {
+        logger.info("*********DEBUG**************");
+        logger.info(json);
+
+
         SourceOrg sourceOrg = new SourceOrg();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
