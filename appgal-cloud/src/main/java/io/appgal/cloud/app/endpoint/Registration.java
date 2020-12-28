@@ -55,7 +55,7 @@ public class Registration {
         }
         catch(ResourceExistsException rxe)
         {
-            logger.info(rxe.getMessage());
+            logger.error(rxe.getMessage(), rxe);
             return Response.status(409).build();
         }
     }
