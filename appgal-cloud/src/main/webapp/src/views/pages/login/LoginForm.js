@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { withRouter } from "react-router";
+import axios from 'axios'
 import {
   CButton,
   CCard,
@@ -38,6 +39,11 @@ class LoginForm extends React.Component {
   handleLogin(event) {
     this.props.history.push("/dashboard");
     console.log(JSON.stringify(this.state));
+    const apiUrl = 'http://localhost:8080/registration/login/';
+    axios.post(apiUrl,{"email":"Do","password":"do","statusCode":null,"profile":null}).then((response) => {
+          console.log(JSON.stringify(response.data));
+    });
+
     event.preventDefault();
   }
 

@@ -222,6 +222,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler-plugin.version}</version>
       </plugin>
+      <!--
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
@@ -261,6 +262,7 @@
           <installDirectory>target</installDirectory>
         </configuration>
       </plugin>
+      -->
     </plugins>
   </build>
   <profiles>
