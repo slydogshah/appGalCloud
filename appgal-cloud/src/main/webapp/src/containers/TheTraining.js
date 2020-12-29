@@ -61,7 +61,7 @@ class NameForm extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.value);
+    console.log(JSON.stringify(this.state));
     event.preventDefault();
   }
 

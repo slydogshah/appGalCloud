@@ -37,7 +37,7 @@ class LoginForm extends React.Component {
 
   handleLogin(event) {
     this.props.history.push("/dashboard");
-    alert('A name was submitted: ' + this.state.username+":"+this.state.password);
+    console.log(JSON.stringify(this.state));
     event.preventDefault();
   }
 
