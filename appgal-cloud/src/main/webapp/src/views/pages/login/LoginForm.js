@@ -21,22 +21,23 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     //console.log("Constructor: "+JSON.stringify(this.props));
-    this.state = {value: ''};
+    this.state = {username:'',password:''};
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
   }
 
   handleChange(event) {
-    this.setState({value: event.target.value});
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+    this.setState({
+          [name]: [value]
+    });
   }
 
   handleLogin(event) {
     this.props.history.push("/dashboard");
-    //console.log(this.props);
-    //let history = useHistory();
-    //history.push("/dashboard");
-    //alert(History);
-    //alert('A name was submitted: ' + this.state.value);
+    alert('A name was submitted: ' + this.state.username+":"+this.state.password);
     event.preventDefault();
   }
 
@@ -58,7 +59,8 @@ class LoginForm extends React.Component {
                                 <CIcon name="cil-user" />
                               </CInputGroupText>
                             </CInputGroupPrepend>
-                            <CInput type="text" placeholder="Username" autoComplete="username" />
+                            <CInput type="text" placeholder="Username" autoComplete="username"
+                            name="username" onChange={this.handleChange}/>
                           </CInputGroup>
                           <CInputGroup className="mb-4">
                             <CInputGroupPrepend>
@@ -66,7 +68,8 @@ class LoginForm extends React.Component {
                                 <CIcon name="cil-lock-locked" />
                               </CInputGroupText>
                             </CInputGroupPrepend>
-                            <CInput type="password" placeholder="Password" autoComplete="current-password" />
+                            <CInput type="password" placeholder="Password" autoComplete="current-password"
+                            name="password" onChange={this.handleChange}/>
                           </CInputGroup>
                           <CRow>
                             <CCol xs="6">
