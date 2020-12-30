@@ -1,5 +1,7 @@
 import React from 'react'
 import { useState } from "react";
+import { withRouter } from "react-router";
+import axios from 'axios'
 import {
   CBadge,
   CCard,
@@ -64,6 +66,17 @@ const getBadge = (status)=>{
          }
      }
 
+const handle = (history) => {
+    const apiUrl = 'http://localhost:8080/registration/login/';
+    axios.post(apiUrl,{"email":"Do","password":"do","statusCode":null,"profile":null}).then((response) => {
+          history.push({
+            pathname: "/schedulePickup",
+            state: response.data
+            });
+    });
+    //alert('BLAh');
+}
+
 class Sample extends React.Component
 {
     constructor(props)
@@ -103,7 +116,7 @@ class Sample extends React.Component
                               variant="outline"
                               shape="square"
                               size="sm"
-                              onClick={()=>{alert(item.status)}}
+                              onClick={()=>{handle(this.props.history)}}
                             >
                               {'Show'}
                             </CButton>
@@ -116,7 +129,7 @@ class Sample extends React.Component
     }
 }
 
-export default Sample
+export default withRouter(Sample)
 
 /*
 const [details, setDetails] = useState([])
