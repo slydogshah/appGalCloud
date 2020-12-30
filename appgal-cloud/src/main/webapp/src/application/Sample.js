@@ -105,7 +105,7 @@ class Sample extends React.Component
                               size="sm"
                               onClick={()=>{alert('BLAHBLAH')}}
                             >
-                              {'Hide'}
+                              {'Show'}
                             </CButton>
                           </td>
                           )
