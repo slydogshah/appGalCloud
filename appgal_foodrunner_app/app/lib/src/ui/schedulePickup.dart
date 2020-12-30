@@ -1,20 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:app/src/model/sourceOrg.dart';
 
 import '../model/foodRunner.dart';
 import '../model/sourceOrg.dart';
-
-import 'package:flutter/material.dart';
-
-import 'package:app/src/model/sourceOrg.dart';
-
 import '../rest/activeNetworkRestClient.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRunner.dart';
-
-import 'package:app/data/gallery_options.dart';
 
 class SchedulePickup extends StatefulWidget {
   SourceOrg sourceOrg;
@@ -237,46 +231,6 @@ class SchedulePickupState extends State<SchedulePickup> {
                 ),
           ],
         ),
-      ),
-    );
-  }
-
-  Future<void> _showDemoDialog<T>({BuildContext context, Widget child}) async {
-    child = ApplyTextOptions(
-      child: Theme(
-        data: Theme.of(context),
-        child: child,
-      ),
-    );
-    final value = await showDialog<T>(
-      context: context,
-      builder: (context) => child,
-    );
-    // The value passed to Navigator.pop() or null.
-    if (value != null && value is String) {
-      _scaffoldKey.currentState.hideCurrentSnackBar();
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content:
-            Text("Discard"),
-      ));
-    }
-  }
-
-  void _showAlertDialog(BuildContext context) {
-    final theme = Theme.of(context);
-    final dialogTextStyle = theme.textTheme.subtitle1
-        .copyWith(color: theme.textTheme.caption.color);
-    _showDemoDialog<String>(
-      context: context,
-      child: AlertDialog(
-        content: Text(
-          "Discard",
-          style: dialogTextStyle,
-        ),
-        actions: [
-          _DialogButton(text: "Cancel"),
-          _DialogButton(text: "Discard"),
-        ],
       ),
     );
   }
