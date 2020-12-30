@@ -103,6 +103,7 @@ class Sample extends React.Component
                               variant="outline"
                               shape="square"
                               size="sm"
+                              onClick={()=>{alert('BLAHBLAH')}}
                             >
                               {'Hide'}
                             </CButton>
