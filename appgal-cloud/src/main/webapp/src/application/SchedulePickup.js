@@ -29,7 +29,7 @@ const sourceOrgFields = [{key:'orgId',label:'Org'},
 {key:'orgName',label:'Name'},
 {key:'orgContactEmail',label:'Contact'}]
 
-class Main extends React.Component
+class SchedulePickup extends React.Component
 {
     constructor(props) {
         super(props);
@@ -149,4 +149,4 @@ class Main extends React.Component
     }
 }
 
-export default Main
+export default SchedulePickup
