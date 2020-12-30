@@ -103,7 +103,7 @@ class Sample extends React.Component
                               variant="outline"
                               shape="square"
                               size="sm"
-                              onClick={()=>{alert('BLAHBLAH')}}
+                              onClick={()=>{alert(item.status)}}
                             >
                               {'Show'}
                             </CButton>
