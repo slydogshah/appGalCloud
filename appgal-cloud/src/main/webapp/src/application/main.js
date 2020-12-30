@@ -6,7 +6,8 @@ import {
   CCardHeader,
   CCol,
   CDataTable,
-  CRow
+  CRow,
+  CButton
 } from '@coreui/react'
 
 import { DocsLink } from 'src/reusable'
@@ -27,7 +28,14 @@ const fields = ['name','registered', 'role', 'status']
 
 const sourceOrgFields = [{key:'orgId',label:'Org'},
 {key:'orgName',label:'Name'},
-{key:'orgContactEmail',label:'Contact'}]
+{key:'orgContactEmail',label:'Contact'},
+{key: 'producer',label: 'Producer'}
+]
+
+/*const sourceOrgFields = [{key:'orgId',label:'Org'},
+{key:'orgName',label:'Name'},
+{key:'orgContactEmail',label:'Contact'}
+]*/
 
 class Main extends React.Component
 {
@@ -39,6 +47,7 @@ class Main extends React.Component
       const sourceOrgs = this.props.location.state.sourceOrgs;
       return (
         <>
+        <template>
           <CRow>
             <CCol xs="12" lg="6">
               <CCard>
@@ -50,100 +59,26 @@ class Main extends React.Component
                 <CDataTable
                   items={sourceOrgs}
                   fields={sourceOrgFields}
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Striped Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  striped
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CRow>
-
-          <CRow>
-
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Condensed Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  size="sm"
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Bordered Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  bordered
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-          </CRow>
-
-          <CRow>
-            <CCol>
-              <CCard>
-                <CCardHeader>
-                  Combined All Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  hover
-                  striped
-                  bordered
-                  size="sm"
-                />
+                >
+                    <template>
+                            <td class="py-2">
+                              <CButton
+                                color="primary"
+                                variant="outline"
+                                square
+                                size="sm"
+                                onClick="toggleDetails(item, index)"
+                              >
+                                {'Show'}
+                              </CButton>
+                            </td>
+                          </template>
+                </CDataTable>
                 </CCardBody>
               </CCard>
             </CCol>
           </CRow>
-            <CRow>
-            <CCol>
-              <CCard>
-                <CCardHeader>
-                  Combined All dark Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  dark
-                  hover
-                  striped
-                  bordered
-                  size="sm"
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CRow>
+         </template>
         </>
       )
     }

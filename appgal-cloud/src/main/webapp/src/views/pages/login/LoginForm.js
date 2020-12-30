@@ -44,7 +44,7 @@ class LoginForm extends React.Component {
           //console.log(JSON.stringify(response.data));
           //setTimeout(() => {  this.props.history.push("/dashboard"); }, 10000)
           this.props.history.push({
-            pathname: "/main",
+            pathname: "/sample",
             state: response.data
             });
     });

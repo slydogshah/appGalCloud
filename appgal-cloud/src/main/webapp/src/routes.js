@@ -42,6 +42,7 @@ const User = React.lazy(() => import('./views/users/User'));
 //Application
 const Main = React.lazy(() => import('./application/Main'));
 const SchedulePickup = React.lazy(() => import('./application/SchedulePickup'));
+const Sample = React.lazy(() => import('./application/Sample'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -85,7 +86,8 @@ const routes = [
   { path: '/users', exact: true,  name: 'Users', component: Users },
   { path: '/users/:id', exact: true, name: 'User Details', component: User },
   { path: '/main', exact: true, name: 'Main Page', component: Main },
-  { path: '/schedulePickup', exact: true, name: 'Schedule Pickup', component: SchedulePickup }
+  { path: '/schedulePickup', exact: true, name: 'Schedule Pickup', component: SchedulePickup },
+  { path: '/sample', exact: true, name: 'Sample', component: Sample }
 ];
 
 export default routes;
