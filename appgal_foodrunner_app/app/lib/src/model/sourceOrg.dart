@@ -24,12 +24,17 @@ class SourceOrg
       this.isProducer = isProducer;
     }
 
-    SourceOrg.fromJson(Map<String, dynamic> json) :
-    this.orgId = json['orgId'],
-    this.orgName = json['orgName'],
-    this.orgContactEmail = json['orgContactEmail'],
-    this.isProducer = json['producer'],
-    this.location = Location.fromJson(json['location'],);
+    SourceOrg.fromJson(Map<String, dynamic> json)
+    {
+      this.orgId = json['orgId'];
+      this.orgName = json['orgName'];
+      this.orgContactEmail = json['orgContactEmail'];
+      this.isProducer = json['producer'];
+      if(json['location'] != null)
+      {
+        this.location = Location.fromJson(json['location'],);
+      }
+    }
 
     Map<String, dynamic> toJson()
     {

@@ -28,7 +28,8 @@ class SchedulePickup extends StatefulWidget {
 }
 
 class SchedulePickupState extends State<SchedulePickup> {
-  SourceOrg sourceOrg;
+ SourceOrg sourceOrg;
+ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
  SchedulePickupState(SourceOrg sourceOrg)
   {
     this.sourceOrg = sourceOrg;
@@ -252,13 +253,13 @@ class SchedulePickupState extends State<SchedulePickup> {
       builder: (context) => child,
     );
     // The value passed to Navigator.pop() or null.
-    /*if (value != null && value is String) {
+    if (value != null && value is String) {
       _scaffoldKey.currentState.hideCurrentSnackBar();
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content:
-            Text(GalleryLocalizations.of(context).dialogSelectedOption(value)),
+            Text("Discard"),
       ));
-    }*/
+    }
   }
 
   void _showAlertDialog(BuildContext context) {
@@ -273,14 +274,41 @@ class SchedulePickupState extends State<SchedulePickup> {
           style: dialogTextStyle,
         ),
         actions: [
-          //_DialogButton(text: "Cancel",
-          //_DialogButton(text: "Discard",
+          _DialogButton(text: "Cancel"),
+          _DialogButton(text: "Discard"),
         ],
       ),
     );
   }
 
-  void schedulePickup (BuildContext context, SchedulePickupNotification notification) {
+  Future<void> _handleClickMe() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return CupertinoAlertDialog(
+        title: Text('Allow "Maps" to access your location while you use the app?'),
+        content: Text('Your current location will be displayed on the map and used for directions, nearby search results, and estimated travel times.'),
+        actions: <Widget>[
+          CupertinoDialogAction(
+            child: Text('Don\'t Allow'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          CupertinoDialogAction(
+            child: Text('Allow'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void schedulePickup (BuildContext context, SchedulePickupNotification notification) {
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
       children: [CupertinoActivityIndicator()]
@@ -303,8 +331,46 @@ class SchedulePickupState extends State<SchedulePickup> {
 
       Navigator.of(context, rootNavigator: true).pop();
 
-      _showAlertDialog(context);
+      /*AlertDialog alertDialog = AlertDialog(
+          title: Text('Reset settings?'),
+          content: Text('This will reset your device to its default factory settings.'),
+          actions: [
+            FlatButton(
+              textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: Text('CANCEL'),
+            ),
+            FlatButton(
+              textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: Text('ACCEPT'),
+            ),
+          ],
+        );
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+          return alertDialog;
+        },
+      );*/
+      _handleClickMe();
     });
+  }
+}
+
+class _DialogButton extends StatelessWidget {
+  const _DialogButton({Key key, this.text}) : super(key: key);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: Text(text),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop(text);
+      },
+    );
   }
 }
 
