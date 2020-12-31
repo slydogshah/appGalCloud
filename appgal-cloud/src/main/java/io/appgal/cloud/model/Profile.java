@@ -7,18 +7,30 @@ import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 public class Profile implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(Profile.class);
 
     private String id;
+
+    @Email(regexp = ".+@.+\\..+",message="email_invalid")
+    @NotBlank(message="email_required")
     private String email;
-    private String mobile;
-    private String photo;
+
+    @NotBlank(message="password_required")
     private String password;
 
+    @Digits(integer = 10, fraction = 0, message = "phone_invalid")
+    private long mobile;
+
+    private String photo;
+
     private String sourceOrgId;
+
     private ProfileType profileType;
     private Location location;
 
@@ -29,7 +41,7 @@ public class Profile implements Serializable {
 
     }
 
-    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType)
+    public Profile(String id, String email, long mobile, String photo, String password, ProfileType profileType)
     {
         this.id = id;
         this.email = email;
@@ -39,20 +51,20 @@ public class Profile implements Serializable {
         this.profileType = profileType;
     }
 
-    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType, String sourceOrgId)
+    public Profile(String id, String email, long mobile, String photo, String password, ProfileType profileType, String sourceOrgId)
     {
         this(id,email,mobile,photo,password,profileType);
         this.sourceOrgId = sourceOrgId;
     }
 
-    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType, String sourceOrgId,
+    public Profile(String id, String email, long mobile, String photo, String password, ProfileType profileType, String sourceOrgId,
                    Location location)
     {
         this(id,email,mobile,photo,password,profileType, sourceOrgId);
         this.location = location;
     }
 
-    public Profile(String id, String email, String mobile, String photo, String password, ProfileType profileType,
+    public Profile(String id, String email, long mobile, String photo, String password, ProfileType profileType,
                    Location location)
     {
         this(id,email,mobile,photo,password,profileType);
@@ -79,12 +91,12 @@ public class Profile implements Serializable {
         this.email = email;
     }
 
-    public String getMobile()
+    public long getMobile()
     {
         return mobile;
     }
 
-    public void setMobile(String mobile)
+    public void setMobile(long mobile)
     {
         this.mobile = mobile;
     }
@@ -155,9 +167,7 @@ public class Profile implements Serializable {
         if(this.email != null) {
             jsonObject.addProperty("email", this.email);
         }
-        if(this.mobile != null) {
-            jsonObject.addProperty("mobile", this.mobile);
-        }
+        jsonObject.addProperty("mobile", this.mobile);
         if(this.photo != null) {
             jsonObject.addProperty("photo", this.photo);
         }
@@ -195,7 +205,7 @@ public class Profile implements Serializable {
             profile.email = jsonObject.get("email").getAsString();
         }
         if(jsonObject.has("mobile")) {
-            profile.mobile = jsonObject.get("mobile").getAsString();
+            profile.mobile = jsonObject.get("mobile").getAsLong();
         }
         if(jsonObject.has("photo")) {
             profile.photo = jsonObject.get("photo").getAsString();

@@ -12,13 +12,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Path("registration")
 public class Registration {
     private static Logger logger = LoggerFactory.getLogger(Registration.class);
+
+    @Inject
+    private Validator validator;
 
     @Inject
     private ProfileRegistrationService profileRegistrationService;
@@ -47,16 +54,31 @@ public class Registration {
         try {
             JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
             Profile profile = Profile.parse(jsonObject.toString());
+
+            Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
+            if(!violations.isEmpty())
+            {
+                String message = violations.stream()
+                        .map(cv -> cv.getMessage())
+                        .collect(Collectors.joining(", "));
+                JsonObject responseJson = new JsonObject();
+                responseJson.addProperty("violations", message);
+                return Response.status(400).entity(responseJson.toString()).build();
+            }
+
             this.profileRegistrationService.register(profile);
 
-            JsonObject responseJson = new JsonObject();
-            responseJson.addProperty("statusCode", 200);
-            return Response.ok(responseJson.toString()).build();
+            return Response.ok().build();
         }
         catch(ResourceExistsException rxe)
         {
             logger.error(rxe.getMessage(), rxe);
             return Response.status(409).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
         }
     }
 

@@ -43,7 +43,7 @@ public class NetworkOrchestratorTests extends BaseTest {
     public void testEnterNetwork() throws Exception {
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
         Location location = new Location(startLatitude, startLongitude);
         FoodRunner foodRunner = new FoodRunner(profile, location);
 
@@ -71,7 +71,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             double startLatitude = 30.25860595703125d;
             double startLongitude = -97.74873352050781d;
             String profileId = UUID.randomUUID().toString();
-            Profile profile = new Profile(profileId, "bugs.bunny.shah@gmail.com", "8675309", "", "", ProfileType.FOOD_RUNNER);
+            Profile profile = new Profile(profileId, "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
             Location location = new Location(startLatitude, startLongitude);
             FoodRunner foodRunner = new FoodRunner(profile, location);
 
@@ -122,7 +122,7 @@ public class NetworkOrchestratorTests extends BaseTest {
         pickupRequest.setSourceOrg(sourceOrg);
         for(int i=0; i<numberOfFoodRunners; i++) {
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                    "8675309", "", "", ProfileType.FOOD_RUNNER);
+                    8675309l, "", "", ProfileType.FOOD_RUNNER);
             FoodRunner foodRunner = new FoodRunner(profile, location);
             logger.info("************************FOODRUNNER***************************************");
             logger.info("FoodRunner: " + foodRunner.getProfile().getId());
@@ -157,14 +157,14 @@ public class NetworkOrchestratorTests extends BaseTest {
 
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "",
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "",
                 ProfileType.FOOD_RUNNER);
         Location location = new Location(startLatitude, startLongitude);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
 
         startLatitude = 44.9441d;
         startLongitude = -93.0852d;
-        profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", "8675309", "", "",
+        profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", 8675309l, "", "",
                 ProfileType.FOOD_RUNNER);
         location = new Location(startLatitude, startLongitude);
         FoodRunner captain = new FoodRunner(profile, location);
@@ -188,14 +188,14 @@ public class NetworkOrchestratorTests extends BaseTest {
 
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "", "",
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "",
                 ProfileType.FOOD_RUNNER);
         Location location = new Location(startLatitude, startLongitude);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
 
         startLatitude = 44.9441d;
         startLongitude = -93.0852d;
-        profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", "8675309", "", "",
+        profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", 8675309l, "", "",
                 ProfileType.FOOD_RUNNER);
         location = new Location(startLatitude, startLongitude);
         FoodRunner captain = new FoodRunner(profile, location);
@@ -254,7 +254,7 @@ public class NetworkOrchestratorTests extends BaseTest {
     {
         double startLatitude = 30.25860595703125d;
         double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(startLatitude, startLongitude);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
         final List<SourceOrg> bestDestination = this.networkOrchestrator.findBestDestination(bugsBunny);
@@ -288,7 +288,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             destinationOrg.setProducer(true);
             Location location = new Location(30.25860595703125d, -97.74873352050781d);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                    "8675309", "", "", ProfileType.FOOD_RUNNER, location);
+                    8675309l, "", "", ProfileType.FOOD_RUNNER, location);
             FoodRunner foodRunner = new FoodRunner(profile, location);
             foodRunner.setPickUpOrg(sourceOrg1);
             DropOffNotification dropOffNotification = new DropOffNotification(destinationOrg, location, foodRunner);

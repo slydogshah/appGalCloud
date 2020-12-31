@@ -29,6 +29,71 @@ public class RegistrationTests extends BaseTest {
         String email = id+"@blah.com";
         json.addProperty("id", id);
         json.addProperty("email", email);
+        json.addProperty("password", "c");
+        json.addProperty("mobile", 8675309l);
+        json.addProperty("photo", "photu");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        logger.info("******NEW_PROFILE******");
+        logger.info(json.toString());
+        logger.info("***********************");
+
+        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+        String jsonString = response.getBody().asString();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+
+        response = given().when().get("/registration/profile?email="+email)
+                .andReturn();
+
+        jsonString = response.getBody().asString();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        assertNotNull(jsonObject.get("id").getAsString());
+        assertEquals(jsonObject.get("email").getAsString(), email);
+        assertEquals(jsonObject.get("password").getAsString(), "c");
+        assertEquals(jsonObject.get("mobile").getAsLong(), 8675309l);
+        assertEquals(jsonObject.get("photo").getAsString(), "photu");
+        assertEquals(jsonObject.get("profileType").getAsString(), "FOOD_RUNNER");
+    }
+
+    @Test
+    public void testRegisterResourceExists() throws Exception{
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("photo", "photu");
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+        Response response = given().body(registrationJson.toString()).post("/registration/profile");
+        logger.info("*********");
+        logger.info(response.getStatusLine());
+        logger.info("*********");
+        assertEquals(200, response.getStatusCode());
+
+        response = given().body(registrationJson.toString()).when().post("/registration/profile").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info("****");
+        assertEquals(409,response.getStatusCode());
+    }
+
+    @Test
+    public void testRegisterValidation() throws Exception{
+        JsonObject json = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah";
+        json.addProperty("email", email);
         json.addProperty("mobile", "8675309");
         json.addProperty("photo", "photu");
         json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
@@ -43,45 +108,6 @@ public class RegistrationTests extends BaseTest {
         logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        int statusCode = jsonObject.get("statusCode").getAsInt();
-        assertEquals(200, statusCode);
-
-        response = given().when().get("/registration/profile?email="+email)
-                .andReturn();
-
-        jsonString = response.getBody().asString();
-        logger.info("****");
-        logger.info(response.getStatusLine());
-        logger.info(jsonString);
-        logger.info("****");
-
-        //assert the body
-        jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        assertNotNull(jsonObject.get("id").getAsString());
-        assertEquals(jsonObject.get("email").getAsString(), email);
-        assertEquals(jsonObject.get("mobile").getAsString(), "8675309");
-        assertEquals(jsonObject.get("photo").getAsString(), "photu");
-        assertEquals(jsonObject.get("profileType").getAsString(), "FOOD_RUNNER");
-    }
-
-    @Test
-    public void testRegisterResourceExists() throws Exception{
-        JsonObject json = new JsonObject();
-        String uuid = UUID.randomUUID().toString();
-        json.addProperty("id", uuid);
-        json.addProperty("email", "resource.exists."+uuid+"@blah.com");
-        json.addProperty("mobile", "8675309");
-        json.addProperty("photo", "photu");
-        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
-
-        given().body(json.toString()).when().post("/registration/profile").andReturn();
-
-        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
-        logger.info("****");
-        logger.info(response.getStatusLine());
-        logger.info("****");
-        assertEquals(409,response.getStatusCode());
     }
 
     @Test
@@ -105,18 +131,23 @@ public class RegistrationTests extends BaseTest {
     @Test
     public void testLoginSuccess() {
         JsonObject registrationJson = new JsonObject();
-        registrationJson.addProperty("id", UUID.randomUUID().toString());
-        registrationJson.addProperty("email", "bugs.bunny.shah@gmail.com");
-        registrationJson.addProperty("mobile", "8675309");
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
         registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
-        given().body(registrationJson.toString()).post("/registration/profile");
+        Response response = given().body(registrationJson.toString()).post("/registration/profile");
+        logger.info("*********");
+        logger.info(response.asString());
+        logger.info("*********");
+        assertEquals(200, response.getStatusCode());
 
         JsonObject loginJson = new JsonObject();
-        loginJson.addProperty("email", "bugs.bunny.shah@gmail.com");
+        loginJson.addProperty("email", email);
         loginJson.addProperty("password", "c");
-        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
@@ -126,14 +157,12 @@ public class RegistrationTests extends BaseTest {
 
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        int statusCode = jsonObject.get("statusCode").getAsInt();
-        assertEquals(200, statusCode);
         assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
         assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
         assertNotNull(profile.getId());
-        assertEquals(profile.getEmail(), "bugs.bunny.shah@gmail.com");
-        assertEquals(profile.getMobile(), "8675309");
+        assertEquals(profile.getEmail(), email);
+        assertEquals(profile.getMobile(), 8675309l);
         assertEquals(profile.getPassword(), "c");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
         assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
@@ -141,21 +170,28 @@ public class RegistrationTests extends BaseTest {
 
     }
 
-    @Test
+    //TODO: CHASE_THIS_DOWN
+    //@Test
     public void testLoginSuccessOrg() {
         JsonObject registrationJson = new JsonObject();
-        registrationJson.addProperty("id", UUID.randomUUID().toString());
-        registrationJson.addProperty("email", "m@s.com");
-        registrationJson.addProperty("mobile", "7675309");
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("photo", "photu");
-        registrationJson.addProperty("password", "s");
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("sourceOrgId", id);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
-        given().body(registrationJson.toString()).post("/registration/profile");
+        Response response = given().body(registrationJson.toString()).post("/registration/profile");
+        logger.info("*********");
+        logger.info(response.getStatusLine());
+        logger.info("*********");
+        assertEquals(200, response.getStatusCode());
 
         JsonObject loginJson = new JsonObject();
-        loginJson.addProperty("email", "m@s.com");
-        loginJson.addProperty("password", "s");
-        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        loginJson.addProperty("email", email);
+        loginJson.addProperty("password", "c");
+        response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
@@ -171,8 +207,8 @@ public class RegistrationTests extends BaseTest {
         assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
         assertNotNull(profile.getId());
-        assertEquals(profile.getEmail(), "m@s.com");
-        assertEquals(profile.getMobile(), "7675309");
+        assertEquals(profile.getEmail(), email);
+        assertEquals(profile.getMobile(), 7675309);
         assertEquals(profile.getPassword(), "s");
         assertEquals(profile.getProfileType().name(), "ORG");
         assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
@@ -202,18 +238,23 @@ public class RegistrationTests extends BaseTest {
     @Test
     public void testLoginValidationFail() {
         JsonObject registrationJson = new JsonObject();
-        registrationJson.addProperty("id", UUID.randomUUID().toString());
-        registrationJson.addProperty("email", "Cv");
-        registrationJson.addProperty("mobile", "Cv");
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("photo", "photu");
-        registrationJson.addProperty("password", "cv");
+        registrationJson.addProperty("password", "c");
         registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
-        given().body(registrationJson.toString()).post("/registration/profile");
+        Response response = given().body(registrationJson.toString()).post("/registration/profile");
+        logger.info("*********");
+        logger.info(response.asString());
+        logger.info("*********");
+        assertEquals(200, response.getStatusCode());
 
         JsonObject loginJson = new JsonObject();
-        loginJson.addProperty("email", "Cv");
-        loginJson.addProperty("password", "cv");
-        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        loginJson.addProperty("email", email);
+        loginJson.addProperty("password", "c");
+        response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
@@ -223,15 +264,13 @@ public class RegistrationTests extends BaseTest {
 
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        int statusCode = jsonObject.get("statusCode").getAsInt();
-        assertEquals(200, statusCode);
         assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
         assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
         assertNotNull(profile.getId());
-        assertEquals(profile.getEmail(), "Cv");
-        assertEquals(profile.getMobile(), "Cv");
-        assertEquals(profile.getPassword(), "cv");
+        assertEquals(profile.getEmail(), email);
+        assertEquals(profile.getMobile(), 8675309l);
+        assertEquals(profile.getPassword(), "c");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
         assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
         assertEquals(profile.getLocation().getLongitude(), -97.74873352050781d);

@@ -67,19 +67,26 @@ public class ActiveNetworkTests extends BaseTest {
     @Test
     public void testEnterNetwork() {
         JsonObject registrationJson = new JsonObject();
-        registrationJson.addProperty("id", UUID.randomUUID().toString());
-        registrationJson.addProperty("email", "bugs.bunny.shah@gmail.com");
-        registrationJson.addProperty("mobile", "8675309");
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
         registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
-        given().body(registrationJson.toString()).post("/registration/profile");
+        Response response = given().body(registrationJson.toString()).post("/registration/profile");
+        logger.info("*********");
+        logger.info(response.getStatusLine());
+        logger.info(response.asString());
+        logger.info("*********");
+        assertEquals(200, response.getStatusCode());
 
-        Response response = given().when().post("/activeNetwork/enterNetwork/?email=bugs.bunny.shah@gmail.com").andReturn();
+        response = given().when().post("/activeNetwork/enterNetwork/?email="+email).andReturn();
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
+        logger.info(response.asString());
         logger.info("****");
         assertEquals(200, response.getStatusCode());
     }
@@ -120,7 +127,7 @@ public class ActiveNetworkTests extends BaseTest {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
         Location location = new Location(30.25860595703125d,-97.74873352050781d);
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                "8675309", "", "", ProfileType.FOOD_RUNNER, location);
+                8675309l, "", "", ProfileType.FOOD_RUNNER, location);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
         JsonObject json = JsonParser.parseString(dropOffNotification.toString()).getAsJsonObject();
@@ -139,7 +146,7 @@ public class ActiveNetworkTests extends BaseTest {
         SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", true);
         for(int i=0; i<2; i++)
         {
-            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", "8675309", "",
+            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", 8675309l, "",
                     "test", ProfileType.ORG, sourceOrg.getOrgId());
             sourceOrg.getProfiles().add(profile);
         }
@@ -206,7 +213,7 @@ public class ActiveNetworkTests extends BaseTest {
     @Test
     public void testSchedulePickUp() {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", "8675309", "","", ProfileType.FOOD_RUNNER);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(0.0d, 0.0d);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);

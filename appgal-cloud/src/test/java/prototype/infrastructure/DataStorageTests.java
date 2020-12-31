@@ -61,7 +61,7 @@ public class DataStorageTests extends BaseTest {
             destinationOrg.setProducer(true);
             Location location = new Location(30.25860595703125d,-97.74873352050781d);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                    "8675309", "", "", ProfileType.FOOD_RUNNER, location);
+                    8675309l, "", "", ProfileType.FOOD_RUNNER, location);
             FoodRunner foodRunner = new FoodRunner(profile, location);
             DropOffNotification dropOffNotification = new DropOffNotification(destinationOrg, location, foodRunner);
             destinationNotification.setDropOffNotification(dropOffNotification);

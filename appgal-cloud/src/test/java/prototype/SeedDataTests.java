@@ -46,11 +46,11 @@ public class SeedDataTests {
         customerService.storeSourceOrg(dropOff2);
 
         String uuid = UUID.randomUUID().toString();
-        Profile profile = new Profile(UUID.randomUUID().toString(), "c."+uuid+"@s.com", "8675309", "", "c",
+        Profile profile = new Profile(UUID.randomUUID().toString(), "c."+uuid+"@s.com", 8675309l, "", "c",
                 ProfileType.FOOD_RUNNER);
         this.profileRegistrationService.register(profile);
 
-        Profile profile2 = new Profile(UUID.randomUUID().toString(), "m."+uuid+"@s.com", "7675309", "", "s",
+        Profile profile2 = new Profile(UUID.randomUUID().toString(), "m."+uuid+"@s.com", 7675309l, "", "s",
                 ProfileType.ORG, "microsoft");
         this.profileRegistrationService.register(profile2);
 
