@@ -203,7 +203,10 @@ public class MongoDBJsonStore {
             Document doc = Document.parse(json);
             activeFoodRunnerDocs.add(doc);
         }
-        collection.insertMany(activeFoodRunnerDocs);
+
+        if(!activeFoodRunnerDocs.isEmpty()) {
+            collection.insertMany(activeFoodRunnerDocs);
+        }
     }
 
     public ActiveNetwork getActiveNetwork()

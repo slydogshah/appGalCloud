@@ -77,7 +77,7 @@ class RegistrationScene extends StatelessWidget {
                     onPressed: () 
                     {
                       profileFunctions.showAlertDialogRegistration(context, email.controller.text, 
-                      password.controller.text,mobile.controller.text, "FOOD_RUNNER");
+                      password.controller.text,int.parse(mobile.controller.text), "FOOD_RUNNER");
                     }
                   )
                 ),

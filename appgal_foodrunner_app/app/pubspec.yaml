@@ -34,8 +34,9 @@ dependencies:
   animations: ^1.1.2
   provider: ^4.3.2
   adaptive_breakpoints: ^0.0.2
-  google_maps_flutter: 0.5.24+1
+  google_maps_flutter: ^1.0.6
   http: ^0.12.0+4
+  external_app_launcher: ^0.0.1
 
 dev_dependencies:
   flutter_test:

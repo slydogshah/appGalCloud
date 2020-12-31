@@ -169,7 +169,9 @@ public class Profile implements Serializable {
         if(this.email != null) {
             jsonObject.addProperty("email", this.email);
         }
+
         jsonObject.addProperty("mobile", this.mobile);
+
         if(this.photo != null) {
             jsonObject.addProperty("photo", this.photo);
         }

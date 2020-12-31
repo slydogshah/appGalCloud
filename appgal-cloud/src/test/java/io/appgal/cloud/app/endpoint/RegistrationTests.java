@@ -1,7 +1,7 @@
 package io.appgal.cloud.app.endpoint;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import java.util.List;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -21,6 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @QuarkusTest
 public class RegistrationTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(RegistrationTests.class);
+
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
+    private Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
 
     @Test
     public void testRegister() throws Exception{
@@ -170,9 +179,11 @@ public class RegistrationTests extends BaseTest {
 
     }
 
-    //TODO: CHASE_THIS_DOWN
-    //@Test
+    @Test
     public void testLoginSuccessOrg() {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
         JsonObject registrationJson = new JsonObject();
         String id = UUID.randomUUID().toString();
         String email = id+"@blah.com";
@@ -180,7 +191,7 @@ public class RegistrationTests extends BaseTest {
         registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
-        registrationJson.addProperty("sourceOrgId", id);
+        registrationJson.addProperty("sourceOrgId", sourceOrg.getOrgId());
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
         Response response = given().body(registrationJson.toString()).post("/registration/profile");
         logger.info("*********");
@@ -208,9 +219,9 @@ public class RegistrationTests extends BaseTest {
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), email);
-        assertEquals(profile.getMobile(), 7675309);
-        assertEquals(profile.getPassword(), "s");
-        assertEquals(profile.getProfileType().name(), "ORG");
+        assertEquals(profile.getMobile(), 8675309l);
+        assertEquals(profile.getPassword(), "c");
+        assertEquals(profile.getProfileType(), ProfileType.ORG);
         assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
         assertEquals(profile.getLocation().getLongitude(), -97.74873352050781d);
     }
