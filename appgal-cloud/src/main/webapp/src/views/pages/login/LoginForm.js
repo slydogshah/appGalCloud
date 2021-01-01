@@ -60,14 +60,24 @@ class LoginForm extends React.Component {
             state: response.data
           });
     }).catch(err => {
-           const errorData = JSON.stringify(err.response.data);
-           console.log(errorData);
+           if(err.response != null && err.response.status == 401)
+           {
+                this.setState({
+                  "errorMessage": "Login Failed. Please check your Username and/or Password"
+                });
+           }
+           else
+           {
+                this.setState({
+                    "errorMessage": "Unknown Error. Please check your Network Connection"
+                });
+           }
            const element = (
                  <CAlert
-                 color="warning"
+                 color="dark"
                  closeButton
                  >
-                    {errorData}
+                    {this.state.errorMessage}
                 </CAlert>
              );
            ReactDOM.unmountComponentAtNode(document.getElementById('loginErrorAlert'));
