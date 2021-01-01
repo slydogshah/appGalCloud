@@ -82,7 +82,6 @@ const Popovers = () => {
                     content={`Popover with placement: ${placement}`}
                     placement={placement}
                     interactive={true}
-                    trigger="click"
                   >
                     <CButton color="primary">
                       { placement }
