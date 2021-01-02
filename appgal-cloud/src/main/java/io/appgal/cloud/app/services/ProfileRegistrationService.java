@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.List;
 
@@ -65,13 +66,18 @@ public class ProfileRegistrationService {
     public JsonObject login(String userAgent, String email, String password)
             throws AuthenticationException, DifferentContextAuthException
     {
+        logger.info("*****LOGIN_USER_AGENT******");
+        logger.info("USER_AGENT: "+userAgent);
+
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
             logger.info("PROFILE_NOT_FOUND: "+email);
             throw new AuthenticationException(email);
         }
-        if(profile.getProfileType() != ProfileType.FOOD_RUNNER && userAgent.contains("dart"))
+        if(profile.getProfileType() != ProfileType.FOOD_RUNNER &&
+                (userAgent.toLowerCase(Locale.getDefault()).contains("dart") || userAgent.toLowerCase(Locale.getDefault()).contains("apache-httpclient"))
+        )
         {
             throw new DifferentContextAuthException(email,profile.getProfileType());
         }
