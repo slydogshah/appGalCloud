@@ -1,7 +1,5 @@
 package io.appgal.cloud.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.validators.ValidProfileSourceOrg;
@@ -11,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -36,7 +35,9 @@ public class Profile implements Serializable {
     //NotBlank if An 'ORG' Profile
     private String sourceOrgId;
 
+    @NotNull
     private ProfileType profileType;
+
     private Location location;
 
     private String chainId;

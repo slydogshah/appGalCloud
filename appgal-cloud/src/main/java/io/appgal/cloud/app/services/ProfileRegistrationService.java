@@ -136,4 +136,36 @@ public class ProfileRegistrationService {
         logger.info("AUTHENTICATION_FAILED");
         throw new AuthenticationException(email);
     }
+
+    public JsonObject orgLogin(String email, String password) throws AuthenticationException
+    {
+        logger.info("******ORG_LOGIN*******");
+        logger.info("Email:"+email);
+        logger.info("Password:"+password);
+        logger.info("*************************");
+
+        Profile profile = this.mongoDBJsonStore.getProfile(email);
+        if(profile == null)
+        {
+            logger.info("PROFILE_NOT_FOUND: "+email);
+            throw new AuthenticationException(email);
+        }
+
+        String registeredEmail = profile.getEmail();
+        String registeredPassword = profile.getPassword();
+
+        if(registeredEmail == null)
+        {
+            logger.info("EMAIL_NOT_FOUND");
+            throw new AuthenticationException(email);
+        }
+
+        if(registeredEmail.equals(email) && registeredPassword.equals(password))
+        {
+            return this.networkOrchestrator.getActiveView();
+        }
+
+        logger.info("AUTHENTICATION_FAILED");
+        throw new AuthenticationException(email);
+    }
 }

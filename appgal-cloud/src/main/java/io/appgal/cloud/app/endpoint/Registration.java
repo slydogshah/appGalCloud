@@ -85,6 +85,44 @@ public class Registration {
         }
     }
 
+    @Path("org")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerOrg(@RequestBody String profileJson)
+    {
+        try {
+            JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
+            Profile profile = Profile.parse(jsonObject.toString());
+
+            Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
+            if(!violations.isEmpty())
+            {
+                JsonObject responseJson = new JsonObject();
+                JsonArray violationsArray = new JsonArray();
+                for(ConstraintViolation violation:violations)
+                {
+                    violationsArray.add(violation.getMessage());
+                }
+                responseJson.add("violations", violationsArray);
+                return Response.status(400).entity(responseJson.toString()).build();
+            }
+
+            this.profileRegistrationService.register(profile);
+
+            return Response.ok().build();
+        }
+        catch(ResourceExistsException rxe)
+        {
+            logger.error(rxe.getMessage(), rxe);
+            return Response.status(409).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
     @Path("login")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -97,6 +135,27 @@ public class Registration {
 
         try {
             JsonObject result = this.profileRegistrationService.login(email, password);
+            String json = result.toString();
+            return Response.ok(json).build();
+        }
+        catch(AuthenticationException authenticationException)
+        {
+            return Response.status(401).entity(authenticationException.toString()).build();
+        }
+    }
+
+    @Path("/org/login")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response orgLogin(@RequestBody String credentialsJson)
+    {
+        JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
+
+        String email = jsonObject.get("email").getAsString();
+        String password = jsonObject.get("password").getAsString();
+
+        try {
+            JsonObject result = this.profileRegistrationService.orgLogin(email, password);
             String json = result.toString();
             return Response.ok(json).build();
         }
