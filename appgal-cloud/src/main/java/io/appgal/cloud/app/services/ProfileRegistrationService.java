@@ -64,22 +64,16 @@ public class ProfileRegistrationService {
     }
 
     public JsonObject login(String userAgent, String email, String password)
-            throws AuthenticationException, DifferentContextAuthException
+            throws AuthenticationException
     {
-        logger.info("*****LOGIN_USER_AGENT******");
-        logger.info("USER_AGENT: "+userAgent);
+        //logger.info("*****LOGIN_USER_AGENT******");
+        //logger.info("USER_AGENT: "+userAgent);
 
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
             logger.info("PROFILE_NOT_FOUND: "+email);
             throw new AuthenticationException(email);
-        }
-        if(profile.getProfileType() != ProfileType.FOOD_RUNNER &&
-                (userAgent.toLowerCase(Locale.getDefault()).contains("dart") || userAgent.toLowerCase(Locale.getDefault()).contains("apache-httpclient"))
-        )
-        {
-            throw new DifferentContextAuthException(email,profile.getProfileType());
         }
 
         String registeredEmail = profile.getEmail();
@@ -138,18 +132,13 @@ public class ProfileRegistrationService {
         throw new AuthenticationException(email);
     }
 
-    public JsonObject orgLogin(String userAgent, String email, String password)
-            throws AuthenticationException,DifferentContextAuthException
+    public JsonObject orgLogin(String userAgent, String email, String password) throws AuthenticationException
     {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
             logger.info("PROFILE_NOT_FOUND: "+email);
             throw new AuthenticationException(email);
-        }
-        if(profile.getProfileType() != ProfileType.ORG)
-        {
-            throw new DifferentContextAuthException(email,profile.getProfileType());
         }
 
         String registeredEmail = profile.getEmail();

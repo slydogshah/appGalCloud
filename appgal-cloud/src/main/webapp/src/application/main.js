@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from "react";
+import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
 import axios from 'axios'
 import {
@@ -11,6 +12,7 @@ import {
   CDataTable,
   CRow,
   CButton,
+  CAlert,
   CCollapse
 } from '@coreui/react'
 
@@ -82,11 +84,28 @@ class Main extends React.Component
     constructor(props)
     {
         super(props);
+        this.show = this.show.bind(this);
+        this.state = {payload:props.location.state};
+    }
+
+    show(event)
+    {
+        const payload = (
+                                       <CAlert
+                                       color="warning"
+                                       >
+                                          {JSON.stringify(this.state.payload)}
+                                      </CAlert>
+                                   );
+                ReactDOM.unmountComponentAtNode(document.getElementById('payload'));
+                ReactDOM.render(payload,document.getElementById('payload'));
     }
 
     render()
     {
         return(
+           <>
+           <div id="payload"/>
            <CDataTable
                   items={usersData}
                   fields={fields}
@@ -116,7 +135,7 @@ class Main extends React.Component
                               variant="outline"
                               shape="square"
                               size="sm"
-                              onClick={()=>{handle(this.props.history)}}
+                              onClick={this.show}
                             >
                               {'Show'}
                             </CButton>
@@ -125,6 +144,7 @@ class Main extends React.Component
                       }
                    }}
                 />
+                </>
         );
     }
 }

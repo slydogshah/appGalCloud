@@ -8,6 +8,7 @@ import io.appgal.cloud.app.services.DifferentContextAuthException;
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.model.Profile;
+import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
 import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
@@ -136,48 +137,28 @@ public class Registration {
     {
         JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
 
+        String userAgent = request.getHeader("User-Agent");
         String email = jsonObject.get("email").getAsString();
         String password = jsonObject.get("password").getAsString();
 
         try {
-            String userAgent = request.getHeader("User-Agent");
-            JsonObject result = this.profileRegistrationService.login(userAgent, email, password);
-            String json = result.toString();
+            Profile profile = this.profileRegistrationService.getProfile(email);
+            JsonObject result;
+            String json;
+            if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
+                result = this.profileRegistrationService.login(userAgent, email, password);
+                json = result.toString();
+            }
+            else
+            {
+                result = this.profileRegistrationService.orgLogin(userAgent, email, password);
+                json = result.toString();
+            }
             return Response.ok(json).build();
         }
         catch(AuthenticationException authenticationException)
         {
             return Response.status(401).entity(authenticationException.toString()).build();
-        }
-        catch(DifferentContextAuthException differentContextAuthException)
-        {
-            return Response.status(403).entity(differentContextAuthException.toString()).build();
-        }
-    }
-
-    @Path("/org/login")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response orgLogin(@RequestBody String credentialsJson)
-    {
-        JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
-
-        String email = jsonObject.get("email").getAsString();
-        String password = jsonObject.get("password").getAsString();
-
-        try {
-            String userAgent = request.getHeader("User-Agent");
-            JsonObject result = this.profileRegistrationService.orgLogin(userAgent, email, password);
-            String json = result.toString();
-            return Response.ok(json).build();
-        }
-        catch(AuthenticationException authenticationException)
-        {
-            return Response.status(401).entity(authenticationException.toString()).build();
-        }
-        catch(DifferentContextAuthException differentContextAuthException)
-        {
-            return Response.status(403).entity(differentContextAuthException.toString()).build();
         }
     }
 }

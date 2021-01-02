@@ -207,75 +207,6 @@ public class RegistrationTests extends BaseTest {
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
         loginJson.addProperty("password", "c");
-        response = given().body(loginJson.toString()).when().post("/registration/org/login").andReturn();
-
-        String jsonString = response.getBody().prettyPrint();
-        logger.info("****");
-        logger.info(response.getStatusLine());
-        logger.info(jsonString);
-        logger.info("****");
-
-        //assert the body
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-    }
-
-    @Test
-    public void testLoginSuccessUnauthorized() {
-        JsonObject registrationJson = new JsonObject();
-        String id = UUID.randomUUID().toString();
-        String email = id+"@blah.com";
-        registrationJson.addProperty("email", email);
-        registrationJson.addProperty("mobile", 8675309l);
-        registrationJson.addProperty("photo", "photu");
-        registrationJson.addProperty("password", "c");
-        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
-        Response response = given().body(registrationJson.toString()).post("/registration/profile");
-        logger.info("*********");
-        logger.info(response.asString());
-        logger.info("*********");
-        assertEquals(200, response.getStatusCode());
-
-        JsonObject loginJson = new JsonObject();
-        loginJson.addProperty("email", email);
-        loginJson.addProperty("password", "c");
-        response = given().body(loginJson.toString()).when().post("/registration/org/login").andReturn();
-
-        String jsonString = response.getBody().prettyPrint();
-        logger.info("****");
-        logger.info(response.getStatusLine());
-        logger.info(jsonString);
-        logger.info("****");
-        assertEquals(403, response.getStatusCode());
-    }
-
-    @Test
-    public void testLoginSuccessOrgUnauthorized() {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
-
-        JsonObject registrationJson = new JsonObject();
-        String id = UUID.randomUUID().toString();
-        String email = id+"@blah.com";
-        registrationJson.addProperty("email", email);
-        registrationJson.addProperty("mobile", 8675309l);
-        registrationJson.addProperty("photo", "photu");
-        registrationJson.addProperty("password", "c");
-        registrationJson.addProperty("sourceOrgId", sourceOrg.getOrgId());
-        registrationJson.addProperty("profileType", ProfileType.ORG.name());
-
-        logger.info("******NEW_ORG******");
-        logger.info(registrationJson.toString());
-        logger.info("***********************");
-
-        Response response = given().body(registrationJson.toString()).post("/registration/org");
-        logger.info("*********");
-        logger.info(response.getStatusLine());
-        logger.info("*********");
-        assertEquals(200, response.getStatusCode());
-
-        JsonObject loginJson = new JsonObject();
-        loginJson.addProperty("email", email);
-        loginJson.addProperty("password", "c");
         response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String jsonString = response.getBody().prettyPrint();
@@ -283,27 +214,9 @@ public class RegistrationTests extends BaseTest {
         logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
-        assertEquals(403, response.getStatusCode());
-    }
-
-    @Test
-    public void testLoginEmpty() {
-        JsonObject json = new JsonObject();
-        json.addProperty("email", "");
-        json.addProperty("password", "");
-
-        Response response = given().body(json.toString()).when().post("/registration/login").andReturn();
-
-        String jsonString = response.getBody().prettyPrint();
-        logger.info("****");
-        logger.info(response.getStatusLine());
-        logger.info(jsonString);
-        logger.info("****");
 
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        assertEquals(401, response.getStatusCode());
-        assertEquals(jsonObject.get("email").getAsString(), "");
     }
 
     @Test
