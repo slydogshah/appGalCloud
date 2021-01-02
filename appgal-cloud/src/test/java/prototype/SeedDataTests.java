@@ -54,7 +54,7 @@ public class SeedDataTests {
                 ProfileType.ORG, "microsoft");
         this.profileRegistrationService.register(profile2);
 
-        JsonObject auth = this.profileRegistrationService.login("c."+uuid+"@s.com","c");
+        JsonObject auth = this.profileRegistrationService.login("mozilla", "c."+uuid+"@s.com","c");
         logger.info("****************");
         logger.info(auth.toString());
         logger.info("****************");

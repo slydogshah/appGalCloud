@@ -9,6 +9,7 @@ import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.SourceOrg;
+import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Set;
@@ -31,6 +33,9 @@ public class Registration {
 
     @Inject
     private ProfileRegistrationService profileRegistrationService;
+
+    @Context
+    private HttpServerRequest request;
 
     @Path("profile")
     @GET
@@ -135,7 +140,8 @@ public class Registration {
         String password = jsonObject.get("password").getAsString();
 
         try {
-            JsonObject result = this.profileRegistrationService.login(email, password);
+            String userAgent = request.getHeader("User-Agent");
+            JsonObject result = this.profileRegistrationService.login(userAgent, email, password);
             String json = result.toString();
             return Response.ok(json).build();
         }
@@ -160,7 +166,8 @@ public class Registration {
         String password = jsonObject.get("password").getAsString();
 
         try {
-            JsonObject result = this.profileRegistrationService.orgLogin(email, password);
+            String userAgent = request.getHeader("User-Agent");
+            JsonObject result = this.profileRegistrationService.orgLogin(userAgent, email, password);
             String json = result.toString();
             return Response.ok(json).build();
         }

@@ -62,7 +62,7 @@ public class ProfileRegistrationService {
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
     }
 
-    public JsonObject login(String email, String password)
+    public JsonObject login(String userAgent, String email, String password)
             throws AuthenticationException, DifferentContextAuthException
     {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
@@ -71,7 +71,7 @@ public class ProfileRegistrationService {
             logger.info("PROFILE_NOT_FOUND: "+email);
             throw new AuthenticationException(email);
         }
-        if(profile.getProfileType() != ProfileType.FOOD_RUNNER)
+        if(profile.getProfileType() != ProfileType.FOOD_RUNNER && userAgent.contains("dart"))
         {
             throw new DifferentContextAuthException(email,profile.getProfileType());
         }
@@ -132,7 +132,7 @@ public class ProfileRegistrationService {
         throw new AuthenticationException(email);
     }
 
-    public JsonObject orgLogin(String email, String password)
+    public JsonObject orgLogin(String userAgent, String email, String password)
             throws AuthenticationException,DifferentContextAuthException
     {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
