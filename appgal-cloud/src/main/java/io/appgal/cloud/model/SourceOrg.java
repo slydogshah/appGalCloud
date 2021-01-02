@@ -159,10 +159,6 @@ public class SourceOrg implements Serializable {
 
     public static SourceOrg parse(String json)
     {
-        logger.info("*********DEBUG**************");
-        logger.info(json);
-
-
         SourceOrg sourceOrg = new SourceOrg();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();

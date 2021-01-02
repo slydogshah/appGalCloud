@@ -87,6 +87,10 @@ public class Registration {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@RequestBody String credentialsJson)
     {
+        logger.info("******LOGIN*******");
+        logger.info(credentialsJson);
+        logger.info("*************************");
+
         JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
 
         String email = jsonObject.get("email").getAsString();

@@ -69,6 +69,11 @@ public class ProfileRegistrationService {
 
     public JsonObject login(String email, String password) throws AuthenticationException
     {
+        logger.info("******LOGIN*******");
+        logger.info("Email:"+email);
+        logger.info("Password:"+password);
+        logger.info("*************************");
+
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {

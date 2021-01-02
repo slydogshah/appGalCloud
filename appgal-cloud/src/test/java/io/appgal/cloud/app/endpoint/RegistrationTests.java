@@ -193,6 +193,11 @@ public class RegistrationTests extends BaseTest {
         registrationJson.addProperty("password", "c");
         registrationJson.addProperty("sourceOrgId", sourceOrg.getOrgId());
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
         Response response = given().body(registrationJson.toString()).post("/registration/profile");
         logger.info("*********");
         logger.info(response.getStatusLine());
