@@ -12,6 +12,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 @ValidProfileSourceOrg
 public class Profile implements Serializable {
@@ -31,6 +33,7 @@ public class Profile implements Serializable {
 
     private String photo;
 
+    //NotBlank if An 'ORG' Profile
     private String sourceOrgId;
 
     private ProfileType profileType;
@@ -209,7 +212,13 @@ public class Profile implements Serializable {
             profile.email = jsonObject.get("email").getAsString();
         }
         if(jsonObject.has("mobile")) {
-            profile.mobile = jsonObject.get("mobile").getAsLong();
+            String input = jsonObject.get("mobile").getAsString();
+            try {
+                NumberFormat.getInstance().parse(input);
+                profile.mobile = jsonObject.get("mobile").getAsLong();
+            } catch (ParseException e) {
+                profile.mobile = 11111111111l;
+            }
         }
         if(jsonObject.has("photo")) {
             profile.photo = jsonObject.get("photo").getAsString();

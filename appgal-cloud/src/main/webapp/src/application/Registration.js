@@ -42,6 +42,9 @@ class Register extends React.Component {
       ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
       ReactDOM.unmountComponentAtNode(document.getElementById('mobileRequired'));
       ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
+      ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
+      ReactDOM.unmountComponentAtNode(document.getElementById('phoneInvalid'));
+      ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
       const required = (
                        <CAlert
                        color="warning"
@@ -86,23 +89,75 @@ class Register extends React.Component {
                          this.setState({
                            "errorMessage": "Login Failed. Please check your Username and/or Password"
                          });
+                         const element = (
+                                                                       <CAlert
+                                                                       color="dark"
+                                                                       closeButton
+                                                                       >
+                                                                          {this.state.errorMessage}
+                                                                      </CAlert>
+                                                                   );
+
+                                             ReactDOM.render(element,document.getElementById('errorAlert'));
+                    }
+                    else if(err.response != null && err.response.status == 409)
+                    {
+                         this.setState({
+                           "errorMessage": "This email is already registered"
+                         });
+                         const element = (
+                                                                                                <CAlert
+                                                                                                color="dark"
+                                                                                                closeButton
+                                                                                                >
+                                                                                                   {this.state.errorMessage}
+                                                                                               </CAlert>
+                                                                                            );
+
+                                                                      ReactDOM.render(element,document.getElementById('errorAlert'));
+                    }
+                    else if(err.response != null && err.response.status == 400)
+                    {
+                        const violations = err.response.data.violations;
+                        if(violations.includes("email_invalid"))
+                        {
+                        const emailInvalid = (
+                                               <CAlert
+                                               color="warning"
+                                               >
+                                                  Email is not valid
+                                              </CAlert>
+                                           );
+                        ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
+                        }
+                        if(violations.includes("phone_invalid"))
+                        {
+                            const phoneInvalid = (
+                                                                           <CAlert
+                                                                           color="warning"
+                                                                           >
+                                                                              Phone is not valid
+                                                                          </CAlert>
+                                                                       );
+                            ReactDOM.render(phoneInvalid,document.getElementById('phoneInvalid'));
+                        }
                     }
                     else
                     {
                          this.setState({
                              "errorMessage": "Unknown Error. Please check your Network Connection"
                          });
+                         const element = (
+                                                                                                <CAlert
+                                                                                                color="dark"
+                                                                                                closeButton
+                                                                                                >
+                                                                                                   {this.state.errorMessage}
+                                                                                               </CAlert>
+                                                                                            );
+
+                                                                      ReactDOM.render(element,document.getElementById('errorAlert'));
                     }
-                    const element = (
-                          <CAlert
-                          color="dark"
-                          closeButton
-                          >
-                             {this.state.errorMessage}
-                         </CAlert>
-                      );
-                    ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
-                    ReactDOM.render(element,document.getElementById('errorAlert'));
               });
       }
   }
@@ -124,6 +179,7 @@ class Register extends React.Component {
                         </CInputGroupPrepend>
                         <CInput type="text" placeholder="Email" autoComplete="email" name="email" onChange={this.handleChange}/>
                         <div id="emailRequired"/>
+                        <div id="emailInvalid"/>
                       </CInputGroup>
                       <CInputGroup className="mb-3">
                         <CInputGroupPrepend>
@@ -149,6 +205,7 @@ class Register extends React.Component {
                         </CInputGroupText>
                         <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={this.handleChange}/>
                         <div id="mobileRequired"/>
+                        <div id="phoneInvalid"/>
                       </CInputGroup>
                       <CInputGroup className="mb-6">
                         <CInputGroupText>

@@ -1,5 +1,6 @@
 package io.appgal.cloud.app.endpoint;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.app.services.AuthenticationException;
@@ -58,11 +59,13 @@ public class Registration {
             Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
             if(!violations.isEmpty())
             {
-                String message = violations.stream()
-                        .map(cv -> cv.getMessage())
-                        .collect(Collectors.joining(", "));
                 JsonObject responseJson = new JsonObject();
-                responseJson.addProperty("violations", message);
+                JsonArray violationsArray = new JsonArray();
+                for(ConstraintViolation violation:violations)
+                {
+                    violationsArray.add(violation.getMessage());
+                }
+                responseJson.add("violations", violationsArray);
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
@@ -87,10 +90,6 @@ public class Registration {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@RequestBody String credentialsJson)
     {
-        logger.info("******LOGIN*******");
-        logger.info(credentialsJson);
-        logger.info("*************************");
-
         JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
 
         String email = jsonObject.get("email").getAsString();
