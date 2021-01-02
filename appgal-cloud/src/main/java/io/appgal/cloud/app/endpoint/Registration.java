@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.app.services.AuthenticationException;
+import io.appgal.cloud.app.services.DifferentContextAuthException;
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.model.Profile;
@@ -142,6 +143,10 @@ public class Registration {
         {
             return Response.status(401).entity(authenticationException.toString()).build();
         }
+        catch(DifferentContextAuthException differentContextAuthException)
+        {
+            return Response.status(403).entity(differentContextAuthException.toString()).build();
+        }
     }
 
     @Path("/org/login")
@@ -162,6 +167,10 @@ public class Registration {
         catch(AuthenticationException authenticationException)
         {
             return Response.status(401).entity(authenticationException.toString()).build();
+        }
+        catch(DifferentContextAuthException differentContextAuthException)
+        {
+            return Response.status(403).entity(differentContextAuthException.toString()).build();
         }
     }
 }

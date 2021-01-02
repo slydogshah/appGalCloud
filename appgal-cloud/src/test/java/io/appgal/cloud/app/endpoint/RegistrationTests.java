@@ -198,7 +198,76 @@ public class RegistrationTests extends BaseTest {
         logger.info(registrationJson.toString());
         logger.info("***********************");
 
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        logger.info("*********");
+        logger.info(response.getStatusLine());
+        logger.info("*********");
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", email);
+        loginJson.addProperty("password", "c");
+        response = given().body(loginJson.toString()).when().post("/registration/org/login").andReturn();
+
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+
+        //assert the body
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+    }
+
+    @Test
+    public void testLoginSuccessUnauthorized() {
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("photo", "photu");
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
         Response response = given().body(registrationJson.toString()).post("/registration/profile");
+        logger.info("*********");
+        logger.info(response.asString());
+        logger.info("*********");
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", email);
+        loginJson.addProperty("password", "c");
+        response = given().body(loginJson.toString()).when().post("/registration/org/login").andReturn();
+
+        String jsonString = response.getBody().prettyPrint();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+        assertEquals(403, response.getStatusCode());
+    }
+
+    @Test
+    public void testLoginSuccessOrgUnauthorized() {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("photo", "photu");
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("sourceOrgId", sourceOrg.getOrgId());
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
         logger.info("*********");
         logger.info(response.getStatusLine());
         logger.info("*********");
@@ -214,21 +283,7 @@ public class RegistrationTests extends BaseTest {
         logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
-
-        //assert the body
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        int statusCode = jsonObject.get("statusCode").getAsInt();
-        assertEquals(200, statusCode);
-        assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
-        assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
-        Profile profile = Profile.parse(jsonObject.get("profile").toString());
-        assertNotNull(profile.getId());
-        assertEquals(profile.getEmail(), email);
-        assertEquals(profile.getMobile(), 8675309l);
-        assertEquals(profile.getPassword(), "c");
-        assertEquals(profile.getProfileType(), ProfileType.ORG);
-        assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
-        assertEquals(profile.getLocation().getLongitude(), -97.74873352050781d);
+        assertEquals(403, response.getStatusCode());
     }
 
     @Test

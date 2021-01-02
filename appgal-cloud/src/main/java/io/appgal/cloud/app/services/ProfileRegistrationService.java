@@ -2,11 +2,7 @@ package io.appgal.cloud.app.services;
 
 import com.google.gson.*;
 
-import io.appgal.cloud.model.ActiveNetwork;
-import io.appgal.cloud.model.FoodRunner;
-import io.appgal.cloud.model.Location;
-import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 
 import io.appgal.cloud.network.services.NetworkOrchestrator;
@@ -54,7 +50,6 @@ public class ProfileRegistrationService {
 
     public void registerSourceOrg(SourceOrg sourceOrg) throws ResourceExistsException
     {
-        //TODO: Add validation..Add proper response
         String sourceOrgId = sourceOrg.getOrgId();
         SourceOrg exists = this.mongoDBJsonStore.getSourceOrg(sourceOrgId);
         if(exists != null)
@@ -67,18 +62,18 @@ public class ProfileRegistrationService {
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
     }
 
-    public JsonObject login(String email, String password) throws AuthenticationException
+    public JsonObject login(String email, String password)
+            throws AuthenticationException, DifferentContextAuthException
     {
-        logger.info("******LOGIN*******");
-        logger.info("Email:"+email);
-        logger.info("Password:"+password);
-        logger.info("*************************");
-
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
             logger.info("PROFILE_NOT_FOUND: "+email);
             throw new AuthenticationException(email);
+        }
+        if(profile.getProfileType() != ProfileType.FOOD_RUNNER)
+        {
+            throw new DifferentContextAuthException(email,profile.getProfileType());
         }
 
         String registeredEmail = profile.getEmail();
@@ -137,18 +132,18 @@ public class ProfileRegistrationService {
         throw new AuthenticationException(email);
     }
 
-    public JsonObject orgLogin(String email, String password) throws AuthenticationException
+    public JsonObject orgLogin(String email, String password)
+            throws AuthenticationException,DifferentContextAuthException
     {
-        logger.info("******ORG_LOGIN*******");
-        logger.info("Email:"+email);
-        logger.info("Password:"+password);
-        logger.info("*************************");
-
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
             logger.info("PROFILE_NOT_FOUND: "+email);
             throw new AuthenticationException(email);
+        }
+        if(profile.getProfileType() != ProfileType.ORG)
+        {
+            throw new DifferentContextAuthException(email,profile.getProfileType());
         }
 
         String registeredEmail = profile.getEmail();
