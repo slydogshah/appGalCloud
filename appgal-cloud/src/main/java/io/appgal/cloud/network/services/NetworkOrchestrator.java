@@ -120,12 +120,6 @@ public class NetworkOrchestrator {
         return jsonObject;
     }
 
-    public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
-    {
-        logger.info("***********************");
-        logger.info("***********************");
-    }
-
     public JsonArray getRegistered(SourceOrg destination){
         List<SourceOrg>registeredSources=this.activeNetwork.findSourceOrgs(destination);
         return JsonParser.parseString(registeredSources.toString()).getAsJsonArray();
@@ -167,5 +161,12 @@ public class NetworkOrchestrator {
             modelChain.add("payload", jsonObject);
             this.dataReplayService.addToDiffChain(chainId, modelChain);
         }
+    }
+    //--------FoodRunner Matching Process-----------------------------------------------
+    public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
+    {
+        logger.info("***********************");
+        logger.info(schedulePickUpNotification.toString());
+        logger.info("***********************");
     }
 }

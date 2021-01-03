@@ -317,4 +317,10 @@ public class NetworkOrchestratorTests extends BaseTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void testFoodRunnerMatchingProcess() throws Exception
+    {
+        this.networkOrchestrator.schedulePickUp(new SchedulePickUpNotification());
+    }
 }
