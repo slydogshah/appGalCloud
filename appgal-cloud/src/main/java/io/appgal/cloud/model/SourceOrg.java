@@ -23,6 +23,7 @@ public class SourceOrg implements Serializable {
     private List<Profile> profiles;
     private Location location;
     private boolean isProducer;
+    private Address address;
 
     public SourceOrg()
     {
@@ -49,6 +50,17 @@ public class SourceOrg implements Serializable {
         this.orgContactEmail = orgContactEmail;
         this.deliveryPreference = new DeliveryPreference();
         this.isProducer = isProducer;
+    }
+
+    public SourceOrg(String orgId, String orgName, String orgContactEmail, Address address, boolean isProducer)
+    {
+        this();
+        this.orgId = orgId;
+        this.orgName = orgName;
+        this.orgContactEmail = orgContactEmail;
+        this.deliveryPreference = new DeliveryPreference();
+        this.isProducer = isProducer;
+        this.address = address;
     }
 
     public String getOrgId() {
