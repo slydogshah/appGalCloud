@@ -214,9 +214,10 @@ public class RegistrationTests extends BaseTest {
         logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
+        assertEquals(200, response.getStatusCode());
 
         //assert the body
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        //JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
     }
 
     @Test

@@ -143,15 +143,14 @@ public class Registration {
 
         try {
             Profile profile = this.profileRegistrationService.getProfile(email);
-            JsonObject result;
             String json;
             if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
-                result = this.profileRegistrationService.login(userAgent, email, password);
+                JsonObject result = this.profileRegistrationService.login(userAgent, email, password);
                 json = result.toString();
             }
             else
             {
-                result = this.profileRegistrationService.orgLogin(userAgent, email, password);
+                JsonArray result = this.profileRegistrationService.orgLogin(userAgent, email, password);
                 json = result.toString();
             }
             return Response.ok(json).build();

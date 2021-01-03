@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.List;
@@ -132,7 +133,7 @@ public class ProfileRegistrationService {
         throw new AuthenticationException(email);
     }
 
-    public JsonObject orgLogin(String userAgent, String email, String password) throws AuthenticationException
+    public JsonArray orgLogin(String userAgent, String email, String password) throws AuthenticationException
     {
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
@@ -152,7 +153,19 @@ public class ProfileRegistrationService {
 
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
-            return this.networkOrchestrator.getActiveView();
+            final JsonObject activeView = this.networkOrchestrator.getActiveView();
+            JsonArray activeProfiles = new JsonArray();
+
+            JsonArray activeFoodRunners = activeView.getAsJsonArray("activeFoodRunners");
+            Iterator<JsonElement> itr = activeFoodRunners.iterator();
+            while(itr.hasNext())
+            {
+                JsonObject cour = itr.next().getAsJsonObject();
+                Profile courProfile = Profile.parse(cour.get("profile").getAsJsonObject().toString());
+                activeProfiles.add(courProfile.toJson());
+            }
+
+            return activeProfiles;
         }
 
         logger.info("AUTHENTICATION_FAILED");
