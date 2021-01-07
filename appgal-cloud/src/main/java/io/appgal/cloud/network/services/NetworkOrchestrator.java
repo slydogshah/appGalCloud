@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.data.history.service.DataReplayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,8 +166,9 @@ public class NetworkOrchestrator {
     //--------FoodRunner Matching Process-----------------------------------------------
     public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
     {
-        logger.info("***********************");
-        logger.info(schedulePickUpNotification.toString());
-        logger.info("***********************");
+        JsonObject activeView = this.getActiveView();
+
+        List<FoodRunner> match = this.activeNetwork.matchFoodRunners(schedulePickUpNotification);
+        JsonUtil.print(JsonParser.parseString(match.toString()));
     }
 }

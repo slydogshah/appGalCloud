@@ -24,6 +24,12 @@ public class SchedulePickUpNotification implements Serializable
 
     }
 
+    public SchedulePickUpNotification(SourceOrg sourceOrg,OffsetDateTime start)
+    {
+        this.sourceOrg = sourceOrg;
+        this.start = start;
+    }
+
     public SourceOrg getSourceOrg() {
         return sourceOrg;
     }

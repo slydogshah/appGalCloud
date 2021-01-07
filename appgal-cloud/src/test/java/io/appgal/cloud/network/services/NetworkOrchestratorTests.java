@@ -321,6 +321,36 @@ public class NetworkOrchestratorTests extends BaseTest {
     @Test
     public void testFoodRunnerMatchingProcess() throws Exception
     {
-        this.networkOrchestrator.schedulePickUp(new SchedulePickUpNotification());
+        int numberOfFoodRunners = 10;
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Location location = new Location(startLatitude, startLongitude);
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        sourceOrg.setProducer(true);
+        sourceOrg.setLocation(location);
+        PickupRequest pickupRequest = new PickupRequest();
+        pickupRequest.setSourceOrg(sourceOrg);
+        for(int i=0; i<numberOfFoodRunners; i++) {
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
+                    8675309l, "", "", ProfileType.FOOD_RUNNER);
+            FoodRunner foodRunner;
+            if(i % 2 == 0)
+            {
+                foodRunner = new FoodRunner(profile, location);
+            }
+            else
+            {
+                Location away = new Location(0d, 0d);
+                foodRunner = new FoodRunner(profile, away);
+            }
+            logger.info("************************FOODRUNNER***************************************");
+            logger.info("FoodRunner: " + foodRunner.getProfile().getId());
+            logger.info("***************************************************************");
+
+            this.networkOrchestrator.enterNetwork(foodRunner);
+        }
+
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        this.networkOrchestrator.schedulePickUp(new SchedulePickUpNotification(sourceOrg,start));
     }
 }

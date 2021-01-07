@@ -97,6 +97,28 @@ public class ActiveNetwork implements Serializable {
         return result;
     }
 
+    public List<FoodRunner> matchFoodRunners(SchedulePickUpNotification schedulePickUpNotification)
+    {
+        List<FoodRunner> result = new ArrayList<>();
+        DistanceCalculator distanceCalculator = new DistanceCalculator();
+        Iterator<FoodRunner> iterator = this.activeFoodRunners.values().iterator();
+        Location pickUpLocation = schedulePickUpNotification.getSourceOrg().getLocation();
+        while(iterator.hasNext())
+        {
+            FoodRunner foodRunner = iterator.next();
+            Location foodRunnerLocation = foodRunner.getLocation();
+            Double distance = distanceCalculator.calculateDistance(pickUpLocation, foodRunnerLocation);
+            if(distance <= 5.0d)
+            {
+                result.add(foodRunner);
+            }
+        }
+        if(!result.isEmpty()) {
+            this.mongoDBJsonStore.storeResults(result);
+        }
+        return result;
+    }
+
     public List<FoodRunner> matchSourceOrgs(PickupRequest pickupRequest)
     {
         if(pickupRequest.getRequestId() == null)
