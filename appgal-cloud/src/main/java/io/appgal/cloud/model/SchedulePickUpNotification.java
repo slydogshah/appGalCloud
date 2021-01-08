@@ -18,6 +18,7 @@ public class SchedulePickUpNotification implements Serializable
     private SourceOrg sourceOrg;
     private FoodRunner foodRunner;
     private OffsetDateTime start;
+    private boolean notificationSent;
 
     public SchedulePickUpNotification()
     {
@@ -54,6 +55,14 @@ public class SchedulePickUpNotification implements Serializable
         this.foodRunner = foodRunner;
     }
 
+    public boolean isNotificationSent() {
+        return notificationSent;
+    }
+
+    public void setNotificationSent(boolean notificationSent) {
+        this.notificationSent = notificationSent;
+    }
+
     public static SchedulePickUpNotification parse(String json)
     {
         SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
@@ -75,6 +84,10 @@ public class SchedulePickUpNotification implements Serializable
             long startEpochSecond = jsonObject.get("start").getAsLong();
             schedulePickUpNotification.start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(startEpochSecond),ZoneOffset.UTC);
         }
+        if(jsonObject.has("notificationSent"))
+        {
+            schedulePickUpNotification.notificationSent = jsonObject.get("notificationSent").getAsBoolean();
+        }
 
         return schedulePickUpNotification;
     }
@@ -93,6 +106,7 @@ public class SchedulePickUpNotification implements Serializable
         {
             jsonObject.addProperty("start", this.start.toEpochSecond());
         }
+        jsonObject.addProperty("notificationSent", this.notificationSent);
 
         return jsonObject;
     }

@@ -93,9 +93,10 @@ public class NotificationReceiver {
     @Path("/pickup/notifications")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPickUpNotifications()
+    public Response getPickUpNotifications(@QueryParam("email") String email)
     {
-        List<SchedulePickUpNotification> schedulePickUpNotificationList = this.mongoDBJsonStore.getSchedulePickUpNotifications();
+        List<SchedulePickUpNotification> schedulePickUpNotificationList = this.mongoDBJsonStore.
+                getSchedulePickUpNotifications(email);
         return Response.ok(schedulePickUpNotificationList.toString()).build();
     }
 }

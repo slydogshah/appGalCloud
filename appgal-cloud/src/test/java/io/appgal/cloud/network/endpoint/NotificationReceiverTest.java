@@ -139,8 +139,10 @@ public class NotificationReceiverTest extends BaseTest {
         Thread.sleep(45000);
 
 
-        Response response = given().when().get("/notification/pickup/notifications")
+        Response response = given().when().get("/notification/pickup/notifications?email=bugs.bunny.shah@gmail.com")
                 .andReturn();
         JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
+        JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
+        assertTrue(array.size() > 0);
     }
 }

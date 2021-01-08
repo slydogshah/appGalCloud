@@ -188,7 +188,13 @@ public class MongoDBJsonStoreTests extends BaseTest {
 
         this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
 
-        List<SchedulePickUpNotification> notifications = this.mongoDBJsonStore.getSchedulePickUpNotifications();
+        List<SchedulePickUpNotification> notifications = this.mongoDBJsonStore.getSchedulePickUpNotifications(bugsBunny.getProfile().getEmail());
         JsonUtil.print(JsonParser.parseString(notifications.toString()));
+        assertFalse(notifications.isEmpty());
+
+        bugsBunny.getProfile().setEmail("bogus@bogus.com");
+        notifications = this.mongoDBJsonStore.getSchedulePickUpNotifications(bugsBunny.getProfile().getEmail());
+        JsonUtil.print(JsonParser.parseString(notifications.toString()));
+        assertTrue(notifications.isEmpty());
     }
 }
