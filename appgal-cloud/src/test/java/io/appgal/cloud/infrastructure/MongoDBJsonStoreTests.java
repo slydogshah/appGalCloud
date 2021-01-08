@@ -4,6 +4,7 @@ import com.google.gson.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
+import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
@@ -186,5 +187,8 @@ public class MongoDBJsonStoreTests extends BaseTest {
         schedulePickUpNotification.setStart(start);
 
         this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
+
+        List<SchedulePickUpNotification> notifications = this.mongoDBJsonStore.getSchedulePickUpNotifications();
+        JsonUtil.print(JsonParser.parseString(notifications.toString()));
     }
 }

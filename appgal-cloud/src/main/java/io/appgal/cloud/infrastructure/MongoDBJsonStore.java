@@ -366,6 +366,29 @@ public class MongoDBJsonStore {
         collection.insertMany(documents);
     }
 
+    public List<SchedulePickUpNotification> getSchedulePickUpNotifications()
+    {
+        List<SchedulePickUpNotification> notifications = new ArrayList<>();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
+
+            notifications.add(notification);
+        }
+
+        return notifications;
+    }
+
     public void storeScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
