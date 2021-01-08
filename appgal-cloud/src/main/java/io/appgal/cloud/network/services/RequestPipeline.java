@@ -45,6 +45,11 @@ public class RequestPipeline {
         return this.queue.poll();
     }
 
+    public void clear()
+    {
+        this.queue.clear();
+    }
+
     @Override
     public String toString()
     {

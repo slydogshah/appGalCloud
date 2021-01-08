@@ -7,6 +7,7 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,12 @@ public class RequestPipelineTests extends BaseTest {
 
     @Inject
     private RequestPipeline requestPipeline;
+
+    @BeforeEach
+    public void setUp()
+    {
+        this.requestPipeline.clear();
+    }
 
     @Test
     public void testOrdering() throws Exception
