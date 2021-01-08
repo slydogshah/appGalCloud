@@ -178,9 +178,7 @@ public class NetworkOrchestrator {
     //--------FoodRunner Matching Process-----------------------------------------------
     public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
     {
+        this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
         this.requestPipeline.add(schedulePickUpNotification);
-
-        List<FoodRunner> match = this.activeNetwork.matchFoodRunners(schedulePickUpNotification);
-        JsonUtil.print(JsonParser.parseString(match.toString()));
     }
 }

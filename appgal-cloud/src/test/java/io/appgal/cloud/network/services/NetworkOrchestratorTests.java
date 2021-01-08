@@ -320,7 +320,7 @@ public class NetworkOrchestratorTests extends BaseTest {
     }
 
     @Test
-    public void testNotifications() throws Exception
+    public void testSchedulePickUp() throws Exception
     {
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
         JsonUtil.print(this.networkOrchestrator.getActiveView());

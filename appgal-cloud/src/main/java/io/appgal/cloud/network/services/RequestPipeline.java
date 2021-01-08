@@ -1,11 +1,15 @@
 package io.appgal.cloud.network.services;
 
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Comparator;
+import java.util.List;
 import java.util.PriorityQueue;
 
 @Singleton
@@ -13,6 +17,9 @@ public class RequestPipeline {
     private static Logger logger = LoggerFactory.getLogger(RequestPipeline.class);
 
     private PriorityQueue<SchedulePickUpNotification> queue;
+
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
 
     public RequestPipeline()
     {
@@ -33,6 +40,16 @@ public class RequestPipeline {
             }
         };
         this.queue = new PriorityQueue<>(comparator);
+    }
+
+    @PostConstruct
+    public void start()
+    {
+        List<SchedulePickUpNotification> notifications = this.mongoDBJsonStore.getSchedulePickUpNotifications();
+        for(SchedulePickUpNotification schedulePickUpNotification:notifications)
+        {
+            this.add(schedulePickUpNotification);
+        }
     }
 
     public void add(SchedulePickUpNotification schedulePickUpNotification)
