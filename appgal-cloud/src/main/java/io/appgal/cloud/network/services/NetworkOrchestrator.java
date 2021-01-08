@@ -3,10 +3,12 @@ package io.appgal.cloud.network.services;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.data.history.service.DataReplayService;
+import io.bugsbunny.preprocess.SecurityTokenContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,15 +30,25 @@ public class NetworkOrchestrator {
     @Inject
     private DataReplayService dataReplayService;
 
+    @Inject
+    private SecurityTokenContainer securityTokenContainer;
+
+    @Inject
+    private RequestPipeline requestPipeline;
+
     private Queue<PickupRequest> activeFoodRunnerQueue;
 
     private Map<String, Collection<FoodRunner>> finderResults;
+
+    private NotificationEngine notificationEngine;
 
     @PostConstruct
     public void start()
     {
         this.activeFoodRunnerQueue = new PriorityQueue<>();
         this.finderResults = new HashMap<>();
+        this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline);
+        this.notificationEngine.start();
         logger.info("*******");
         logger.info("NETWORK_ORCHESTRATOR_IS_ONLINE_NOW");
         logger.info("*******");
@@ -166,7 +178,7 @@ public class NetworkOrchestrator {
     //--------FoodRunner Matching Process-----------------------------------------------
     public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
     {
-        JsonObject activeView = this.getActiveView();
+        this.requestPipeline.add(schedulePickUpNotification);
 
         List<FoodRunner> match = this.activeNetwork.matchFoodRunners(schedulePickUpNotification);
         JsonUtil.print(JsonParser.parseString(match.toString()));

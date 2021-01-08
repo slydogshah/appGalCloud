@@ -4,9 +4,11 @@ import io.appgal.cloud.model.SchedulePickUpNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
+@Singleton
 public class RequestPipeline {
     private static Logger logger = LoggerFactory.getLogger(RequestPipeline.class);
 

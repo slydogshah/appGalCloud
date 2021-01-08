@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class RequestPipelineTests extends BaseTest {
             .setPrettyPrinting()
             .create();
 
+    @Inject
+    private RequestPipeline requestPipeline;
+
     @Test
     public void testOrdering() throws Exception
     {
@@ -44,7 +48,6 @@ public class RequestPipelineTests extends BaseTest {
             schedulePickUpNotificationList.add(start);
             logger.info(schedulePickUpNotificationList.toString());
 
-            RequestPipeline requestPipeline = new RequestPipeline();
             for (OffsetDateTime cour : schedulePickUpNotificationList) {
                 SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
                 sourceOrg.setProducer(true);
@@ -60,7 +63,7 @@ public class RequestPipelineTests extends BaseTest {
                 //JsonUtil.print(schedulePickUpNotification.toJson());
                 logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
-                requestPipeline.add(schedulePickUpNotification);
+                this.requestPipeline.add(schedulePickUpNotification);
             }
 
             //Assert
@@ -82,7 +85,7 @@ public class RequestPipelineTests extends BaseTest {
 
             int counter = 0;
             while (true) {
-                SchedulePickUpNotification current = requestPipeline.next();
+                SchedulePickUpNotification current = this.requestPipeline.next();
                 if (current == null) {
                     break;
                 }
