@@ -15,6 +15,7 @@ public class SchedulePickUpNotification implements Serializable
 {
     private static Logger logger = LoggerFactory.getLogger(SchedulePickUpNotification.class);
 
+    private String id;
     private SourceOrg sourceOrg;
     private FoodRunner foodRunner;
     private OffsetDateTime start;
@@ -25,8 +26,9 @@ public class SchedulePickUpNotification implements Serializable
 
     }
 
-    public SchedulePickUpNotification(SourceOrg sourceOrg,OffsetDateTime start)
+    public SchedulePickUpNotification(String id, SourceOrg sourceOrg,OffsetDateTime start)
     {
+        this.id = id;
         this.sourceOrg = sourceOrg;
         this.start = start;
     }
@@ -63,13 +65,39 @@ public class SchedulePickUpNotification implements Serializable
         this.notificationSent = notificationSent;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    //TODO: Write the corresponding test
+    public boolean activateNotification()
+    {
+        long epochSecond = this.start.toEpochSecond();
+        long minutes30 = 30 * 60;
+
+        if(epochSecond >= minutes30+epochSecond)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public static SchedulePickUpNotification parse(String json)
     {
         SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
-        if(jsonObject.has("sourceOrg"))
+        if(jsonObject.has("id"))
+        {
+            schedulePickUpNotification.id = jsonObject.get("id").getAsString();
+        }
+        else if(jsonObject.has("sourceOrg"))
         {
             JsonObject sourceOrgJson = jsonObject.get("sourceOrg").getAsJsonObject();
             schedulePickUpNotification.sourceOrg = SourceOrg.parse(sourceOrgJson.toString());
@@ -96,6 +124,10 @@ public class SchedulePickUpNotification implements Serializable
     {
         JsonObject jsonObject = new JsonObject();
 
+        if(this.id != null)
+        {
+            jsonObject.addProperty("id", this.id);
+        }
         if(this.sourceOrg != null) {
             jsonObject.add("sourceOrg", this.sourceOrg.toJson());
         }

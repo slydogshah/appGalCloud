@@ -421,6 +421,40 @@ public class MongoDBJsonStore {
         collection.insertOne(doc);
     }
 
+    //TODO: Write corresponding test
+    public void updateScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        JsonObject stored = this.getScheduledPickUpNotification(schedulePickUpNotification.getId());
+        Bson bson = Document.parse(stored.toString());
+        collection.deleteOne(bson);
+
+        stored.remove("_id");
+        stored.addProperty("live", true);
+        this.storeScheduledPickUpNotification(SchedulePickUpNotification.parse(stored.toString()));
+    }
+
+    public JsonObject getScheduledPickUpNotification(String id)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        String queryJson = "{\"id\":\""+id+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            return JsonParser.parseString(documentJson).getAsJsonObject();
+        }
+        return null;
+    }
+
     public void storePickUpRequest(PickupRequest pickupRequest)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");

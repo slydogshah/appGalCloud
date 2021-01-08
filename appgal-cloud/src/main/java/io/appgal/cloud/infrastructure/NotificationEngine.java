@@ -19,12 +19,14 @@ public class NotificationEngine extends TimerTask {
     private SecurityToken securityToken;
 
     private RequestPipeline requestPipeline;
+    private MongoDBJsonStore mongoDBJsonStore;
 
-    public NotificationEngine(SecurityTokenContainer securityTokenContainer, RequestPipeline requestPipeline)
+    public NotificationEngine(SecurityTokenContainer securityTokenContainer, RequestPipeline requestPipeline, MongoDBJsonStore mongoDBJsonStore)
     {
         this.securityTokenContainer = securityTokenContainer;
         this.securityToken = this.securityTokenContainer.getSecurityToken();
         this.requestPipeline = requestPipeline;
+        this.mongoDBJsonStore = mongoDBJsonStore;
     }
 
     public void start()
@@ -38,11 +40,22 @@ public class NotificationEngine extends TimerTask {
     {
         try
         {
-            logger.info("*****NOTIFICATION_ENGINE**********");
-            SchedulePickUpNotification notification = this.requestPipeline.next();
-            if(notification != null) {
-                JsonUtil.print(notification.toJson());
+            logger.info("***********NOTIFICATION_ENGINE**********");
+            SchedulePickUpNotification notification = this.requestPipeline.peek();
+            if(notification == null) {
+                return;
             }
+            //Check
+            if(!notification.activateNotification())
+            {
+                return;
+            }
+
+            notification = this.requestPipeline.next();
+            notification.setNotificationSent(true);
+
+            //Send
+            this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
         }
         catch(Exception e)
         {

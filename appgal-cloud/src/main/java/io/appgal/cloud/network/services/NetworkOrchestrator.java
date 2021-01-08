@@ -47,7 +47,7 @@ public class NetworkOrchestrator {
     {
         this.activeFoodRunnerQueue = new PriorityQueue<>();
         this.finderResults = new HashMap<>();
-        this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline);
+        this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline, this.mongoDBJsonStore);
         this.notificationEngine.start();
         logger.info("*******");
         logger.info("NETWORK_ORCHESTRATOR_IS_ONLINE_NOW");
