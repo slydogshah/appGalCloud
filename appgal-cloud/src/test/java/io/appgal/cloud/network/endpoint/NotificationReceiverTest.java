@@ -4,9 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.appgal.cloud.model.SourceNotification;
+import io.appgal.cloud.model.*;
+import io.appgal.cloud.network.services.NetworkOrchestrator;
+import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,13 +20,19 @@ import static io.restassured.RestAssured.given;
 import io.restassured.response.Response;
 
 import javax.inject.Inject;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
 @QuarkusTest
 public class NotificationReceiverTest extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(NotificationReceiverTest.class);
+
+    @Inject
+    private NetworkOrchestrator networkOrchestrator;
 
     @BeforeEach
     public void setUp() throws InterruptedException {
@@ -90,5 +99,48 @@ public class NotificationReceiverTest extends BaseTest {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         String foodRunnerId = jsonObject.get("foodRunnerId").getAsString();
         assertNotNull(foodRunnerId);
+    }
+
+    @Test
+    public void testPickUpNotifications() throws Exception{
+        Location location = new Location(30.25860595703125d, -97.74873352050781d);
+        JsonUtil.print(this.networkOrchestrator.getActiveView());
+
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
+
+        OffsetDateTime middle = OffsetDateTime.now(ZoneOffset.UTC).withHour(12).withMinute(0).withSecond(0);
+
+        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).withHour(20).withMinute(0).withSecond(0);
+
+        List<OffsetDateTime> schedulePickUpNotificationList = new LinkedList<>();
+        schedulePickUpNotificationList.add(middle);
+        schedulePickUpNotificationList.add(end);
+        schedulePickUpNotificationList.add(start);
+        logger.info(schedulePickUpNotificationList.toString());
+
+        for (OffsetDateTime cour : schedulePickUpNotificationList) {
+            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
+            sourceOrg.setProducer(true);
+            sourceOrg.setLocation(location);
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
+            FoodRunner bugsBunny = new FoodRunner(profile, location);
+
+            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
+            schedulePickUpNotification.setSourceOrg(sourceOrg);
+            schedulePickUpNotification.setFoodRunner(bugsBunny);
+            schedulePickUpNotification.setStart(cour);
+            logger.info("********************************************");
+            //JsonUtil.print(schedulePickUpNotification.toJson());
+            logger.info(cour.toString() + ":" + cour.toEpochSecond());
+
+            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
+        }
+
+        Thread.sleep(45000);
+
+
+        Response response = given().when().get("/notification/pickup/notifications")
+                .andReturn();
+        JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
     }
 }

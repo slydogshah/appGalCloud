@@ -2,6 +2,10 @@ package io.appgal.cloud.network.endpoint;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.SchedulePickUpNotification;
+import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.network.services.ProcessIncomingPackets;
 import io.appgal.cloud.model.MessageWindow;
 import io.appgal.cloud.model.OutstandingFoodRunnerNotification;
@@ -16,6 +20,7 @@ import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.UUID;
 
 @Path("notification")
@@ -24,6 +29,9 @@ public class NotificationReceiver {
 
     @Inject
     private ProcessIncomingPackets processIncomingPackets;
+
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
 
     @Path("receive")
     @POST
@@ -80,5 +88,14 @@ public class NotificationReceiver {
         outstandingFoodRunnerNotification.setFoodRunnerId(UUID.randomUUID().toString());
         jsonObject.addProperty("foodRunnerId", outstandingFoodRunnerNotification.getFoodRunnerId());
         return Response.ok(jsonObject.toString()).build();
+    }
+
+    @Path("/pickup/notifications")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPickUpNotifications()
+    {
+        List<SchedulePickUpNotification> schedulePickUpNotificationList = this.mongoDBJsonStore.getSchedulePickUpNotifications();
+        return Response.ok(schedulePickUpNotificationList.toString()).build();
     }
 }
