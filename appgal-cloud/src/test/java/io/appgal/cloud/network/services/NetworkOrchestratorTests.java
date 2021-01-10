@@ -344,7 +344,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
             FoodRunner bugsBunny = new FoodRunner(profile, location);
 
-            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
+            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             schedulePickUpNotification.setSourceOrg(sourceOrg);
             schedulePickUpNotification.setFoodRunner(bugsBunny);
             schedulePickUpNotification.setStart(cour);

@@ -1,6 +1,7 @@
 package io.appgal.cloud.network.endpoint;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -22,10 +23,7 @@ import io.restassured.response.Response;
 import javax.inject.Inject;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @QuarkusTest
 public class NotificationReceiverTest extends BaseTest {
@@ -110,22 +108,24 @@ public class NotificationReceiverTest extends BaseTest {
 
         OffsetDateTime middle = OffsetDateTime.now(ZoneOffset.UTC).withHour(12).withMinute(0).withSecond(0);
 
-        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).withHour(20).withMinute(0).withSecond(0);
+        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).plusDays(1);
 
         List<OffsetDateTime> schedulePickUpNotificationList = new LinkedList<>();
         schedulePickUpNotificationList.add(middle);
         schedulePickUpNotificationList.add(end);
         schedulePickUpNotificationList.add(start);
+        List<String> excluded = new LinkedList<>();
         logger.info(schedulePickUpNotificationList.toString());
 
-        for (OffsetDateTime cour : schedulePickUpNotificationList) {
+        for (int i=0; i<schedulePickUpNotificationList.size();i++) {
+            OffsetDateTime cour = schedulePickUpNotificationList.get(i);
             SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
             sourceOrg.setProducer(true);
             sourceOrg.setLocation(location);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
             FoodRunner bugsBunny = new FoodRunner(profile, location);
 
-            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
+            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             schedulePickUpNotification.setSourceOrg(sourceOrg);
             schedulePickUpNotification.setFoodRunner(bugsBunny);
             schedulePickUpNotification.setStart(cour);
@@ -134,15 +134,36 @@ public class NotificationReceiverTest extends BaseTest {
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
             this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
+
+            if(cour.toEpochSecond() == end.toEpochSecond())
+            {
+                excluded.add(schedulePickUpNotification.getId());
+            }
         }
 
+        logger.info(excluded.toString());
+        assertTrue(excluded.size()==1);
         Thread.sleep(45000);
 
 
         Response response = given().when().get("/notification/pickup/notifications?email=bugs.bunny.shah@gmail.com")
                 .andReturn();
-        JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
         JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
+        JsonUtil.print(array);
         assertTrue(array.size() > 0);
+        Iterator<JsonElement> itr = array.iterator();
+        while(itr.hasNext())
+        {
+            JsonObject cour = itr.next().getAsJsonObject();
+            String id = cour.get("id").getAsString();
+
+            logger.info("****************************************");
+            logger.info("Exclude: "+excluded.get(0).toString());
+            logger.info("Current: "+id);
+            logger.info("****************************************");
+
+            assertFalse(excluded.contains(id));
+            assertTrue(cour.get("notificationSent").getAsBoolean());
+        }
     }
 }

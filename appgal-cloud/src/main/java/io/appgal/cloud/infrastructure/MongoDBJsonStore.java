@@ -9,6 +9,7 @@ import com.mongodb.connection.ClusterDescription;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
+import io.appgal.cloud.util.JsonUtil;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -405,7 +406,33 @@ public class MongoDBJsonStore {
             Document document = cursor.next();
             String documentJson = document.toJson();
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
-            notifications.add(notification);
+            if(notification.isNotificationSent()) {
+                notifications.add(notification);
+            }
+        }
+
+        return notifications;
+    }
+
+    public List<SchedulePickUpNotification> getUnsentSchedulePickUpNotifications(String email)
+    {
+        List<SchedulePickUpNotification> notifications = new ArrayList<>();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        String queryJson = "{\"foodRunner.profile.email\":\""+email+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
+            if(!notification.isNotificationSent()) {
+                notifications.add(notification);
+            }
         }
 
         return notifications;
@@ -433,7 +460,7 @@ public class MongoDBJsonStore {
         collection.deleteOne(bson);
 
         stored.remove("_id");
-        stored.addProperty("live", true);
+        stored.addProperty("notificationSent", true);
         this.storeScheduledPickUpNotification(SchedulePickUpNotification.parse(stored.toString()));
     }
 

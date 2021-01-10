@@ -3,11 +3,13 @@ package io.appgal.cloud.model;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +23,14 @@ public class SchedulePickUpNotification implements Serializable
     private OffsetDateTime start;
     private boolean notificationSent;
 
-    public SchedulePickUpNotification()
+    public SchedulePickUpNotification(String id)
     {
-
+        this.id = id;
     }
 
     public SchedulePickUpNotification(String id, SourceOrg sourceOrg,OffsetDateTime start)
     {
-        this.id = id;
+        this(id);
         this.sourceOrg = sourceOrg;
         this.start = start;
     }
@@ -77,9 +79,9 @@ public class SchedulePickUpNotification implements Serializable
     public boolean activateNotification()
     {
         long epochSecond = this.start.toEpochSecond();
-        long minutes30 = 30 * 60;
+        long current = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond();
 
-        if(epochSecond >= minutes30+epochSecond)
+        if(epochSecond <= current)
         {
             return true;
         }
@@ -89,15 +91,12 @@ public class SchedulePickUpNotification implements Serializable
 
     public static SchedulePickUpNotification parse(String json)
     {
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
-
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String id = jsonObject.get("id").getAsString();
 
-        if(jsonObject.has("id"))
-        {
-            schedulePickUpNotification.id = jsonObject.get("id").getAsString();
-        }
-        else if(jsonObject.has("sourceOrg"))
+        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(id);
+
+        if(jsonObject.has("sourceOrg"))
         {
             JsonObject sourceOrgJson = jsonObject.get("sourceOrg").getAsJsonObject();
             schedulePickUpNotification.sourceOrg = SourceOrg.parse(sourceOrgJson.toString());
@@ -116,7 +115,6 @@ public class SchedulePickUpNotification implements Serializable
         {
             schedulePickUpNotification.notificationSent = jsonObject.get("notificationSent").getAsBoolean();
         }
-
         return schedulePickUpNotification;
     }
 

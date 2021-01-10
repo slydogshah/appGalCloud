@@ -62,7 +62,7 @@ public class RequestPipelineTests extends BaseTest {
                 Location location = new Location(0.0d, 0.0d);
                 FoodRunner bugsBunny = new FoodRunner(profile, location);
 
-                SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
+                SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
                 schedulePickUpNotification.setSourceOrg(sourceOrg);
                 schedulePickUpNotification.setFoodRunner(bugsBunny);
                 schedulePickUpNotification.setStart(cour);

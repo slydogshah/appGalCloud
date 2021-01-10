@@ -40,22 +40,28 @@ public class NotificationEngine extends TimerTask {
     {
         try
         {
-            logger.info("***********NOTIFICATION_ENGINE**********");
-            SchedulePickUpNotification notification = this.requestPipeline.peek();
-            if(notification == null) {
-                return;
-            }
-            //Check
-            if(!notification.activateNotification())
-            {
-                return;
-            }
+            //logger.info("***********NOTIFICATION_ENGINE**********");
+            while(true) {
+                SchedulePickUpNotification notification = this.requestPipeline.peek();
+                if (notification == null) {
+                    //logger.info("*******1*********");
+                    return;
+                }
+                //Check
+                if (!notification.activateNotification()) {
+                    //logger.info("*******2*********");
+                    this.requestPipeline.remove(notification);
+                    return;
+                }
 
-            notification = this.requestPipeline.next();
-            notification.setNotificationSent(true);
+                //logger.info("*******3*********");
+                notification = this.requestPipeline.next();
+                notification.setNotificationSent(true);
 
-            //Send
-            this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
+                //logger.info("*******4*********");
+                //Send
+                this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
+            }
         }
         catch(Exception e)
         {

@@ -68,6 +68,11 @@ public class RequestPipeline {
         return this.queue.peek();
     }
 
+    public void remove(SchedulePickUpNotification notification)
+    {
+        this.queue.remove(notification);
+    }
+
     public void clear()
     {
         this.queue.clear();

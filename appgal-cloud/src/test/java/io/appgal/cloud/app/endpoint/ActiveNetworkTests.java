@@ -219,7 +219,7 @@ public class ActiveNetworkTests extends BaseTest {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         long epochSecond = start.toEpochSecond();
 
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification();
+        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
         schedulePickUpNotification.setSourceOrg(sourceOrg);
         schedulePickUpNotification.setFoodRunner(bugsBunny);
         schedulePickUpNotification.setStart(start);
