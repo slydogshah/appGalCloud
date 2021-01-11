@@ -228,4 +228,57 @@ public class MongoDBJsonStoreTests extends BaseTest {
         storedNotification = SchedulePickUpNotification.parse(stored.toString());
         assertTrue(storedNotification.isNotificationSent());
     }
+
+    @Test
+    public void testStoreScheduledDropOffNotification() throws Exception
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        Location location = new Location(0.0d, 0.0d);
+        FoodRunner bugsBunny = new FoodRunner(profile, location);
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        long epochSecond = start.toEpochSecond();
+
+        ScheduleDropOffNotification notification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
+        notification.setSourceOrg(sourceOrg);
+        notification.setFoodRunner(bugsBunny);
+        notification.setStart(start);
+
+        this.mongoDBJsonStore.storeScheduledDropOffNotification(notification);
+        JsonObject stored = this.mongoDBJsonStore.getScheduledDropOffNotification(notification.getId());
+        ScheduleDropOffNotification storedNotification = ScheduleDropOffNotification.parse(stored.toString());
+        JsonUtil.print(storedNotification.toJson());
+        assertFalse(storedNotification.isNotificationSent());
+    }
+
+    @Test
+    public void testUpdateScheduledDropOffNotification() throws Exception
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        Location location = new Location(0.0d, 0.0d);
+        FoodRunner bugsBunny = new FoodRunner(profile, location);
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        long epochSecond = start.toEpochSecond();
+
+        ScheduleDropOffNotification notification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
+        notification.setSourceOrg(sourceOrg);
+        notification.setFoodRunner(bugsBunny);
+        notification.setStart(start);
+
+        this.mongoDBJsonStore.storeScheduledDropOffNotification(notification);
+
+        JsonObject stored = this.mongoDBJsonStore.getScheduledDropOffNotification(notification.getId());
+        JsonUtil.print(stored);
+
+        ScheduleDropOffNotification storedNotification = ScheduleDropOffNotification.parse(stored.toString());
+        assertFalse(storedNotification.isNotificationSent());
+        storedNotification.setNotificationSent(true);
+        this.mongoDBJsonStore.updateScheduledDropOffNotification(storedNotification);
+
+        stored = this.mongoDBJsonStore.getScheduledDropOffNotification(notification.getId());
+        JsonUtil.print(stored);
+        storedNotification = ScheduleDropOffNotification.parse(stored.toString());
+        assertTrue(storedNotification.isNotificationSent());
+    }
 }

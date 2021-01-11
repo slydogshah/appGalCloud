@@ -481,6 +481,49 @@ public class MongoDBJsonStore {
         return null;
     }
 
+    public void storeScheduledDropOffNotification(ScheduleDropOffNotification scheduleDropOffNotification)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
+
+        Document doc = Document.parse(scheduleDropOffNotification.toString());
+        collection.insertOne(doc);
+    }
+
+    public void updateScheduledDropOffNotification(ScheduleDropOffNotification notification)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
+
+        JsonObject stored = this.getScheduledDropOffNotification(notification.getId());
+        Bson bson = Document.parse(stored.toString());
+        collection.deleteOne(bson);
+
+        stored.remove("_id");
+        stored.addProperty("notificationSent", true);
+        this.storeScheduledDropOffNotification(ScheduleDropOffNotification.parse(stored.toString()));
+    }
+
+    public JsonObject getScheduledDropOffNotification(String id)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
+
+        String queryJson = "{\"id\":\""+id+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            return JsonParser.parseString(documentJson).getAsJsonObject();
+        }
+        return null;
+    }
+
     public void storePickUpRequest(PickupRequest pickupRequest)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
