@@ -3,13 +3,11 @@ package io.appgal.cloud.network.services;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.model.MessageWindow;
-import io.appgal.cloud.model.DestinationNotification;
 import io.appgal.cloud.model.SourceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;

@@ -150,31 +150,6 @@ public class NetworkOrchestrator {
         List<SourceOrg> sourceOrgs = this.activeNetwork.matchFoodRunner(foodRunner);
         return sourceOrgs;
     }
-
-    public void sendDeliveryNotification(DestinationNotification destinationNotification)
-    {
-        JsonObject jsonObject = JsonParser.parseString(destinationNotification.toString()).getAsJsonObject();
-
-        FoodRunner foodRunner = destinationNotification.getDropOffNotification().getFoodRunner();
-        String chainId = foodRunner.getProfile().getChainId();
-
-        if(chainId == null) {
-            Random random = new Random();
-            JsonObject modelChain = new JsonObject();
-            modelChain.addProperty("modelId", random.nextLong());
-            modelChain.add("payload", jsonObject);
-            chainId = this.dataReplayService.generateDiffChain(modelChain);
-            foodRunner.getProfile().setChainId(chainId);
-        }
-        else
-        {
-            String modelId = chainId.substring(chainId.lastIndexOf("/"));
-            JsonObject modelChain = new JsonObject();
-            modelChain.addProperty("modelId", modelId);
-            modelChain.add("payload", jsonObject);
-            this.dataReplayService.addToDiffChain(chainId, modelChain);
-        }
-    }
     //--------FoodRunner Matching Process-----------------------------------------------
     public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
     {

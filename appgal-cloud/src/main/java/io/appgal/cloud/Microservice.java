@@ -42,47 +42,4 @@ public class Microservice {
 
         return jsonObject.toString();
     }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("test")
-    public String test()
-    {
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-        OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-        MessageWindow messageWindow = new MessageWindow();
-        messageWindow.setStart(start);
-        messageWindow.setEnd(end);
-        Random random = new Random();
-        for(int i=0; i<10; i++) {
-            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
-
-            String sourceNotificationId = UUID.randomUUID().toString();
-            SourceNotification sourceNotification = new SourceNotification();
-            sourceNotification.setSourceNotificationId(sourceNotificationId);
-            sourceNotification.setMessageWindow(messageWindow);
-            sourceNotification.setSourceOrg(sourceOrg1);
-
-            String destinationNotificationId = UUID.randomUUID().toString();
-            DestinationNotification destinationNotification = new DestinationNotification();
-            destinationNotification.setDestinationNotificationId(destinationNotificationId);
-            destinationNotification.setSourceNotification(sourceNotification);
-            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", false);
-            Location location = new Location(30.25860595703125d, -97.74873352050781d);
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                    8675309l, "", "", ProfileType.FOOD_RUNNER, location);
-            FoodRunner foodRunner = new FoodRunner(profile, location);
-            DropOffNotification dropOffNotification = new DropOffNotification(destinationOrg, location, foodRunner);
-            destinationNotification.setDropOffNotification(dropOffNotification);
-
-            JsonObject jsonObject = JsonParser.parseString(destinationNotification.toString()).getAsJsonObject();
-
-            JsonObject modelChain = new JsonObject();
-            modelChain.addProperty("modelId", random.nextLong());
-            modelChain.add("payload", jsonObject);
-            String oid = this.dataReplayService.generateDiffChain(modelChain);
-            logger.info("ChainId: " + oid);
-        }
-        return "blah";
-    }
 }

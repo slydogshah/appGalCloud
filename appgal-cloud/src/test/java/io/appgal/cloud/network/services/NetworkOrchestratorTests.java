@@ -265,61 +265,6 @@ public class NetworkOrchestratorTests extends BaseTest {
     }
 
     @Test
-    public void testSendDeliveryNotification()
-    {
-        try {
-            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-            OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-            MessageWindow messageWindow = new MessageWindow();
-            messageWindow.setStart(start);
-            messageWindow.setEnd(end);
-            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-            sourceOrg1.setProducer(true);
-            String sourceNotificationId = UUID.randomUUID().toString();
-            SourceNotification sourceNotification = new SourceNotification();
-            sourceNotification.setSourceNotificationId(sourceNotificationId);
-            sourceNotification.setMessageWindow(messageWindow);
-            sourceNotification.setSourceOrg(sourceOrg1);
-
-            String destinationNotificationId = UUID.randomUUID().toString();
-            DestinationNotification destinationNotification = new DestinationNotification();
-            destinationNotification.setDestinationNotificationId(destinationNotificationId);
-            destinationNotification.setSourceNotification(sourceNotification);
-            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-            destinationOrg.setProducer(true);
-            Location location = new Location(30.25860595703125d, -97.74873352050781d);
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                    8675309l, "", "", ProfileType.FOOD_RUNNER, location);
-            FoodRunner foodRunner = new FoodRunner(profile, location);
-            foodRunner.setPickUpOrg(sourceOrg1);
-            DropOffNotification dropOffNotification = new DropOffNotification(destinationOrg, location, foodRunner);
-            destinationNotification.setDropOffNotification(dropOffNotification);
-
-            assertNull(destinationNotification.getDropOffNotification().getFoodRunner().getProfile().getChainId());
-
-            this.networkOrchestrator.sendDeliveryNotification(destinationNotification);
-            String newChainId = destinationNotification.getDropOffNotification().getFoodRunner().getProfile().getChainId();
-            assertNotNull(newChainId);
-            logger.info("*********************");
-            logger.info("ChainId: "+newChainId);
-            logger.info("*********************");
-
-            this.networkOrchestrator.sendDeliveryNotification(destinationNotification);
-            String sameChainId = destinationNotification.getDropOffNotification().getFoodRunner().getProfile().getChainId();
-            logger.info("*********************");
-            logger.info("ChainId: "+destinationNotification.getDropOffNotification().getFoodRunner().getProfile().getChainId());
-            logger.info("*********************");
-
-            assertEquals(newChainId, sameChainId);
-        }
-        catch(Exception e)
-        {
-            logger.info(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
     public void testSchedulePickUp() throws Exception
     {
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
