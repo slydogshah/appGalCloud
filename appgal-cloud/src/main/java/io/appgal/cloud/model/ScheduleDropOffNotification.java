@@ -1,37 +1,36 @@
 package io.appgal.cloud.model;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class SchedulePickUpNotification extends ScheduleNotification
+public class ScheduleDropOffNotification extends ScheduleNotification
 {
-    private static Logger logger = LoggerFactory.getLogger(SchedulePickUpNotification.class);
+    private static Logger logger = LoggerFactory.getLogger(ScheduleDropOffNotification.class);
 
-    public SchedulePickUpNotification(String id)
+    public ScheduleDropOffNotification(String id)
     {
         super(id);
     }
 
-    public SchedulePickUpNotification(String id, SourceOrg sourceOrg,OffsetDateTime start)
+    public ScheduleDropOffNotification(String id, SourceOrg sourceOrg, OffsetDateTime start)
     {
         this(id);
         this.sourceOrg = sourceOrg;
         this.start = start;
     }
 
-    public static SchedulePickUpNotification parse(String json)
+    public static ScheduleDropOffNotification parse(String json)
     {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         String id = jsonObject.get("id").getAsString();
 
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(id);
+        ScheduleDropOffNotification schedulePickUpNotification = new ScheduleDropOffNotification(id);
 
         if(jsonObject.has("sourceOrg"))
         {
