@@ -481,6 +481,7 @@ public class MongoDBJsonStore {
         return null;
     }
 
+
     public void storeScheduledDropOffNotification(ScheduleDropOffNotification scheduleDropOffNotification)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
@@ -522,6 +523,27 @@ public class MongoDBJsonStore {
             return JsonParser.parseString(documentJson).getAsJsonObject();
         }
         return null;
+    }
+
+    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications(String orgId)
+    {
+        List<ScheduleDropOffNotification> notifications = new ArrayList<>();
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
+
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"sourceOrg.orgId\":\""+orgId+"\"},{\"notificationSent\":"+Boolean.TRUE.toString()+"}]}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            notifications.add(ScheduleDropOffNotification.parse(documentJson));
+        }
+        return notifications;
     }
 
     public void storePickUpRequest(PickupRequest pickupRequest)

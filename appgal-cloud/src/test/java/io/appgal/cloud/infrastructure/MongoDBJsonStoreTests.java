@@ -281,4 +281,32 @@ public class MongoDBJsonStoreTests extends BaseTest {
         storedNotification = ScheduleDropOffNotification.parse(stored.toString());
         assertTrue(storedNotification.isNotificationSent());
     }
+
+    @Test
+    public void testGetScheduledDropOffNotifications() throws Exception
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        Location location = new Location(0.0d, 0.0d);
+        FoodRunner bugsBunny = new FoodRunner(profile, location);
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        long epochSecond = start.toEpochSecond();
+
+        for(int i=0; i<10; i++) {
+            ScheduleDropOffNotification notification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
+            notification.setSourceOrg(sourceOrg);
+            notification.setFoodRunner(bugsBunny);
+            notification.setStart(start);
+            notification.setNotificationSent(true);
+            this.mongoDBJsonStore.storeScheduledDropOffNotification(notification);
+        }
+
+        List<ScheduleDropOffNotification> stored = this.mongoDBJsonStore.getScheduledDropOffNotifications(sourceOrg.getOrgId());
+        JsonUtil.print(JsonParser.parseString(stored.toString()));
+        assertFalse(stored.isEmpty());
+        for(ScheduleDropOffNotification cour:stored)
+        {
+            assertTrue(cour.isNotificationSent());
+        }
+    }
 }
