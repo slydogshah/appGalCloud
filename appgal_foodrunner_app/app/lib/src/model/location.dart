@@ -12,8 +12,16 @@ class Location
   }
 
   Location.fromJson(Map<String, dynamic> json)
-  : latitude = json['latitude'],
-    longitude = json['longitude'];
+  {
+    if(json['latitude'] != null)
+    {
+      latitude = json['latitude'];
+    }
+    if(json['longitude'] != null)
+    {
+      longitude = json['longitude'];
+    }
+  }
 
   Map<String, dynamic> toJson() =>
   {

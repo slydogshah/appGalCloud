@@ -80,4 +80,20 @@ class ActiveNetworkRestClient
     }
     return sourceOrgs;
   }
+
+  Future<String> getSchedulePickUpNotification(String email) async
+  {
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/notification/pickup/notifications/?email='+email;
+    var response = await http.get(remoteUrl);
+    String responseJson = response.body;
+    /*Iterable l = json.decode(responseJson);
+    List<SourceOrg> sourceOrgs = new List();
+    for(Map<String, dynamic> sourceOrgJson in l)
+    {
+        SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
+        sourceOrgs.add(sourceOrg);
+    }
+    return sourceOrgs;*/
+    return responseJson;
+  }
 }

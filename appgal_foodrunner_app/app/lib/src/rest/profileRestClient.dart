@@ -50,8 +50,6 @@ class ProfileRestClient
     print("************************************");
     print("LoginResponse"+responseJson);
     print("************************************");
-
-    Map<String, dynamic> json  = jsonDecode(responseJson);
     if(response.statusCode == 401)
     {
         AuthCredentials authCredentials = new AuthCredentials();
@@ -64,6 +62,7 @@ class ProfileRestClient
       throw new CloudBusinessException(response.statusCode, response.body);
     }
 
+    Map<String, dynamic> json  = jsonDecode(responseJson);
     Iterable sourceOrgIterable = json['sourceOrgs'];
     List<SourceOrg> sourceOrgs = new List();
     for(Map<String, dynamic> sourceOrgJson in sourceOrgIterable)
