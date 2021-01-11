@@ -55,24 +55,5 @@ public class RegistrationAutomatedTests extends BaseTest {
         logger.info(response.getStatusLine());
         logger.info(jsonString);
         logger.info("****");
-        assertEquals(200, response.getStatusCode());
-
-        response = given().when().get("/registration/profile?email="+email)
-                .andReturn();
-
-        jsonString = response.getBody().asString();
-        logger.info("****");
-        logger.info(response.getStatusLine());
-        logger.info(jsonString);
-        logger.info("****");
-
-        //assert the body
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        assertNotNull(jsonObject.get("id").getAsString());
-        assertEquals(jsonObject.get("email").getAsString(), email);
-        assertEquals(jsonObject.get("password").getAsString(), "by");
-        assertEquals(jsonObject.get("mobile").getAsLong(), 8675309l);
-        assertEquals(jsonObject.get("photo").getAsString(), "photu");
-        assertEquals(jsonObject.get("profileType").getAsString(), "FOOD_RUNNER");
     }
 }
