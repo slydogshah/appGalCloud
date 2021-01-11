@@ -8,21 +8,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.UUID;
 
-import com.google.gson.JsonParser;
-
 import io.bugsbunny.data.history.service.DataReplayService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Random;
-
-import io.appgal.cloud.model.*;
-import io.appgal.cloud.model.MessageWindow;
 
 @Path("/microservice")
 public class Microservice {

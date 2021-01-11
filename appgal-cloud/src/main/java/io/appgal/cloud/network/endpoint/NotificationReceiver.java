@@ -4,8 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.SchedulePickUpNotification;
-import io.appgal.cloud.network.services.ProcessIncomingPackets;
-import io.appgal.cloud.model.MessageWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,27 +21,7 @@ public class NotificationReceiver {
     private static Logger logger = LoggerFactory.getLogger(NotificationReceiver.class);
 
     @Inject
-    private ProcessIncomingPackets processIncomingPackets;
-
-    @Inject
     private MongoDBJsonStore mongoDBJsonStore;
-
-    @Path("readDestinationNotifications")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response readDestinationNotifications(@QueryParam("startTimestamp") String startTimestamp,@QueryParam("endTimestamp") String endTimestamp)
-    {
-        OffsetDateTime start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(startTimestamp)), ZoneOffset.UTC);
-        OffsetDateTime end = OffsetDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTimestamp)), ZoneOffset.UTC);
-        MessageWindow messageWindow = new MessageWindow();
-        messageWindow.setStart(start);
-        messageWindow.setEnd(end);
-        JsonArray destinationNotifications = this.processIncomingPackets.readDestinationNotifications(messageWindow);
-
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("destinationNotifications", destinationNotifications);
-        return Response.ok(jsonObject.toString()).build();
-    }
 
 
     @Path("/pickup/notifications")
