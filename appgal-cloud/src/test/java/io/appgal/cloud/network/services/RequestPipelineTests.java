@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @QuarkusTest
 public class RequestPipelineTests extends BaseTest {
@@ -108,5 +109,47 @@ public class RequestPipelineTests extends BaseTest {
                 counter++;
             }
         }
+    }
+
+    @Test
+    public void testPeek() throws Exception
+    {
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
+
+        OffsetDateTime middle = OffsetDateTime.now(ZoneOffset.UTC).withHour(12).withMinute(0).withSecond(0);
+
+        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).withHour(20).withMinute(0).withSecond(0);
+
+        List<OffsetDateTime> schedulePickUpNotificationList = new LinkedList<>();
+        schedulePickUpNotificationList.add(middle);
+        schedulePickUpNotificationList.add(end);
+        schedulePickUpNotificationList.add(start);
+        logger.info(schedulePickUpNotificationList.toString());
+
+        for (OffsetDateTime cour : schedulePickUpNotificationList) {
+            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
+            sourceOrg.setProducer(true);
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
+            Location location = new Location(0.0d, 0.0d);
+            FoodRunner bugsBunny = new FoodRunner(profile, location);
+
+            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
+            schedulePickUpNotification.setSourceOrg(sourceOrg);
+            schedulePickUpNotification.setFoodRunner(bugsBunny);
+            schedulePickUpNotification.setStart(cour);
+            logger.info("********************************************");
+            //JsonUtil.print(schedulePickUpNotification.toJson());
+            logger.info(cour.toString() + ":" + cour.toEpochSecond());
+
+            this.requestPipeline.add(schedulePickUpNotification);
+        }
+
+        SchedulePickUpNotification top = this.requestPipeline.peek();
+        assertNotNull(top);
+        assertEquals(3, this.requestPipeline.size());
+
+        top = this.requestPipeline.next();
+        assertNotNull(top);
+        assertEquals(2, this.requestPipeline.size());
     }
 }

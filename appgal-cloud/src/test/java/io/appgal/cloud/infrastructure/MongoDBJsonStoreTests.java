@@ -197,4 +197,35 @@ public class MongoDBJsonStoreTests extends BaseTest {
         JsonUtil.print(JsonParser.parseString(notifications.toString()));
         assertTrue(notifications.isEmpty());
     }
+
+    @Test
+    public void testUpdateScheduledPickUpNotification() throws Exception
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        Location location = new Location(0.0d, 0.0d);
+        FoodRunner bugsBunny = new FoodRunner(profile, location);
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        long epochSecond = start.toEpochSecond();
+
+        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
+        schedulePickUpNotification.setSourceOrg(sourceOrg);
+        schedulePickUpNotification.setFoodRunner(bugsBunny);
+        schedulePickUpNotification.setStart(start);
+
+        this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
+
+        JsonObject stored = this.mongoDBJsonStore.getScheduledPickUpNotification(schedulePickUpNotification.getId());
+        JsonUtil.print(stored);
+
+        SchedulePickUpNotification storedNotification = SchedulePickUpNotification.parse(stored.toString());
+        assertFalse(storedNotification.isNotificationSent());
+        storedNotification.setNotificationSent(true);
+        this.mongoDBJsonStore.updateScheduledPickUpNotification(storedNotification);
+
+        stored = this.mongoDBJsonStore.getScheduledPickUpNotification(schedulePickUpNotification.getId());
+        JsonUtil.print(stored);
+        storedNotification = SchedulePickUpNotification.parse(stored.toString());
+        assertTrue(storedNotification.isNotificationSent());
+    }
 }

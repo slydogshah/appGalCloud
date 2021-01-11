@@ -75,7 +75,6 @@ public class SchedulePickUpNotification implements Serializable
         this.id = id;
     }
 
-    //TODO: Write the corresponding test
     public boolean activateNotification()
     {
         long epochSecond = this.start.toEpochSecond();

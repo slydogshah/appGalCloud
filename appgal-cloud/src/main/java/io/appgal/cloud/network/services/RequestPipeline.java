@@ -62,10 +62,14 @@ public class RequestPipeline {
         return this.queue.poll();
     }
 
-    //TODO: Write the corresponding test
     public SchedulePickUpNotification peek()
     {
         return this.queue.peek();
+    }
+
+    public int size()
+    {
+        return this.queue.size();
     }
 
     public void remove(SchedulePickUpNotification notification)

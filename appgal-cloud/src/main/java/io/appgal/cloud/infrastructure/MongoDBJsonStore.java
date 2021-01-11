@@ -448,7 +448,6 @@ public class MongoDBJsonStore {
         collection.insertOne(doc);
     }
 
-    //TODO: Write corresponding test
     public void updateScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
