@@ -3,6 +3,7 @@ package io.appgal.cloud.network.services;
 import com.google.gson.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
@@ -319,8 +320,79 @@ public class NetworkOrchestratorTests extends BaseTest {
     }
 
     @Test
+    public void testSchedulePickUp() throws Exception
+    {
+        Location location = new Location(30.25860595703125d, -97.74873352050781d);
+        JsonUtil.print(this.networkOrchestrator.getActiveView());
+
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
+
+        OffsetDateTime middle = OffsetDateTime.now(ZoneOffset.UTC).withHour(12).withMinute(0).withSecond(0);
+
+        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).withHour(20).withMinute(0).withSecond(0);
+
+        List<OffsetDateTime> schedulePickUpNotificationList = new LinkedList<>();
+        schedulePickUpNotificationList.add(middle);
+        schedulePickUpNotificationList.add(end);
+        schedulePickUpNotificationList.add(start);
+        logger.info(schedulePickUpNotificationList.toString());
+
+        for (OffsetDateTime cour : schedulePickUpNotificationList) {
+            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
+            sourceOrg.setProducer(true);
+            sourceOrg.setLocation(location);
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
+            FoodRunner bugsBunny = new FoodRunner(profile, location);
+
+            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
+            schedulePickUpNotification.setSourceOrg(sourceOrg);
+            schedulePickUpNotification.setFoodRunner(bugsBunny);
+            schedulePickUpNotification.setStart(cour);
+            logger.info("********************************************");
+            //JsonUtil.print(schedulePickUpNotification.toJson());
+            logger.info(cour.toString() + ":" + cour.toEpochSecond());
+
+            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
+        }
+
+        Thread.sleep(45000);
+    }
+
+    /*@Test
     public void testFoodRunnerMatchingProcess() throws Exception
     {
-        this.networkOrchestrator.schedulePickUp(new SchedulePickUpNotification());
-    }
+        int numberOfFoodRunners = 10;
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Location location = new Location(startLatitude, startLongitude);
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        sourceOrg.setProducer(true);
+        sourceOrg.setLocation(location);
+        PickupRequest pickupRequest = new PickupRequest();
+        pickupRequest.setSourceOrg(sourceOrg);
+        for(int i=0; i<numberOfFoodRunners; i++) {
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
+                    8675309l, "", "", ProfileType.FOOD_RUNNER);
+            FoodRunner foodRunner;
+            if(i % 2 == 0)
+            {
+                foodRunner = new FoodRunner(profile, location);
+            }
+            else
+            {
+                Location away = new Location(0d, 0d);
+                foodRunner = new FoodRunner(profile, away);
+            }
+            logger.info("************************FOODRUNNER***************************************");
+            logger.info("FoodRunner: " + foodRunner.getProfile().getId());
+            logger.info("***************************************************************");
+
+            this.networkOrchestrator.enterNetwork(foodRunner);
+        }
+
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        this.networkOrchestrator.schedulePickUp(new SchedulePickUpNotification(sourceOrg,start));
+
+        Thread.sleep(45000);
+    }*/
 }
