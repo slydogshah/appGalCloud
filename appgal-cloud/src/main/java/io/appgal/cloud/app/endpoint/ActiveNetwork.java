@@ -60,28 +60,6 @@ public class ActiveNetwork {
         return Response.ok(jsonObject.toString()).build();
     }
 
-    @Path("pickUpRequest/send")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public String sendPickRequest(@RequestBody String jsonBody)
-    {
-        PickupRequest pickupRequest = PickupRequest.parse(jsonBody);
-        String requestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
-
-        JsonObject pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
-
-        return pickRequestResult.toString();
-    }
-
-    @Path("pickUpRequest/result")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getPickRequestResult(@PathParam("") String requestId)
-    {
-        JsonObject pickRequestResult = this.networkOrchestrator.getPickRequestResult(requestId);
-        return pickRequestResult.toString();
-    }
-
     @Path("/findBestDestination")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -103,23 +81,6 @@ public class ActiveNetwork {
         //this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
 
         return Response.ok().build();
-    }
-
-    @Path("/sendFoodRequest")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response sendFoodRequest(@RequestBody String jsonBody)
-    {
-        logger.info(jsonBody.toString());
-        PickupRequest pickupRequest = PickupRequest.parse(jsonBody);
-        String requestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
-
-        JsonArray results = this.networkOrchestrator.getLatestResults(requestId);
-
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("foodRequestId", requestId);
-        responseJson.add("results", results);
-        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("sourceOrgs")

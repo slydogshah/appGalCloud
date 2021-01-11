@@ -143,7 +143,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
-        CompletedTrip completedTrip = new CompletedTrip(foodRunner, dropOffNotification, null);
+        CompletedTrip completedTrip = new CompletedTrip(foodRunner, dropOffNotification);
         this.mongoDBJsonStore.setCompletedTrip(completedTrip);
 
         List<CompletedTrip> completedTrips = this.mongoDBJsonStore.getCompletedTrips();

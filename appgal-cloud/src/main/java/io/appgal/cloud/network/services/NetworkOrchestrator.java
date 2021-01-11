@@ -36,8 +36,6 @@ public class NetworkOrchestrator {
     @Inject
     private RequestPipeline requestPipeline;
 
-    private Queue<PickupRequest> activeFoodRunnerQueue;
-
     private Map<String, Collection<FoodRunner>> finderResults;
 
     private NotificationEngine notificationEngine;
@@ -45,7 +43,6 @@ public class NetworkOrchestrator {
     @PostConstruct
     public void start()
     {
-        this.activeFoodRunnerQueue = new PriorityQueue<>();
         this.finderResults = new HashMap<>();
         this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline, this.mongoDBJsonStore);
         this.notificationEngine.start();
@@ -66,35 +63,6 @@ public class NetworkOrchestrator {
         this.mongoDBJsonStore.storeActiveNetwork(this.activeNetwork.getActiveFoodRunners());
     }
 
-    public String sendPickUpRequest(PickupRequest pickupRequest)
-    {
-        String requestId = UUID.randomUUID().toString();
-        pickupRequest.setRequestId(requestId);
-
-        this.mongoDBJsonStore.storePickUpRequest(pickupRequest);
-
-        this.runFoodRunnerFinder();
-
-        return requestId;
-    }
-
-    public JsonObject getPickRequestResult(String requestId)
-    {
-        PickupRequest pickupRequest = this.mongoDBJsonStore.getPickupRequest(requestId);
-        if(pickupRequest == null)
-        {
-            return new JsonObject();
-        }
-        return pickupRequest.toJson();
-    }
-
-    public JsonArray getLatestResults(String requestId)
-    {
-        PickupRequest pickupRequest = this.mongoDBJsonStore.getPickupRequest(requestId);
-        List<FoodRunner> foodRunners = this.activeNetwork.matchSourceOrgs(pickupRequest);
-        return JsonParser.parseString(foodRunners.toString()).getAsJsonArray();
-    }
-
     public JsonObject getActiveView()
     {
         JsonObject jsonObject = new JsonObject();
@@ -102,12 +70,6 @@ public class NetworkOrchestrator {
         jsonObject.add("activeFoodRunners", JsonParser.parseString(this.activeNetwork.toString()));
 
         JsonArray pickUpRequestArray = new JsonArray();
-        Iterator<PickupRequest> itr = this.activeFoodRunnerQueue.iterator();
-        while(itr.hasNext())
-        {
-            PickupRequest pickupRequest = itr.next();
-            pickUpRequestArray.add(pickupRequest.toJson());
-        }
         jsonObject.add("activeFoodRunnerQueue", pickUpRequestArray);
 
         JsonArray finderResultsArray = new JsonArray();

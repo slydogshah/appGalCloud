@@ -75,28 +75,6 @@ public class ActiveNetwork implements Serializable {
         return this.activeFoodRunners.values();
     }
 
-    public List<FoodRunner> findFoodRunners(PickupRequest pickupRequest)
-    {
-        List<FoodRunner> result = new ArrayList<>();
-        DistanceCalculator distanceCalculator = new DistanceCalculator();
-        Iterator<FoodRunner> iterator = this.activeFoodRunners.values().iterator();
-        while(iterator.hasNext())
-        {
-            FoodRunner foodRunner = iterator.next();
-            Location pickUpLocation = pickupRequest.getSourceOrg().getLocation();
-            Location foodRunnerLocation = foodRunner.getLocation();
-            Double distance = distanceCalculator.calculateDistance(pickUpLocation, foodRunnerLocation);
-            if(distance <= 5.0d)
-            {
-                result.add(foodRunner);
-            }
-        }
-        if(!result.isEmpty()) {
-            this.mongoDBJsonStore.storeResults(result);
-        }
-        return result;
-    }
-
     public List<FoodRunner> matchFoodRunners(SchedulePickUpNotification schedulePickUpNotification)
     {
         List<FoodRunner> result = new ArrayList<>();
@@ -113,35 +91,6 @@ public class ActiveNetwork implements Serializable {
             this.mongoDBJsonStore.storeResults(result);
         }
         return result;
-    }
-
-    public List<FoodRunner> matchSourceOrgs(PickupRequest pickupRequest)
-    {
-        if(pickupRequest.getRequestId() == null)
-        {
-            return new ArrayList<>();
-        }
-
-        List<FoodRunner> results = new ArrayList<>();
-        DistanceCalculator distanceCalculator = new DistanceCalculator();
-        Location sourceLocation = pickupRequest.getSourceOrg().getLocation();
-        Collection<FoodRunner> all = this.activeFoodRunners.values();
-        //logger.info("*******ALL***********");
-        //logger.info(all.toString());
-        for(FoodRunner cour:all) {
-            Location location = cour.getLocation();
-            Double distance = distanceCalculator.calculateDistance(sourceLocation, location);
-            //logger.info("*******DISTANCE**********");
-            //logger.info("SourceLocation: "+sourceLocation.toJson());
-            //logger.info("FoodRunnerLocation: "+location.toJson());
-            //logger.info(pickupRequest.toJson().toString());
-            //logger.info(distance+"");
-            if(distance <= 5.0d)
-            {
-                results.add(cour);
-            }
-        }
-        return results;
     }
 
     public List<SourceOrg> findSourceOrgs(SourceOrg destination)
