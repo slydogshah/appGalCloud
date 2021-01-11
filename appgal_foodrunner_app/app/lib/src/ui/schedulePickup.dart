@@ -277,7 +277,7 @@ void schedulePickup (BuildContext context, SchedulePickupNotification notificati
     );
 
     ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
-    Future<String> future = activeNetworkRestClient.sendSchedulePickupNotification(notification);
+    Future<int> future = activeNetworkRestClient.sendSchedulePickupNotification(notification);
     future.then((response){
       print("*********RESPONSE****************");
       print(response);

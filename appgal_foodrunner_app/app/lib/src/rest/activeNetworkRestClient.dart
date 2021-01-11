@@ -10,6 +10,8 @@ import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
 
+import '../model/schedulePickupNotification.dart';
+
 class ActiveNetworkRestClient
 {
   Future<ActiveView> getActiveView() async
@@ -96,5 +98,13 @@ class ActiveNetworkRestClient
     }
     return sourceOrgs;*/
     return responseJson;
+  }
+
+  Future<int> sendSchedulePickupNotification(SchedulePickupNotification notification) async
+  {
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/schedulePickUp/';
+    String jsonBody = notification.toJson().toString();
+    var response = await http.post(remoteUrl, body: jsonBody);
+    return response.statusCode;
   }
 }
