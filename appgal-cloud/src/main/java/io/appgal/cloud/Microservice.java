@@ -55,7 +55,7 @@ public class Microservice {
         messageWindow.setEnd(end);
         Random random = new Random();
         for(int i=0; i<10; i++) {
-            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
 
             String sourceNotificationId = UUID.randomUUID().toString();
             SourceNotification sourceNotification = new SourceNotification();
@@ -67,10 +67,10 @@ public class Microservice {
             DestinationNotification destinationNotification = new DestinationNotification();
             destinationNotification.setDestinationNotificationId(destinationNotificationId);
             destinationNotification.setSourceNotification(sourceNotification);
-            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", false);
             Location location = new Location(30.25860595703125d, -97.74873352050781d);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                    "8675309", "", "", ProfileType.FOOD_RUNNER, location);
+                    8675309l, "", "", ProfileType.FOOD_RUNNER, location);
             FoodRunner foodRunner = new FoodRunner(profile, location);
             DropOffNotification dropOffNotification = new DropOffNotification(destinationOrg, location, foodRunner);
             destinationNotification.setDropOffNotification(dropOffNotification);

@@ -13,30 +13,28 @@
     <maven.home>/Users/babyboy/devtools/maven/apache-maven-3.6.3</maven.home>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus-plugin.version>1.7.1.Final</quarkus-plugin.version>
+    <quarkus-plugin.version>1.10.5.Final</quarkus-plugin.version>
     <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>1.7.1.Final</quarkus.platform.version>
+    <quarkus.platform.version>1.10.5.Final</quarkus.platform.version>
     <surefire-plugin.version>2.22.2</surefire-plugin.version>
     <dl4j-master.version>1.0.0-beta7</dl4j-master.version>
     <nd4j.backend>nd4j-native</nd4j.backend>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
   </properties>
   <repositories>
+    <!--
     <repository>
       <id>maven2-repository.dev.java.net</id>
       <name>Java.net repository</name>
       <url>http://download.java.net/maven/2</url>
     </repository>
+    -->
+    <!--
     <repository>
       <id>osgeo</id>
       <name>Open Source Geospatial Foundation Repository</name>
       <url>http://download.osgeo.org/webdav/geotools/</url>
-    </repository>
-    <repository>
-      <id>google_firebase</id>
-      <name>Firebase</name>
-      <url>http://maven.google.com/</url>
     </repository>
     <repository>
       <snapshots>
@@ -46,6 +44,8 @@
       <name>Boundless Maven Repository</name>
       <url>http://repo.boundlessgeo.com/main</url>
     </repository>
+    -->
+    <!--
     <repository>
       <snapshots>
         <enabled>true</enabled>
@@ -54,6 +54,7 @@
       <name>sonnatype</name>
       <url>https://oss.sonatype.org/content/repositories/releases/</url>
     </repository>
+    -->
   </repositories>
   <dependencyManagement>
     <dependencies>
@@ -81,6 +82,15 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-validator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-jsonb</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
@@ -222,6 +232,47 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler-plugin.version}</version>
       </plugin>
+      <!--
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>v12.16.3</nodeVersion>
+              <npmVersion>6.14.4</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm run build</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run prod</arguments>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <workingDirectory>${project.basedir}/src/main/webapp</workingDirectory>
+          <installDirectory>target</installDirectory>
+        </configuration>
+      </plugin>
+      -->
     </plugins>
   </build>
   <profiles>

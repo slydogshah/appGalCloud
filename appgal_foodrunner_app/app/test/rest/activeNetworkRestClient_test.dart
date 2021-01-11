@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
@@ -12,6 +13,7 @@ import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
+import 'package:app/src/model/schedulePickupNotification.dart';
 
 void main() {
 
@@ -123,4 +125,20 @@ void main() {
       expect(true, sourceOrgs.length > 0);
     }); 
   });*/
+
+  test('sendSchedulePickupNotification', () {
+    ActiveNetworkRestClient activeNetworkRestClient = ActiveNetworkRestClient();
+    SchedulePickupNotification notification = new SchedulePickupNotification(null,null,null);
+    Future<String> future = activeNetworkRestClient.sendSchedulePickupNotification(notification);
+    print("HELLO");
+    //print(future);
+    future.then((response){
+      print("*************************");
+      print(response);
+      print("*************************");
+      expect(true, false);
+    });
+
+    sleep(Duration(seconds:10));
+  });
 }

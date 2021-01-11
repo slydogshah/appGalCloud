@@ -31,12 +31,14 @@ public class SeedDataTests {
     @Test
     public void testSeedData() throws Exception
     {
-        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        pickUp1.setProducer(true);
         pickUp1.setLocation(new Location(30.25860595703125d, -97.74873352050781d));
-        SourceOrg pickUp2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com");
+        SourceOrg pickUp2 = new SourceOrg("apple", "Apple", "tim_cook@apple.com",true);
+        pickUp2.setProducer(true);
 
-        SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com");
-        SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com");
+        SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com",false);
+        SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com",false);
 
         customerService.storeSourceOrg(pickUp1);
         customerService.storeSourceOrg(pickUp2);
@@ -44,15 +46,15 @@ public class SeedDataTests {
         customerService.storeSourceOrg(dropOff2);
 
         String uuid = UUID.randomUUID().toString();
-        Profile profile = new Profile(UUID.randomUUID().toString(), "c."+uuid+"@s.com", "8675309", "", "c",
+        Profile profile = new Profile(UUID.randomUUID().toString(), "c."+uuid+"@s.com", 8675309l, "", "c",
                 ProfileType.FOOD_RUNNER);
         this.profileRegistrationService.register(profile);
 
-        Profile profile2 = new Profile(UUID.randomUUID().toString(), "m."+uuid+"@s.com", "7675309", "", "s",
+        Profile profile2 = new Profile(UUID.randomUUID().toString(), "m."+uuid+"@s.com", 7675309l, "", "s",
                 ProfileType.ORG, "microsoft");
         this.profileRegistrationService.register(profile2);
 
-        JsonObject auth = this.profileRegistrationService.login("c."+uuid+"@s.com","c");
+        JsonObject auth = this.profileRegistrationService.login("mozilla", "c."+uuid+"@s.com","c");
         logger.info("****************");
         logger.info(auth.toString());
         logger.info("****************");

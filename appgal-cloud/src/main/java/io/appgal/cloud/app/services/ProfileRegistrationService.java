@@ -2,11 +2,7 @@ package io.appgal.cloud.app.services;
 
 import com.google.gson.*;
 
-import io.appgal.cloud.model.ActiveNetwork;
-import io.appgal.cloud.model.FoodRunner;
-import io.appgal.cloud.model.Location;
-import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 
 import io.appgal.cloud.network.services.NetworkOrchestrator;
@@ -15,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.List;
 
@@ -39,7 +37,6 @@ public class ProfileRegistrationService {
 
     public void register(Profile profile) throws ResourceExistsException
     {
-        //TODO: Add validation..Add proper response
         String email = profile.getEmail();
         Profile exists = this.mongoDBJsonStore.getProfile(email);
         if(exists != null)
@@ -55,7 +52,6 @@ public class ProfileRegistrationService {
 
     public void registerSourceOrg(SourceOrg sourceOrg) throws ResourceExistsException
     {
-        //TODO: Add validation..Add proper response
         String sourceOrgId = sourceOrg.getOrgId();
         SourceOrg exists = this.mongoDBJsonStore.getSourceOrg(sourceOrgId);
         if(exists != null)
@@ -68,8 +64,12 @@ public class ProfileRegistrationService {
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
     }
 
-    public JsonObject login(String email, String password) throws AuthenticationException
+    public JsonObject login(String userAgent, String email, String password)
+            throws AuthenticationException
     {
+        //logger.info("*****LOGIN_USER_AGENT******");
+        //logger.info("USER_AGENT: "+userAgent);
+
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
@@ -119,12 +119,53 @@ public class ProfileRegistrationService {
             JsonArray matchArray = new JsonArray();
             for(SourceOrg sourceOrg:match)
             {
-                matchArray.add(sourceOrg.toJson());
+                if(sourceOrg.isProducer()) {
+                    matchArray.add(sourceOrg.toJson());
+                }
             }
             authResponse.add("sourceOrgs", matchArray);
 
             //logger.info("AUTHENTICATION_SUCCESS");
             return authResponse;
+        }
+
+        logger.info("AUTHENTICATION_FAILED");
+        throw new AuthenticationException(email);
+    }
+
+    public JsonArray orgLogin(String userAgent, String email, String password) throws AuthenticationException
+    {
+        Profile profile = this.mongoDBJsonStore.getProfile(email);
+        if(profile == null)
+        {
+            logger.info("PROFILE_NOT_FOUND: "+email);
+            throw new AuthenticationException(email);
+        }
+
+        String registeredEmail = profile.getEmail();
+        String registeredPassword = profile.getPassword();
+
+        if(registeredEmail == null)
+        {
+            logger.info("EMAIL_NOT_FOUND");
+            throw new AuthenticationException(email);
+        }
+
+        if(registeredEmail.equals(email) && registeredPassword.equals(password))
+        {
+            final JsonObject activeView = this.networkOrchestrator.getActiveView();
+            JsonArray activeProfiles = new JsonArray();
+
+            JsonArray activeFoodRunners = activeView.getAsJsonArray("activeFoodRunners");
+            Iterator<JsonElement> itr = activeFoodRunners.iterator();
+            while(itr.hasNext())
+            {
+                JsonObject cour = itr.next().getAsJsonObject();
+                Profile courProfile = Profile.parse(cour.get("profile").getAsJsonObject().toString());
+                activeProfiles.add(courProfile.toJson());
+            }
+
+            return activeProfiles;
         }
 
         logger.info("AUTHENTICATION_FAILED");

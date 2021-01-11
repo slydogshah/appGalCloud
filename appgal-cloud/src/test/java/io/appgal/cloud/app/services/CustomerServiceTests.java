@@ -30,7 +30,7 @@ public class CustomerServiceTests extends BaseTest {
     @Test
     public void testSourceOrgCycle()
     {
-        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
         customerService.storeSourceOrg(pickUp1);
 
         List<SourceOrg> sourceOrgs = this.mongoDBJsonStore.getSourceOrgs();

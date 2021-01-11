@@ -27,6 +27,7 @@ public class CustomerTests extends BaseTest {
         sourceOrg.setOrgId(orgId);
         sourceOrg.setOrgName("microsoft");
         sourceOrg.setOrgContactEmail("blah@microsoft.com");
+        sourceOrg.setProducer(true);
 
         Response response = given().body(sourceOrg.toJson().toString()).when().post("/customer/save")
                 .andReturn();

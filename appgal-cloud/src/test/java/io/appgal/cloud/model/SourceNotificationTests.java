@@ -29,7 +29,8 @@ public class SourceNotificationTests  {
         messageWindow.setStart(start);
         messageWindow.setEnd(end);
 
-        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com");
+        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        sourceOrg1.setProducer(true);
         String sourceNotificationId = UUID.randomUUID().toString();
         SourceNotification sourceNotification = new SourceNotification();
         sourceNotification.setSourceNotificationId(sourceNotificationId);

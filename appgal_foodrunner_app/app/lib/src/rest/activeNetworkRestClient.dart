@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:app/src/model/activeView.dart' show ActiveView;
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
+import 'package:app/src/model/schedulePickupNotification.dart';
 
 class ActiveNetworkRestClient
 {

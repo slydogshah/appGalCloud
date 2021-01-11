@@ -1,16 +1,10 @@
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 
-import 'package:app/src/context/activeSession.dart';
-import 'package:app/src/model/dropOffNotification.dart';
-import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/location.dart';
-import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
-import 'package:app/src/rest/activeNetworkRestClient.dart';
 
-import 'driveToDestination.dart';
-import 'foodRunnerDestinations.dart';
+import 'schedulePickup.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<SourceOrg> sourceOrgs;
@@ -35,11 +29,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     List<Card> cards = new List();
     for(SourceOrg sourceOrg in this.sourceOrgs)
     {
-
-      print("GAAND_MAAR......");
-      print(sourceOrg.orgName);
-      print("GAAND_MAAR......");
-
       Location location = new Location(0.0, 0.0);
       sourceOrg.location = location;
       Card card = Card(shape: RoundedRectangleBorder(
@@ -58,12 +47,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Organization Id: '+sourceOrg.orgId,
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
                           labelText: 'Email: '+sourceOrg.orgContactEmail,
                           ),
                         ),
@@ -71,15 +54,9 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                           child: ButtonBar(
                             children: <Widget>[
                               FlatButton(
-                                child: const Text('Drop Off', style: TextStyle(color: Colors.white)),
+                                child: const Text('Schedule Pickup', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleDriveToDestination(context);
-                                },
-                              ),
-                              FlatButton(
-                                child: const Text('Pick Up', style: TextStyle(color: Colors.white)),
-                                onPressed: () {
-                                  handlePickupSource(context,sourceOrg);
+                                    handleSchedulePickup(context, sourceOrg);
                                 },
                               ),
                             ],
@@ -93,47 +70,12 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     return cards;
   }
 
-  void handleClick(BuildContext context)
-  {
-    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    Profile profile = ActiveSession.getInstance().getProfile();
-    FoodRunner foodRunner = new FoodRunner(profile);
-    Future<Iterable> futureP = activeNetworkRestClient.findBestDestination(foodRunner);
-    futureP.then((sourceOrgs){
-      if(sourceOrgs.length == 0)
-      {
-        return;
-      }
-
-      Navigator.push(context,
-      MaterialPageRoute(builder: (context) => new FoodRunnerDestination(sourceOrgs)));
-      
-      //also send a notification I am on my way
-      Map<String, dynamic> json = sourceOrgs.elementAt(0);
-      SourceOrg sourceOrg = SourceOrg.fromJson(json);
-      DropOffNotification dropOffNotification = DropOffNotification(sourceOrg, foodRunner);
-      activeNetworkRestClient.sendDeliveryNotification(dropOffNotification);
-    });
-  }
-
-  void handleDriveToDestination(BuildContext context)
-  {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => DriveToDestinationScene()));
-  }
-
-  void handlePickupSource(BuildContext context, SourceOrg sourceOrg)
-  {
-    List<SourceOrg> sourceOrgs = new List();
-    sourceOrgs.add(sourceOrg);
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
-  }
-  
   @override
   Widget build(BuildContext context) {
     Scaffold scaffold = Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("title"),
+        title: Text("Pickup Requests"),
       ),
       body: Scrollbar(
         child: ListView(
@@ -144,5 +86,10 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
       bottomNavigationBar: UiFunctions.bottomNavigationBar(context)
     );
     return scaffold;
+  }
+
+  void handleSchedulePickup(BuildContext context, SourceOrg sourceOrg)
+  {
+    Navigator.push(context,MaterialPageRoute(builder: (context) => SchedulePickup(sourceOrg)));
   }
 }
