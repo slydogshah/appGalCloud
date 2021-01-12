@@ -40,7 +40,7 @@ public class NotificationReceiver {
         return Response.ok(schedulePickUpNotificationList.toString()).build();
     }
 
-    @Path("/dropoff/notifications")
+    @Path("/dropOff/notifications")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDropOffNotifications(@QueryParam("orgId") String orgId)
