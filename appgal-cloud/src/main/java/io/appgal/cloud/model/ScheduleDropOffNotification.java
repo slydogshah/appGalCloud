@@ -1,5 +1,7 @@
 package io.appgal.cloud.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
@@ -8,14 +10,20 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class ScheduleDropOffNotification extends ScheduleNotification
 {
     private static Logger logger = LoggerFactory.getLogger(ScheduleDropOffNotification.class);
 
+    private List<Note> dropOffNotes;
+
     public ScheduleDropOffNotification(String id)
     {
         super(id);
+        this.dropOffNotes = new ArrayList<>();
     }
 
     public ScheduleDropOffNotification(String id, SourceOrg sourceOrg, OffsetDateTime start)
@@ -23,6 +31,19 @@ public class ScheduleDropOffNotification extends ScheduleNotification
         this(id);
         this.sourceOrg = sourceOrg;
         this.start = start;
+    }
+
+    public List<Note> getDropOffNotes() {
+        return dropOffNotes;
+    }
+
+    public void setDropOffNotes(List<Note> dropOffNotes) {
+        this.dropOffNotes = dropOffNotes;
+    }
+
+    public void addDropOffNote(Note dropOffNote)
+    {
+        this.dropOffNotes.add(dropOffNote);
     }
 
     public static ScheduleDropOffNotification parse(String json)
@@ -51,6 +72,16 @@ public class ScheduleDropOffNotification extends ScheduleNotification
         {
             schedulePickUpNotification.notificationSent = jsonObject.get("notificationSent").getAsBoolean();
         }
+        if(jsonObject.has("dropOffNotes"))
+        {
+            JsonArray array = jsonObject.get("dropOffNotes").getAsJsonArray();
+            Iterator<JsonElement> itr = array.iterator();
+            while(itr.hasNext())
+            {
+                JsonObject noteJson = itr.next().getAsJsonObject();
+                schedulePickUpNotification.dropOffNotes.add(Note.parse(noteJson.toString()));
+            }
+        }
         return schedulePickUpNotification;
     }
 
@@ -73,6 +104,7 @@ public class ScheduleDropOffNotification extends ScheduleNotification
             jsonObject.addProperty("start", this.start.toEpochSecond());
         }
         jsonObject.addProperty("notificationSent", this.notificationSent);
+        jsonObject.add("dropOffNotes",JsonParser.parseString(this.dropOffNotes.toString()));
 
         return jsonObject;
     }

@@ -397,7 +397,8 @@ public class MongoDBJsonStore {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
-        String queryJson = "{\"foodRunner.profile.email\":\""+email+"\"}";
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"foodRunner.profile.email\":\""+email+"\"},{\"notificationSent\":"+Boolean.TRUE.booleanValue()+"}]}";
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -406,9 +407,7 @@ public class MongoDBJsonStore {
             Document document = cursor.next();
             String documentJson = document.toJson();
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
-            if(notification.isNotificationSent()) {
-                notifications.add(notification);
-            }
+            notifications.add(notification);
         }
 
         return notifications;
@@ -532,7 +531,7 @@ public class MongoDBJsonStore {
         MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
-        String queryJson = "{$and:[{\"sourceOrg.orgId\":\""+orgId+"\"},{\"notificationSent\":"+Boolean.TRUE.toString()+"}]}";
+        String queryJson = "{$and:[{\"sourceOrg.orgId\":\""+orgId+"\"},{\"notificationSent\":"+Boolean.TRUE.booleanValue()+"}]}";
         logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);

@@ -3,7 +3,12 @@ package io.appgal.cloud.model;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -14,9 +19,12 @@ public class SchedulePickUpNotification extends ScheduleNotification
 {
     private static Logger logger = LoggerFactory.getLogger(SchedulePickUpNotification.class);
 
+    private List<Note> pickupNotes;
+
     public SchedulePickUpNotification(String id)
     {
         super(id);
+        this.pickupNotes = new ArrayList<>();
     }
 
     public SchedulePickUpNotification(String id, SourceOrg sourceOrg,OffsetDateTime start)
@@ -24,6 +32,19 @@ public class SchedulePickUpNotification extends ScheduleNotification
         this(id);
         this.sourceOrg = sourceOrg;
         this.start = start;
+    }
+
+    public List<Note> getPickupNotes() {
+        return pickupNotes;
+    }
+
+    public void setPickupNotes(List<Note> pickupNotes) {
+        this.pickupNotes = pickupNotes;
+    }
+
+    public void addPickupNote(Note pickupNote)
+    {
+        this.pickupNotes.add(pickupNote);
     }
 
     public static SchedulePickUpNotification parse(String json)
@@ -52,6 +73,16 @@ public class SchedulePickUpNotification extends ScheduleNotification
         {
             schedulePickUpNotification.notificationSent = jsonObject.get("notificationSent").getAsBoolean();
         }
+        if(jsonObject.has("pickupNotes"))
+        {
+            JsonArray array = jsonObject.get("pickupNotes").getAsJsonArray();
+            Iterator<JsonElement> itr = array.iterator();
+            while(itr.hasNext())
+            {
+                JsonObject noteJson = itr.next().getAsJsonObject();
+                schedulePickUpNotification.pickupNotes.add(Note.parse(noteJson.toString()));
+            }
+        }
         return schedulePickUpNotification;
     }
 
@@ -74,6 +105,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
             jsonObject.addProperty("start", this.start.toEpochSecond());
         }
         jsonObject.addProperty("notificationSent", this.notificationSent);
+        jsonObject.add("pickupNotes",JsonParser.parseString(this.pickupNotes.toString()));
 
         return jsonObject;
     }

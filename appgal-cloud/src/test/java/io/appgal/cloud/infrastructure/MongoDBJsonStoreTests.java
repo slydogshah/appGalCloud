@@ -185,6 +185,11 @@ public class MongoDBJsonStoreTests extends BaseTest {
         schedulePickUpNotification.setSourceOrg(sourceOrg);
         schedulePickUpNotification.setFoodRunner(bugsBunny);
         schedulePickUpNotification.setStart(start);
+        schedulePickUpNotification.setNotificationSent(true);
+        for(int j=0; j<3; j++)
+        {
+            schedulePickUpNotification.addPickupNote(new Note("note/"+j));
+        }
 
         this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
 
@@ -211,6 +216,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
         schedulePickUpNotification.setSourceOrg(sourceOrg);
         schedulePickUpNotification.setFoodRunner(bugsBunny);
+
         schedulePickUpNotification.setStart(start);
 
         this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
@@ -298,6 +304,10 @@ public class MongoDBJsonStoreTests extends BaseTest {
             notification.setFoodRunner(bugsBunny);
             notification.setStart(start);
             notification.setNotificationSent(true);
+            for(int j=0; j<3; j++)
+            {
+                notification.addDropOffNote(new Note("note/"+j));
+            }
             this.mongoDBJsonStore.storeScheduledDropOffNotification(notification);
         }
 
