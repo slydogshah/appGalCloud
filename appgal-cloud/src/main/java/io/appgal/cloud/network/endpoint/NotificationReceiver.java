@@ -3,9 +3,12 @@ package io.appgal.cloud.network.endpoint;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.ScheduleDropOffNotification;
 import io.appgal.cloud.model.SchedulePickUpNotification;
+import io.appgal.cloud.network.services.NetworkOrchestrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -23,6 +26,9 @@ public class NotificationReceiver {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    @Inject
+    private NetworkOrchestrator networkOrchestrator;
+
 
     @Path("/pickup/notifications")
     @GET
@@ -32,5 +38,36 @@ public class NotificationReceiver {
         List<SchedulePickUpNotification> schedulePickUpNotificationList = this.mongoDBJsonStore.
                 getSchedulePickUpNotifications(email);
         return Response.ok(schedulePickUpNotificationList.toString()).build();
+    }
+
+    @Path("/dropoff/notifications")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDropOffNotifications(@QueryParam("orgId") String orgId)
+    {
+        List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
+        return Response.ok(scheduleDropOffNotificationList.toString()).build();
+    }
+
+    @Path("/scheduleDropOff")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response scheduleDropOff(@RequestBody String jsonBody)
+    {
+        ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
+        this.networkOrchestrator.schedulePickDropOff(notification);
+
+        return Response.ok().build();
+    }
+
+    @Path("/scheduleDropOff")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response schedulePickUp(@RequestBody String jsonBody)
+    {
+        SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
+        this.networkOrchestrator.schedulePickUp(notification);
+
+        return Response.ok().build();
     }
 }

@@ -91,23 +91,4 @@ public class ActiveNetwork {
         List<SourceOrg> sourceOrgs = this.mongoDBJsonStore.getSourceOrgs();
         return sourceOrgs.toString();
     }
-
-    @Path("/schedulePickUp")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response schedulePickUp(@RequestBody String jsonBody)
-    {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        SchedulePickUpNotification schedulePickUpNotification = SchedulePickUpNotification.parse(jsonBody);
-
-
-        JsonObject responseJson = schedulePickUpNotification.toJson();
-        return Response.ok(responseJson.toString()).build();
-    }
 }

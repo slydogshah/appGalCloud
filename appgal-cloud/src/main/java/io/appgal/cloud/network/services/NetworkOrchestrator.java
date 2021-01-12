@@ -118,4 +118,10 @@ public class NetworkOrchestrator {
         this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
         this.requestPipeline.add(schedulePickUpNotification);
     }
+
+    public void schedulePickDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
+    {
+        this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
+        //this.requestPipeline.add(schedulePickUpNotification);
+    }
 }
