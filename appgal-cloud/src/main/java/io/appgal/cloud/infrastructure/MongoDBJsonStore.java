@@ -545,6 +545,26 @@ public class MongoDBJsonStore {
         return notifications;
     }
 
+    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications()
+    {
+        List<ScheduleDropOffNotification> notifications = new ArrayList<>();
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
+
+        String queryJson = "{}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            notifications.add(ScheduleDropOffNotification.parse(documentJson));
+        }
+        return notifications;
+    }
+
     public void cleanup()
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");

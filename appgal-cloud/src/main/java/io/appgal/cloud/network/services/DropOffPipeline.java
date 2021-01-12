@@ -1,6 +1,7 @@
 package io.appgal.cloud.network.services;
 
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.ScheduleDropOffNotification;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,19 +14,19 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 @Singleton
-public class RequestPipeline {
-    private static Logger logger = LoggerFactory.getLogger(RequestPipeline.class);
+public class DropOffPipeline {
+    private static Logger logger = LoggerFactory.getLogger(DropOffPipeline.class);
 
-    private PriorityQueue<SchedulePickUpNotification> queue;
+    private PriorityQueue<ScheduleDropOffNotification> dropOffQueue;
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
-    public RequestPipeline()
+    public DropOffPipeline()
     {
-        Comparator<SchedulePickUpNotification> comparator = new Comparator<SchedulePickUpNotification>() {
+        Comparator<ScheduleDropOffNotification> dcomparator = new Comparator<ScheduleDropOffNotification>() {
             @Override
-            public int compare(SchedulePickUpNotification o1, SchedulePickUpNotification o2) {
+            public int compare(ScheduleDropOffNotification o1, ScheduleDropOffNotification o2) {
                 long left = o1.getStart().toEpochSecond();
                 long right = o2.getStart().toEpochSecond();
                 if(left < right)
@@ -39,58 +40,58 @@ public class RequestPipeline {
                 return 0; //they are equal
             }
         };
-        this.queue = new PriorityQueue<>(comparator);
+        this.dropOffQueue = new PriorityQueue<>(dcomparator);
     }
 
     @PostConstruct
     public void start()
     {
-        List<SchedulePickUpNotification> notifications = this.mongoDBJsonStore.getSchedulePickUpNotifications();
-        for(SchedulePickUpNotification schedulePickUpNotification:notifications)
+        List<ScheduleDropOffNotification> dnotifications = this.mongoDBJsonStore.getScheduledDropOffNotifications();
+        for(ScheduleDropOffNotification scheduleDropOffNotification:dnotifications)
         {
-            this.add(schedulePickUpNotification);
+            this.add(scheduleDropOffNotification);
         }
     }
 
-    public void add(SchedulePickUpNotification schedulePickUpNotification)
+    public void add(ScheduleDropOffNotification notification)
     {
-        this.queue.add(schedulePickUpNotification);
+        this.dropOffQueue.add(notification);
     }
 
-    public SchedulePickUpNotification next()
+    public ScheduleDropOffNotification next()
     {
-        return this.queue.poll();
+        return this.dropOffQueue.poll();
     }
 
-    public SchedulePickUpNotification peek()
+    public ScheduleDropOffNotification peek()
     {
-        return this.queue.peek();
+        return this.dropOffQueue.peek();
     }
 
     public int size()
     {
-        return this.queue.size();
+        return this.dropOffQueue.size();
     }
 
-    public void remove(SchedulePickUpNotification notification)
+    public void remove(ScheduleDropOffNotification notification)
     {
-        this.queue.remove(notification);
+        this.dropOffQueue.remove(notification);
     }
 
     public void clear()
     {
-        this.queue.clear();
+        this.dropOffQueue.clear();
     }
 
     @Override
     public String toString()
     {
-        return this.queue.toString();
+        return this.dropOffQueue.toString();
     }
 
     public void process()
     {
-        SchedulePickUpNotification notification = this.peek();
+        ScheduleDropOffNotification notification = this.peek();
         if (notification == null) {
             //logger.info("*******1*********");
             return;
@@ -108,6 +109,6 @@ public class RequestPipeline {
 
         //logger.info("*******4*********");
         //Send
-        this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
+        this.mongoDBJsonStore.updateScheduledDropOffNotification(notification);
     }
 }

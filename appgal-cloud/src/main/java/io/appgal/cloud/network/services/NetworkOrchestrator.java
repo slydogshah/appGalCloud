@@ -36,6 +36,9 @@ public class NetworkOrchestrator {
     @Inject
     private RequestPipeline requestPipeline;
 
+    @Inject
+    private DropOffPipeline dropOffPipeline;
+
     private Map<String, Collection<FoodRunner>> finderResults;
 
     private NotificationEngine notificationEngine;
@@ -44,7 +47,8 @@ public class NetworkOrchestrator {
     public void start()
     {
         this.finderResults = new HashMap<>();
-        this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline, this.mongoDBJsonStore);
+        this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline, this.dropOffPipeline,
+                this.mongoDBJsonStore);
         this.notificationEngine.start();
         logger.info("*******");
         logger.info("NETWORK_ORCHESTRATOR_IS_ONLINE_NOW");
@@ -122,8 +126,6 @@ public class NetworkOrchestrator {
     public void schedulePickDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
     {
         this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
-
-        //TODO: Add this support
-        //this.requestPipeline.add(schedulePickUpNotification);
+        this.dropOffPipeline.add(scheduleDropOffNotification);
     }
 }
