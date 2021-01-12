@@ -1,6 +1,7 @@
 package io.bugsbunny.test.components;
 
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import javax.inject.Inject;
@@ -16,7 +17,21 @@ public abstract class BaseTest
     @BeforeEach
     public void setUp() throws Exception
     {
+        if(this.securityTokenMockComponent == null)
+        {
+            this.securityTokenMockComponent = new SecurityTokenMockComponent();
+        }
         this.securityTokenMockComponent.start();
-        //this.mongoDBJsonStore.cleanup();
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception
+    {
+        /*if(this.mongoDBJsonStore == null)
+        {
+            this.mongoDBJsonStore = new MongoDBJsonStore();
+        }
+        this.mongoDBJsonStore.start();
+        this.mongoDBJsonStore.getMongoClient().getDatabase("appgalcloud").drop();*/
     }
 }

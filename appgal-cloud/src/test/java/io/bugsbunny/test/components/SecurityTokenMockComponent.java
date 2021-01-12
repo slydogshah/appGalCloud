@@ -53,7 +53,7 @@ public class SecurityTokenMockComponent implements ContainerRequestFilter
         }
         catch(Exception e)
         {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
         }
     }
 

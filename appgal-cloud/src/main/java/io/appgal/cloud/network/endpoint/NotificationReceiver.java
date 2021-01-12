@@ -1,7 +1,5 @@
 package io.appgal.cloud.network.endpoint;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.ScheduleDropOffNotification;
 import io.appgal.cloud.model.SchedulePickUpNotification;
@@ -14,9 +12,6 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Path("notification")
@@ -55,7 +50,7 @@ public class NotificationReceiver {
     public Response scheduleDropOff(@RequestBody String jsonBody)
     {
         ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
-        this.networkOrchestrator.schedulePickDropOff(notification);
+        this.networkOrchestrator.scheduleDropOff(notification);
 
         return Response.ok().build();
     }

@@ -123,7 +123,7 @@ public class NetworkOrchestrator {
         this.requestPipeline.add(schedulePickUpNotification);
     }
 
-    public void schedulePickDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
+    public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
     {
         this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
         this.dropOffPipeline.add(scheduleDropOffNotification);

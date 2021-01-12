@@ -40,6 +40,11 @@ public class MongoDBJsonStore {
         this.mongoClient.close();
     }
 
+    public MongoClient getMongoClient()
+    {
+        return this.mongoClient;
+    }
+
     public List<FoodRunner> getAllFoodRunners()
     {
         List<FoodRunner> foodRunners = new ArrayList<>();
@@ -565,9 +570,10 @@ public class MongoDBJsonStore {
         return notifications;
     }
 
-    public void cleanup()
+    /*public void cleanup()
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        mongoClient.getDatabase("appgalcloud").drop();
+
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
         collection.deleteMany(Document.parse("{}"));
@@ -578,10 +584,13 @@ public class MongoDBJsonStore {
         collection = database.getCollection("dropOffNotifications");
         collection.deleteMany(Document.parse("{}"));
 
-        collection = database.getCollection("kafkaDaemonBootstrapData");
-        collection.deleteMany(Document.parse("{}"));
-
         collection = database.getCollection("profile");
         collection.deleteMany(Document.parse("{}"));
-    }
+
+        collection = database.getCollection("scheduledDropOffNotifications");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("scheduledPickUpNotifications");
+        collection.deleteMany(Document.parse("{}"));
+    }*/
 }

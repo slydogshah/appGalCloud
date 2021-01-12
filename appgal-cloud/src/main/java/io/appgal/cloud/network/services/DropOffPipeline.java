@@ -103,9 +103,10 @@ public class DropOffPipeline {
             return;
         }
 
-        //logger.info("*******3*********");
+        logger.info("*******3*********");
         notification = this.next();
         notification.setNotificationSent(true);
+
 
         //logger.info("*******4*********");
         //Send
