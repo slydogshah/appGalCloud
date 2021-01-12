@@ -6,7 +6,6 @@ import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
-import io.appgal.cloud.app.services.CustomerService;
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -23,12 +22,9 @@ public class SeedDataTests {
     private static Logger logger = LoggerFactory.getLogger(SeedDataTests.class);
 
     @Inject
-    private CustomerService customerService;
-
-    @Inject
     private ProfileRegistrationService profileRegistrationService;
 
-    @Test
+    //@Test
     public void testSeedData() throws Exception
     {
         SourceOrg pickUp1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
@@ -39,11 +35,6 @@ public class SeedDataTests {
 
         SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH", "downtown.church@gmail.com",false);
         SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com",false);
-
-        customerService.storeSourceOrg(pickUp1);
-        customerService.storeSourceOrg(pickUp2);
-        customerService.storeSourceOrg(dropOff1);
-        customerService.storeSourceOrg(dropOff2);
 
         String uuid = UUID.randomUUID().toString();
         Profile profile = new Profile(UUID.randomUUID().toString(), "c."+uuid+"@s.com", 8675309l, "", "c",
