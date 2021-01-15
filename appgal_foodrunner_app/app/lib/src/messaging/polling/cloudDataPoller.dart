@@ -17,7 +17,7 @@ class CloudDataPoller
 
     // Read fetch_events from SharedPreferences
     List<String> events = [];
-    String json = prefs.getString("jen_network");
+    String json = prefs.getString("com.transistersoft.io.appgallabs.jen.network");
     if (json != null) {
       events = jsonDecode(json).cast<String>();
 
@@ -26,18 +26,36 @@ class CloudDataPoller
     // Add new event.
     events.insert(0, profile.toString());
     // Persist fetch events in SharedPreferences
-    prefs.setString("jen_network", jsonEncode(events));
+    prefs.setString("com.transistersoft.io.appgallabs.jen.network", jsonEncode(events));
 
     // Register to receive BackgroundFetch events after app is terminated.
     // Requires {stopOnTerminate: false, enableHeadless: true}
     BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+
+    // Configure BackgroundFetch.
+    BackgroundFetch.configure(BackgroundFetchConfig(
+        minimumFetchInterval: 1,
+        forceAlarmManager: false,
+        stopOnTerminate: false,
+        startOnBoot: true,
+        enableHeadless: true,
+        requiresBatteryNotLow: false,
+        requiresCharging: false,
+        requiresStorageNotLow: false,
+        requiresDeviceIdle: false,
+        requiredNetworkType: NetworkType.NONE,
+    ), backgroundFetchHeadlessTask).then((int status) {
+      print('[BackgroundFetch] configure success: $status');
+    }).catchError((e) {
+      print('[BackgroundFetch] configure ERROR: $e');
+    });
 
       // Schedule a "one-shot" custom-task in 10000ms.
     // These are fairly reliable on Android (particularly with forceAlarmManager) but not iOS,
     // where device must be powered (and delay will be throttled by the OS).
     var rng = new Random();
     int id = rng.nextInt(10000); 
-    startBackgroundTask("$id");
+    startBackgroundTask("com.transistersoft.io.appgallabs.jen.network");
   }
 
   static void pollData(Profile profile)
@@ -45,7 +63,9 @@ class CloudDataPoller
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
     Future<String> futureP = activeNetworkRestClient.getSchedulePickUpNotification(profile.email);
     futureP.then((response){
+      print("********PUSH**********");
       print(response);
+      print("********PUSH**********");
     });
   }
 
@@ -55,7 +75,7 @@ class CloudDataPoller
 
     // Read fetch_events from SharedPreferences
     List<String> events = [];
-    String eventJson = prefs.getString("jen_network");
+    String eventJson = prefs.getString("com.transistersoft.io.appgallabs.jen.network");
     if (eventJson != null) {
       events = jsonDecode(eventJson).cast<String>();
 
@@ -70,18 +90,18 @@ class CloudDataPoller
 
     var rng = new Random();
     int id = rng.nextInt(10000); 
-    startBackgroundTask("$id");
+    startBackgroundTask("com.transistersoft.io.appgallabs.jen.network");
   }
 
   static void startBackgroundTask(String taskId)
   {
-    BackgroundFetch.scheduleTask(TaskConfig(
+    /*BackgroundFetch.scheduleTask(TaskConfig(
           taskId: taskId,
           delay: 1000,
           periodic: true,
           forceAlarmManager: true,
           stopOnTerminate: false,
           enableHeadless: true
-    ));
+    ));*/
   }
 }
