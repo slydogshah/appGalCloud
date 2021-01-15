@@ -128,8 +128,8 @@ class ProfileFunctions
     });
   }
 
-  void showCards(BuildContext context, Profile profile) {
-    //TODO: finalize the notification flow....
-    CloudDataPoller.startPolling(context);
+  void showCards(BuildContext context, Profile profile) 
+  {
+    CloudDataPoller.startPolling(profile);
   }  
 }
