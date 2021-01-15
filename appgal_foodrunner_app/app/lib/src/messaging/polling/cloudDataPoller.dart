@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
+import 'dart:io';
 
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
@@ -11,13 +11,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CloudDataPoller
 {
+  static String scheduledTaskId = "com.transistersoft.io.appgallabs.jen.network";
+  static String standardTaskId = "com.transistorsoft.fetch";
+
   static void startPolling(Profile profile) async
+  {
+      if(Platform.isIOS)
+      {
+        startIOSPolling(profile);
+      }
+      else if(Platform.isAndroid)
+      {
+        startAndroidPolling(profile);
+      }
+  }
+  //--------ios--------------------------------------------
+  static void startIOSPolling(Profile profile) async
   {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Read fetch_events from SharedPreferences
     List<String> events = [];
-    String json = prefs.getString("com.transistersoft.io.appgallabs.jen.network");
+    String json = prefs.getString(standardTaskId);
     if (json != null) {
       events = jsonDecode(json).cast<String>();
 
@@ -26,11 +41,7 @@ class CloudDataPoller
     // Add new event.
     events.insert(0, profile.toString());
     // Persist fetch events in SharedPreferences
-    prefs.setString("com.transistersoft.io.appgallabs.jen.network", jsonEncode(events));
-
-    // Register to receive BackgroundFetch events after app is terminated.
-    // Requires {stopOnTerminate: false, enableHeadless: true}
-    BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+    prefs.setString(standardTaskId, jsonEncode(events));
 
     // Configure BackgroundFetch.
     BackgroundFetch.configure(BackgroundFetchConfig(
@@ -43,21 +54,52 @@ class CloudDataPoller
         requiresCharging: false,
         requiresStorageNotLow: false,
         requiresDeviceIdle: false,
-        requiredNetworkType: NetworkType.NONE,
-    ), backgroundFetchHeadlessTask).then((int status) {
-      print('[BackgroundFetch] configure success: $status');
+        requiredNetworkType: NetworkType.NONE
+    ), standardTask).then((int status) {
+      print('[StandardFetch] configure success: $status');
+      BackgroundFetch.start().then((int status) {
+        print('[StandardFetch] start success: $status');
+      }).catchError((e) {
+        print('[StandardFetch] start FAILURE: $e');
+      });
     }).catchError((e) {
-      print('[BackgroundFetch] configure ERROR: $e');
+      print('[StandardFetch] configure ERROR: $e');
     });
 
-      // Schedule a "one-shot" custom-task in 10000ms.
-    // These are fairly reliable on Android (particularly with forceAlarmManager) but not iOS,
-    // where device must be powered (and delay will be throttled by the OS).
-    var rng = new Random();
-    int id = rng.nextInt(10000); 
-    startBackgroundTask("com.transistersoft.io.appgallabs.jen.network");
+    BackgroundFetch.finish(standardTaskId);
   }
+  //--------android----------------------------------------
+  static void startAndroidPolling(Profile profile) async
+  {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    // Read fetch_events from SharedPreferences
+    List<String> events = [];
+    String json = prefs.getString(scheduledTaskId);
+    if (json != null) {
+      events = jsonDecode(json).cast<String>();
+
+    }
+
+    // Add new event.
+    events.insert(0, profile.toString());
+    // Persist fetch events in SharedPreferences
+    prefs.setString(scheduledTaskId, jsonEncode(events));
+
+    // Register to receive BackgroundFetch events after app is terminated.
+    // Requires {stopOnTerminate: false, enableHeadless: true}
+    BackgroundFetch.registerHeadlessTask(scheduledTask);
+
+    BackgroundFetch.scheduleTask(TaskConfig(
+          taskId: scheduledTaskId,
+          delay: 1000,
+          periodic: true,
+          forceAlarmManager: true,
+          stopOnTerminate: false,
+          enableHeadless: true
+    ));
+  }
+  //--------------------------------------------------------
   static void pollData(Profile profile)
   {
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
@@ -70,12 +112,12 @@ class CloudDataPoller
   }
 
   /// This "Headless Task" is run when app is terminated.
-  static void backgroundFetchHeadlessTask(String taskId) async {
+  static void scheduledTask(String taskId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Read fetch_events from SharedPreferences
     List<String> events = [];
-    String eventJson = prefs.getString("com.transistersoft.io.appgallabs.jen.network");
+    String eventJson = prefs.getString(taskId);
     if (eventJson != null) {
       events = jsonDecode(eventJson).cast<String>();
 
@@ -88,20 +130,33 @@ class CloudDataPoller
 
     BackgroundFetch.finish(taskId);
 
-    var rng = new Random();
-    int id = rng.nextInt(10000); 
-    startBackgroundTask("com.transistersoft.io.appgallabs.jen.network");
-  }
-
-  static void startBackgroundTask(String taskId)
-  {
-    /*BackgroundFetch.scheduleTask(TaskConfig(
+    BackgroundFetch.scheduleTask(TaskConfig(
           taskId: taskId,
           delay: 1000,
           periodic: true,
           forceAlarmManager: true,
           stopOnTerminate: false,
           enableHeadless: true
-    ));*/
+    ));
+  }
+
+  static void standardTask(String taskId) async
+  {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Read fetch_events from SharedPreferences
+    List<String> events = [];
+    String eventJson = prefs.getString(taskId);
+    if (eventJson != null) {
+      events = jsonDecode(eventJson).cast<String>();
+
+    }
+    String profileJson = events[0];
+    Profile profile = Profile.fromJson(
+    json.decode(profileJson));
+
+    pollData(profile);
+
+    BackgroundFetch.finish(taskId);
   }
 }
