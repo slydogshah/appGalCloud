@@ -94,7 +94,7 @@ class NavigationProtoState extends State<NavigationProto>
       _platformVersion = platformVersion;
     });
 
-    var wayPoints = List<WayPoint>();
+    /*var wayPoints = List<WayPoint>();
                             wayPoints.add(_origin);
                             wayPoints.add(_stop1);
 
@@ -105,7 +105,26 @@ class NavigationProtoState extends State<NavigationProto>
                                         MapBoxNavigationMode.drivingWithTraffic,
                                     simulateRoute: true,
                                     language: "en",
+                                    units: VoiceUnits.metric));*/
+      _isMultipleStop = true;
+                            var wayPoints = List<WayPoint>();
+                            wayPoints.add(_origin);
+                            wayPoints.add(_stop1);
+                            wayPoints.add(_stop2);
+                            wayPoints.add(_stop3);
+                            wayPoints.add(_stop4);
+                            wayPoints.add(_origin);
+
+                            await _directions.startNavigation(
+                                wayPoints: wayPoints,
+                                options: MapBoxOptions(
+                                    mode: MapBoxNavigationMode.driving,
+                                    simulateRoute: true,
+                                    language: "en",
+                                    allowsUTurnAtWayPoints: true,
                                     units: VoiceUnits.metric));
+
+      
   }
 
   @override
