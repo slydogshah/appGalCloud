@@ -35,6 +35,18 @@
 		<string>fetch</string>
 		<string>processing</string>
 	</array>
+	<key>MGLMapboxAccessToken</key>
+	<string>pk.eyJ1IjoiYnVnc2J1bm55c2hhaCIsImEiOiJja2pjYXFldTgzNHl2Mnpwa2Fqdjdpc2N6In0.XZ_Vh0H28FNfv3il1P1bkg</string>
+	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
+	<string>YES</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Shows your location on the map and helps improve OpenStreetMap</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>location</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

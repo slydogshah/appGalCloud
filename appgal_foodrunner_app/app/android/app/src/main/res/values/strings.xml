@@ -19,4 +19,6 @@
     <!-- [END fcm_default_icon_string] -->
     <string name="msg_subscribe_failed">Failed to subscribe to weather topic</string>
     <string name="fcm_message">FCM Message</string>
+
+    <string name="mapbox_access_token" translatable="false">pk.eyJ1IjoiYnVnc2J1bm55c2hhaCIsImEiOiJja2pjYXFldTgzNHl2Mnpwa2Fqdjdpc2N6In0.XZ_Vh0H28FNfv3il1P1bkg</string>
 </resources>

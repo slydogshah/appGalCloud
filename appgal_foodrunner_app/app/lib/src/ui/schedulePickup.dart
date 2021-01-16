@@ -1,3 +1,4 @@
+import 'package:app/src/navigation/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -225,7 +226,8 @@ class SchedulePickupState extends State<SchedulePickup> {
                       ActiveSession activeSession = ActiveSession.getInstance();
                       FoodRunner foodRunner = new FoodRunner(activeSession.profile);
                       SchedulePickupNotification schedulePickupNotification = new SchedulePickupNotification(sourceOrg, foodRunner, null);
-                      schedulePickup(context, schedulePickupNotification);
+                      //schedulePickup(context, schedulePickupNotification);
+                      Navigator.push(context,MaterialPageRoute(builder: (context) => Navigation()));
                     }
                   )
                 ),
