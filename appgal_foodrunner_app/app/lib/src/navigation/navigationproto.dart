@@ -17,12 +17,16 @@ class NavigationProtoState extends State<NavigationProto>
 {
   String _platformVersion = 'Unknown';
   String _instruction = "";
+
+  //The Monarch
   final _origin = WayPoint(
-      name: "Way Point 1",
+      name: "The Monarch",
       latitude: 38.9111117447887,
       longitude: -77.04012393951416);
+
+  //GE 
   final _stop1 = WayPoint(
-      name: "Way Point 2",
+      name: "GE Aviation",
       latitude: 38.91113678979344,
       longitude: -77.03847169876099);
   final _stop2 = WayPoint(
@@ -94,7 +98,7 @@ class NavigationProtoState extends State<NavigationProto>
       _platformVersion = platformVersion;
     });
 
-    /*var wayPoints = List<WayPoint>();
+    var wayPoints = List<WayPoint>();
                             wayPoints.add(_origin);
                             wayPoints.add(_stop1);
 
@@ -105,8 +109,8 @@ class NavigationProtoState extends State<NavigationProto>
                                         MapBoxNavigationMode.drivingWithTraffic,
                                     simulateRoute: true,
                                     language: "en",
-                                    units: VoiceUnits.metric));*/
-      _isMultipleStop = true;
+                                    units: VoiceUnits.metric));
+      /*_isMultipleStop = true;
                             var wayPoints = List<WayPoint>();
                             wayPoints.add(_origin);
                             wayPoints.add(_stop1);
@@ -122,7 +126,7 @@ class NavigationProtoState extends State<NavigationProto>
                                     simulateRoute: true,
                                     language: "en",
                                     allowsUTurnAtWayPoints: true,
-                                    units: VoiceUnits.metric));
+                                    units: VoiceUnits.metric));*/
 
       
   }

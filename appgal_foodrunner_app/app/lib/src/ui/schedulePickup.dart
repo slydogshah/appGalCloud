@@ -47,13 +47,13 @@ class SchedulePickupState extends State<SchedulePickup> {
   String _platformVersion = 'Unknown';
   String _instruction = "";
   final _origin = WayPoint(
-      name: "Way Point 1",
-      latitude: 38.9111117447887,
-      longitude: -77.04012393951416);
+      name: "The Monarch",
+      latitude: 30.269040,
+      longitude: -97.751840);
   final _stop1 = WayPoint(
-      name: "Way Point 2",
-      latitude: 38.91113678979344,
-      longitude: -77.03847169876099);
+      name: "GE Aviation",
+      latitude: 30.278180,
+      longitude: -97.743140);
   final _stop2 = WayPoint(
       name: "Way Point 3",
       latitude: 38.91040213277608,

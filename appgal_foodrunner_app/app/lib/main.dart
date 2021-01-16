@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 void main() 
 {
   //Launch the App
-  //runApp(new Login());
-  runApp(new NavigationProto());
+  runApp(new Login());
+  //runApp(new NavigationProto());
 }
 
 
