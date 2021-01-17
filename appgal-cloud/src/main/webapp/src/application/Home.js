@@ -75,7 +75,6 @@ const Widgets = () => {
                          </CDropdownToggle>
                          <CDropdownMenu className="pt-0" placement="bottom-end">
                            <CDropdownItem onClick={schedulePickup}>Schedule</CDropdownItem>
-                           <CDropdownItem onClick={schedulePickup}>In-Progess</CDropdownItem>
                            <CDropdownItem onClick={schedulePickup}>History</CDropdownItem>
                          </CDropdownMenu>
                        </CDropdown>
