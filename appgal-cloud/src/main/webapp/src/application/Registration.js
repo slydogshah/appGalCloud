@@ -80,7 +80,7 @@ class Register extends React.Component {
               axios.post(apiUrl,{"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).then((response) => {
                     //setTimeout(() => {  this.props.history.push("/dashboard"); }, 10000)
                     this.props.history.push({
-                      pathname: "/main",
+                      pathname: "/home",
                       state: response.data
                     });
               }).catch(err => {
