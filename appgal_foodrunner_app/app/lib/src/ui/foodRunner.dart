@@ -1,3 +1,4 @@
+import 'package:app/src/navigation/navigation.dart';
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 
@@ -61,7 +62,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                               FlatButton(
                                 child: const Text('Accept', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleSchedulePickup(context, sourceOrg);
+                                    handleAccept(context, sourceOrg);
                                 },
                               ),
                             ],
@@ -93,8 +94,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     return scaffold;
   }
 
-  void handleSchedulePickup(BuildContext context, SourceOrg sourceOrg)
+  void handleAccept(BuildContext context, SourceOrg sourceOrg)
   {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => SchedulePickup(sourceOrg)));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => Navigation()));
   }
 }
