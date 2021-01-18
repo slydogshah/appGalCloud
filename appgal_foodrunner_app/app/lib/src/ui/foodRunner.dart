@@ -41,20 +41,25 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                       children: <Widget>[
                         ListTile(
                           leading: Icon(Icons.album, size: 70),
-                          title: Text('Organization', style: TextStyle(color: Colors.white)),
-                          subtitle: Text(sourceOrg.orgName, style: TextStyle(color: Colors.white)),
+                          title: Text('Pickup Request', style: TextStyle(color: Colors.white)),
                         ),
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Email: '+sourceOrg.orgContactEmail,
+                          labelText: 'Pickup: '+sourceOrg.orgName,
+                          ),
+                        ),
+                        TextField(
+                          decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'DropOff: Church',
                           ),
                         ),
                         ButtonTheme.bar(
                           child: ButtonBar(
                             children: <Widget>[
                               FlatButton(
-                                child: const Text('Schedule Pickup', style: TextStyle(color: Colors.white)),
+                                child: const Text('Accept', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
                                     handleSchedulePickup(context, sourceOrg);
                                 },
