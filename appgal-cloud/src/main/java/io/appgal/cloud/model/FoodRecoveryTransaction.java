@@ -1,5 +1,6 @@
 package io.appgal.cloud.model;
 
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,5 +31,20 @@ public class FoodRecoveryTransaction implements Serializable {
 
     public void setDropOffNotification(DropOffNotification dropOffNotification) {
         this.dropOffNotification = dropOffNotification;
+    }
+
+    public static FoodRecoveryTransaction parse(String json)
+    {
+        return new FoodRecoveryTransaction();
+    }
+
+    public JsonObject toJson()
+    {
+        return new JsonObject();
+    }
+
+    @Override
+    public String toString() {
+        return this.toJson().toString();
     }
 }

@@ -14,6 +14,8 @@ public class FoodRecoveryTransactionTests {
     @Test
     public void testJson()
     {
+        FoodRecoveryTransaction tx = new FoodRecoveryTransaction();
         logger.info("FOOD_RECOVERY_TRANSACTION_JSON_LOGGER");
+        logger.info(tx.toString());
     }
 }
