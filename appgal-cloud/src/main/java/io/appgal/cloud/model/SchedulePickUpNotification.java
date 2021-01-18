@@ -21,6 +21,11 @@ public class SchedulePickUpNotification extends ScheduleNotification
 
     private List<Note> pickupNotes;
 
+    public SchedulePickUpNotification()
+    {
+        super();
+    }
+
     public SchedulePickUpNotification(String id)
     {
         super(id);
@@ -104,8 +109,11 @@ public class SchedulePickUpNotification extends ScheduleNotification
         {
             jsonObject.addProperty("start", this.start.toEpochSecond());
         }
+        if(this.pickupNotes != null) {
+            jsonObject.add("pickupNotes", JsonParser.parseString(this.pickupNotes.toString()));
+        }
+
         jsonObject.addProperty("notificationSent", this.notificationSent);
-        jsonObject.add("pickupNotes",JsonParser.parseString(this.pickupNotes.toString()));
 
         return jsonObject;
     }

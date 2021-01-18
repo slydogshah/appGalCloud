@@ -16,6 +16,9 @@ public abstract class ScheduleNotification implements Serializable {
     protected OffsetDateTime start;
     protected boolean notificationSent;
 
+    public ScheduleNotification() {
+    }
+
     public ScheduleNotification(String id)
     {
         this.id = id;

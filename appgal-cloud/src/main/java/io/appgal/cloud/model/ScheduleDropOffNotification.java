@@ -20,6 +20,11 @@ public class ScheduleDropOffNotification extends ScheduleNotification
 
     private List<Note> dropOffNotes;
 
+    public ScheduleDropOffNotification()
+    {
+        super();
+    }
+
     public ScheduleDropOffNotification(String id)
     {
         super(id);

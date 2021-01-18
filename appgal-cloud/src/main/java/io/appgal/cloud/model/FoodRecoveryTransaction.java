@@ -10,11 +10,15 @@ public class FoodRecoveryTransaction implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(FoodRecoveryTransaction.class);
 
     private SchedulePickUpNotification pickUpNotification;
-    private DropOffNotification dropOffNotification;
+    private ScheduleDropOffNotification dropOffNotification;
 
     FoodRecoveryTransaction()
     {
+    }
 
+    public FoodRecoveryTransaction(SchedulePickUpNotification pickUpNotification, ScheduleDropOffNotification dropOffNotification) {
+        this.pickUpNotification = pickUpNotification;
+        this.dropOffNotification = dropOffNotification;
     }
 
     public SchedulePickUpNotification getPickUpNotification() {
@@ -25,11 +29,11 @@ public class FoodRecoveryTransaction implements Serializable {
         this.pickUpNotification = pickUpNotification;
     }
 
-    public DropOffNotification getDropOffNotification() {
+    public ScheduleDropOffNotification getDropOffNotification() {
         return dropOffNotification;
     }
 
-    public void setDropOffNotification(DropOffNotification dropOffNotification) {
+    public void setDropOffNotification(ScheduleDropOffNotification dropOffNotification) {
         this.dropOffNotification = dropOffNotification;
     }
 
@@ -40,7 +44,12 @@ public class FoodRecoveryTransaction implements Serializable {
 
     public JsonObject toJson()
     {
-        return new JsonObject();
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.add("pickupNotification", this.pickUpNotification.toJson());
+        jsonObject.add("dropOffNotification", this.dropOffNotification.toJson());
+
+        return jsonObject;
     }
 
     @Override
