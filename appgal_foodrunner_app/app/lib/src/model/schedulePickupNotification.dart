@@ -6,7 +6,7 @@ class SchedulePickupNotification
   SourceOrg sourceOrg;
   FoodRunner foodRunner;
   String  start;
-
+  
   SchedulePickupNotification(SourceOrg sourceOrg, FoodRunner foodRunner, String start)
   {
     this.sourceOrg = sourceOrg;

@@ -4,34 +4,60 @@ import 'package:flutter/material.dart';
 
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/schedulePickupNotification.dart';
+import 'package:app/src/model/dropOffNotification.dart';
 
 import 'schedulePickup.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<SourceOrg> sourceOrgs;
+  List<FoodRecoveryTransaction> recoveryTxs;
+
   FoodRunnerMainScene(List<SourceOrg> sourceOrgs)
   {
     this.sourceOrgs = sourceOrgs;
+
+    //TODO: unmock
+    this.recoveryTxs = new List();
+    for(int i=0; i< 2; i++)
+    {
+        //pickup
+        SourceOrg sourceOrg = new SourceOrg("apple", "Apple", "melinda_gates@microsoft.com", null,true);
+        SchedulePickupNotification schedulePickUpNotification = new SchedulePickupNotification(sourceOrg,null,null);
+
+        //dropoff
+        SourceOrg dropOffOrg = new SourceOrg("church", "Heaven", "melinda_gates@microsoft.com", null,true);
+        DropOffNotification dropOffNotification = new DropOffNotification(dropOffOrg, null);
+
+        FoodRecoveryTransaction local = new FoodRecoveryTransaction(schedulePickUpNotification, dropOffNotification);
+        recoveryTxs.add(local);
+    }
   }
 
+  /*FoodRunnerMainScene(List<FoodRecoveryTransaction> recoveryTxs)
+  {
+    this.recoveryTxs = recoveryTxs;
+  }*/
+
   @override
-  _FoodRunnerMainState createState() => _FoodRunnerMainState(this.sourceOrgs);
+  _FoodRunnerMainState createState() => _FoodRunnerMainState(this.recoveryTxs);
 }
 
 class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
-  List<SourceOrg> sourceOrgs;
-  _FoodRunnerMainState(List<SourceOrg> sourceOrgs)
+    List<FoodRecoveryTransaction> recoveryTxs;
+  _FoodRunnerMainState(List<FoodRecoveryTransaction> recoveryTxs)
   {
-    this.sourceOrgs = sourceOrgs;
+    this.recoveryTxs = recoveryTxs;
   }
 
   List<Card> getCards()
   {
     List<Card> cards = new List();
-    for(SourceOrg sourceOrg in this.sourceOrgs)
+    for(FoodRecoveryTransaction tx in this.recoveryTxs)
     {
       Location location = new Location(0.0, 0.0);
-      sourceOrg.location = location;
+      //sourceOrg.location = location;
       Card card = Card(shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
@@ -47,13 +73,25 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Pickup: '+sourceOrg.orgName,
+                          labelText: 'Pickup: '+tx.schedulePickupNotification.sourceOrg.orgName,
                           ),
                         ),
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'DropOff: Church',
+                          labelText: 'DropOff: '+tx.dropOffNotification.sourceOrg.orgName,
+                          ),
+                        ),
+                        TextField(
+                          decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Est Pickup Trip: 10 minutes',
+                          ),
+                        ),
+                        TextField(
+                          decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Est DropOff Trip: 15 minutes',
                           ),
                         ),
                         ButtonTheme.bar(
@@ -62,7 +100,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                               FlatButton(
                                 child: const Text('Accept', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleAccept(context, sourceOrg);
+                                    handleAccept(context, tx);
                                 },
                               ),
                             ],
@@ -94,7 +132,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     return scaffold;
   }
 
-  void handleAccept(BuildContext context, SourceOrg sourceOrg)
+  void handleAccept(BuildContext context, FoodRecoveryTransaction tx)
   {
     Navigator.push(context,MaterialPageRoute(builder: (context) => Navigation()));
   }
