@@ -38,7 +38,7 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import WidgetsDropdown from './WidgetsDropdown'
-import Dash from './Dash'
+import DropOffDash from './DropOffDash'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
@@ -51,7 +51,7 @@ class Home extends React.Component {
       this.state = {username:'',password:'',isModalOpen:false};
       this.handlePickup = this.handlePickup.bind(this);
       this.handlePickupProcess = this.handlePickupProcess.bind(this);
-      this.handlePickupHistory = this.handlePickupHistory.bind(this);
+      this.handleHistory = this.handleHistory.bind(this);
   }
 
   handlePickup(event)
@@ -109,10 +109,10 @@ class Home extends React.Component {
                 });
   }
 
-  handlePickupHistory(event)
+  handleHistory(event)
     {
         this.props.history.push({
-                    pathname: "/pickupHistory",
+                    pathname: "/dropOffHistory",
                     state: ""
                   });
     }
@@ -127,7 +127,7 @@ class Home extends React.Component {
                  <CWidgetDropdown
                            color="gradient-primary"
                            header="50"
-                           text="Pickups In-Progress"
+                           text="Deliveries In-Progress"
                            footerSlot={
                              <ChartLineSimple
                                pointed
@@ -145,8 +145,7 @@ class Home extends React.Component {
                            <CIcon name="cil-settings"/>
                          </CDropdownToggle>
                          <CDropdownMenu className="pt-0" placement="bottom-end">
-                           <CDropdownItem onClick={this.handlePickup}>Schedule</CDropdownItem>
-                           <CDropdownItem onClick={this.handlePickupHistory}>History</CDropdownItem>
+                           <CDropdownItem onClick={this.handleHistory}>History</CDropdownItem>
                          </CDropdownMenu>
                        </CDropdown>
                      </CWidgetDropdown>
@@ -155,7 +154,7 @@ class Home extends React.Component {
           </CRow>
           <CRow>
                 <CCol>
-                    <Dash/>
+                    <DropOffDash/>
                 </CCol>
                 </CRow>
           </>

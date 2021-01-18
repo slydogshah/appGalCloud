@@ -45,6 +45,9 @@ const SchedulePickup = React.lazy(() => import('./application/SchedulePickup'));
 const Sample = React.lazy(() => import('./application/Sample'));
 const Registration = React.lazy(() => import('./application/Registration'));
 const Home = React.lazy(() => import('./application/Home'));
+const PickupHistory = React.lazy(() => import('./application/PickupHistory'));
+const DropOffHome = React.lazy(() => import('./application/DropOffHome'));
+const DropOffHistory = React.lazy(() => import('./application/DropOffHistory'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -91,6 +94,9 @@ const routes = [
   { path: '/registration', exact: true, name: 'Schedule Pickup', component: Registration },
   { path: '/schedulePickup', exact: true, name: 'Schedule Pickup', component: SchedulePickup },
   { path: '/home', exact: true, name: 'Home', component: Home },
+  { path: '/pickupHistory', exact: true, name: 'Pickup History', component: PickupHistory },
+  { path: '/dropOffHome', exact: true, name: 'DropOff Home', component: DropOffHome },
+  { path: '/dropOffHistory', exact: true, name: 'DropOff History', component: DropOffHistory },
   { path: '/sample', exact: true, name: 'Sample', component: Sample }
 ];
 
