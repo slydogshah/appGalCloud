@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:convert';
+
 import 'package:app/src/navigation/navigation.dart';
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
@@ -17,20 +20,24 @@ class FoodRunnerMainScene extends StatefulWidget {
   FoodRunnerMainScene(List<SourceOrg> sourceOrgs)
   {
     this.sourceOrgs = sourceOrgs;
+    this.mock();
+  }
 
+  mock() async
+  {
     //TODO: unmock
     this.recoveryTxs = new List();
     for(int i=0; i< 2; i++)
     {
         //pickup
-        SourceOrg sourceOrg = new SourceOrg("apple", "Apple", "melinda_gates@microsoft.com", null,true);
-        SchedulePickupNotification schedulePickUpNotification = new SchedulePickupNotification(sourceOrg,null,null);
+        File file = new File('test_resources/schedulePickupNotification.json');
+        SchedulePickupNotification schedulePickupNotification = SchedulePickupNotification.fromJson(jsonDecode(await file.readAsString()));
 
         //dropoff
-        SourceOrg dropOffOrg = new SourceOrg("church", "Heaven", "melinda_gates@microsoft.com", null,true);
-        DropOffNotification dropOffNotification = new DropOffNotification(dropOffOrg, null);
+        file = new File('test_resources/dropOffNotification.json');
+        DropOffNotification dropOffNotification = DropOffNotification.fromJson(jsonDecode(await file.readAsString()));
 
-        FoodRecoveryTransaction local = new FoodRecoveryTransaction(schedulePickUpNotification, dropOffNotification);
+        FoodRecoveryTransaction local = new FoodRecoveryTransaction(schedulePickupNotification, dropOffNotification);
         recoveryTxs.add(local);
     }
   }

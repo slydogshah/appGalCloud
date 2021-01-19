@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:app/src/model/sourceOrg.dart';
 import 'foodRunner.dart';
 
@@ -5,9 +7,9 @@ class SchedulePickupNotification
 {
   SourceOrg sourceOrg;
   FoodRunner foodRunner;
-  String  start;
+  int  start;
   
-  SchedulePickupNotification(SourceOrg sourceOrg, FoodRunner foodRunner, String start)
+  SchedulePickupNotification(SourceOrg sourceOrg, FoodRunner foodRunner, int start)
   {
     this.sourceOrg = sourceOrg;
     this.foodRunner = foodRunner;
@@ -29,17 +31,31 @@ class SchedulePickupNotification
     this.foodRunner = foodRunner;
   }
 
-  void setStart(String start)
+  void setStart(int start)
   {
     this.start = start;
   }
 
-  String getStart()
+  int getStart()
   {
     return this.start;
   }
 
-
+  SchedulePickupNotification.fromJson(Map<String, dynamic> json)
+  { 
+    if(json["sourceOrg"] != null)
+    {
+      this.sourceOrg = SourceOrg.fromJson(json["sourceOrg"]);
+    }
+    if(json["foodRunner"] != null)
+    {
+      this.foodRunner = FoodRunner.fromJson(json["foodRunner"]);
+    }
+    if(json["start"] != null)
+    {
+      this.start = json['start'];
+    }
+  }
 
   Map<String, dynamic> toJson()
   {
@@ -57,6 +73,12 @@ class SchedulePickupNotification
       json['start'] = this.start;
     }
 
+    return json;
+  }
+
+  String toString()
+  {
+    String json = jsonEncode(this.toJson());
     return json;
   }
 }
