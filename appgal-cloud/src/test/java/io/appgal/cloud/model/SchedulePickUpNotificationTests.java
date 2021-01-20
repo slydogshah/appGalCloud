@@ -3,6 +3,7 @@ package io.appgal.cloud.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -40,15 +41,18 @@ public class SchedulePickUpNotificationTests extends BaseTest {
         schedulePickUpNotification.setFoodRunner(bugsBunny);
         schedulePickUpNotification.setStart(start);
 
+        FoodDetails foodDetails = new FoodDetails();
+        schedulePickUpNotification.setFoodDetails(foodDetails);
+
         String ser = schedulePickUpNotification.toString();
-        logger.info("*******");
-        logger.info(schedulePickUpNotification.toJson().toString());
+        JsonUtil.print(schedulePickUpNotification.toJson());
 
         SchedulePickUpNotification deser = SchedulePickUpNotification.parse(ser);
         assertEquals(0.0d, deser.getFoodRunner().getLocation().getLatitude());
         assertEquals(epochSecond, deser.getStart().toEpochSecond());
         assertEquals("microsoft", deser.getSourceOrg().getOrgId());
         assertEquals("bugs.bunny.shah@gmail.com", deser.getFoodRunner().getProfile().getEmail());
+        JsonUtil.print(deser.toJson());
     }
 
     @Test

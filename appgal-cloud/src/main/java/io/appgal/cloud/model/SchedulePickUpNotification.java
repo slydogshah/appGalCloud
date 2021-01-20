@@ -20,7 +20,6 @@ public class SchedulePickUpNotification extends ScheduleNotification
     private static Logger logger = LoggerFactory.getLogger(SchedulePickUpNotification.class);
 
     private List<Note> pickupNotes;
-    private FoodDetails foodDetails;
 
     public SchedulePickUpNotification()
     {
@@ -89,6 +88,10 @@ public class SchedulePickUpNotification extends ScheduleNotification
                 schedulePickUpNotification.pickupNotes.add(Note.parse(noteJson.toString()));
             }
         }
+        if(jsonObject.has("foodDetails"))
+        {
+            schedulePickUpNotification.foodDetails = FoodDetails.parse(jsonObject.get("foodDetails").toString());
+        }
         return schedulePickUpNotification;
     }
 
@@ -112,6 +115,10 @@ public class SchedulePickUpNotification extends ScheduleNotification
         }
         if(this.pickupNotes != null) {
             jsonObject.add("pickupNotes", JsonParser.parseString(this.pickupNotes.toString()));
+        }
+        if(this.foodDetails != null)
+        {
+            jsonObject.add("foodDetails", JsonParser.parseString(this.foodDetails.toString()));
         }
 
         jsonObject.addProperty("notificationSent", this.notificationSent);
