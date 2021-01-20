@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/navigation/navigation.dart';
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
@@ -141,6 +142,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
 
   void handleAccept(BuildContext context, FoodRecoveryTransaction tx)
   {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => Navigation()));
+    //Navigator.push(context,MaterialPageRoute(builder: (context) => Navigation()));
+    EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation();
+    embeddedNavigation.start();
   }
 }
