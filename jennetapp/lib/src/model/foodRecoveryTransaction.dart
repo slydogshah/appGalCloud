@@ -31,4 +31,16 @@ class FoodRecoveryTransaction
   {
     this.dropOffNotification = dropOffNotification;
   }
+
+  FoodRecoveryTransaction.fromJson(Map<String, dynamic> json)
+  {
+    if(json["pickupNotification"] != null)
+    {
+      this.schedulePickupNotification = SchedulePickupNotification.fromJson(json["pickupNotification"]);
+    }
+    if(json["dropOffNotification"] != null)
+    {
+      this.dropOffNotification = DropOffNotification.fromJson(json["dropOffNotification"]);
+    }
+  }
 }

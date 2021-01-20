@@ -10,6 +10,7 @@ import 'package:app/src/model/activeView.dart' show ActiveView;
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
+import 'package:app/src/model/foodRecoveryTransaction.dart';
 
 import '../model/schedulePickupNotification.dart';
 
@@ -111,7 +112,7 @@ class ActiveNetworkRestClient
 
   Future<FoodRecoveryTransaction> getFoodRecoveryTransaction() async
   {
-    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/sourceOrgs/bhenchod/';
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/tx/recovery';
     print(remoteUrl);
     var response = await http.get(remoteUrl);
     String responseJson = response.body;
@@ -123,6 +124,6 @@ class ActiveNetworkRestClient
         SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
         sourceOrgs.add(sourceOrg);
     }*/
-    return null;
+    return FoodRecoveryTransaction.fromJson(jsonDecode(responseJson));
   }
 }

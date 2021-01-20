@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/navigation/navigation.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +42,11 @@ class FoodRunnerMainScene extends StatefulWidget {
         FoodRecoveryTransaction local = new FoodRecoveryTransaction(schedulePickupNotification, dropOffNotification);
         recoveryTxs.add(local);
     }
+    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+    Future<FoodRecoveryTransaction> future = client.getFoodRecoveryTransaction();
+    future.then((foodRecoveryTransaction){
+        print(foodRecoveryTransaction);
+    });
   }
 
   /*FoodRunnerMainScene(List<FoodRecoveryTransaction> recoveryTxs)
