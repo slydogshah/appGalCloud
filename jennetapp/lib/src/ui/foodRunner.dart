@@ -16,20 +16,18 @@ import 'package:app/src/model/dropOffNotification.dart';
 import 'schedulePickup.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
-  List<SourceOrg> sourceOrgs;
   List<FoodRecoveryTransaction> recoveryTxs;
 
-  FoodRunnerMainScene(List<SourceOrg> sourceOrgs)
+  FoodRunnerMainScene(List<FoodRecoveryTransaction> recoveryTxs)
   {
-    this.sourceOrgs = sourceOrgs;
-    this.mock();
+    this.recoveryTxs = recoveryTxs;
   }
 
   mock() async
   {
     //TODO: unmock
     this.recoveryTxs = new List();
-    for(int i=0; i< 2; i++)
+    /*for(int i=0; i< 2; i++)
     {
         //pickup
         SourceOrg pickupOrg = new SourceOrg("microsoft","Microsoft","missgates@microsft.com",null,true);
@@ -41,11 +39,12 @@ class FoodRunnerMainScene extends StatefulWidget {
 
         FoodRecoveryTransaction local = new FoodRecoveryTransaction(schedulePickupNotification, dropOffNotification);
         recoveryTxs.add(local);
-    }
+    }*/
     ActiveNetworkRestClient client = new ActiveNetworkRestClient();
     Future<FoodRecoveryTransaction> future = client.getFoodRecoveryTransaction();
     future.then((foodRecoveryTransaction){
         print(foodRecoveryTransaction);
+        recoveryTxs.add(foodRecoveryTransaction);
     });
   }
 

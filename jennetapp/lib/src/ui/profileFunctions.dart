@@ -3,8 +3,10 @@ import 'dart:ffi';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
+import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
@@ -121,9 +123,18 @@ class ProfileFunctions
 
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(authCredentials.getProfile());
-
       Profile profile = activeSession.getProfile();
-      Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(FoodRunnerLoginData.sourceOrgs)));
+
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<FoodRecoveryTransaction> future = client.getFoodRecoveryTransaction();
+      future.then((foodRecoveryTransaction){
+        print(foodRecoveryTransaction);
+        List<FoodRecoveryTransaction> recoveryTxs = new List();
+        recoveryTxs.add(foodRecoveryTransaction);
+
+        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(recoveryTxs)));
+      });
+
       showCards(context, profile);
     });
   }
