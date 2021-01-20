@@ -20,6 +20,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
     private static Logger logger = LoggerFactory.getLogger(SchedulePickUpNotification.class);
 
     private List<Note> pickupNotes;
+    private FoodDetails foodDetails;
 
     public SchedulePickUpNotification()
     {
