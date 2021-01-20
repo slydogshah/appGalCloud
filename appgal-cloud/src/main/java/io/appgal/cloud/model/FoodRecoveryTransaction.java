@@ -1,6 +1,7 @@
 package io.appgal.cloud.model;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ public class FoodRecoveryTransaction implements Serializable {
     private SchedulePickUpNotification pickUpNotification;
     private ScheduleDropOffNotification dropOffNotification;
 
-    FoodRecoveryTransaction()
+    public FoodRecoveryTransaction()
     {
     }
 
@@ -39,15 +40,34 @@ public class FoodRecoveryTransaction implements Serializable {
 
     public static FoodRecoveryTransaction parse(String json)
     {
-        return new FoodRecoveryTransaction();
+        FoodRecoveryTransaction foodRecoveryTransaction = new FoodRecoveryTransaction();
+
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+
+        if(jsonObject.has("pickupNotification"))
+        {
+            foodRecoveryTransaction.pickUpNotification = SchedulePickUpNotification.parse(
+                    jsonObject.get("pickupNotification").toString());
+        }
+        if(jsonObject.has("dropOffNotification"))
+        {
+            foodRecoveryTransaction.dropOffNotification = ScheduleDropOffNotification.parse(
+                    jsonObject.get("dropOffNotification").toString());
+        }
+
+        return foodRecoveryTransaction;
     }
 
     public JsonObject toJson()
     {
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.add("pickupNotification", this.pickUpNotification.toJson());
-        jsonObject.add("dropOffNotification", this.dropOffNotification.toJson());
+        if(this.pickUpNotification != null) {
+            jsonObject.add("pickupNotification", this.pickUpNotification.toJson());
+        }
+        if(this.dropOffNotification != null) {
+            jsonObject.add("dropOffNotification", this.dropOffNotification.toJson());
+        }
 
         return jsonObject;
     }

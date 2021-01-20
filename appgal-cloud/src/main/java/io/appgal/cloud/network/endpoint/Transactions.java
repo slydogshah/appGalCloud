@@ -25,32 +25,16 @@ import java.util.UUID;
 public class Transactions {
     private static Logger logger = LoggerFactory.getLogger(Transactions.class);
 
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
 
     @Path("/recovery")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFoodRecoveryTransactions(@QueryParam("email") String email)
     {
-        List<FoodRecoveryTransaction> txs = new ArrayList<>();
-
-        for(int i=0; i<5; i++) {
-            //pickup
-            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
-            sourceOrg.setProducer(true);
-            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
-            schedulePickUpNotification.setSourceOrg(sourceOrg);
-            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-            schedulePickUpNotification.setStart(start);
-
-            //dropoff
-            SourceOrg church = new SourceOrg("church", "Church", "mrchrist@church.com", false);
-            ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
-            dropOffNotification.setSourceOrg(church);
-
-
-            FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification, dropOffNotification);
-            txs.add(tx);
-        }
+        List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransaction(email);
         return Response.ok(txs.toString()).build();
     }
 }

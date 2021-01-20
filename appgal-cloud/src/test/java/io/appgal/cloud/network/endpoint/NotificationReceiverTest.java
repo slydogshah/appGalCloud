@@ -98,6 +98,11 @@ public class NotificationReceiverTest extends BaseTest {
             assertFalse(excluded.contains(id));
             assertTrue(cour.get("notificationSent").getAsBoolean());
         }
+
+        response = given().when().get("/tx/recovery/?email=bugs.bunny.shah@gmail.com")
+                .andReturn();
+        array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
+        JsonUtil.print(array);
     }
 
     @Test

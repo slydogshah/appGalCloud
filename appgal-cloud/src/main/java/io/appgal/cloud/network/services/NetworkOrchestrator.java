@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.data.history.service.DataReplayService;
 import io.bugsbunny.preprocess.SecurityTokenContainer;
 import org.slf4j.Logger;
@@ -38,6 +37,9 @@ public class NetworkOrchestrator {
 
     @Inject
     private DropOffPipeline dropOffPipeline;
+
+    @Inject
+    private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
 
     private Map<String, Collection<FoodRunner>> finderResults;
 
@@ -121,11 +123,20 @@ public class NetworkOrchestrator {
     {
         this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
         this.requestPipeline.add(schedulePickUpNotification);
+
+        this.foodRecoveryOrchestrator.notifyForPickUp(schedulePickUpNotification);
     }
 
     public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
     {
         this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
         this.dropOffPipeline.add(scheduleDropOffNotification);
+
+        this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);
+    }
+
+    public NotificationEngine getNotificationEngine()
+    {
+        return this.notificationEngine;
     }
 }

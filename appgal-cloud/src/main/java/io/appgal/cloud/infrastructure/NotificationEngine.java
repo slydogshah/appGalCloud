@@ -38,6 +38,16 @@ public class NotificationEngine extends TimerTask {
         this.timer.schedule(this, new Date(), 5000);
     }
 
+    public RequestPipeline getRequestPipeline()
+    {
+        return this.requestPipeline;
+    }
+
+    public DropOffPipeline getDropOffPipeline()
+    {
+        return this.dropOffPipeline;
+    }
+
     @Override
     public void run()
     {
