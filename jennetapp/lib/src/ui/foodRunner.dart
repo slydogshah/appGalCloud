@@ -30,12 +30,12 @@ class FoodRunnerMainScene extends StatefulWidget {
     for(int i=0; i< 2; i++)
     {
         //pickup
-        File file = new File('test_resources/schedulePickupNotification.json');
-        SchedulePickupNotification schedulePickupNotification = SchedulePickupNotification.fromJson(jsonDecode(await file.readAsString()));
+        SourceOrg pickupOrg = new SourceOrg("microsoft","Microsoft","missgates@microsft.com",null,true);
+        SchedulePickupNotification schedulePickupNotification = new SchedulePickupNotification(pickupOrg,null,0);
 
         //dropoff
-        file = new File('test_resources/dropOffNotification.json');
-        DropOffNotification dropOffNotification = DropOffNotification.fromJson(jsonDecode(await file.readAsString()));
+        SourceOrg dropOffOrg = new SourceOrg("apple","Apple","mrjobs@apple.com",null,false);
+        DropOffNotification dropOffNotification = new DropOffNotification(dropOffOrg, null);
 
         FoodRecoveryTransaction local = new FoodRecoveryTransaction(schedulePickupNotification, dropOffNotification);
         recoveryTxs.add(local);

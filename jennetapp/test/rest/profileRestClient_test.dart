@@ -58,7 +58,7 @@ void main() {
 
   test('register', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Profile profile = new Profile(null,"testsuite@blah.com","8675309","photu","password");
+    Profile profile = new Profile(null,"testsuite@blah.com",8675309,"photu","password");
     profile.setProfileType("FOOD_RUNNER");
     profileRestClient.register(profile);
   });
