@@ -168,23 +168,6 @@ public class ActiveNetworkTests extends BaseTest {
     }
 
     @Test
-    public void testFoodRequestCycle()
-    {
-        PickupRequest foodRequest = new PickupRequest();
-        SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
-        foodRequest.setFoodType(FoodTypes.VEG);
-        foodRequest.setSourceOrg(sourceOrg1);
-        String jsonBody = foodRequest.toJson().toString();
-
-        Response response = given().body(jsonBody.toString()).when().post("/activeNetwork/sendFoodRequest/").andReturn();
-
-        String jsonString = response.getBody().prettyPrint();
-        logger.info("****");
-        logger.info(jsonString);
-        logger.info("****");
-    }
-
-    @Test
     public void testSourceOrgs() {
         Response response = given().when().get("/activeNetwork/sourceOrgs/")
                 .andReturn();

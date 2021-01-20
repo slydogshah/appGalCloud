@@ -32,73 +32,6 @@ public class NotificationReceiverTest extends BaseTest {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
-    @BeforeEach
-    public void setUp() throws InterruptedException {
-        JsonObject jsonObject = new JsonObject();
-        List<String> ids = new ArrayList<>();
-        for(int i=0; i< 10; i++) {
-            jsonObject = new JsonObject();
-            String id = UUID.randomUUID().toString();
-            ids.add(id);
-            jsonObject.addProperty("sourceNotificationId", id);
-        }
-    }
-
-    //@Test
-    public void testReceiveSourceNotification() {
-        Response response = given().when().post("/notification/receive/?startTimestamp=1581392859&endTimestamp=1581393459")
-                .andReturn();
-
-        response.getBody().prettyPrint();
-    }
-
-    //@Test
-    public void testReadDestinationNotifications() {
-        given().when().post("/notification/receive/?startTimestamp=1581392859&endTimestamp=1581393459")
-                .andReturn();
-        Response response = given().when().get("/notification/readDestinationNotifications/?startTimestamp=1581392859&endTimestamp=1581393459")
-                .andReturn();
-
-        String json = response.getBody().prettyPrint();
-
-        //assert the body
-        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        JsonArray destinationNotifications = jsonObject.getAsJsonArray("destinationNotifications");
-        assertNotNull(destinationNotifications);
-    }
-
-    //@Test
-    public void testReceiveNotificationForPickup() {
-        Response response = given().when().post("/notification/receiveNotificationForPickup/92ed655a-99a2-438b-8eeb-05d12a2d8a1b")
-                .andReturn();
-
-        String json = response.getBody().prettyPrint();
-        //logger.info("****");
-        //logger.info(json);
-        //logger.info("****");
-
-        //assert the body
-        JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-        JsonObject jsonObject = jsonArray.get(0).getAsJsonObject();
-        String sourceNotificationId = jsonObject.get("sourceNotificationId").getAsString();
-        assertEquals("92ed655a-99a2-438b-8eeb-05d12a2d8a1b", sourceNotificationId);
-    }
-
-    //@Test
-    public void testGetOutstandingFoodRunnerNotification() {
-        Response response = given().when().get("/notification/getOutstandingFoodRunnerNotification").andReturn();
-
-        String json = response.getBody().prettyPrint();
-        logger.info("****");
-        logger.info(json);
-        logger.info("****");
-
-        //assert the body
-        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String foodRunnerId = jsonObject.get("foodRunnerId").getAsString();
-        assertNotNull(foodRunnerId);
-    }
-
     @Test
     public void testPickUpNotifications() throws Exception{
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
@@ -143,11 +76,80 @@ public class NotificationReceiverTest extends BaseTest {
 
         logger.info(excluded.toString());
         assertTrue(excluded.size()==1);
-        Thread.sleep(45000);
+        Thread.sleep(15000);
 
 
         Response response = given().when().get("/notification/pickup/notifications?email=bugs.bunny.shah@gmail.com")
                 .andReturn();
+        JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
+        JsonUtil.print(array);
+        assertTrue(array.size() > 0);
+        Iterator<JsonElement> itr = array.iterator();
+        while(itr.hasNext())
+        {
+            JsonObject cour = itr.next().getAsJsonObject();
+            String id = cour.get("id").getAsString();
+
+            logger.info("****************************************");
+            logger.info("Exclude: "+excluded.get(0).toString());
+            logger.info("Current: "+id);
+            logger.info("****************************************");
+
+            assertFalse(excluded.contains(id));
+            assertTrue(cour.get("notificationSent").getAsBoolean());
+        }
+    }
+
+    @Test
+    public void testDropOffNotifications() throws Exception{
+        Location location = new Location(30.25860595703125d, -97.74873352050781d);
+        JsonUtil.print(this.networkOrchestrator.getActiveView());
+
+        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
+
+        OffsetDateTime middle = OffsetDateTime.now(ZoneOffset.UTC).withHour(12).withMinute(0).withSecond(0);
+
+        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).plusDays(1);
+
+        List<OffsetDateTime> notificationList = new LinkedList<>();
+        notificationList.add(middle);
+        notificationList.add(end);
+        notificationList.add(start);
+        List<String> excluded = new LinkedList<>();
+        logger.info(notificationList.toString());
+
+        for (int i=0; i<notificationList.size();i++) {
+            OffsetDateTime cour = notificationList.get(i);
+            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
+            sourceOrg.setProducer(true);
+            sourceOrg.setLocation(location);
+            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
+            FoodRunner bugsBunny = new FoodRunner(profile, location);
+
+            ScheduleDropOffNotification notification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
+            notification.setSourceOrg(sourceOrg);
+            notification.setFoodRunner(bugsBunny);
+            notification.setStart(cour);
+            logger.info("********************************************");
+            //JsonUtil.print(schedulePickUpNotification.toJson());
+            logger.info(cour.toString() + ":" + cour.toEpochSecond());
+
+            this.networkOrchestrator.scheduleDropOff(notification);
+
+            if(cour.toEpochSecond() == end.toEpochSecond())
+            {
+                excluded.add(notification.getId());
+            }
+        }
+
+        logger.info(excluded.toString());
+        assertTrue(excluded.size()==1);
+        Thread.sleep(15000);
+
+
+        Response response = given().when().get("/notification/dropOff/notifications?orgId=microsoft")
+                .andReturn();
+        logger.info(response.getBody().prettyPrint());
         JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
         JsonUtil.print(array);
         assertTrue(array.size() > 0);

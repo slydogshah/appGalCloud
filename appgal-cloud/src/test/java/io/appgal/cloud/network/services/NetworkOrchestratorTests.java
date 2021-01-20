@@ -111,47 +111,6 @@ public class NetworkOrchestratorTests extends BaseTest {
     }
 
     @Test
-    public void testSendPickUpRequestLifeCycle() throws Exception {
-        int numberOfFoodRunners = 10;
-        double startLatitude = 0.0d;
-        double startLongitude = 0.0d;
-        Location location = new Location(startLatitude, startLongitude);
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setProducer(true);
-        sourceOrg.setLocation(location);
-        PickupRequest pickupRequest = new PickupRequest();
-        pickupRequest.setSourceOrg(sourceOrg);
-        for(int i=0; i<numberOfFoodRunners; i++) {
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                    8675309l, "", "", ProfileType.FOOD_RUNNER);
-            FoodRunner foodRunner = new FoodRunner(profile, location);
-            logger.info("************************FOODRUNNER***************************************");
-            logger.info("FoodRunner: " + foodRunner.getProfile().getId());
-            logger.info("***************************************************************");
-
-            this.networkOrchestrator.enterNetwork(foodRunner);
-        }
-
-        String pickupRequestId = this.networkOrchestrator.sendPickUpRequest(pickupRequest);
-
-        logger.info("************************REQUEST_ID***************************************");
-        logger.info("RequestId: " + pickupRequestId);
-        logger.info("***************************************************************");
-
-        JsonObject request = this.networkOrchestrator.getPickRequestResult(pickupRequestId);
-        logger.info("*********************PICKUP_REQUEST******************************************");
-        logger.info(request.toString());
-        logger.info("***************************************************************");
-
-        JsonArray latestResults = this.networkOrchestrator.getLatestResults(pickupRequestId);
-        logger.info("********************RESULTS*******************************************");
-        logger.info(latestResults.toString());
-        logger.info("NUMBER: "+ latestResults.size());
-        logger.info("***************************************************************");
-        assertEquals(numberOfFoodRunners, latestResults.size());
-    }
-
-    @Test
     public void testActiveView() throws Exception {
         JsonObject activeView = this.networkOrchestrator.getActiveView();
         logger.info(gson.toJson(activeView));
@@ -180,77 +139,6 @@ public class NetworkOrchestratorTests extends BaseTest {
     }
 
     @Test
-    public void testOrchestration() throws Exception {
-        this.activeNetwork.clearActiveNetwork();
-
-        List<FoodRunner> foodRunners = this.mongoDBStore.getAllFoodRunners();
-        logger.info(foodRunners.toString());
-
-
-        double startLatitude = 30.25860595703125d;
-        double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "",
-                ProfileType.FOOD_RUNNER);
-        Location location = new Location(startLatitude, startLongitude);
-        FoodRunner bugsBunny = new FoodRunner(profile, location);
-
-        startLatitude = 44.9441d;
-        startLongitude = -93.0852d;
-        profile = new Profile(UUID.randomUUID().toString(), "ms.dhoni@gmail.com", 8675309l, "", "",
-                ProfileType.FOOD_RUNNER);
-        location = new Location(startLatitude, startLongitude);
-        FoodRunner captain = new FoodRunner(profile, location);
-
-        this.networkOrchestrator.enterNetwork(bugsBunny);
-        this.networkOrchestrator.enterNetwork(captain);
-
-        JsonObject activeView = this.networkOrchestrator.getActiveView();
-        logger.info("***ACTIVE_VIEW****");
-        logger.info(gson.toJson(activeView));
-        logger.info("******************");
-
-        List<SourceOrg> sourceOrgs = new ArrayList<>();
-        Location dropLocation1 = new Location(30.25860595703125d, -97.74873352050781d);
-        Location dropLocation2 = new Location(44.9441d, -93.0852d);
-
-        SourceOrg dropOff1 = new SourceOrg("church1", "DOWNTOWN_CHURCH",
-                "downtown.church@gmail.com",false);
-        dropOff1.setProducer(false);
-        dropOff1.setLocation(dropLocation1);
-        SourceOrg dropOff2 = new SourceOrg("church2", "SUBURB_CHURCH", "suburb.church@gmail.com",true);
-        dropOff2.setProducer(true);
-        dropOff2.setLocation(dropLocation2);
-        sourceOrgs.add(dropOff1);
-        sourceOrgs.add(dropOff2);
-
-
-        PickupRequest pickupRequest1 = new PickupRequest();
-        pickupRequest1.setSourceOrg(dropOff1);
-
-        PickupRequest pickupRequest2 = new PickupRequest();
-        pickupRequest2.setSourceOrg(dropOff2);
-
-        String pickupRequestId1 = this.networkOrchestrator.sendPickUpRequest(pickupRequest1);
-        String pickupRequestId2 = this.networkOrchestrator.sendPickUpRequest(pickupRequest2);
-
-
-        JsonArray latestResults1 = this.networkOrchestrator.getLatestResults(pickupRequestId1);
-        logger.info("********************RESULTS*******************************************");
-        logger.info(latestResults1.toString());
-        logger.info("NUMBER: "+ latestResults1.size());
-        logger.info("***************************************************************");
-        assertEquals(1, latestResults1.size());
-
-
-        JsonArray latestResults2 = this.networkOrchestrator.getLatestResults(pickupRequestId2);
-        logger.info("********************RESULTS*******************************************");
-        logger.info(latestResults2.toString());
-        logger.info("NUMBER: "+ latestResults2.size());
-        logger.info("***************************************************************");
-        assertEquals(1, latestResults2.size());
-    }
-
-    @Test
     public void testFindBestDestination()
     {
         double startLatitude = 30.25860595703125d;
@@ -262,61 +150,6 @@ public class NetworkOrchestratorTests extends BaseTest {
         logger.info("*******");
         logger.info(bestDestination.toString());
         logger.info("*******");
-    }
-
-    @Test
-    public void testSendDeliveryNotification()
-    {
-        try {
-            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-            OffsetDateTime end = start.plusMinutes(Duration.ofMinutes(10).toMinutes());
-            MessageWindow messageWindow = new MessageWindow();
-            messageWindow.setStart(start);
-            messageWindow.setEnd(end);
-            SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-            sourceOrg1.setProducer(true);
-            String sourceNotificationId = UUID.randomUUID().toString();
-            SourceNotification sourceNotification = new SourceNotification();
-            sourceNotification.setSourceNotificationId(sourceNotificationId);
-            sourceNotification.setMessageWindow(messageWindow);
-            sourceNotification.setSourceOrg(sourceOrg1);
-
-            String destinationNotificationId = UUID.randomUUID().toString();
-            DestinationNotification destinationNotification = new DestinationNotification();
-            destinationNotification.setDestinationNotificationId(destinationNotificationId);
-            destinationNotification.setSourceNotification(sourceNotification);
-            SourceOrg destinationOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-            destinationOrg.setProducer(true);
-            Location location = new Location(30.25860595703125d, -97.74873352050781d);
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com",
-                    8675309l, "", "", ProfileType.FOOD_RUNNER, location);
-            FoodRunner foodRunner = new FoodRunner(profile, location);
-            foodRunner.setPickUpOrg(sourceOrg1);
-            DropOffNotification dropOffNotification = new DropOffNotification(destinationOrg, location, foodRunner);
-            destinationNotification.setDropOffNotification(dropOffNotification);
-
-            assertNull(destinationNotification.getDropOffNotification().getFoodRunner().getProfile().getChainId());
-
-            this.networkOrchestrator.sendDeliveryNotification(destinationNotification);
-            String newChainId = destinationNotification.getDropOffNotification().getFoodRunner().getProfile().getChainId();
-            assertNotNull(newChainId);
-            logger.info("*********************");
-            logger.info("ChainId: "+newChainId);
-            logger.info("*********************");
-
-            this.networkOrchestrator.sendDeliveryNotification(destinationNotification);
-            String sameChainId = destinationNotification.getDropOffNotification().getFoodRunner().getProfile().getChainId();
-            logger.info("*********************");
-            logger.info("ChainId: "+destinationNotification.getDropOffNotification().getFoodRunner().getProfile().getChainId());
-            logger.info("*********************");
-
-            assertEquals(newChainId, sameChainId);
-        }
-        catch(Exception e)
-        {
-            logger.info(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
     }
 
     @Test

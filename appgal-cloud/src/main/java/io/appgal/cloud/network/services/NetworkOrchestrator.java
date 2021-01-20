@@ -36,7 +36,8 @@ public class NetworkOrchestrator {
     @Inject
     private RequestPipeline requestPipeline;
 
-    private Queue<PickupRequest> activeFoodRunnerQueue;
+    @Inject
+    private DropOffPipeline dropOffPipeline;
 
     private Map<String, Collection<FoodRunner>> finderResults;
 
@@ -45,9 +46,9 @@ public class NetworkOrchestrator {
     @PostConstruct
     public void start()
     {
-        this.activeFoodRunnerQueue = new PriorityQueue<>();
         this.finderResults = new HashMap<>();
-        this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline, this.mongoDBJsonStore);
+        this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline, this.dropOffPipeline,
+                this.mongoDBJsonStore);
         this.notificationEngine.start();
         logger.info("*******");
         logger.info("NETWORK_ORCHESTRATOR_IS_ONLINE_NOW");
@@ -66,35 +67,6 @@ public class NetworkOrchestrator {
         this.mongoDBJsonStore.storeActiveNetwork(this.activeNetwork.getActiveFoodRunners());
     }
 
-    public String sendPickUpRequest(PickupRequest pickupRequest)
-    {
-        String requestId = UUID.randomUUID().toString();
-        pickupRequest.setRequestId(requestId);
-
-        this.mongoDBJsonStore.storePickUpRequest(pickupRequest);
-
-        this.runFoodRunnerFinder();
-
-        return requestId;
-    }
-
-    public JsonObject getPickRequestResult(String requestId)
-    {
-        PickupRequest pickupRequest = this.mongoDBJsonStore.getPickupRequest(requestId);
-        if(pickupRequest == null)
-        {
-            return new JsonObject();
-        }
-        return pickupRequest.toJson();
-    }
-
-    public JsonArray getLatestResults(String requestId)
-    {
-        PickupRequest pickupRequest = this.mongoDBJsonStore.getPickupRequest(requestId);
-        List<FoodRunner> foodRunners = this.activeNetwork.matchSourceOrgs(pickupRequest);
-        return JsonParser.parseString(foodRunners.toString()).getAsJsonArray();
-    }
-
     public JsonObject getActiveView()
     {
         JsonObject jsonObject = new JsonObject();
@@ -102,12 +74,6 @@ public class NetworkOrchestrator {
         jsonObject.add("activeFoodRunners", JsonParser.parseString(this.activeNetwork.toString()));
 
         JsonArray pickUpRequestArray = new JsonArray();
-        Iterator<PickupRequest> itr = this.activeFoodRunnerQueue.iterator();
-        while(itr.hasNext())
-        {
-            PickupRequest pickupRequest = itr.next();
-            pickUpRequestArray.add(pickupRequest.toJson());
-        }
         jsonObject.add("activeFoodRunnerQueue", pickUpRequestArray);
 
         JsonArray finderResultsArray = new JsonArray();
@@ -150,35 +116,16 @@ public class NetworkOrchestrator {
         List<SourceOrg> sourceOrgs = this.activeNetwork.matchFoodRunner(foodRunner);
         return sourceOrgs;
     }
-
-    public void sendDeliveryNotification(DestinationNotification destinationNotification)
-    {
-        JsonObject jsonObject = JsonParser.parseString(destinationNotification.toString()).getAsJsonObject();
-
-        FoodRunner foodRunner = destinationNotification.getDropOffNotification().getFoodRunner();
-        String chainId = foodRunner.getProfile().getChainId();
-
-        if(chainId == null) {
-            Random random = new Random();
-            JsonObject modelChain = new JsonObject();
-            modelChain.addProperty("modelId", random.nextLong());
-            modelChain.add("payload", jsonObject);
-            chainId = this.dataReplayService.generateDiffChain(modelChain);
-            foodRunner.getProfile().setChainId(chainId);
-        }
-        else
-        {
-            String modelId = chainId.substring(chainId.lastIndexOf("/"));
-            JsonObject modelChain = new JsonObject();
-            modelChain.addProperty("modelId", modelId);
-            modelChain.add("payload", jsonObject);
-            this.dataReplayService.addToDiffChain(chainId, modelChain);
-        }
-    }
     //--------FoodRunner Matching Process-----------------------------------------------
     public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
     {
         this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
         this.requestPipeline.add(schedulePickUpNotification);
+    }
+
+    public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
+    {
+        this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
+        this.dropOffPipeline.add(scheduleDropOffNotification);
     }
 }

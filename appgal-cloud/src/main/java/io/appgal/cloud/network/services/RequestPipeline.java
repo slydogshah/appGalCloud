@@ -87,4 +87,27 @@ public class RequestPipeline {
     {
         return this.queue.toString();
     }
+
+    public void process()
+    {
+        SchedulePickUpNotification notification = this.peek();
+        if (notification == null) {
+            //logger.info("*******1*********");
+            return;
+        }
+        //Check
+        if (!notification.activateNotification()) {
+            //logger.info("*******2*********");
+            this.remove(notification);
+            return;
+        }
+
+        //logger.info("*******3*********");
+        notification = this.next();
+        notification.setNotificationSent(true);
+
+        //logger.info("*******4*********");
+        //Send
+        this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
+    }
 }

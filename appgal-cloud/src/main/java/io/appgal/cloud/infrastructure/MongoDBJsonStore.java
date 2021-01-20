@@ -40,6 +40,11 @@ public class MongoDBJsonStore {
         this.mongoClient.close();
     }
 
+    public MongoClient getMongoClient()
+    {
+        return this.mongoClient;
+    }
+
     public List<FoodRunner> getAllFoodRunners()
     {
         List<FoodRunner> foodRunners = new ArrayList<>();
@@ -397,7 +402,8 @@ public class MongoDBJsonStore {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
-        String queryJson = "{\"foodRunner.profile.email\":\""+email+"\"}";
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"foodRunner.profile.email\":\""+email+"\"},{\"notificationSent\":"+Boolean.TRUE.booleanValue()+"}]}";
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -406,9 +412,7 @@ public class MongoDBJsonStore {
             Document document = cursor.next();
             String documentJson = document.toJson();
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
-            if(notification.isNotificationSent()) {
-                notifications.add(notification);
-            }
+            notifications.add(notification);
         }
 
         return notifications;
@@ -481,25 +485,38 @@ public class MongoDBJsonStore {
         return null;
     }
 
-    public void storePickUpRequest(PickupRequest pickupRequest)
+
+    public void storeScheduledDropOffNotification(ScheduleDropOffNotification scheduleDropOffNotification)
     {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
-        MongoCollection<Document> collection = database.getCollection("pickuprequest");
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
 
-        Document doc = Document.parse(pickupRequest.toString());
+        Document doc = Document.parse(scheduleDropOffNotification.toString());
         collection.insertOne(doc);
     }
 
-    public PickupRequest getPickupRequest(String requestId)
+    public void updateScheduledDropOffNotification(ScheduleDropOffNotification notification)
     {
-        PickupRequest pickupRequest = new PickupRequest();
-
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
-        MongoCollection<Document> collection = database.getCollection("pickuprequest");
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
 
-        String queryJson = "{\"requestId\":\""+requestId+"\"}";
+        JsonObject stored = this.getScheduledDropOffNotification(notification.getId());
+        Bson bson = Document.parse(stored.toString());
+        collection.deleteOne(bson);
+
+        stored.remove("_id");
+        stored.addProperty("notificationSent", true);
+        this.storeScheduledDropOffNotification(ScheduleDropOffNotification.parse(stored.toString()));
+    }
+
+    public JsonObject getScheduledDropOffNotification(String id)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
+
+        String queryJson = "{\"id\":\""+id+"\"}";
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -507,15 +524,56 @@ public class MongoDBJsonStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            pickupRequest = PickupRequest.parse(documentJson);
+            return JsonParser.parseString(documentJson).getAsJsonObject();
         }
-
-        return pickupRequest;
+        return null;
     }
 
-    public void cleanup()
+    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications(String orgId)
     {
+        List<ScheduleDropOffNotification> notifications = new ArrayList<>();
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
+
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"sourceOrg.orgId\":\""+orgId+"\"},{\"notificationSent\":"+Boolean.TRUE.booleanValue()+"}]}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            notifications.add(ScheduleDropOffNotification.parse(documentJson));
+        }
+        return notifications;
+    }
+
+    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications()
+    {
+        List<ScheduleDropOffNotification> notifications = new ArrayList<>();
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
+
+        String queryJson = "{}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            notifications.add(ScheduleDropOffNotification.parse(documentJson));
+        }
+        return notifications;
+    }
+
+    /*public void cleanup()
+    {
+        mongoClient.getDatabase("appgalcloud").drop();
+
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
         collection.deleteMany(Document.parse("{}"));
@@ -526,10 +584,13 @@ public class MongoDBJsonStore {
         collection = database.getCollection("dropOffNotifications");
         collection.deleteMany(Document.parse("{}"));
 
-        collection = database.getCollection("kafkaDaemonBootstrapData");
-        collection.deleteMany(Document.parse("{}"));
-
         collection = database.getCollection("profile");
         collection.deleteMany(Document.parse("{}"));
-    }
+
+        collection = database.getCollection("scheduledDropOffNotifications");
+        collection.deleteMany(Document.parse("{}"));
+
+        collection = database.getCollection("scheduledPickUpNotifications");
+        collection.deleteMany(Document.parse("{}"));
+    }*/
 }

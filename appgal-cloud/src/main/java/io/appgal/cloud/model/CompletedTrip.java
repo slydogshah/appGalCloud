@@ -9,17 +9,15 @@ public class CompletedTrip {
 
     private FoodRunner foodRunner;
     private DropOffNotification dropOffNotification;
-    private PickupRequest pickupRequest;
 
     public CompletedTrip()
     {
 
     }
 
-    public CompletedTrip(FoodRunner foodRunner, DropOffNotification dropOffNotification, PickupRequest pickupRequest) {
+    public CompletedTrip(FoodRunner foodRunner, DropOffNotification dropOffNotification) {
         this.foodRunner = foodRunner;
         this.dropOffNotification = dropOffNotification;
-        this.pickupRequest = pickupRequest;
     }
 
     public FoodRunner getFoodRunner() {
@@ -36,14 +34,6 @@ public class CompletedTrip {
 
     public void setDropOffNotification(DropOffNotification dropOffNotification) {
         this.dropOffNotification = dropOffNotification;
-    }
-
-    public PickupRequest getPickupRequest() {
-        return pickupRequest;
-    }
-
-    public void setPickupRequest(PickupRequest pickupRequest) {
-        this.pickupRequest = pickupRequest;
     }
 
     public JsonObject toJson()

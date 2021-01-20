@@ -23,7 +23,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@QuarkusTest
 public class RequestPipelineTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(RequestPipelineTests.class);
 
@@ -31,12 +30,12 @@ public class RequestPipelineTests extends BaseTest {
             .setPrettyPrinting()
             .create();
 
-    @Inject
-    private RequestPipeline requestPipeline;
+    private RequestPipeline requestPipeline = new RequestPipeline();
 
     @BeforeEach
-    public void setUp()
+    public void setUp() throws Exception
     {
+        super.setUp();
         this.requestPipeline.clear();
     }
 
