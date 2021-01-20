@@ -110,20 +110,19 @@ class ActiveNetworkRestClient
     return response.statusCode;
   }
 
-  Future<FoodRecoveryTransaction> getFoodRecoveryTransaction() async
+  Future<List<FoodRecoveryTransaction>> getFoodRecoveryTransaction() async
   {
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/tx/recovery';
-    print(remoteUrl);
     var response = await http.get(remoteUrl);
     String responseJson = response.body;
     print(responseJson);
-    /*Iterable l = json.decode(responseJson);
-    List<SourceOrg> sourceOrgs = new List();
-    for(Map<String, dynamic> sourceOrgJson in l)
+    Iterable l = json.decode(responseJson);
+    List<FoodRecoveryTransaction> txs = new List();
+    for(Map<String, dynamic> tx in l)
     {
-        SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
-        sourceOrgs.add(sourceOrg);
-    }*/
-    return FoodRecoveryTransaction.fromJson(jsonDecode(responseJson));
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+        txs.add(local);
+    }
+    return txs;
   }
 }

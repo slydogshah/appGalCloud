@@ -1,5 +1,6 @@
 package io.appgal.cloud.network.endpoint;
 
+import com.google.common.collect.ForwardingList;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.FoodRecoveryTransaction;
 import io.appgal.cloud.model.ScheduleDropOffNotification;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,21 +31,26 @@ public class Transactions {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFoodRecoveryTransactions(@QueryParam("email") String email)
     {
-        //pickup
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setProducer(true);
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
-        schedulePickUpNotification.setSourceOrg(sourceOrg);
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-        schedulePickUpNotification.setStart(start);
+        List<FoodRecoveryTransaction> txs = new ArrayList<>();
 
-        //dropoff
-        SourceOrg church = new SourceOrg("church", "Church", "mrchrist@church.com",false);
-        ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
-        dropOffNotification.setSourceOrg(church);
+        for(int i=0; i<5; i++) {
+            //pickup
+            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
+            sourceOrg.setProducer(true);
+            SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
+            schedulePickUpNotification.setSourceOrg(sourceOrg);
+            OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+            schedulePickUpNotification.setStart(start);
+
+            //dropoff
+            SourceOrg church = new SourceOrg("church", "Church", "mrchrist@church.com", false);
+            ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
+            dropOffNotification.setSourceOrg(church);
 
 
-        FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,dropOffNotification);
-        return Response.ok(tx.toJson().toString()).build();
+            FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification, dropOffNotification);
+            txs.add(tx);
+        }
+        return Response.ok(txs.toString()).build();
     }
 }

@@ -126,13 +126,10 @@ class ProfileFunctions
       Profile profile = activeSession.getProfile();
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<FoodRecoveryTransaction> future = client.getFoodRecoveryTransaction();
-      future.then((foodRecoveryTransaction){
-        print(foodRecoveryTransaction);
-        List<FoodRecoveryTransaction> recoveryTxs = new List();
-        recoveryTxs.add(foodRecoveryTransaction);
-
-        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(recoveryTxs)));
+      Future<List<FoodRecoveryTransaction>> future = client.getFoodRecoveryTransaction();
+      future.then((txs){
+        print(txs);
+        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(txs)));
       });
 
       showCards(context, profile);
