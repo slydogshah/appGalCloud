@@ -1,1 +1,0 @@
-# AppGal FoodRunner App
