@@ -24,6 +24,14 @@ public class FoodRecoveryTransaction implements Serializable {
         this.dropOffNotification = dropOffNotification;
     }
 
+    public FoodRecoveryTransaction(SchedulePickUpNotification pickUpNotification, ScheduleDropOffNotification dropOffNotification,
+                                   FoodRunner foodRunner)
+    {
+        this.pickUpNotification = pickUpNotification;
+        this.dropOffNotification = dropOffNotification;
+        this.foodRunner = foodRunner;
+    }
+
     public SchedulePickUpNotification getPickUpNotification() {
         return pickUpNotification;
     }
@@ -38,6 +46,22 @@ public class FoodRecoveryTransaction implements Serializable {
 
     public void setDropOffNotification(ScheduleDropOffNotification dropOffNotification) {
         this.dropOffNotification = dropOffNotification;
+    }
+
+    public FoodRunner getFoodRunner() {
+        return foodRunner;
+    }
+
+    public void setFoodRunner(FoodRunner foodRunner) {
+        this.foodRunner = foodRunner;
+    }
+
+    public TransactionState getState() {
+        return state;
+    }
+
+    public void setState(TransactionState state) {
+        this.state = state;
     }
 
     public static FoodRecoveryTransaction parse(String json)
@@ -56,6 +80,16 @@ public class FoodRecoveryTransaction implements Serializable {
             foodRecoveryTransaction.dropOffNotification = ScheduleDropOffNotification.parse(
                     jsonObject.get("dropOffNotification").toString());
         }
+        if(jsonObject.has("foodRunner"))
+        {
+            foodRecoveryTransaction.foodRunner = FoodRunner.parse(
+                    jsonObject.get("foodRunner").toString());
+        }
+        if(jsonObject.has("state"))
+        {
+            String txStateStriing = jsonObject.get("state").getAsString();
+            foodRecoveryTransaction.state = TransactionState.valueOf(txStateStriing);
+        }
 
         return foodRecoveryTransaction;
     }
@@ -64,11 +98,19 @@ public class FoodRecoveryTransaction implements Serializable {
     {
         JsonObject jsonObject = new JsonObject();
 
+        if(this.state != null)
+        {
+            jsonObject.addProperty("state", this.state.name());
+        }
         if(this.pickUpNotification != null) {
             jsonObject.add("pickupNotification", this.pickUpNotification.toJson());
         }
         if(this.dropOffNotification != null) {
             jsonObject.add("dropOffNotification", this.dropOffNotification.toJson());
+        }
+        if(this.foodRunner != null)
+        {
+            jsonObject.add("foodRunner", this.foodRunner.toJson());
         }
 
         return jsonObject;

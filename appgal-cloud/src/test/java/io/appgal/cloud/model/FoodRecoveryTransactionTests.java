@@ -32,8 +32,18 @@ public class FoodRecoveryTransactionTests {
         ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
         dropOffNotification.setSourceOrg(church);
 
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        Location location = new Location(0.0d, 0.0d);
+        FoodRunner bugsBunny = new FoodRunner(profile, location);
+        schedulePickUpNotification.setFoodRunner(bugsBunny);
 
         FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,dropOffNotification);
+        TransactionState txState = TransactionState.INPROGRESS;
+        tx.setState(txState);
         JsonUtil.print(tx.toJson());
+
+        String jsonString = tx.toString();
+        FoodRecoveryTransaction deser = FoodRecoveryTransaction.parse(jsonString);
+        JsonUtil.print(deser.toJson());
     }
 }
