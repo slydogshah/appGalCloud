@@ -303,21 +303,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void testFoodRecoveryTransactionLifeCycle()
     {
-        //pickup
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setProducer(true);
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
-        schedulePickUpNotification.setSourceOrg(sourceOrg);
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-        schedulePickUpNotification.setStart(start);
-
-        //dropoff
-        SourceOrg church = new SourceOrg("church", "Church", "mrchrist@church.com",false);
-        ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
-        dropOffNotification.setSourceOrg(church);
-
-
-        FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,dropOffNotification);
+        FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
         JsonUtil.print(tx.toJson());
 
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
