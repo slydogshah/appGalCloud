@@ -1,6 +1,7 @@
 package io.appgal.cloud.model;
 
 import io.appgal.cloud.util.JsonUtil;
+import io.bugsbunny.test.components.MockData;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,27 +20,7 @@ public class FoodRecoveryTransactionTests {
     @Test
     public void testJson()
     {
-        //pickup
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setProducer(true);
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
-        schedulePickUpNotification.setSourceOrg(sourceOrg);
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-        schedulePickUpNotification.setStart(start);
-
-        //dropoff
-        SourceOrg church = new SourceOrg("church", "Church", "mrchrist@church.com",false);
-        ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
-        dropOffNotification.setSourceOrg(church);
-
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
-        Location location = new Location(0.0d, 0.0d);
-        FoodRunner bugsBunny = new FoodRunner(profile, location);
-        schedulePickUpNotification.setFoodRunner(bugsBunny);
-
-        FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,dropOffNotification);
-        TransactionState txState = TransactionState.INPROGRESS;
-        tx.setState(txState);
+        FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
         JsonUtil.print(tx.toJson());
 
         String jsonString = tx.toString();

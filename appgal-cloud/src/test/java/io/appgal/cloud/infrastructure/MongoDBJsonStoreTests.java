@@ -6,6 +6,7 @@ import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
+import io.bugsbunny.test.components.MockData;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,30 +50,9 @@ public class MongoDBJsonStoreTests extends BaseTest {
     }
 
     @Test
-    public void testDropOffNotificationStorageCycle()
-    {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","",
-                ProfileType.FOOD_RUNNER);
-        FoodRunner foodRunner = new FoodRunner(profile, location);
-        DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
-
-        logger.info(dropOffNotification.toJson().toString());
-
-        this.mongoDBJsonStore.storeDropOffNotification(dropOffNotification);
-
-        DropOffNotification stored = this.mongoDBJsonStore.findDropOffNotification("blah");
-        JsonObject object = JsonParser.parseString(stored.toString()).getAsJsonObject();
-        logger.info("*******");
-        logger.info(this.gson.toJson(object));
-        logger.info("*******");
-    }
-
-    @Test
     public void testStoreProfile()
     {
-        Profile profile = new Profile("CLOUD_ID","blah@blah.com",8675309l,"photu","", ProfileType.FOOD_RUNNER);
+        Profile profile = MockData.mockProfile();
         this.mongoDBJsonStore.storeProfile(profile);
 
         Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
@@ -85,7 +65,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void testSourceOrgLifecycle()
     {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        SourceOrg sourceOrg = MockData.mockProducerOrg();
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
         List<SourceOrg> stored = this.mongoDBJsonStore.getSourceOrgs();
 

@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 
 import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
+import io.bugsbunny.test.components.MockData;
+import io.quarkus.test.Mock;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
@@ -28,22 +30,8 @@ public class SchedulePickUpNotificationTests extends BaseTest {
     @Test
     public void testJson() throws Exception
     {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setProducer(true);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
-        Location location = new Location(0.0d, 0.0d);
-        FoodRunner bugsBunny = new FoodRunner(profile, location);
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-        long epochSecond = start.toEpochSecond();
-
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
-        schedulePickUpNotification.setSourceOrg(sourceOrg);
-        schedulePickUpNotification.setFoodRunner(bugsBunny);
-        schedulePickUpNotification.setStart(start);
-
-        FoodDetails foodDetails = new FoodDetails();
-        foodDetails.setFoodTypes(FoodTypes.VEG);
-        schedulePickUpNotification.setFoodDetails(foodDetails);
+        SchedulePickUpNotification schedulePickUpNotification = MockData.mockSchedulePickupNotification();
+        long epochSecond = schedulePickUpNotification.start.toEpochSecond();
 
         String ser = schedulePickUpNotification.toString();
         JsonUtil.print(schedulePickUpNotification.toJson());
@@ -59,17 +47,7 @@ public class SchedulePickUpNotificationTests extends BaseTest {
     @Test
     public void testActivateNotification() throws Exception
     {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setProducer(true);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
-        Location location = new Location(0.0d, 0.0d);
-        FoodRunner bugsBunny = new FoodRunner(profile, location);
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
-        schedulePickUpNotification.setSourceOrg(sourceOrg);
-        schedulePickUpNotification.setFoodRunner(bugsBunny);
-        schedulePickUpNotification.setStart(start);
+        SchedulePickUpNotification schedulePickUpNotification = MockData.mockSchedulePickupNotification();
 
         assertTrue(schedulePickUpNotification.activateNotification());
 
