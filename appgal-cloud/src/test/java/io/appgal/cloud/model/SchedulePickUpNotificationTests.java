@@ -42,6 +42,7 @@ public class SchedulePickUpNotificationTests extends BaseTest {
         schedulePickUpNotification.setStart(start);
 
         FoodDetails foodDetails = new FoodDetails();
+        foodDetails.setFoodTypes(FoodTypes.VEG);
         schedulePickUpNotification.setFoodDetails(foodDetails);
 
         String ser = schedulePickUpNotification.toString();
