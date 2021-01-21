@@ -55,6 +55,7 @@ public class RequestPipeline {
     public void add(SchedulePickUpNotification schedulePickUpNotification)
     {
         this.queue.add(schedulePickUpNotification);
+        logger.info("QUEUE_SIZE: "+this.queue.size());
     }
 
     public SchedulePickUpNotification next()
@@ -85,19 +86,31 @@ public class RequestPipeline {
     @Override
     public String toString()
     {
-        return this.queue.toString();
+        //return this.queue.toString();
+        return "QUEUE_SIZE: "+this.queue.size();
     }
 
     public void process()
     {
-        SchedulePickUpNotification notification = this.peek();
-        if (notification == null) {
-            //logger.info("*******1*********");
+        if(this.size() == 0)
+        {
+            //logger.info("NOTIFICATION_PIPELINE_IS_EMPTY");
+            /*try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
             return;
         }
+        SchedulePickUpNotification notification = this.peek();
+        /*if (notification == null) {
+            //logger.info("*******1*********");
+            return;
+        }*/
+
         //Check
         if (!notification.activateNotification()) {
-            //logger.info("*******2*********");
+            logger.info("NOTIFICATION_NOT_READY_TO_BE_PROCESSED_YET");
             this.remove(notification);
             return;
         }

@@ -13,7 +13,7 @@ public class FoodRecoveryTransaction implements Serializable {
     private SchedulePickUpNotification pickUpNotification;
     private ScheduleDropOffNotification dropOffNotification;
     private FoodRunner foodRunner;
-    private TransactionState state;
+    private TransactionState state = TransactionState.SUBMITTED;
 
     public FoodRecoveryTransaction()
     {

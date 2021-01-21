@@ -35,7 +35,7 @@ public class NotificationEngine extends TimerTask {
     public void start()
     {
         this.timer = new Timer(true);
-        this.timer.schedule(this, new Date(), 5000);
+        this.timer.schedule(this, 10000, 10000);
     }
 
     public RequestPipeline getRequestPipeline()
