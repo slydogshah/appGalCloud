@@ -1,12 +1,15 @@
 package io.appgal.cloud.app.endpoint;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.app.services.AuthenticationException;
 import io.appgal.cloud.app.services.DifferentContextAuthException;
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.FoodRecoveryTransaction;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
@@ -22,6 +25,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,6 +41,9 @@ public class Registration {
 
     @Context
     private HttpServerRequest request;
+
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
 
     @Path("profile")
     @GET
@@ -142,18 +149,22 @@ public class Registration {
         String password = jsonObject.get("password").getAsString();
 
         try {
+            JsonObject responseJson = new JsonObject();
+
             Profile profile = this.profileRegistrationService.getProfile(email);
-            String json;
+            JsonElement profileJson;
             if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
-                JsonObject result = this.profileRegistrationService.login(userAgent, email, password);
-                json = result.toString();
+                profileJson = this.profileRegistrationService.login(userAgent, email, password);
+                responseJson.add("profile", profileJson);
             }
             else
             {
-                JsonArray result = this.profileRegistrationService.orgLogin(userAgent, email, password);
-                json = result.toString();
+                this.profileRegistrationService.orgLogin(userAgent, email, password);
             }
-            return Response.ok(json).build();
+            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransaction(email);
+            responseJson.add("pickupTransactions", JsonParser.parseString(txs.toString()));
+
+            return Response.ok(responseJson.toString()).build();
         }
         catch(AuthenticationException authenticationException)
         {
