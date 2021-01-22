@@ -33,7 +33,7 @@ class SchedulePickup extends React.Component
 {
     constructor(props) {
         super(props);
-        console.log("Constructor: "+JSON.stringify(this.props.location.state.sourceOrgs));
+        console.log("Constructor: "+JSON.stringify(this.props.location.state));
     }
     render() {
       const sourceOrgs = this.props.location.state.sourceOrgs;

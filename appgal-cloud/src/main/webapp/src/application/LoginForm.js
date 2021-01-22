@@ -53,8 +53,6 @@ class LoginForm extends React.Component {
 
     const apiUrl = 'http://localhost:8080/registration/login/';
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
-          //console.log(JSON.stringify(response.data));
-          //setTimeout(() => {  this.props.history.push("/dashboard"); }, 10000)
           this.props.history.push({
             pathname: "/home",
             state: response.data
