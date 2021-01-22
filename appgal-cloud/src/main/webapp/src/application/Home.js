@@ -45,6 +45,57 @@ import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
 
+const PendingTransactionView = () => {
+    const txs = []
+    const elements = [
+        {id: 0, name: 'John Doe', registered: '2018/01/01', role: 'Guest', status: 'Pending'},
+        {id: 1, name: 'Samppa Nori', registered: '2018/01/01', role: 'Member', status: 'Active'},
+        {id: 2, name: 'Estavan Lykos', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
+        {id: 3, name: 'Chetan Mohamed', registered: '2018/02/01', role: 'Admin', status: 'Inactive'},
+        {id: 4, name: 'Derick Maximinus', registered: '2018/03/01', role: 'Member', status: 'Pending'},
+        {id: 5, name: 'Friderik Dávid', registered: '2018/01/21', role: 'Staff', status: 'Active'},
+        {id: 6, name: 'Yiorgos Avraamu', registered: '2018/01/01', role: 'Member', status: 'Active'},
+        {id: 7, name: 'Avram Tarasios', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
+        {id: 8, name: 'Quintin Ed', registered: '2018/02/01', role: 'Admin', status: 'Inactive'},
+        {id: 9, name: 'Enéas Kwadwo', registered: '2018/03/01', role: 'Member', status: 'Pending'},
+        {id: 10, name: 'Agapetus Tadeáš', registered: '2018/01/21', role: 'Staff', status: 'Active'},
+        {id: 11, name: 'Carwyn Fachtna', registered: '2018/01/01', role: 'Member', status: 'Active'},
+        {id: 12, name: 'Nehemiah Tatius', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
+        {id: 13, name: 'Ebbe Gemariah', registered: '2018/02/01', role: 'Admin', status: 'Inactive'},
+        {id: 14, name: 'Eustorgios Amulius', registered: '2018/03/01', role: 'Member', status: 'Pending'},
+        {id: 15, name: 'Leopold Gáspár', registered: '2018/01/21', role: 'Staff', status: 'Active'},
+        {id: 16, name: 'Pompeius René', registered: '2018/01/01', role: 'Member', status: 'Active'},
+        {id: 17, name: 'Paĉjo Jadon', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
+        {id: 18, name: 'Micheal Mercurius', registered: '2018/02/01', role: 'Admin', status: 'Inactive'},
+        {id: 19, name: 'Ganesha Dubhghall', registered: '2018/03/01', role: 'Member', status: 'Pending'},
+        {id: 20, name: 'Hiroto Šimun', registered: '2018/01/21', role: 'Staff', status: 'Active'},
+        {id: 21, name: 'Vishnu Serghei', registered: '2018/01/01', role: 'Member', status: 'Active'},
+        {id: 22, name: 'Zbyněk Phoibos', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
+        {id: 23, name: 'Aulus Agmundr', registered: '2018/01/01', role: 'Member', status: 'Pending'},
+        {id: 42, name: 'Ford Prefect', registered: '2001/05/25', role: 'Alien', status: 'Don\'t panic!'}
+      ]
+    for (const [index, value] of elements.entries()) {
+        txs.push(
+             <div className="progress-group mb-4">
+                    <div className="progress-group-prepend">
+                      <span className="progress-group-text">
+                        Monday
+                      </span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <CProgress className="progress-xs" color="info" value="34" />
+                      <CProgress className="progress-xs" color="danger" value="78" />
+                    </div>
+              </div>
+         )
+    }
+    return(
+        <div>
+            {txs}
+        </div>
+    )
+}
+
 class Home extends React.Component {
   element;
   constructor(props) {
@@ -178,93 +229,7 @@ class Home extends React.Component {
                                       </CRow>
 
                                       <hr className="mt-0" />
-
-                                      <div className="progress-group mb-4">
-                                        <div className="progress-group-prepend">
-                                          <span className="progress-group-text">
-                                            Monday
-                                          </span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="info" value="34" />
-                                          <CProgress className="progress-xs" color="danger" value="78" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group mb-4">
-                                        <div className="progress-group-prepend">
-                                          <span className="progress-group-text">
-                                          Tuesday
-                                          </span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="info" value="56" />
-                                          <CProgress className="progress-xs" color="danger" value="94" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group mb-4">
-                                        <div className="progress-group-prepend">
-                                          <span className="progress-group-text">
-                                          Wednesday
-                                          </span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="info" value="12" />
-                                          <CProgress className="progress-xs" color="danger" value="67" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group mb-4">
-                                        <div className="progress-group-prepend">
-                                          <span className="progress-group-text">
-                                          Thursday
-                                          </span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="info" value="43" />
-                                          <CProgress className="progress-xs" color="danger" value="91" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group mb-4">
-                                        <div className="progress-group-prepend">
-                                          <span className="progress-group-text">
-                                          Friday
-                                          </span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="info" value="22" />
-                                          <CProgress className="progress-xs" color="danger" value="73" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group mb-4">
-                                        <div className="progress-group-prepend">
-                                          <span className="progress-group-text">
-                                          Saturday
-                                          </span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="info" value="53" />
-                                          <CProgress className="progress-xs" color="danger" value="82" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group mb-4">
-                                        <div className="progress-group-prepend">
-                                          <span className="progress-group-text">
-                                          Sunday
-                                          </span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="info" value="9" />
-                                          <CProgress className="progress-xs" color="danger" value="69" />
-                                        </div>
-                                      </div>
-                                      <div className="legend text-center">
-                                        <small>
-                                          <sup className="px-1"><CBadge shape="pill" color="info">&nbsp;</CBadge></sup>
-                                          New clients
-                                          &nbsp;
-                                          <sup className="px-1"><CBadge shape="pill" color="danger">&nbsp;</CBadge></sup>
-                                          Recurring clients
-                                        </small>
-                                      </div>
+                                      <PendingTransactionView/>
                                     </CCol>
 
                                     <CCol xs="12" md="6" xl="6">
