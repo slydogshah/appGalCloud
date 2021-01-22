@@ -128,7 +128,7 @@ class Home extends React.Component {
           <CCardGroup className="mb-4">
                  <CWidgetDropdown
                            color="gradient-primary"
-                           header={this.props.location.state.pickupTransactions.length}
+                           header={this.props.location.state.inProgress.length}
                            text="Pickups In-Progress"
                            footerSlot={
                              <ChartLineSimple
@@ -172,7 +172,7 @@ class Home extends React.Component {
                                           <CCallout color="info">
                                             <small className="text-muted">Pending</small>
                                             <br />
-                                            <strong className="h4">100</strong>
+                                            <strong className="h4">{this.props.location.state.pending.length}</strong>
                                           </CCallout>
                                         </CCol>
                                       </CRow>
@@ -274,7 +274,7 @@ class Home extends React.Component {
                                           <CCallout color="success">
                                             <small className="text-muted">Accepted</small>
                                             <br />
-                                            <strong className="h4">{this.props.location.state.pickupTransactions.length}</strong>
+                                            <strong className="h4">{this.props.location.state.inProgress.length}</strong>
                                           </CCallout>
                                         </CCol>
                                       </CRow>

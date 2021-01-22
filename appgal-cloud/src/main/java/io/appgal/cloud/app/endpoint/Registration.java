@@ -9,10 +9,7 @@ import io.appgal.cloud.app.services.DifferentContextAuthException;
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.model.FoodRecoveryTransaction;
-import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.ProfileType;
-import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.model.*;
 import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,7 +159,21 @@ public class Registration {
                 this.profileRegistrationService.orgLogin(userAgent, email, password);
             }
             List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransaction(email);
-            responseJson.add("pickupTransactions", JsonParser.parseString(txs.toString()));
+            JsonArray pendingTransactions = new JsonArray();
+            JsonArray activeTransactions = new JsonArray();
+            for(FoodRecoveryTransaction tx: txs)
+            {
+                if(tx.getState() == TransactionState.SUBMITTED)
+                {
+                    pendingTransactions.add(tx.toJson());
+                }
+                else
+                {
+                    activeTransactions.add(tx.toJson());
+                }
+            }
+            responseJson.add("pending", pendingTransactions);
+            responseJson.add("inProgress", activeTransactions);
 
             return Response.ok(responseJson.toString()).build();
         }
