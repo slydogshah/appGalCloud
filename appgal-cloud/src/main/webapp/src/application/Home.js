@@ -154,10 +154,13 @@ class Home extends React.Component {
 
   handlePickupProcess(event)
   {
-      this.props.history.push({
-                  pathname: "/schedulePickup",
-                  state: ""
-                });
+      const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft'; //TODO: unmock
+      axios.get(apiUrl).then((response) => {
+        this.props.history.push({
+          pathname: "/schedulePickup",
+          state: response.data
+        });
+      });
   }
 
   handlePickupHistory(event)

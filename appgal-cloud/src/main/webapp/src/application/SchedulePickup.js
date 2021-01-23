@@ -40,16 +40,16 @@ class SchedulePickup extends React.Component
       return (
         <>
           <CRow>
-            <CCol xs="12" lg="6">
+             <CCol xs="12" lg="6">
               <CCard>
                 <CCardHeader>
-                  Simple Table
-                  <DocsLink name="CModal"/>
+                  Striped Table
                 </CCardHeader>
                 <CCardBody>
                 <CDataTable
                   items={sourceOrgs}
                   fields={sourceOrgFields}
+                  striped
                 />
                 </CCardBody>
               </CCard>
@@ -72,78 +72,36 @@ class SchedulePickup extends React.Component
           </CRow>
 
           <CRow>
+           <CCol xs="12" lg="6">
+            <CCard>
+              <CCardHeader>
+                Striped Table
+              </CCardHeader>
+              <CCardBody>
+              <CDataTable
+                items={sourceOrgs}
+                fields={sourceOrgFields}
+                striped
+              />
+              </CCardBody>
+            </CCard>
+          </CCol>
 
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Condensed Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  size="sm"
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Bordered Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  bordered
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-          </CRow>
-
-          <CRow>
-            <CCol>
-              <CCard>
-                <CCardHeader>
-                  Combined All Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  hover
-                  striped
-                  bordered
-                  size="sm"
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CRow>
-            <CRow>
-            <CCol>
-              <CCard>
-                <CCardHeader>
-                  Combined All dark Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  dark
-                  hover
-                  striped
-                  bordered
-                  size="sm"
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CRow>
+          <CCol xs="12" lg="6">
+            <CCard>
+              <CCardHeader>
+                Striped Table
+              </CCardHeader>
+              <CCardBody>
+              <CDataTable
+                items={sourceOrgs}
+                fields={sourceOrgFields}
+                striped
+              />
+              </CCardBody>
+            </CCard>
+          </CCol>
+        </CRow>
         </>
       )
     }
