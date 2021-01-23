@@ -1,6 +1,7 @@
 import React, { useEffect, useState, createRef, lazy } from 'react'
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
+import axios from 'axios'
 import {
   CCardGroup,
   CCardFooter,
@@ -160,12 +161,15 @@ class Home extends React.Component {
   }
 
   handlePickupHistory(event)
-    {
-        this.props.history.push({
-                    pathname: "/pickupHistory",
-                    state: ""
-                  });
-    }
+  {
+    const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft'; //TODO: unmock
+    axios.get(apiUrl).then((response) => {
+          this.props.history.push({
+            pathname: "/pickupHistory",
+            state: response.data
+          });
+    });
+  }
 
   render() {
       return (
