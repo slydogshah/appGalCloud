@@ -1,6 +1,7 @@
 import React, { useEffect, useState, createRef } from 'react'
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
+import axios from 'axios'
 import {
   CCardGroup,
   CCardFooter,
@@ -43,90 +44,36 @@ import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
 
-class Home extends React.Component {
+class DropOffHome extends React.Component {
 
   element;
   constructor(props) {
       super(props);
+      console.log("DropOffHome: "+JSON.stringify(this.props.location.state));
       this.state = {username:'',password:'',isModalOpen:false};
-      this.handlePickup = this.handlePickup.bind(this);
-      this.handlePickupProcess = this.handlePickupProcess.bind(this);
       this.handleHistory = this.handleHistory.bind(this);
   }
 
-  handlePickup(event)
-  {
-     this.element = (
-          <CModal
-            size="sm"
-            show={true}
-            color="success"
-            fade="true"
-          >
-            <CModalHeader>
-              <CModalTitle>Schedule A Pickup</CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-                 <CCard>
-                     <CCardBody>
-                       <CRow>
-                         <CCol>
-                           <CFormGroup>
-                             <CLabel htmlFor="ccmonth">Preferred Pickup Time</CLabel>
-                             <CSelect custom name="ccmonth" id="ccmonth">
-                               <option value="0">12:00 AM</option>
-                               <option value="12">12:00 PM</option>
-                               <option value="23">11:59 PM</option>
-                             </CSelect>
-                           </CFormGroup>
-                         </CCol>
-                       </CRow>
-                     </CCardBody>
-                   </CCard>
-            </CModalBody>
-            <CModalFooter>
-                <CButton color="success" onClick={this.handlePickupProcess}>Schedule</CButton>
-            </CModalFooter>
-          </CModal>
-     );
-     /*const element = (
-                      <CAlert
-                      color="dark"
-                      closeButton
-                      >
-                         blah
-                     </CAlert>
-                  );*/
-     ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
-     ReactDOM.render(this.element,document.getElementById('schedulePickup'));
-  }
-
-  handlePickupProcess(event)
-  {
-      this.props.history.push({
-                  pathname: "/schedulePickup",
-                  state: ""
-                });
-  }
-
   handleHistory(event)
-    {
-        this.props.history.push({
-                    pathname: "/dropOffHistory",
-                    state: ""
-                  });
-    }
+  {
+        const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft';
+              axios.get(apiUrl).then((response) => {
+                this.props.history.push({
+                  pathname: "/dropOffHistory",
+                  state: response.data
+                });
+              });
+  }
 
   render() {
       return (
           <>
-          <div id="schedulePickup"></div>
           <CRow>
           <CCol>
           <CCardGroup className="mb-4">
                  <CWidgetDropdown
                            color="gradient-primary"
-                           header="50"
+                           header={this.props.location.state.inProgress.length}
                            text="Deliveries In-Progress"
                            footerSlot={
                              <ChartLineSimple
@@ -154,7 +101,7 @@ class Home extends React.Component {
           </CRow>
           <CRow>
                 <CCol>
-                    <DropOffDash/>
+                    <DropOffDash inProgress={this.props.location.state.inProgress}/>
                 </CCol>
                 </CRow>
           </>
@@ -162,4 +109,4 @@ class Home extends React.Component {
   }
 }
 
-export default withRouter(Home)
+export default withRouter(DropOffHome)
