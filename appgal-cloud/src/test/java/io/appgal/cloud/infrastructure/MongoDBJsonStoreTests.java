@@ -311,6 +311,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryTransactions(tx.getFoodRunner().
                 getProfile().getEmail());
         JsonUtil.print(JsonParser.parseString(list.toString()));
+        assertFalse(list.isEmpty());
     }
 
     @Test
@@ -325,5 +326,6 @@ public class MongoDBJsonStoreTests extends BaseTest {
         List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryTransactionHistory(tx.
                 getPickUpNotification().getSourceOrg().getOrgId());
         JsonUtil.print(JsonParser.parseString(list.toString()));
+        assertFalse(list.isEmpty());
     }
 }
