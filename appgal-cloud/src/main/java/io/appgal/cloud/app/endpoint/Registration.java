@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.app.services.AuthenticationException;
-import io.appgal.cloud.app.services.DifferentContextAuthException;
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
@@ -24,7 +23,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Path("registration")
 public class Registration {
@@ -158,7 +156,7 @@ public class Registration {
             {
                 this.profileRegistrationService.orgLogin(userAgent, email, password);
             }
-            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransaction(email);
+            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
             JsonArray pendingTransactions = new JsonArray();
             JsonArray activeTransactions = new JsonArray();
             for(FoodRecoveryTransaction tx: txs)
@@ -167,7 +165,7 @@ public class Registration {
                 {
                     pendingTransactions.add(tx.toJson());
                 }
-                else
+                else if(tx.getState() == TransactionState.INPROGRESS || tx.getState() == TransactionState.ONTHEWAY)
                 {
                     activeTransactions.add(tx.toJson());
                 }
