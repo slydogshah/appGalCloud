@@ -47,48 +47,6 @@ import usersData from 'src/views/users/UsersData'
 
 
 class DropOffOrgsView extends React.Component {
-    /*const components = []
-    for (const [index, value] of dropOffOrgs.entries()) {
-        components.push(
-             <CRow>
-                       <CCol>
-                       <CCardGroup className="mb-4">
-                              <CWidgetDropdown
-                                        color="gradient-primary"
-                                        header={value.orgName}
-                                        text="Schedule Pickup"
-                                        footerSlot={
-                                          <ChartLineSimple
-                                            pointed
-                                            className="c-chart-wrapper mt-3 mx-3"
-                                            style={{height: '70px'}}
-                                            dataPoints={[65, 59, 84, 84, 51, 55, 40]}
-                                            pointHoverBackgroundColor="primary"
-                                            label="Members"
-                                            labels="months"
-                                          />
-                                        }
-                                      >
-                                    <CDropdown>
-                                      <CDropdownToggle color="transparent">
-                                        <CIcon name="cil-settings"/>
-                                      </CDropdownToggle>
-                                      <CDropdownMenu className="pt-0" placement="bottom-end">
-                                        <CDropdownItem onClick={this.handleConfirm}>Confirm</CDropdownItem>
-                                      </CDropdownMenu>
-                                    </CDropdown>
-                                  </CWidgetDropdown>
-                       </CCardGroup>
-                       </CCol>
-                       </CRow>
-         )
-    }
-    return(
-        <div>
-            {components}
-        </div>
-    )*/
-
     constructor(props) {
         super(props);
         console.log("DropOffOrgsView : "+JSON.stringify(this.props));
