@@ -27,4 +27,13 @@ public class Transactions {
         List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
         return Response.ok(txs.toString()).build();
     }
+
+    @Path("/recovery/history")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodRecoveryTransactionHistory(@QueryParam("orgId") String orgId)
+    {
+        List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactionHistory(orgId);
+        return Response.ok(txs.toString()).build();
+    }
 }

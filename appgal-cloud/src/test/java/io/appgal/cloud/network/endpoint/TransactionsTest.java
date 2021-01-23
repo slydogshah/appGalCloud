@@ -24,4 +24,15 @@ public class TransactionsTest {
 
         JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
     }
+
+    @Test
+    public void testRecoveryHistoryEndpoint() throws Exception
+    {
+        String orgId = "microsoft";
+        final Response response = given()
+                .when().get("/tx/recovery/history/?orgId=" + orgId)
+                .andReturn();
+
+        JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
+    }
 }
