@@ -45,41 +45,38 @@ import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
 
-const PendingTransactionView = () => {
+const PendingTransactionView = ({pending}) => {
     const txs = []
-    const elements = [
-        {id: 0, name: 'John Doe', registered: '2018/01/01', role: 'Guest', status: 'Pending'},
-        {id: 1, name: 'Samppa Nori', registered: '2018/01/01', role: 'Member', status: 'Active'},
-        {id: 2, name: 'Estavan Lykos', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
-        {id: 3, name: 'Chetan Mohamed', registered: '2018/02/01', role: 'Admin', status: 'Inactive'},
-        {id: 4, name: 'Derick Maximinus', registered: '2018/03/01', role: 'Member', status: 'Pending'},
-        {id: 5, name: 'Friderik Dávid', registered: '2018/01/21', role: 'Staff', status: 'Active'},
-        {id: 6, name: 'Yiorgos Avraamu', registered: '2018/01/01', role: 'Member', status: 'Active'},
-        {id: 7, name: 'Avram Tarasios', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
-        {id: 8, name: 'Quintin Ed', registered: '2018/02/01', role: 'Admin', status: 'Inactive'},
-        {id: 9, name: 'Enéas Kwadwo', registered: '2018/03/01', role: 'Member', status: 'Pending'},
-        {id: 10, name: 'Agapetus Tadeáš', registered: '2018/01/21', role: 'Staff', status: 'Active'},
-        {id: 11, name: 'Carwyn Fachtna', registered: '2018/01/01', role: 'Member', status: 'Active'},
-        {id: 12, name: 'Nehemiah Tatius', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
-        {id: 13, name: 'Ebbe Gemariah', registered: '2018/02/01', role: 'Admin', status: 'Inactive'},
-        {id: 14, name: 'Eustorgios Amulius', registered: '2018/03/01', role: 'Member', status: 'Pending'},
-        {id: 15, name: 'Leopold Gáspár', registered: '2018/01/21', role: 'Staff', status: 'Active'},
-        {id: 16, name: 'Pompeius René', registered: '2018/01/01', role: 'Member', status: 'Active'},
-        {id: 17, name: 'Paĉjo Jadon', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
-        {id: 18, name: 'Micheal Mercurius', registered: '2018/02/01', role: 'Admin', status: 'Inactive'},
-        {id: 19, name: 'Ganesha Dubhghall', registered: '2018/03/01', role: 'Member', status: 'Pending'},
-        {id: 20, name: 'Hiroto Šimun', registered: '2018/01/21', role: 'Staff', status: 'Active'},
-        {id: 21, name: 'Vishnu Serghei', registered: '2018/01/01', role: 'Member', status: 'Active'},
-        {id: 22, name: 'Zbyněk Phoibos', registered: '2018/02/01', role: 'Staff', status: 'Banned'},
-        {id: 23, name: 'Aulus Agmundr', registered: '2018/01/01', role: 'Member', status: 'Pending'},
-        {id: 42, name: 'Ford Prefect', registered: '2001/05/25', role: 'Alien', status: 'Don\'t panic!'}
-      ]
-    for (const [index, value] of elements.entries()) {
+    for (const [index, value] of pending.entries()) {
         txs.push(
              <div className="progress-group mb-4">
                     <div className="progress-group-prepend">
                       <span className="progress-group-text">
-                        Monday
+                        {value.state}
+                      </span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <CProgress className="progress-xs" color="info" value="34" />
+                      <CProgress className="progress-xs" color="danger" value="78" />
+                    </div>
+              </div>
+         )
+    }
+    return(
+        <div>
+            {txs}
+        </div>
+    )
+}
+
+const InProgressTransactionView = ({inProgress}) => {
+    const txs = []
+    for (const [index, value] of inProgress.entries()) {
+        txs.push(
+             <div className="progress-group mb-4">
+                    <div className="progress-group-prepend">
+                      <span className="progress-group-text">
+                        {value.state}
                       </span>
                     </div>
                     <div className="progress-group-bars">
@@ -229,7 +226,7 @@ class Home extends React.Component {
                                       </CRow>
 
                                       <hr className="mt-0" />
-                                      <PendingTransactionView/>
+                                      <PendingTransactionView pending={this.props.location.state.pending}/>
                                     </CCol>
 
                                     <CCol xs="12" md="6" xl="6">
@@ -245,75 +242,7 @@ class Home extends React.Component {
                                       </CRow>
 
                                       <hr className="mt-0" />
-
-                                      <div className="progress-group mb-4">
-                                        <div className="progress-group-header">
-                                          <CIcon className="progress-group-icon" name="cil-user" />
-                                          <span className="title">Male</span>
-                                          <span className="ml-auto font-weight-bold">43%</span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="warning" value="43" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group mb-5">
-                                        <div className="progress-group-header">
-                                          <CIcon className="progress-group-icon" name="cil-user-female" />
-                                          <span className="title">Female</span>
-                                          <span className="ml-auto font-weight-bold">37%</span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="warning" value="37" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group">
-                                        <div className="progress-group-header">
-                                          <CIcon className="progress-group-icon" name="cil-globe-alt" />
-                                          <span className="title">Organic Search</span>
-                                          <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="success" value="56" />
-                                        </div>
-                                      </div>
-
-
-                                      <div className="progress-group">
-                                        <div className="progress-group-header">
-                                          <CIcon name="cib-facebook" className="progress-group-icon" />
-                                          <span className="title">Facebook</span>
-                                          <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="success" value="15" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group">
-                                        <div className="progress-group-header">
-                                          <CIcon name="cib-twitter" className="progress-group-icon" />
-                                          <span className="title">Twitter</span>
-                                          <span className="ml-auto font-weight-bold">37,564 <span className="text-muted small">(11%)</span></span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="success" value="11" />
-                                        </div>
-                                      </div>
-                                      <div className="progress-group">
-                                        <div className="progress-group-header">
-                                          <CIcon name="cib-linkedin" className="progress-group-icon" />
-                                          <span className="title">LinkedIn</span>
-                                          <span className="ml-auto font-weight-bold">27,319 <span className="text-muted small">(8%)</span></span>
-                                        </div>
-                                        <div className="progress-group-bars">
-                                          <CProgress className="progress-xs" color="success" value="8" />
-                                        </div>
-                                      </div>
-                                      <div className="divider text-center">
-                                        <CButton color="link" size="sm" className="text-muted">
-                                          <CIcon name="cil-options" />
-                                        </CButton>
-                                      </div>
-
+                                      <InProgressTransactionView inProgress={this.props.location.state.inProgress}/>
                                     </CCol>
                                   </CRow>
                                 </CCardBody>
