@@ -69,6 +69,7 @@ const DroppOfOrgsView = ({dropOffOrgs}) => {
                        <CCardGroup className="mb-4">
                               <CWidgetDropdown
                                         color="gradient-primary"
+                                        header={value.orgName}
                                         text="Schedule Pickup"
                                         footerSlot={
                                           <ChartLineSimple
