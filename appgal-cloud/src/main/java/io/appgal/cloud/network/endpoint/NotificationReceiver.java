@@ -42,6 +42,18 @@ public class NotificationReceiver {
         return Response.ok(schedulePickUpNotificationList.toString()).build();
     }
 
+    @Path("/dropOffOrgs")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response dropOffOrgs(@QueryParam("orgId") String orgId)
+    {
+        List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
+
+        JsonObject responseJson = new JsonObject();
+        responseJson.add("dropOffOrgs", JsonParser.parseString(dropOffOrgs.toString()));
+        return Response.ok(responseJson.toString()).build();
+    }
+
     @Path("/schedulePickup")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -51,11 +63,8 @@ public class NotificationReceiver {
         String orgId = jsonObject.get("orgId").getAsString();
         this.networkOrchestrator.schedulePickUp(orgId);
 
-        List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
-
         JsonObject responseJson = new JsonObject();
         responseJson.addProperty("operationSuccessful",true);
-        responseJson.add("dropOffOrgs", JsonParser.parseString(dropOffOrgs.toString()));
         return Response.ok(responseJson.toString()).build();
     }
 
