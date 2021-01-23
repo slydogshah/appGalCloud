@@ -154,8 +154,8 @@ class Home extends React.Component {
 
   handlePickupProcess(event)
   {
-      const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft'; //TODO: unmock
-      axios.get(apiUrl).then((response) => {
+      const apiUrl = 'http://localhost:8080/notification/schedulePickup/';
+      axios.post(apiUrl,{orgId: "microsoft"}).then((response) => {
         this.props.history.push({
           pathname: "/schedulePickup",
           state: response.data

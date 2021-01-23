@@ -1,6 +1,9 @@
 package io.bugsbunny.test.components;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.util.JsonUtil;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -82,5 +85,15 @@ public class MockData {
     {
         Profile profile = new Profile("CLOUD_ID","blah@blah.com",8675309l,"photu","", ProfileType.FOOD_RUNNER);
         return profile;
+    }
+
+    public static void main(String[] args)
+    {
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+
+        SchedulePickUpNotification object = mockSchedulePickupNotification();
+        System.out.println(gson.toJson(object.toJson()));
     }
 }

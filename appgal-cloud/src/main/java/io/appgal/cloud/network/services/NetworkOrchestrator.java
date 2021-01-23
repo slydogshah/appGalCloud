@@ -119,12 +119,12 @@ public class NetworkOrchestrator {
         return sourceOrgs;
     }
     //--------FoodRunner Matching Process-----------------------------------------------
-    public void schedulePickUp(SchedulePickUpNotification schedulePickUpNotification)
+    public void schedulePickUp(String orgId)
     {
-        this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
-        this.requestPipeline.add(schedulePickUpNotification);
+        //this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
+        //this.requestPipeline.add(schedulePickUpNotification);
 
-        this.foodRecoveryOrchestrator.notifyForPickUp(schedulePickUpNotification);
+        //this.foodRecoveryOrchestrator.notifyForPickUp(schedulePickUpNotification);
     }
 
     public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)

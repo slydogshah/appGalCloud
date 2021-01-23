@@ -1,8 +1,12 @@
 package io.appgal.cloud.network.endpoint;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.ScheduleDropOffNotification;
 import io.appgal.cloud.model.SchedulePickUpNotification;
+import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.network.services.FoodRecoveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +28,9 @@ public class NotificationReceiver {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
+    @Inject
+    private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
+
 
     @Path("/pickup/notifications")
     @GET
@@ -33,6 +40,23 @@ public class NotificationReceiver {
         List<SchedulePickUpNotification> schedulePickUpNotificationList = this.mongoDBJsonStore.
                 getSchedulePickUpNotifications(email);
         return Response.ok(schedulePickUpNotificationList.toString()).build();
+    }
+
+    @Path("/schedulePickup")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response schedulePickUp(@RequestBody String jsonBody)
+    {
+        JsonObject jsonObject = JsonParser.parseString(jsonBody).getAsJsonObject();
+        String orgId = jsonObject.get("orgId").getAsString();
+        this.networkOrchestrator.schedulePickUp(orgId);
+
+        List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
+
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("operationSuccessful",true);
+        responseJson.add("dropOffOrgs", JsonParser.parseString(dropOffOrgs.toString()));
+        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("/dropOff/notifications")
@@ -51,17 +75,6 @@ public class NotificationReceiver {
     {
         ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
         this.networkOrchestrator.scheduleDropOff(notification);
-
-        return Response.ok().build();
-    }
-
-    @Path("/scheduleDropOff")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response schedulePickUp(@RequestBody String jsonBody)
-    {
-        SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
-        this.networkOrchestrator.schedulePickUp(notification);
 
         return Response.ok().build();
     }
