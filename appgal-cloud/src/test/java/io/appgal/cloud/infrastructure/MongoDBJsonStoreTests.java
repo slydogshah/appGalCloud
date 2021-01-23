@@ -328,4 +328,18 @@ public class MongoDBJsonStoreTests extends BaseTest {
         JsonUtil.print(JsonParser.parseString(list.toString()));
         assertFalse(list.isEmpty());
     }
+
+    @Test
+    public void testFoodRecoveryDropOffHistory()
+    {
+        FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
+        tx.setState(TransactionState.CLOSED);
+        JsonUtil.print(tx.toJson());
+
+        this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
+
+        List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(tx.getDropOffNotification().getSourceOrg().getOrgId());
+        JsonUtil.print(JsonParser.parseString(list.toString()));
+        assertFalse(list.isEmpty());
+    }
 }

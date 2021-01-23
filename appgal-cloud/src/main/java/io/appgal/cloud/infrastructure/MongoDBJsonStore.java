@@ -622,6 +622,27 @@ public class MongoDBJsonStore {
         return list;
     }
 
+    public List<FoodRecoveryTransaction> getFoodRecoveryDropOffHistory(String orgId)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"state\":\""+TransactionState.CLOSED+"\"}]}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
+    }
+
     /*public void cleanup()
     {
         mongoClient.getDatabase("appgalcloud").drop();

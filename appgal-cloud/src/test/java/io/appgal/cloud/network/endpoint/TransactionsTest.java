@@ -35,4 +35,15 @@ public class TransactionsTest {
 
         JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
     }
+
+    @Test
+    public void testDropOffHistoryEndpoint() throws Exception
+    {
+        String orgId = "church";
+        final Response response = given()
+                .when().get("/tx/dropOff/history/?orgId=" + orgId)
+                .andReturn();
+
+        JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
+    }
 }

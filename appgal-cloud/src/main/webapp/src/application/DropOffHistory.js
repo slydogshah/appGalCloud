@@ -78,7 +78,7 @@ const ClosedTransactionView = ({closed}) => {
              <div className="progress-group mb-4">
                     <div className="progress-group-prepend">
                       <span className="progress-group-text">
-                        {value.dropOffNotification.sourceOrg.orgName}
+                        {value.pickupNotification.sourceOrg.orgName}
                       </span>
                     </div>
                     <div className="progress-group-prepend">
@@ -129,7 +129,7 @@ class DropOffHistory extends React.Component
                                                           <CCallout color="info">
                                                             <small className="text-muted">Closed</small>
                                                             <br />
-                                                            <strong className="h4">10</strong>
+                                                            <strong className="h4">{this.props.location.state.length}</strong>
                                                           </CCallout>
                                                         </CCol>
                                                       </CRow>
