@@ -5,6 +5,7 @@ import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
@@ -161,11 +162,12 @@ public class RegistrationTests extends BaseTest {
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
-        logger.info(jsonString);
+        JsonUtil.print(JsonParser.parseString(jsonString));
         logger.info("****");
 
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        jsonObject = jsonObject.getAsJsonObject("profile");
         assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
         assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
@@ -244,11 +246,12 @@ public class RegistrationTests extends BaseTest {
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
-        logger.info(jsonString);
+        JsonUtil.print(JsonParser.parseString(jsonString));
         logger.info("****");
 
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        jsonObject = jsonObject.getAsJsonObject("profile");
         assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
         assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
         Profile profile = Profile.parse(jsonObject.get("profile").toString());

@@ -66,7 +66,7 @@ public class NotificationReceiverTest extends BaseTest {
             //JsonUtil.print(schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
-            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
+            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification.getSourceOrg().getOrgId());
 
             if(cour.toEpochSecond() == end.toEpochSecond())
             {
@@ -78,10 +78,14 @@ public class NotificationReceiverTest extends BaseTest {
         assertTrue(excluded.size()==1);
         Thread.sleep(15000);
 
-
-        Response response = given().when().get("/notification/pickup/notifications?email=bugs.bunny.shah@gmail.com")
+        Response response = given().when().get("/tx/recovery/?email=bugs.bunny.shah@gmail.com")
                 .andReturn();
         JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
+        JsonUtil.print(array);
+
+        response = given().when().get("/notification/pickup/notifications?email=bugs.bunny.shah@gmail.com")
+                .andReturn();
+        array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
         JsonUtil.print(array);
         assertTrue(array.size() > 0);
         Iterator<JsonElement> itr = array.iterator();

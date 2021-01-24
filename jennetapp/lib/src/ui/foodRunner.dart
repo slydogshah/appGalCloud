@@ -1,52 +1,22 @@
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:app/src/navigation/embeddedNavigation.dart';
-import 'package:app/src/navigation/navigation.dart';
-import 'package:app/src/ui/uiFunctions.dart';
 import 'package:flutter/material.dart';
 
+import 'package:app/src/ui/uiFunctions.dart';
+import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/model/location.dart';
-import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
-import 'package:app/src/model/schedulePickupNotification.dart';
-import 'package:app/src/model/dropOffNotification.dart';
 
 import 'schedulePickup.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
-  List<SourceOrg> sourceOrgs;
   List<FoodRecoveryTransaction> recoveryTxs;
 
-  FoodRunnerMainScene(List<SourceOrg> sourceOrgs)
-  {
-    this.sourceOrgs = sourceOrgs;
-    this.mock();
-  }
-
-  mock() async
-  {
-    //TODO: unmock
-    this.recoveryTxs = new List();
-    for(int i=0; i< 2; i++)
-    {
-        //pickup
-        SourceOrg pickupOrg = new SourceOrg("microsoft","Microsoft","missgates@microsft.com",null,true);
-        SchedulePickupNotification schedulePickupNotification = new SchedulePickupNotification(pickupOrg,null,0);
-
-        //dropoff
-        SourceOrg dropOffOrg = new SourceOrg("apple","Apple","mrjobs@apple.com",null,false);
-        DropOffNotification dropOffNotification = new DropOffNotification(dropOffOrg, null);
-
-        FoodRecoveryTransaction local = new FoodRecoveryTransaction(schedulePickupNotification, dropOffNotification);
-        recoveryTxs.add(local);
-    }
-  }
-
-  /*FoodRunnerMainScene(List<FoodRecoveryTransaction> recoveryTxs)
+  FoodRunnerMainScene(List<FoodRecoveryTransaction> recoveryTxs)
   {
     this.recoveryTxs = recoveryTxs;
-  }*/
+  }
 
   @override
   _FoodRunnerMainState createState() => _FoodRunnerMainState(this.recoveryTxs);
@@ -64,8 +34,12 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     List<Card> cards = new List();
     for(FoodRecoveryTransaction tx in this.recoveryTxs)
     {
+      if(tx.dropOffNotification == null)
+      {
+        continue;
+      }
+
       Location location = new Location(0.0, 0.0);
-      //sourceOrg.location = location;
       Card card = Card(shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),

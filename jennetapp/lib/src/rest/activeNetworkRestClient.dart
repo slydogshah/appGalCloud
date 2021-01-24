@@ -10,6 +10,7 @@ import 'package:app/src/model/activeView.dart' show ActiveView;
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
+import 'package:app/src/model/foodRecoveryTransaction.dart';
 
 import '../model/schedulePickupNotification.dart';
 
@@ -73,7 +74,6 @@ class ActiveNetworkRestClient
   {
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/sourceOrgs/';
     var response = await http.get(remoteUrl);
-    print(response);
     String responseJson = response.body;
     Iterable l = json.decode(responseJson);
     List<SourceOrg> sourceOrgs = new List();
@@ -109,20 +109,18 @@ class ActiveNetworkRestClient
     return response.statusCode;
   }
 
-  Future<FoodRecoveryTransaction> getFoodRecoveryTransaction() async
+  Future<List<FoodRecoveryTransaction>> getFoodRecoveryTransaction() async
   {
-    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/sourceOrgs/bhenchod/';
-    print(remoteUrl);
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/tx/recovery';
     var response = await http.get(remoteUrl);
     String responseJson = response.body;
-    print(responseJson);
-    /*Iterable l = json.decode(responseJson);
-    List<SourceOrg> sourceOrgs = new List();
-    for(Map<String, dynamic> sourceOrgJson in l)
+    Iterable l = json.decode(responseJson);
+    List<FoodRecoveryTransaction> txs = new List();
+    for(Map<String, dynamic> tx in l)
     {
-        SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
-        sourceOrgs.add(sourceOrg);
-    }*/
-    return null;
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+        txs.add(local);
+    }
+    return txs;
   }
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 import {
   CBadge,
   CCard,
@@ -6,144 +7,120 @@ import {
   CCardHeader,
   CCol,
   CDataTable,
-  CRow
+  CButton,
+    CCollapse,
+    CDropdownItem,
+    CDropdownMenu,
+    CDropdownToggle,
+    CFade,
+    CForm,
+    CFormGroup,
+    CFormText,
+    CValidFeedback,
+    CInvalidFeedback,
+    CTextarea,
+    CInput,
+    CInputFile,
+    CInputCheckbox,
+    CInputRadio,
+    CInputGroup,
+    CInputGroupAppend,
+    CInputGroupPrepend,
+    CDropdown,
+    CInputGroupText,
+    CLabel,
+    CSelect,
+    CRow,
+    CSwitch,
+    CCardFooter,
+    CProgress,
+    CCardGroup,
+    CWidgetDropdown
 } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import WidgetsDropdown from './WidgetsDropdown'
+import ChartLineSimple from '../views/charts/ChartLineSimple'
 
 import { DocsLink } from 'src/reusable'
 
 import usersData from 'src/views/users/UsersData'
 
-const getBadge = status => {
-  switch (status) {
-    case 'Active': return 'success'
-    case 'Inactive': return 'secondary'
-    case 'Pending': return 'warning'
-    case 'Banned': return 'danger'
-    default: return 'primary'
-  }
+
+class DropOffOrgsView extends React.Component {
+    constructor(props) {
+        super(props);
+        console.log("DropOffOrgsView : "+JSON.stringify(this.props));
+        this.handleConfirm = this.handleConfirm.bind(this);
+    }
+
+    handleConfirm(event)
+    {
+      const apiUrl = 'http://localhost:8080/notification/schedulePickup/';
+      axios.post(apiUrl,{orgId: 'microsoft'}).then((response) => {
+        this.props.history.push({
+          pathname: "/dashboard",
+          state: response.data
+        });
+      });
+    }
+
+    render()
+    {
+          const components = []
+              for (const [index, value] of this.props.dropOffOrgs.entries()) {
+                  components.push(
+                       <CRow>
+                                 <CCol>
+                                 <CCardGroup className="mb-4">
+                                        <CWidgetDropdown
+                                                  color="gradient-primary"
+                                                  header={value.orgName}
+                                                  text="Schedule Pickup"
+                                                  footerSlot={
+                                                    <ChartLineSimple
+                                                      pointed
+                                                      className="c-chart-wrapper mt-3 mx-3"
+                                                      style={{height: '70px'}}
+                                                      dataPoints={[65, 59, 84, 84, 51, 55, 40]}
+                                                      pointHoverBackgroundColor="primary"
+                                                      label="Members"
+                                                      labels="months"
+                                                    />
+                                                  }
+                                                >
+                                              <CDropdown>
+                                                <CDropdownToggle color="transparent">
+                                                  <CIcon name="cil-settings"/>
+                                                </CDropdownToggle>
+                                                <CDropdownMenu className="pt-0" placement="bottom-end">
+                                                  <CDropdownItem onClick={this.handleConfirm}>Confirm</CDropdownItem>
+                                                </CDropdownMenu>
+                                              </CDropdown>
+                                            </CWidgetDropdown>
+                                 </CCardGroup>
+                                 </CCol>
+                                 </CRow>
+                   )
+              }
+              return(
+                  <div>
+                      {components}
+                  </div>
+              )
+    }
 }
-const fields = ['name','registered', 'role', 'status']
-
-
-const sourceOrgFields = [{key:'orgId',label:'Org'},
-{key:'orgName',label:'Name'},
-{key:'orgContactEmail',label:'Contact'}]
 
 class SchedulePickup extends React.Component
 {
     constructor(props) {
         super(props);
-        console.log("Constructor: "+JSON.stringify(this.props.location.state.sourceOrgs));
+        console.log("SchedulePickup: "+JSON.stringify(this.props.location.state));
     }
+
     render() {
-      const sourceOrgs = this.props.location.state.sourceOrgs;
       return (
         <>
-          <CRow>
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Simple Table
-                  <DocsLink name="CModal"/>
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Striped Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  striped
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CRow>
-
-          <CRow>
-
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Condensed Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  size="sm"
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            <CCol xs="12" lg="6">
-              <CCard>
-                <CCardHeader>
-                  Bordered Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  bordered
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-          </CRow>
-
-          <CRow>
-            <CCol>
-              <CCard>
-                <CCardHeader>
-                  Combined All Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  hover
-                  striped
-                  bordered
-                  size="sm"
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CRow>
-            <CRow>
-            <CCol>
-              <CCard>
-                <CCardHeader>
-                  Combined All dark Table
-                </CCardHeader>
-                <CCardBody>
-                <CDataTable
-                  items={sourceOrgs}
-                  fields={sourceOrgFields}
-                  dark
-                  hover
-                  striped
-                  bordered
-                  size="sm"
-                />
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CRow>
+          <DropOffOrgsView dropOffOrgs={this.props.location.state.dropOffOrgs} history={this.props.history}/>
         </>
       )
     }

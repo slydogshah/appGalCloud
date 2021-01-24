@@ -1,6 +1,7 @@
 package io.appgal.cloud.model;
 
 import io.appgal.cloud.util.JsonUtil;
+import io.bugsbunny.test.components.MockData;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,21 +20,11 @@ public class FoodRecoveryTransactionTests {
     @Test
     public void testJson()
     {
-        //pickup
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setProducer(true);
-        SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
-        schedulePickUpNotification.setSourceOrg(sourceOrg);
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-        schedulePickUpNotification.setStart(start);
-
-        //dropoff
-        SourceOrg church = new SourceOrg("church", "Church", "mrchrist@church.com",false);
-        ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
-        dropOffNotification.setSourceOrg(church);
-
-
-        FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,dropOffNotification);
+        FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
         JsonUtil.print(tx.toJson());
+
+        String jsonString = tx.toString();
+        FoodRecoveryTransaction deser = FoodRecoveryTransaction.parse(jsonString);
+        JsonUtil.print(deser.toJson());
     }
 }

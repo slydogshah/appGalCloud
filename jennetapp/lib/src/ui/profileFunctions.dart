@@ -3,8 +3,10 @@ import 'dart:ffi';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
+import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
@@ -28,9 +30,6 @@ class ProfileFunctions
       },
     );
 
-    //print("EMAIL: "+email);
-    //print("PASSWORD: "+password);
-
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
@@ -52,10 +51,6 @@ class ProfileFunctions
         return dialog;
       },
     );
-
-    //print("EMAIL: "+email);
-    //print("PASSWORD: "+password);
-    //print("PROFILE_TYPE: "+profileType);
 
     Profile profile = new Profile("", email, 123456789, "", password);
     profile.setProfileType(profileType);
@@ -107,11 +102,6 @@ class ProfileFunctions
     future.then((FoodRunnerLoginData){
       Navigator.of(context, rootNavigator: true).pop();
 
-      print("*************************************");
-      print(FoodRunnerLoginData.authCredentials);
-      print(FoodRunnerLoginData.sourceOrgs);
-      print("*************************************");
-
 
       AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
       if(authCredentials.statusCode == 401)
@@ -121,15 +111,20 @@ class ProfileFunctions
 
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(authCredentials.getProfile());
-
       Profile profile = activeSession.getProfile();
-      Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(FoodRunnerLoginData.sourceOrgs)));
+
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<List<FoodRecoveryTransaction>> future = client.getFoodRecoveryTransaction();
+      future.then((txs){
+        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(txs)));
+      });
+
       showCards(context, profile);
     });
   }
 
   void showCards(BuildContext context, Profile profile) 
   {
-    CloudDataPoller.startPolling(profile);
+    //CloudDataPoller.startPolling(profile);
   }  
 }

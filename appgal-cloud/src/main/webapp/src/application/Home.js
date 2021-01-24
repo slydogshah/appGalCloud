@@ -1,6 +1,7 @@
-import React, { useEffect, useState, createRef } from 'react'
+import React, { useEffect, useState, createRef, lazy } from 'react'
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
+import axios from 'axios'
 import {
   CCardGroup,
   CCardFooter,
@@ -34,20 +35,70 @@ import {
   CInput,
   CSelect,
   CModalFooter,
-  CButton
+  CButton,
+  CBadge,
+  CButtonGroup,
+  CCallout
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import WidgetsDropdown from './WidgetsDropdown'
-import Dash from './Dash'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
 
-class Home extends React.Component {
+const PendingTransactionView = ({pending}) => {
+    const txs = []
+    for (const [index, value] of pending.entries()) {
+        txs.push(
+             <div className="progress-group mb-4">
+                    <div className="progress-group-prepend">
+                      <span className="progress-group-text">
+                        {value.state}
+                      </span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <CProgress className="progress-xs" color="info" value="34" />
+                      <CProgress className="progress-xs" color="danger" value="78" />
+                    </div>
+              </div>
+         )
+    }
+    return(
+        <div>
+            {txs}
+        </div>
+    )
+}
 
+const InProgressTransactionView = ({inProgress}) => {
+    const txs = []
+    for (const [index, value] of inProgress.entries()) {
+        txs.push(
+             <div className="progress-group mb-4">
+                    <div className="progress-group-prepend">
+                      <span className="progress-group-text">
+                        {value.state}
+                      </span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <CProgress className="progress-xs" color="info" value="34" />
+                      <CProgress className="progress-xs" color="danger" value="78" />
+                    </div>
+              </div>
+         )
+    }
+    return(
+        <div>
+            {txs}
+        </div>
+    )
+}
+
+class Home extends React.Component {
   element;
   constructor(props) {
       super(props);
+      //console.log("State: "+this.props.location.state);
       this.state = {username:'',password:'',isModalOpen:false};
       this.handlePickup = this.handlePickup.bind(this);
       this.handlePickupProcess = this.handlePickupProcess.bind(this);
@@ -103,19 +154,25 @@ class Home extends React.Component {
 
   handlePickupProcess(event)
   {
-      this.props.history.push({
-                  pathname: "/schedulePickup",
-                  state: ""
-                });
+      const apiUrl = 'http://localhost:8080/notification/dropOffOrgs/?orgId='+'microsoft';
+      axios.get(apiUrl).then((response) => {
+        this.props.history.push({
+          pathname: "/schedulePickup",
+          state: response.data
+        });
+      });
   }
 
   handlePickupHistory(event)
-    {
-        this.props.history.push({
-                    pathname: "/pickupHistory",
-                    state: ""
-                  });
-    }
+  {
+    const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft'; //TODO: unmock
+    axios.get(apiUrl).then((response) => {
+          this.props.history.push({
+            pathname: "/pickupHistory",
+            state: response.data
+          });
+    });
+  }
 
   render() {
       return (
@@ -126,7 +183,7 @@ class Home extends React.Component {
           <CCardGroup className="mb-4">
                  <CWidgetDropdown
                            color="gradient-primary"
-                           header="50"
+                           header={this.props.location.state.inProgress.length}
                            text="Pickups In-Progress"
                            footerSlot={
                              <ChartLineSimple
@@ -155,7 +212,50 @@ class Home extends React.Component {
           </CRow>
           <CRow>
                 <CCol>
-                    <Dash/>
+                    <CRow>
+                            <CCol>
+                              <CCard>
+                                <CCardHeader>
+                                  Pickups In-Progress
+                                </CCardHeader>
+                                <CCardBody>
+                                  <CRow>
+                                    <CCol xs="12" md="6" xl="6">
+
+                                      <CRow>
+                                        <CCol sm="6">
+                                          <CCallout color="info">
+                                            <small className="text-muted">Pending</small>
+                                            <br />
+                                            <strong className="h4">{this.props.location.state.pending.length}</strong>
+                                          </CCallout>
+                                        </CCol>
+                                      </CRow>
+
+                                      <hr className="mt-0" />
+                                      <PendingTransactionView pending={this.props.location.state.pending}/>
+                                    </CCol>
+
+                                    <CCol xs="12" md="6" xl="6">
+
+                                      <CRow>
+                                        <CCol sm="6">
+                                          <CCallout color="success">
+                                            <small className="text-muted">Accepted</small>
+                                            <br />
+                                            <strong className="h4">{this.props.location.state.inProgress.length}</strong>
+                                          </CCallout>
+                                        </CCol>
+                                      </CRow>
+
+                                      <hr className="mt-0" />
+                                      <InProgressTransactionView inProgress={this.props.location.state.inProgress}/>
+                                    </CCol>
+                                  </CRow>
+                                </CCardBody>
+                              </CCard>
+                            </CCol>
+                          </CRow>
                 </CCol>
                 </CRow>
           </>

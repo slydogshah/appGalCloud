@@ -15,6 +15,7 @@ public abstract class ScheduleNotification implements Serializable {
     protected FoodRunner foodRunner;
     protected OffsetDateTime start;
     protected boolean notificationSent;
+    protected FoodDetails foodDetails;
 
     public ScheduleNotification() {
     }
@@ -69,6 +70,14 @@ public abstract class ScheduleNotification implements Serializable {
 
     public void setNotificationSent(boolean notificationSent) {
         this.notificationSent = notificationSent;
+    }
+
+    public FoodDetails getFoodDetails() {
+        return foodDetails;
+    }
+
+    public void setFoodDetails(FoodDetails foodDetails) {
+        this.foodDetails = foodDetails;
     }
 
     public boolean activateNotification()

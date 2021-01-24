@@ -402,8 +402,9 @@ public class MongoDBJsonStore {
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
-        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        //Query Ex: {$and:[{"foodRunner.profile.email":"bugs.bunny.shah@gmail.com"},{"notificationSent":true}]}
         String queryJson = "{$and:[{\"foodRunner.profile.email\":\""+email+"\"},{\"notificationSent\":"+Boolean.TRUE.booleanValue()+"}]}";
+        logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -568,6 +569,78 @@ public class MongoDBJsonStore {
             notifications.add(ScheduleDropOffNotification.parse(documentJson));
         }
         return notifications;
+    }
+
+    public void storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        Document doc = Document.parse(foodRecoveryTransaction.toString());
+        collection.insertOne(doc);
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String email)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        String queryJson = "{}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactionHistory(String orgId)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"state\":\""+TransactionState.CLOSED+"\"}]}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryDropOffHistory(String orgId)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"state\":\""+TransactionState.CLOSED+"\"}]}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
     }
 
     /*public void cleanup()

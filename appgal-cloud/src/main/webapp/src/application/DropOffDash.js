@@ -14,7 +14,31 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-const DropOffDash = () => {
+const InProgressTransactionView = ({inProgress}) => {
+    const txs = []
+    for (const [index, value] of inProgress.entries()) {
+        txs.push(
+             <div className="progress-group mb-4">
+                    <div className="progress-group-prepend">
+                      <span className="progress-group-text">
+                        {value.state}
+                      </span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <CProgress className="progress-xs" color="info" value="34" />
+                      <CProgress className="progress-xs" color="danger" value="78" />
+                    </div>
+              </div>
+         )
+    }
+    return(
+        <div>
+            {txs}
+        </div>
+    )
+}
+
+const DropOffDash = ({inProgress}) => {
   return (
     <>
       <CRow>
@@ -32,99 +56,13 @@ const DropOffDash = () => {
                       <CCallout color="info">
                         <small className="text-muted">In-Progress</small>
                         <br />
-                        <strong className="h4">100</strong>
+                        <strong className="h4">{inProgress.length}</strong>
                       </CCallout>
                     </CCol>
                   </CRow>
 
                   <hr className="mt-0" />
-
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                        Monday
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="34" />
-                      <CProgress className="progress-xs" color="danger" value="78" />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                      Tuesday
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="56" />
-                      <CProgress className="progress-xs" color="danger" value="94" />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                      Wednesday
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="12" />
-                      <CProgress className="progress-xs" color="danger" value="67" />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                      Thursday
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="43" />
-                      <CProgress className="progress-xs" color="danger" value="91" />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                      Friday
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="22" />
-                      <CProgress className="progress-xs" color="danger" value="73" />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                      Saturday
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="53" />
-                      <CProgress className="progress-xs" color="danger" value="82" />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                      Sunday
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="9" />
-                      <CProgress className="progress-xs" color="danger" value="69" />
-                    </div>
-                  </div>
-                  <div className="legend text-center">
-                    <small>
-                      <sup className="px-1"><CBadge shape="pill" color="info">&nbsp;</CBadge></sup>
-                      New clients
-                      &nbsp;
-                      <sup className="px-1"><CBadge shape="pill" color="danger">&nbsp;</CBadge></sup>
-                      Recurring clients
-                    </small>
-                  </div>
+                  <InProgressTransactionView inProgress={inProgress} />
                 </CCol>
               </CRow>
             </CCardBody>
