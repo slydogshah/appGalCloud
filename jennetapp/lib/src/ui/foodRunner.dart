@@ -34,8 +34,12 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     List<Card> cards = new List();
     for(FoodRecoveryTransaction tx in this.recoveryTxs)
     {
+      if(tx.dropOffNotification == null)
+      {
+        continue;
+      }
+
       Location location = new Location(0.0, 0.0);
-      //sourceOrg.location = location;
       Card card = Card(shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),

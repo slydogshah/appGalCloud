@@ -25,11 +25,9 @@ class UiFunctions{
           onTap: (index){
             if(index == 0)
             {
-              print("Home");
             }
             else if(index == 1)
             {
-              print("PickUp Request");
               /*ActiveNetworkRestClient client = ActiveNetworkRestClient();
               SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
               PickupRequest pickupRequest = new PickupRequest(sourceOrg);
@@ -49,7 +47,6 @@ class UiFunctions{
             }
             else if(index == 2)
             {
-              print("Send Food Request");
               ActiveNetworkRestClient client = ActiveNetworkRestClient();
               //TODO:REMOVE_MOCK_DATA
               SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null, true);

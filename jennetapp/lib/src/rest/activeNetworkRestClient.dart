@@ -74,7 +74,6 @@ class ActiveNetworkRestClient
   {
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/activeNetwork/sourceOrgs/';
     var response = await http.get(remoteUrl);
-    print(response);
     String responseJson = response.body;
     Iterable l = json.decode(responseJson);
     List<SourceOrg> sourceOrgs = new List();
@@ -115,7 +114,6 @@ class ActiveNetworkRestClient
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/tx/recovery';
     var response = await http.get(remoteUrl);
     String responseJson = response.body;
-    print(responseJson);
     Iterable l = json.decode(responseJson);
     List<FoodRecoveryTransaction> txs = new List();
     for(Map<String, dynamic> tx in l)

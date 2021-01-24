@@ -38,18 +38,11 @@ class ProfileRestClient
   {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
 
-    print("************************************");
-    print(credentials.toString());
-    print("************************************");
-
 
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/login/';
     var response = await http.post(remoteUrl, body: credentials.toString());
     String responseJson = response.body;
 
-    print("************************************");
-    print("LoginResponse"+responseJson);
-    print("************************************");
     if(response.statusCode == 401)
     {
         AuthCredentials authCredentials = new AuthCredentials();
@@ -63,7 +56,8 @@ class ProfileRestClient
     }
 
     Map<String, dynamic> json  = jsonDecode(responseJson);
-    Iterable sourceOrgIterable = json['sourceOrgs'];
+    var json2 = json['profile'];
+    Iterable sourceOrgIterable = json2['sourceOrgs'];
     List<SourceOrg> sourceOrgs = new List();
     for(Map<String, dynamic> sourceOrgJson in sourceOrgIterable)
     {

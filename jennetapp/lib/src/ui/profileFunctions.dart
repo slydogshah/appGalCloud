@@ -30,9 +30,6 @@ class ProfileFunctions
       },
     );
 
-    //print("EMAIL: "+email);
-    //print("PASSWORD: "+password);
-
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
@@ -54,10 +51,6 @@ class ProfileFunctions
         return dialog;
       },
     );
-
-    //print("EMAIL: "+email);
-    //print("PASSWORD: "+password);
-    //print("PROFILE_TYPE: "+profileType);
 
     Profile profile = new Profile("", email, 123456789, "", password);
     profile.setProfileType(profileType);
@@ -109,11 +102,6 @@ class ProfileFunctions
     future.then((FoodRunnerLoginData){
       Navigator.of(context, rootNavigator: true).pop();
 
-      print("*************************************");
-      print(FoodRunnerLoginData.authCredentials);
-      print(FoodRunnerLoginData.sourceOrgs);
-      print("*************************************");
-
 
       AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
       if(authCredentials.statusCode == 401)
@@ -128,7 +116,6 @@ class ProfileFunctions
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<List<FoodRecoveryTransaction>> future = client.getFoodRecoveryTransaction();
       future.then((txs){
-        print(txs);
         Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(txs)));
       });
 
@@ -138,6 +125,6 @@ class ProfileFunctions
 
   void showCards(BuildContext context, Profile profile) 
   {
-    CloudDataPoller.startPolling(profile);
+    //CloudDataPoller.startPolling(profile);
   }  
 }
