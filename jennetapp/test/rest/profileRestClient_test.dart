@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:uuid/uuid.dart';
 
 
@@ -77,5 +78,28 @@ void main() {
     Profile newProfile = await profileRestClient.register(profile);
     print(newProfile);
     expect(newProfile.email, profile.email);
+  });
+
+  test('registerValidationFailure', () async {
+    var uuid = Uuid();
+
+    // Generate a v1 (time-based) id
+    var v1 = uuid.v1();
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Profile profile = new Profile(
+        null, "testsuite"+v1+"/blah.com", 8675309, "photu", "password");
+    profile.setProfileType("FOOD_RUNNER");
+    //print(profile);
+
+    try {
+      await profileRestClient.register(profile);
+    }on CloudBusinessException catch(e) {
+      print(e);
+      Map<String,dynamic> json = jsonDecode(e.toString());
+      expect(400, json['statusCode']);
+      Map<String,dynamic> messageJson = jsonDecode(json['message']);
+      List<dynamic> values = messageJson['violations'];
+      expect("email_invalid", values.elementAt(0));
+    }
   });
 }
