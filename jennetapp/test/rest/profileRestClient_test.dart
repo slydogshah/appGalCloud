@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:uuid/uuid.dart';
 
 
 import 'package:app/src/context/activeSession.dart';
@@ -14,6 +16,7 @@ import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
 
+//Future<void> main() async {
 void main() {
   /*test('profileNotFound', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
@@ -33,7 +36,7 @@ void main() {
     });
   });*/
 
-  test('loginSuccess', () {
+  /*test('loginSuccess', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = "b@z.com";
@@ -46,7 +49,7 @@ void main() {
       //expect(profile.email, "m@s.com");
     });
     sleep(Duration(seconds:10));
-  });
+  });*/
 
   /*test('loginFail', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
@@ -58,12 +61,21 @@ void main() {
       AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
       expect(authCredentials.statusCode, 401);
     });
-  });
-
-  test('register', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Profile profile = new Profile(null,"testsuite@blah.com",8675309,"photu","password");
-    profile.setProfileType("FOOD_RUNNER");
-    profileRestClient.register(profile);
   });*/
+
+  test('register', () async {
+    var uuid = Uuid();
+
+    // Generate a v1 (time-based) id
+    var v1 = uuid.v1();
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Profile profile = new Profile(
+        null, "testsuite"+v1+"/blah.com", 8675309, "photu", "password");
+    profile.setProfileType("FOOD_RUNNER");
+    //print(profile);
+
+    Profile newProfile = await profileRestClient.register(profile);
+    print(newProfile);
+    expect(newProfile.email, profile.email);
+  });
 }

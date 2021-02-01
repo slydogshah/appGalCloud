@@ -80,7 +80,7 @@ public class Registration {
 
             this.profileRegistrationService.register(profile);
 
-            return Response.ok().build();
+            return Response.ok(profileJson).build();
         }
         catch(ResourceExistsException rxe)
         {

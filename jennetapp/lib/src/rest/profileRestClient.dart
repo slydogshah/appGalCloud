@@ -27,11 +27,17 @@ class ProfileRestClient
   {
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/profile/';
     var response = await http.post(remoteUrl, body: profile.toString());
+
+    print(response.body);
+    print(response.statusCode);
+    print(response.headers);
     if(response.statusCode != 200)
     {
       throw new CloudBusinessException(response.statusCode, response.body);
     }
-    return profile;
+
+    Profile result = Profile.fromJson(jsonDecode(response.body));
+    return result;
   }
 
   Future<FoodRunnerLoginData> login(AuthCredentials credentials) async
