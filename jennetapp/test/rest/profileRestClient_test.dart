@@ -1,68 +1,28 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
 import 'package:uuid/uuid.dart';
 
 
-import 'package:app/src/context/activeSession.dart';
-import 'package:app/src/model/activeView.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRunnerLoginData.dart';
-import 'package:app/src/model/dropOffNotification.dart';
-import 'package:app/src/model/foodRunner.dart';
-import 'package:app/src/model/location.dart';
 import 'package:app/src/model/profile.dart';
-import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:test/test.dart';
 
 //Future<void> main() async {
 void main() {
-  /*test('profileNotFound', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Profile> profileFuture = profileRestClient.getProfile("notFound@blah.com");
-        profileFuture.catchError((cbe){
-          CloudBusinessException cloudBusinessException = cbe;
-          expect(cloudBusinessException.statusCode, 404);
-    });
-  });
 
-  test('profileSuccess', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Profile> profileFuture = profileRestClient.getProfile("m@s.com");
-    profileFuture.then((profile){
-      print(profile.toString());
-      expect(profile.email, "m@s.com");
-    });
-  });*/
-
-  /*test('loginSuccess', () {
+  test('loginSuccess', () async {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = "b@z.com";
     credentials.password = "by";
-    Future<FoodRunnerLoginData> future = profileRestClient.login(credentials);
-    future.then((foodRunnerLoginData){
-      AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
-      Profile profile = authCredentials.getProfile();
-      print(profile.toString());
-      //expect(profile.email, "m@s.com");
-    });
-    sleep(Duration(seconds:10));
-  });*/
-
-  /*test('loginFail', () {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    AuthCredentials credentials = new AuthCredentials();
-    credentials.email = "m@s.com";
-    credentials.password = "c";
-    Future<FoodRunnerLoginData> future = profileRestClient.login(credentials);
-    future.then((foodRunnerLoginData){
-      AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
-      expect(authCredentials.statusCode, 401);
-    });
-  });*/
+    FoodRunnerLoginData foodRunnerLoginData = await profileRestClient.login(credentials);
+    AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
+    Profile profile = authCredentials.getProfile();
+    print(profile.toString());
+    //expect(profile.email, "m@s.com");
+  });
 
   test('register', () async {
     var uuid = Uuid();
@@ -101,5 +61,37 @@ void main() {
       List<dynamic> values = messageJson['violations'];
       expect("email_invalid", values.elementAt(0));
     }
+  });
+
+  test('profile404', () async {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    try {
+      await profileRestClient.getProfile(
+          "notFound@blah.com");
+    }on CloudBusinessException catch(e)
+    {
+      print(e);
+      expect(e.statusCode, 404);
+    }
+  });
+
+  //TODO: DEBUG
+  test('profileSuccess', () async {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Profile profile = await profileRestClient.getProfile("m@s.com");
+    print(profile.toString());
+    expect(profile.email, "m@s.com");
+  });
+
+  //TODO: DEBUG
+  test('loginFail', () async {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = "m@s.com";
+    credentials.password = "c";
+    FoodRunnerLoginData foodRunnerLoginData = await profileRestClient.login(credentials);
+    print(foodRunnerLoginData);
+    AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
+    expect(authCredentials.statusCode, 401);
   });
 }
