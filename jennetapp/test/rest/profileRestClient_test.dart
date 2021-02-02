@@ -49,18 +49,13 @@ void main() {
     Profile profile = new Profile(
         null, "testsuite"+v1+"/blah.com", 8675309, "photu", "password");
     profile.setProfileType("FOOD_RUNNER");
-    //print(profile);
+    print(profile);
 
-    try {
-      await profileRestClient.register(profile);
-    }on CloudBusinessException catch(e) {
-      print(e);
-      Map<String,dynamic> json = jsonDecode(e.toString());
-      expect(400, json['statusCode']);
-      Map<String,dynamic> messageJson = jsonDecode(json['message']);
-      List<dynamic> values = messageJson['violations'];
-      expect("email_invalid", values.elementAt(0));
-    }
+    Profile rejectedProfile = await profileRestClient.register(profile);
+    Map<String,dynamic> validationError = rejectedProfile.validationError;
+    print(validationError);
+    List<dynamic> values = validationError['violations'];
+    expect("email_invalid", values.elementAt(0));
   });
 
   test('profile404', () async {

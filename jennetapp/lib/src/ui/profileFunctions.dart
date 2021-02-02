@@ -56,16 +56,22 @@ class ProfileFunctions
     profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Profile> future = profileRestClient.register(profile);
-    future.catchError((cbe){
+    future.then((profile){
+      //TODO: Handle this
+      if(profile.validationError != null)
+      {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      else {
+        AuthCredentials credentials = new AuthCredentials();
+        credentials.email = profile.email;
+        credentials.password = profile.password;
+        login(context, dialog, credentials);
+      }
+    }).catchError((cbe){
           CloudBusinessException cloudBusinessException = cbe;
           Navigator.of(context, rootNavigator: true).pop();
           _handleClickMe(context);
-    });
-    future.then((profile){
-      AuthCredentials credentials = new AuthCredentials();
-      credentials.email = profile.email;
-      credentials.password = profile.password;
-      login(context, dialog, credentials);
     });
   }
 
@@ -104,6 +110,8 @@ class ProfileFunctions
 
 
       AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
+
+      //TODO: UI_HANDLING
       if(authCredentials.statusCode == 401)
       {
           return;

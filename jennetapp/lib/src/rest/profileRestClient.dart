@@ -31,7 +31,13 @@ class ProfileRestClient
     //print(response.body);
     //print(response.statusCode);
     //print(response.headers);
-    if(response.statusCode != 200)
+    if(response.statusCode == 400)
+    {
+      Map<String,dynamic> validationError = jsonDecode(response.body);
+      profile.setValidationError(validationError);
+      return profile;
+    }
+    else if(response.statusCode != 200)
     {
       throw new CloudBusinessException(response.statusCode, response.body);
     }

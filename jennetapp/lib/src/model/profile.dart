@@ -11,6 +11,8 @@ class Profile {
   String profileType;
   Location location;
 
+  Map<String,dynamic> validationError;
+
 
   Profile(this.id, this.email, this.mobile, this.photo, this.password);
 
@@ -33,6 +35,16 @@ class Profile {
   void setProfileType(String profileType)
   {
     this.profileType = profileType;
+  }
+
+  Map<String,dynamic> getValidationError()
+  {
+    return this.validationError;
+  }
+
+  setValidationError(Map<String,dynamic> validationError)
+  {
+    this.validationError = validationError;
   }
 
   Profile.fromJson(Map<String, dynamic> json)
