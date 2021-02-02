@@ -23,6 +23,9 @@ class RegistrationScene extends StatelessWidget {
     final cursorColor = Theme.of(context).cursorColor;
     const sizedBoxSpace = SizedBox(height: 24);
     ProfileFunctions profileFunctions = new ProfileFunctions();
+
+    final _formKey = GlobalKey<FormState>();
+
     TextFormField email = TextFormField(
                   controller: TextEditingController(),
                   textCapitalization: TextCapitalization.words,
@@ -35,7 +38,7 @@ class RegistrationScene extends StatelessWidget {
                         "Email",
                   )
                 );
-    TextField password = TextField(
+    TextFormField password = TextFormField(
             controller: TextEditingController(),
             obscureText: true,
             decoration: InputDecoration(
@@ -43,8 +46,14 @@ class RegistrationScene extends StatelessWidget {
                     icon: Icon(Icons.visibility_off),
                     //hintText: "Your email address",
                     labelText:
-                        "Password",
-            )
+                        "Password"
+            ),
+            validator: (value) {
+            if (value.isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            }
     );
     TextFormField mobile = TextFormField(
                   controller: TextEditingController(),
@@ -76,8 +85,10 @@ class RegistrationScene extends StatelessWidget {
                     child: Text("Register"),
                     onPressed: () 
                     {
-                      profileFunctions.showAlertDialogRegistration(context, email.controller.text, 
-                      password.controller.text,int.parse(mobile.controller.text), "FOOD_RUNNER");
+                      if (_formKey.currentState.validate()) {
+                        profileFunctions.showAlertDialogRegistration(context, email.controller.text,
+                            password.controller.text,int.parse(mobile.controller.text), "FOOD_RUNNER");
+                      }
                     }
                   )
                 ),
@@ -86,8 +97,7 @@ class RegistrationScene extends StatelessWidget {
           )
     );
 
-    Form form = new Form(child: scrollbar);
-
+    Form form = new Form(key:_formKey,child:scrollbar);
     AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
     Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
     return scaffold;
