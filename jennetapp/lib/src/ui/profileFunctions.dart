@@ -57,10 +57,26 @@ class ProfileFunctions
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Profile> future = profileRestClient.register(profile);
     future.then((profile){
-      //TODO: Handle this
       if(profile.validationError != null)
       {
         Navigator.of(context, rootNavigator: true).pop();
+        List<dynamic> errors = profile.validationError['violations'];
+        errors.forEach((element) {
+          print(element);
+
+          //TODO: UI_HANDLING
+          /*if (element.startsWith("email")) {
+
+          }
+          else if(element.startsWith("password"))
+          {
+
+          }
+          else if(element.startsWith("phone"))
+          {
+
+          }*/
+        });
       }
       else {
         AuthCredentials credentials = new AuthCredentials();

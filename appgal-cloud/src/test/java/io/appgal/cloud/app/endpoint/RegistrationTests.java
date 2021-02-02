@@ -104,7 +104,7 @@ public class RegistrationTests extends BaseTest {
         String id = UUID.randomUUID().toString();
         String email = id+"@blah";
         json.addProperty("email", email);
-        json.addProperty("mobile", "8675309");
+        json.addProperty("mobile", "ui");
         json.addProperty("photo", "photu");
         json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
 
