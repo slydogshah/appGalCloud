@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
@@ -10,6 +8,7 @@ import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
+import 'package:app/src/ui/registration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -36,7 +35,8 @@ class ProfileFunctions
     login(context, dialog, credentials);
   }
 
-  void showAlertDialogRegistration(BuildContext context, String email, String password, int mobile,
+  void showAlertDialogRegistration(BuildContext context, final RegistrationState state, TextFormField emailField,
+      final String email, String password, int mobile,
   String profileType) 
   {
     // set up the SimpleDialog
@@ -57,18 +57,17 @@ class ProfileFunctions
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Profile> future = profileRestClient.register(profile);
     future.then((profile){
+      Navigator.of(context, rootNavigator: true).pop();
       if(profile.validationError != null)
       {
-        Navigator.of(context, rootNavigator: true).pop();
         List<dynamic> errors = profile.validationError['violations'];
         errors.forEach((element) {
-          print(element);
-
           //TODO: UI_HANDLING
-          /*if (element.startsWith("email")) {
-
+          if (element.startsWith("email")) {
+            emailField.controller.value = new TextEditingValue(text:email);
+            state.notifyEmailIsInvalid(email);
           }
-          else if(element.startsWith("password"))
+          /*else if(element.startsWith("password"))
           {
 
           }
@@ -84,38 +83,7 @@ class ProfileFunctions
         credentials.password = profile.password;
         login(context, dialog, credentials);
       }
-    }).catchError((cbe){
-          CloudBusinessException cloudBusinessException = cbe;
-          Navigator.of(context, rootNavigator: true).pop();
-          _handleClickMe(context);
     });
-  }
-
-  Future<void> _handleClickMe(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text('Allow "Maps" to access your location while you use the app?'),
-          content: Text('Your current location will be displayed on the map and used for directions, nearby search results, and estimated travel times.'),
-          actions: <Widget>[
-            CupertinoDialogAction(
-              child: Text('Don\'t Allow'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            CupertinoDialogAction(
-              child: Text('Allow'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void login (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
