@@ -12,19 +12,7 @@ import 'package:test/test.dart';
 //Future<void> main() async {
 void main() {
 
-  test('loginSuccess', () async {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    AuthCredentials credentials = new AuthCredentials();
-    credentials.email = "b@z.com";
-    credentials.password = "by";
-    FoodRunnerLoginData foodRunnerLoginData = await profileRestClient.login(credentials);
-    AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
-    Profile profile = authCredentials.getProfile();
-    print(profile.toString());
-    //expect(profile.email, "m@s.com");
-  });
-
-  test('register', () async {
+  test('registerAndLogin', () async {
     var uuid = Uuid();
 
     // Generate a v1 (time-based) id
@@ -33,11 +21,16 @@ void main() {
     Profile profile = new Profile(
         null, "testsuite"+v1+"@blah.com", "8675309", "photu", "password");
     profile.setProfileType("FOOD_RUNNER");
-    //print(profile);
 
     Profile newProfile = await profileRestClient.register(profile);
-    print(newProfile);
     expect(newProfile.email, profile.email);
+
+    AuthCredentials credentials = new AuthCredentials();
+    credentials.email = profile.email;
+    credentials.password = profile.password;
+    FoodRunnerLoginData foodRunnerLoginData = await profileRestClient.login(credentials);
+    print(foodRunnerLoginData.getAuthCredentials());
+    expect(credentials.email, foodRunnerLoginData.getAuthCredentials().email);
   });
 
   test('registerValidationFailure', () async {
@@ -70,23 +63,14 @@ void main() {
     }
   });
 
-  //TODO: DEBUG
-  /*test('profileSuccess', () async {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Profile profile = await profileRestClient.getProfile("m@s.com");
-    print(profile.toString());
-    expect(profile.email, "m@s.com");
-  });*/
-
-  //TODO: DEBUG
-  /*test('loginFail', () async {
+  test('loginFail', () async {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     AuthCredentials credentials = new AuthCredentials();
-    credentials.email = "m@s.com";
+    credentials.email = "notFound@blah.com";
     credentials.password = "c";
     FoodRunnerLoginData foodRunnerLoginData = await profileRestClient.login(credentials);
     print(foodRunnerLoginData);
     AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
     expect(authCredentials.statusCode, 401);
-  });*/
+  });
 }

@@ -14,10 +14,12 @@ class AuthCredentials
 
   AuthCredentials.fromJson(Map<String, dynamic> json)
   {
-    email = json['email'];
-    password = json['password'];
-    statusCode = json['statusCode'];
-    this.profile = Profile.fromJson(json['profile']);
+    Map<String,dynamic> profileJson = json['profile'];
+
+    this.profile = Profile.fromJson(profileJson['profile']);
+    email = this.profile.email;
+    password = this.profile.password;
+    statusCode = profileJson['statusCode'];
   }
 
   Map<String, dynamic> toJson() =>

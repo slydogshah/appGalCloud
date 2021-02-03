@@ -54,7 +54,7 @@ class Profile {
       id = json['id'];
     }
     email = json['email'];
-    mobile = json['mobile'];
+    mobile = json['mobile'].toString();
     photo = json['photo'];
     if(json['location'] != null)
     {
