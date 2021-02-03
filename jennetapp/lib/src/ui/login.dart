@@ -10,16 +10,28 @@ import 'package:flutter/rendering.dart';
 
 import 'profileFunctions.dart';
 
-class Login extends StatelessWidget
-{
+class JenNetworkApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-   MaterialApp materialApp = new MaterialApp(home: new LoginScene());
-   return materialApp;
+    MaterialApp materialApp = new MaterialApp(home: new Login());
+    return materialApp;
   }
 }
 
-class LoginScene extends StatelessWidget {
+
+class Login extends StatefulWidget
+{
+  @override
+  LoginState createState() => LoginState();
+
+  @override
+  Widget build(BuildContext context) {
+    MaterialApp materialApp = new MaterialApp(home: new Login());
+    return materialApp;
+  }
+}
+
+class LoginState extends State<Login> {
 
   // This widget is the root of your application.
   @override
