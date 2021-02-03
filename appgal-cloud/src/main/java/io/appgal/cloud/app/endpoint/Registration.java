@@ -80,7 +80,7 @@ public class Registration {
 
             this.profileRegistrationService.register(profile);
 
-            return Response.ok().build();
+            return Response.ok(profileJson).build();
         }
         catch(ResourceExistsException rxe)
         {
@@ -147,6 +147,12 @@ public class Registration {
             JsonObject responseJson = new JsonObject();
 
             Profile profile = this.profileRegistrationService.getProfile(email);
+            if(profile == null)
+            {
+                JsonObject profileNotFound = new JsonObject();
+                profileNotFound.addProperty("message", "profile_not_found");
+                return Response.status(401).entity(profileNotFound.toString()).build();
+            }
             JsonElement profileJson;
             if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
                 profileJson = this.profileRegistrationService.login(userAgent, email, password);

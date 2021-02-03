@@ -69,12 +69,13 @@ public class ProfileRegistrationService {
     {
         //logger.info("*****LOGIN_USER_AGENT******");
         //logger.info("USER_AGENT: "+userAgent);
+        JsonObject authFailure = new JsonObject();
 
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
-            logger.info("PROFILE_NOT_FOUND: "+email);
-            throw new AuthenticationException(email);
+            authFailure.addProperty("message", "profile_not_found");
+            throw new AuthenticationException(authFailure);
         }
 
         String registeredEmail = profile.getEmail();
@@ -82,8 +83,8 @@ public class ProfileRegistrationService {
 
         if(registeredEmail == null)
         {
-            logger.info("EMAIL_NOT_FOUND");
-            throw new AuthenticationException(email);
+            authFailure.addProperty("message", "profile_not_found");
+            throw new AuthenticationException(authFailure);
         }
 
         //logger.info(registeredEmail);
@@ -129,17 +130,18 @@ public class ProfileRegistrationService {
             return authResponse;
         }
 
-        logger.info("AUTHENTICATION_FAILED");
-        throw new AuthenticationException(email);
+        authFailure.addProperty("message", "password_mismatch");
+        throw new AuthenticationException(authFailure);
     }
 
     public JsonArray orgLogin(String userAgent, String email, String password) throws AuthenticationException
     {
+        JsonObject authFailure = new JsonObject();
         Profile profile = this.mongoDBJsonStore.getProfile(email);
         if(profile == null)
         {
-            logger.info("PROFILE_NOT_FOUND: "+email);
-            throw new AuthenticationException(email);
+            authFailure.addProperty("message", "profile_not_found");
+            throw new AuthenticationException(authFailure);
         }
 
         String registeredEmail = profile.getEmail();
@@ -147,8 +149,8 @@ public class ProfileRegistrationService {
 
         if(registeredEmail == null)
         {
-            logger.info("EMAIL_NOT_FOUND");
-            throw new AuthenticationException(email);
+            authFailure.addProperty("message", "profile_not_found");
+            throw new AuthenticationException(authFailure);
         }
 
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
@@ -168,7 +170,7 @@ public class ProfileRegistrationService {
             return activeProfiles;
         }
 
-        logger.info("AUTHENTICATION_FAILED");
-        throw new AuthenticationException(email);
+        authFailure.addProperty("message", "password_mismatch");
+        throw new AuthenticationException(authFailure);
     }
 }

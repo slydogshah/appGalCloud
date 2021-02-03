@@ -5,11 +5,13 @@ import 'package:app/src/model/location.dart';
 class Profile {
   String id;
   String email;
-  int mobile;
+  String mobile;
   String photo;
   String password;
   String profileType;
   Location location;
+
+  Map<String,dynamic> validationError;
 
 
   Profile(this.id, this.email, this.mobile, this.photo, this.password);
@@ -35,6 +37,16 @@ class Profile {
     this.profileType = profileType;
   }
 
+  Map<String,dynamic> getValidationError()
+  {
+    return this.validationError;
+  }
+
+  setValidationError(Map<String,dynamic> validationError)
+  {
+    this.validationError = validationError;
+  }
+
   Profile.fromJson(Map<String, dynamic> json)
   {
     if(json['id'] != null)
@@ -42,7 +54,7 @@ class Profile {
       id = json['id'];
     }
     email = json['email'];
-    mobile = json['mobile'];
+    mobile = json['mobile'].toString();
     photo = json['photo'];
     if(json['location'] != null)
     {

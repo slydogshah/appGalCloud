@@ -6,6 +6,8 @@ class FoodRunnerLoginData
   AuthCredentials authCredentials;
   List<SourceOrg> sourceOrgs;
 
+  Map<String,dynamic> authFailure;
+
   FoodRunnerLoginData();
 
   AuthCredentials getAuthCredentials()

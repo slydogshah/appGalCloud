@@ -18,11 +18,12 @@ import 'package:app/src/model/schedulePickupNotification.dart';
 
 void main() {
 
-test('getActiveView', () {
+test('getActiveView', () async {
     ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+    print("REQUEST STARTING....");
     Future<ActiveView> activeViewFuture = activeNetworkClient.getActiveView();
     activeViewFuture.then((activeView){
-      print(activeView);
+      print("RESPONSE: "+activeView.toString());
       expect((activeView.activeFoodRunners)!=null, true);
       expect((activeView.activeFoodRunnerQueue)!=null, true);
       expect((activeView.finderResults)!=null, true);

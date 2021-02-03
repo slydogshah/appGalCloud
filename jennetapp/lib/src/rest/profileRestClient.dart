@@ -27,11 +27,23 @@ class ProfileRestClient
   {
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/profile/';
     var response = await http.post(remoteUrl, body: profile.toString());
-    if(response.statusCode != 200)
+
+    //print(response.body);
+    //print(response.statusCode);
+    //print(response.headers);
+    if(response.statusCode == 400)
+    {
+      Map<String,dynamic> validationError = jsonDecode(response.body);
+      profile.setValidationError(validationError);
+      return profile;
+    }
+    else if(response.statusCode != 200)
     {
       throw new CloudBusinessException(response.statusCode, response.body);
     }
-    return profile;
+
+    Profile result = Profile.fromJson(jsonDecode(response.body));
+    return result;
   }
 
   Future<FoodRunnerLoginData> login(AuthCredentials credentials) async
@@ -48,6 +60,7 @@ class ProfileRestClient
         AuthCredentials authCredentials = new AuthCredentials();
         authCredentials.statusCode = 401;
         foodRunnerLoginData.setAuthCredentials(authCredentials);
+        foodRunnerLoginData.authFailure = jsonDecode(responseJson);
         return foodRunnerLoginData;
     }
     else if(response.statusCode != 200)

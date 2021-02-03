@@ -1,11 +1,11 @@
-import 'package:app/src/navigation/navigation.dart';
-import 'package:app/src/navigation/navigationproto.dart';
+//TopNavigationBar Sample: https://github.com/flutter/flutter/issues/42759
+
 import 'package:app/src/ui/login.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void main() 
+void main()
 {
   //Launch the App
-  runApp(new Login());
-  //runApp(new NavigationProto());
+  runApp(new JenNetworkApp());
 }
