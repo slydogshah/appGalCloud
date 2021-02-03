@@ -51,6 +51,10 @@ class LoginForm extends React.Component {
   handleLogin(event) {
     console.log(JSON.stringify(this.state));
 
+    ReactDOM.unmountComponentAtNode(document.getElementById('system_error'));
+    ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
+    ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
+
     const apiUrl = 'http://localhost:8080/registration/login/';
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
           this.props.history.push({
@@ -58,28 +62,44 @@ class LoginForm extends React.Component {
             state: response.data
           });
     }).catch(err => {
+
            if(err.response != null && err.response.status == 401)
            {
-                this.setState({
-                  "errorMessage": "Login Failed. Please check your Username and/or Password"
-                });
+                console.log(JSON.stringify(err.response.data));
+                if(err.response.data.message == "profile_not_found")
+                {
+                    const profile_not_found = (
+                                          <CAlert
+                                          color="warning"
+                                          >
+                                             The email is not registered.
+                                         </CAlert>
+                                      );
+                    ReactDOM.render(profile_not_found,document.getElementById('profile_not_found'));
+                }
+                else if(err.response.data.message == "password_mismatch")
+                {
+                    const password_mismatch = (
+                                                              <CAlert
+                                                              color="warning"
+                                                              >
+                                                                 Password does not match.
+                                                             </CAlert>
+                                                          );
+                                        ReactDOM.render(password_mismatch,document.getElementById('password_mismatch'));
+                }
            }
            else
            {
-                this.setState({
-                    "errorMessage": "Unknown Error. Please check your Network Connection"
-                });
+               const system_error = (
+                                                                             <CAlert
+                                                                             color="warning"
+                                                                             >
+                                                                                Unknown Error. Please check your Network Connection
+                                                                            </CAlert>
+                                                                         );
+                                                       ReactDOM.render(system_error,document.getElementById('system_error'));
            }
-           const element = (
-                 <CAlert
-                 color="dark"
-                 closeButton
-                 >
-                    {this.state.errorMessage}
-                </CAlert>
-             );
-           ReactDOM.unmountComponentAtNode(document.getElementById('loginErrorAlert'));
-           ReactDOM.render(element,document.getElementById('loginErrorAlert'));
     });
 
     event.preventDefault();
@@ -97,6 +117,7 @@ class LoginForm extends React.Component {
                         <CForm>
                           <h1>Login</h1>
                           <p className="text-muted">Sign In to your account</p>
+                          <div id="system_error"/>
                           <CInputGroup className="mb-3">
                             <CInputGroupPrepend>
                               <CInputGroupText>
@@ -105,6 +126,7 @@ class LoginForm extends React.Component {
                             </CInputGroupPrepend>
                             <CInput type="text" placeholder="Username" autoComplete="username"
                             name="username" onChange={this.handleChange}/>
+                            <div id="profile_not_found"/>
                           </CInputGroup>
                           <CInputGroup className="mb-4">
                             <CInputGroupPrepend>
@@ -114,6 +136,7 @@ class LoginForm extends React.Component {
                             </CInputGroupPrepend>
                             <CInput type="password" placeholder="Password" autoComplete="current-password"
                             name="password" onChange={this.handleChange}/>
+                            <div id="password_mismatch"/>
                           </CInputGroup>
                           <CRow>
                             <CCol xs="6">
