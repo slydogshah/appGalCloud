@@ -35,7 +35,7 @@ const TheContent = () => {
                   )} />
               )
             })}
-            <Redirect from="/" to="/home" />
+            <Redirect from="/" to="/dropOffHome" />
           </Switch>
         </Suspense>
       </CContainer>

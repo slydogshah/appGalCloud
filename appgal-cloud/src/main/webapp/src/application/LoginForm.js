@@ -28,6 +28,11 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import './../App.js';
+
+/*const PrintApplicationContext = () => {
+    const { planets } = React.useContext(ApplicationContext);
+}*/
 
 class LoginForm extends React.Component {
   mixins = [OverlayMixin];
@@ -57,10 +62,14 @@ class LoginForm extends React.Component {
 
     const apiUrl = 'http://localhost:8080/registration/login/';
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
-          this.props.history.push({
+          /*this.props.history.push({
             pathname: "/home",
             state: response.data
-          });
+          });*/
+          this.props.history.push({
+                      pathname: "/dropOffHome",
+                      state: response.data
+                    });
     }).catch(err => {
 
            if(err.response != null && err.response.status == 401)
