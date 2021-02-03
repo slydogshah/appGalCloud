@@ -9,13 +9,17 @@ import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:app/src/ui/registration.dart';
+import 'package:app/src/ui/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class ProfileFunctions
 {
-  void showAlertDialog(BuildContext context, String email, String password) 
+  void showAlertDialog(BuildContext context, final LoginState loginState, final TextFormField emailField, final TextFormField passwordField)
   {
+    final String email = emailField.controller.text;
+    final String password = passwordField.controller.text;
+
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
       children: [CupertinoActivityIndicator()]
@@ -32,7 +36,7 @@ class ProfileFunctions
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
-    login(context, dialog, credentials);
+    login(context, dialog, loginState, credentials);
   }
 
   void showAlertDialogRegistration(BuildContext context, final RegistrationState state, final TextFormField emailField,
@@ -102,12 +106,12 @@ class ProfileFunctions
         AuthCredentials credentials = new AuthCredentials();
         credentials.email = profile.email;
         credentials.password = profile.password;
-        login(context, dialog, credentials);
+        loginAfterRegistration(context, dialog, credentials);
       }
     });
   }
 
-  void login (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
+  void loginAfterRegistration (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
     future.then((FoodRunnerLoginData){
@@ -120,6 +124,36 @@ class ProfileFunctions
       if(authCredentials.statusCode == 401)
       {
           return;
+      }
+
+      ActiveSession activeSession = ActiveSession.getInstance();
+      activeSession.setProfile(authCredentials.getProfile());
+      Profile profile = activeSession.getProfile();
+
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<List<FoodRecoveryTransaction>> future = client.getFoodRecoveryTransaction();
+      future.then((txs){
+        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(txs)));
+      });
+
+      showCards(context, profile);
+    });
+  }
+
+  void login (BuildContext context, SimpleDialog dialog, LoginState loginState, AuthCredentials authCredentials) {
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
+    future.then((FoodRunnerLoginData){
+      Navigator.of(context, rootNavigator: true).pop();
+
+
+      AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
+
+      //TODO: UI_HANDLING
+      if(authCredentials.statusCode == 401)
+      {
+        loginState.notifyLoginFailed();
+        return;
       }
 
       ActiveSession activeSession = ActiveSession.getInstance();

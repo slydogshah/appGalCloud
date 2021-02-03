@@ -32,6 +32,22 @@ class Login extends StatefulWidget
 }
 
 class LoginState extends State<Login> {
+  String email;
+  String password;
+  bool authenticationFailed = false;
+
+  void notifyLoginFailed()
+  {
+    setState(() {
+      // This call to setState tells the Flutter framework that
+      // something has changed in this State, which causes it to rerun
+      // the build method below so that the display can reflect the
+      // updated values. If you change _counter without calling
+      // setState(), then the build method won't be called again,
+      // and so nothing would appear to happen.
+      this.authenticationFailed = true;
+    });
+  }
 
   // This widget is the root of your application.
   @override
@@ -50,10 +66,20 @@ class LoginState extends State<Login> {
                     //hintText: "Your email address",
                     labelText:
                         "Email",
-                  )
+                  ),
+                  autovalidateMode:AutovalidateMode.always,
+                  validator: (value){
+                    if(this.authenticationFailed)
+                    {
+                      return "Login Failed.";
+                    }
+                    else {
+                      return null;
+                    }
+                  },
                 );
 
-    TextField password = TextField(
+    TextFormField password = TextFormField(
             controller: TextEditingController(),
             obscureText: true,
             decoration: InputDecoration(
@@ -62,7 +88,17 @@ class LoginState extends State<Login> {
                     //hintText: "Your email address",
                     labelText:
                         "Password",
-            )
+            ),
+            autovalidateMode:AutovalidateMode.always,
+            validator: (value){
+              if(this.authenticationFailed)
+              {
+                return "Login Failed.";
+              }
+              else {
+                return null;
+              }
+            },
     );
 
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
@@ -95,7 +131,7 @@ class LoginState extends State<Login> {
                       child: Text("Login"),
                       onPressed: () 
                       {
-                        profileFunctions.showAlertDialog(context, email.controller.text, password.controller.text);
+                        profileFunctions.showAlertDialog(context, this, email, password);
                       }
                     )
                 )
