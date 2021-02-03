@@ -69,8 +69,9 @@ void main() {
     credentials.email = "notFound@blah.com";
     credentials.password = "c";
     FoodRunnerLoginData foodRunnerLoginData = await profileRestClient.login(credentials);
-    print(foodRunnerLoginData);
     AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
+    print(authCredentials);
+    print(foodRunnerLoginData.authFailure);
     expect(authCredentials.statusCode, 401);
   });
 }

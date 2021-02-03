@@ -143,16 +143,15 @@ class ProfileFunctions
   void login (BuildContext context, SimpleDialog dialog, LoginState loginState, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
-    future.then((FoodRunnerLoginData){
+    future.then((foodRunnerLoginData){
       Navigator.of(context, rootNavigator: true).pop();
 
 
-      AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
+      AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
 
-      //TODO: UI_HANDLING
       if(authCredentials.statusCode == 401)
       {
-        loginState.notifyLoginFailed();
+        loginState.notifyLoginFailed(foodRunnerLoginData.authFailure);
         return;
       }
 

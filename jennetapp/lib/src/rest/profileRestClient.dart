@@ -60,6 +60,7 @@ class ProfileRestClient
         AuthCredentials authCredentials = new AuthCredentials();
         authCredentials.statusCode = 401;
         foodRunnerLoginData.setAuthCredentials(authCredentials);
+        foodRunnerLoginData.authFailure = jsonDecode(responseJson);
         return foodRunnerLoginData;
     }
     else if(response.statusCode != 200)

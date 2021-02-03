@@ -35,8 +35,9 @@ class LoginState extends State<Login> {
   String email;
   String password;
   bool authenticationFailed = false;
+  Map<String,dynamic> authFailure;
 
-  void notifyLoginFailed()
+  void notifyLoginFailed(Map<String,dynamic> authFailure)
   {
     setState(() {
       // This call to setState tells the Flutter framework that
@@ -46,6 +47,7 @@ class LoginState extends State<Login> {
       // setState(), then the build method won't be called again,
       // and so nothing would appear to happen.
       this.authenticationFailed = true;
+      this.authFailure = authFailure;
     });
   }
 
@@ -71,7 +73,13 @@ class LoginState extends State<Login> {
                   validator: (value){
                     if(this.authenticationFailed)
                     {
-                      return "Login Failed.";
+                      if(this.authFailure['message'].startsWith("profile_not_found")) {
+                        return "The email is not registered.";
+                      }
+                      else
+                      {
+                        return null;
+                      }
                     }
                     else {
                       return null;
@@ -93,7 +101,13 @@ class LoginState extends State<Login> {
             validator: (value){
               if(this.authenticationFailed)
               {
-                return "Login Failed.";
+                if(this.authFailure['message'].startsWith("password_mismatch")) {
+                  return "Password does not match.";
+                }
+                else
+                {
+                  return null;
+                }
               }
               else {
                 return null;
