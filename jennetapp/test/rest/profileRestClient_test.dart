@@ -31,7 +31,7 @@ void main() {
     var v1 = uuid.v1();
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Profile profile = new Profile(
-        null, "testsuite"+v1+"@blah.com", 8675309, "photu", "password");
+        null, "testsuite"+v1+"@blah.com", "8675309", "photu", "password");
     profile.setProfileType("FOOD_RUNNER");
     //print(profile);
 
@@ -47,7 +47,7 @@ void main() {
     var v1 = uuid.v1();
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Profile profile = new Profile(
-        null, "testsuite"+v1+"/blah.com", 8675309, "photu", "password");
+        null, "testsuite"+v1+"/blah.com", "8675309", "photu", "password");
     profile.setProfileType("FOOD_RUNNER");
     print(profile);
 
