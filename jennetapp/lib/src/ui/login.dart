@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:app/src/ui/profileOptions.dart';
+import 'package:app/src/ui/registration.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -158,7 +159,25 @@ class LoginState extends State<Login> {
 
     AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Login"),);
     Scaffold scaffold = new Scaffold(appBar: appBar, body: form,
-      bottomNavigationBar: ProfileOptions.bottomNavigationBar(context)
+      bottomNavigationBar: Container(
+        height: 60,
+        color: Colors.black12,
+        child: InkWell(
+        onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration())),
+        child: Padding(
+        padding: EdgeInsets.only(top: 8.0),
+        child: Column(
+        children: <Widget>[
+        Icon(
+        Icons.person_add,
+        color: Theme.of(context).accentColor,
+        ),
+        Text('Register'),
+        ],
+        ),
+        ),
+        ),
+        )
     );
     return scaffold;
   }
