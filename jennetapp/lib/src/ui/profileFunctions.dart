@@ -43,6 +43,14 @@ class ProfileFunctions
     final String email = emailField.controller.text;
     final String password = passwordField.controller.text;
     final String mobile = phoneField.controller.text;
+    if(email.isEmpty || password.isEmpty || mobile.isEmpty)
+    {
+      emailField.controller.value = new TextEditingValue(text:email);
+      passwordField.controller.value = new TextEditingValue(text:password);
+      phoneField.controller.value = new TextEditingValue(text:mobile);
+      state.notifyEmailIsInvalid(email,password,mobile,email.isEmpty,password.isEmpty,mobile.isEmpty);
+      return;
+    }
 
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
@@ -63,6 +71,8 @@ class ProfileFunctions
     Future<Profile> future = profileRestClient.register(profile);
     future.then((profile){
       Navigator.of(context, rootNavigator: true).pop();
+      print("&&&&&&&&&&&&");
+      print(profile);
       if(profile.validationError != null)
       {
         List<dynamic> errors = profile.validationError['violations'];

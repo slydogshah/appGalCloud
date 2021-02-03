@@ -28,12 +28,6 @@ class RegistrationState extends State<Registration>
   String phone = "";
 
   void notifyEmailIsInvalid(String emailValue,String passwordValue,String phoneValue,bool emailValid,bool passwordRequired,bool phoneValid) {
-    this.emailIsInvalid = emailValid;
-    this.passwordIsRequired = passwordRequired;
-    this.phoneIsInvalid = phoneValid;
-    this.email = emailValue;
-    this.password = passwordValue;
-    this.phone = phoneValue;
     setState(() {
       // This call to setState tells the Flutter framework that
       // something has changed in this State, which causes it to rerun
@@ -41,6 +35,15 @@ class RegistrationState extends State<Registration>
       // updated values. If you change _counter without calling
       // setState(), then the build method won't be called again,
       // and so nothing would appear to happen.
+      this.emailIsInvalid = emailValid;
+      this.passwordIsRequired = passwordRequired;
+      this.phoneIsInvalid = phoneValid;
+      this.email = emailValue;
+      this.password = passwordValue;
+      this.phone = phoneValue;
+      //print("EmailValid: $emailIsInvalid");
+      //print("PasswordValid: $passwordIsRequired");
+      //print("PhoneValid: $phoneIsInvalid");
     });
   }
 
@@ -65,15 +68,28 @@ class RegistrationState extends State<Registration>
           "Email",
         ),
         validator: (value) {
-          if(this.emailIsInvalid)
-          {
-            if(value.isEmpty)
-            {
+          try {
+            if (this.emailIsInvalid) {
+              if (value.isEmpty) {
                 return "Email is required";
+              }
+              else {
+                return 'Email is invalid';
+              }
             }
-            return 'Email is invalid';
+            if (value.isEmpty) {
+              if (this.emailIsInvalid) {
+                return "Email is required";
+              }
+              else {
+                return null;
+              }
+            }
+            return null;
+          }finally{
+            this.emailIsInvalid = false;
           }
-          return null;
+
         },
         autovalidateMode:AutovalidateMode.always
     );
@@ -88,16 +104,29 @@ class RegistrationState extends State<Registration>
             "Password"
         ),
         validator: (value) {
-          if(this.phoneIsInvalid)
-          {
-            if(value.isEmpty)
-            {
-              return "Password is required";
+          try {
+            if (this.passwordIsRequired) {
+              if (value.isEmpty) {
+                return "Password is required";
+              }
+              else {
+                return null;
+              }
             }
-            return 'Password is invalid';
+            if (value.isEmpty) {
+              if (this.passwordIsRequired) {
+                return "Password is required";
+              }
+              else {
+                return null;
+              }
+            }
+            return null;
+          }finally{
+            this.passwordIsRequired = false;
           }
-          return null;
-        }
+        },
+        autovalidateMode:AutovalidateMode.always
     );
     TextFormField mobile = TextFormField(
         controller: TextEditingController(text:this.phone),
@@ -106,21 +135,34 @@ class RegistrationState extends State<Registration>
         decoration: InputDecoration(
           filled: true,
           icon: Icon(Icons.phone),
-          hintText: "Your mobile number",
+          hintText: "Your phone number",
           labelText:
-          "Mobile",
+          "Phone",
         ),
         validator: (value) {
-          if(this.phoneIsInvalid)
-          {
-            if(value.isEmpty)
-            {
-              return "Phone is required";
+          try {
+            if (this.phoneIsInvalid) {
+              if (value.isEmpty) {
+                return "Phone is required";
+              }
+              else {
+                return 'Phone is invalid';
+              }
             }
-            return 'Phone is invalid';
+            if (value.isEmpty) {
+              if (this.phoneIsInvalid) {
+                return "Phone is required";
+              }
+              else {
+                return null;
+              }
+            }
+            return null;
+          }finally{
+            this.phoneIsInvalid = false;
           }
-          return null;
-        }
+        },
+        autovalidateMode:AutovalidateMode.always
     );
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
         dragStartBehavior: DragStartBehavior.down,
@@ -141,6 +183,13 @@ class RegistrationState extends State<Registration>
                     onPressed: ()
                     {
                       if (_formKey.currentState.validate()) {
+                        emailIsInvalid = false;
+                        passwordIsRequired = false;
+                        phoneIsInvalid = false;
+                        this.email = "";
+                        this.password = "";
+                        this.phone = "";
+
                         profileFunctions.showAlertDialogRegistration(context, this, email, password,mobile,"FOOD_RUNNER");
                       }
                     }
