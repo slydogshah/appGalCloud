@@ -35,10 +35,15 @@ class ProfileFunctions
     login(context, dialog, credentials);
   }
 
-  void showAlertDialogRegistration(BuildContext context, final RegistrationState state, TextFormField emailField,
-      final String email, String password, int mobile,
-  String profileType) 
+  void showAlertDialogRegistration(BuildContext context, final RegistrationState state, final TextFormField emailField,
+  final TextFormField passwordField,
+  final TextFormField phoneField,
+  final String profileType)
   {
+    final String email = emailField.controller.text;
+    final String password = passwordField.controller.text;
+    final String mobile = phoneField.controller.text;
+
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
       children: [CupertinoActivityIndicator()]
@@ -52,7 +57,7 @@ class ProfileFunctions
       },
     );
 
-    Profile profile = new Profile("", email, 123456789, "", password);
+    Profile profile = new Profile("", email, mobile, "", password);
     profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Profile> future = profileRestClient.register(profile);
@@ -61,21 +66,27 @@ class ProfileFunctions
       if(profile.validationError != null)
       {
         List<dynamic> errors = profile.validationError['violations'];
+        bool emailIsInvalid = false;
+        bool passwordIsRequired = false;
+        bool phoneIsInvalid = false;
         errors.forEach((element) {
-          //TODO: UI_HANDLING
           if (element.startsWith("email")) {
-            emailField.controller.value = new TextEditingValue(text:email);
-            state.notifyEmailIsInvalid(email);
+            emailIsInvalid = true;
           }
-          /*else if(element.startsWith("password"))
+          else if(element.startsWith("password"))
           {
-
+            passwordIsRequired = true;
           }
           else if(element.startsWith("phone"))
           {
-
-          }*/
+            phoneIsInvalid = true;
+          }
         });
+
+        emailField.controller.value = new TextEditingValue(text:email);
+        passwordField.controller.value = new TextEditingValue(text:password);
+        phoneField.controller.value = new TextEditingValue(text:mobile);
+        state.notifyEmailIsInvalid(email,password,mobile,emailIsInvalid,passwordIsRequired,phoneIsInvalid);
       }
       else {
         AuthCredentials credentials = new AuthCredentials();

@@ -21,11 +21,19 @@ class Registration extends StatefulWidget
 class RegistrationState extends State<Registration>
 {
   bool emailIsInvalid = false;
+  bool passwordIsRequired = false;
+  bool phoneIsInvalid = false;
   String email = "";
+  String password = "";
+  String phone = "";
 
-  void notifyEmailIsInvalid(String emailValue) {
-    this.emailIsInvalid = true;
+  void notifyEmailIsInvalid(String emailValue,String passwordValue,String phoneValue,bool emailValid,bool passwordRequired,bool phoneValid) {
+    this.emailIsInvalid = emailValid;
+    this.passwordIsRequired = passwordRequired;
+    this.phoneIsInvalid = phoneValid;
     this.email = emailValue;
+    this.password = passwordValue;
+    this.phone = phoneValue;
     setState(() {
       // This call to setState tells the Flutter framework that
       // something has changed in this State, which causes it to rerun
@@ -70,7 +78,7 @@ class RegistrationState extends State<Registration>
         autovalidateMode:AutovalidateMode.always
     );
     TextFormField password = TextFormField(
-        controller: TextEditingController(),
+        controller: TextEditingController(text:this.password),
         obscureText: true,
         decoration: InputDecoration(
             filled: true,
@@ -80,14 +88,19 @@ class RegistrationState extends State<Registration>
             "Password"
         ),
         validator: (value) {
-          if (value.isEmpty) {
-            return 'Password is required';
+          if(this.phoneIsInvalid)
+          {
+            if(value.isEmpty)
+            {
+              return "Password is required";
+            }
+            return 'Password is invalid';
           }
           return null;
         }
     );
     TextFormField mobile = TextFormField(
-        controller: TextEditingController(),
+        controller: TextEditingController(text:this.phone),
         textCapitalization: TextCapitalization.words,
         cursorColor: cursorColor,
         decoration: InputDecoration(
@@ -98,8 +111,13 @@ class RegistrationState extends State<Registration>
           "Mobile",
         ),
         validator: (value) {
-          if (value.isEmpty) {
-            return 'Phone is required';
+          if(this.phoneIsInvalid)
+          {
+            if(value.isEmpty)
+            {
+              return "Phone is required";
+            }
+            return 'Phone is invalid';
           }
           return null;
         }
@@ -123,8 +141,7 @@ class RegistrationState extends State<Registration>
                     onPressed: ()
                     {
                       if (_formKey.currentState.validate()) {
-                        profileFunctions.showAlertDialogRegistration(context, this, email, email.controller.text,
-                            password.controller.text,int.parse(mobile.controller.text), "FOOD_RUNNER");
+                        profileFunctions.showAlertDialogRegistration(context, this, email, password,mobile,"FOOD_RUNNER");
                       }
                     }
                 )

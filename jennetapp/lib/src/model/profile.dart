@@ -5,7 +5,7 @@ import 'package:app/src/model/location.dart';
 class Profile {
   String id;
   String email;
-  int mobile;
+  String mobile;
   String photo;
   String password;
   String profileType;
