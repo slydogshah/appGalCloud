@@ -77,13 +77,23 @@ class Register extends React.Component {
       if(validationSuccess)
       {
           const apiUrl = 'http://localhost:8080/registration/org/';
-              axios.post(apiUrl,{"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).then((response) => {
-                    //setTimeout(() => {  this.props.history.push("/dashboard"); }, 10000)
-                    this.props.history.push({
-                      pathname: "/home",
-                      state: response.data
+          axios.post(apiUrl,{"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).
+          then((response) => {
+                    const loginUrl = 'http://localhost:8080/registration/login/';
+                    axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
+                    then((response) => {
+                        console.log("**************************");
+                        console.log(JSON.stringify(response.data));
+                        /*this.props.history.push({
+                            pathname: "/dropOffHome",
+                            state: response.data
+                        });*/
+                        this.props.history.push({
+                            pathname: "/home",
+                            state: response.data
+                        });
                     });
-              }).catch(err => {
+          }).catch(err => {
                     if(err.response != null && err.response.status == 401)
                     {
                          this.setState({
@@ -159,6 +169,7 @@ class Register extends React.Component {
                                                                       ReactDOM.render(element,document.getElementById('errorAlert'));
                     }
               });
+
       }
   }
 
