@@ -201,8 +201,11 @@ class RegistrationState extends State<Registration>
     );
 
     Form form = new Form(key:_formKey,child:scrollbar);
-    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Register"),);
-    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,);
+    Scaffold scaffold = new Scaffold(appBar: CupertinoNavigationBar(
+        middle: Text("Register"),
+      ),
+      body: form,);
+
     return scaffold;
   }
 }
