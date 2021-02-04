@@ -1,5 +1,6 @@
 import * as React from 'react'
 const CountContext = React.createContext()
+
 function useCount() {
   const context = React.useContext(CountContext)
   if (!context) {

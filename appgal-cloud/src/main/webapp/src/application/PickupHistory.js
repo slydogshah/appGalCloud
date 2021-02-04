@@ -105,7 +105,7 @@ class PickupHistory extends React.Component
     constructor(props)
     {
         super(props);
-        console.log("State: "+JSON.stringify(this.props.location.state));
+        //console.log("State: "+JSON.stringify(this.props.location.state));
     }
 
     render()

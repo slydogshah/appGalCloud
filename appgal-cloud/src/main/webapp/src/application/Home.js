@@ -45,13 +45,14 @@ import WidgetsDropdown from './WidgetsDropdown'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
-import CountContext from './ApplicationContext';
+
+/*import CountContext from './ApplicationContext';
 
 function getAppContext(props)
 {
-    const value = props.location;
+    const value = JSON.parse(JSON.stringify(props.location))
     return <CountContext.Provider value={value} {...props} />
-}
+}*/
 
 const PendingTransactionView = ({pending}) => {
     const txs = []
@@ -105,14 +106,17 @@ class Home extends React.Component {
   element;
   constructor(props) {
       super(props);
-
-
-      const appContext = getAppContext(this.props);
-      console.log("*************************************");
-      console.log(appContext.props.value);
-
-
       //console.log("State: "+this.props.location.state);
+
+      /*if(typeof(this.props.location.state) == "undefined")
+      {
+        const appContext = getAppContext(this.props);
+        console.log("************HOME_STATE_RESTORE*************************");
+        console.log(appContext.props.value);
+        this.props.location.state = appContext.props.value.state;
+      }
+      console.log("RESTORED_STATE: "+this.props.location.state);*/
+
       this.state = {username:'',password:'',isModalOpen:false};
       this.handlePickup = this.handlePickup.bind(this);
       this.handlePickupProcess = this.handlePickupProcess.bind(this);

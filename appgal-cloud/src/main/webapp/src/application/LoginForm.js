@@ -28,26 +28,22 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import CountContext from './ApplicationContext';
+
+/*import CountContext from './ApplicationContext';
 
 function getAppContext(props)
 {
-    const value = props.location;
+    const value = JSON.stringify(props.location);
     return <CountContext.Provider value={value} {...props} />
-}
+}*/
 
 class LoginForm extends React.Component {
   mixins = [OverlayMixin];
   constructor(props) {
     super(props);
-
-
-    const appContext = getAppContext(this.props);
-    console.log("*************************************");
-    console.log(appContext.props.value);
-
-
     //console.log("Constructor: "+JSON.stringify(this.props));
+
+
     this.state = {username:'',password:'',isModalOpen:false};
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
