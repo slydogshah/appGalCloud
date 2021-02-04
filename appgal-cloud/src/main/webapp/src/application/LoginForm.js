@@ -28,11 +28,13 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import './../App.js';
+import CountContext from './count-context.js';
 
-/*const PrintApplicationContext = () => {
-    const { planets } = React.useContext(ApplicationContext);
-}*/
+function getAppContext(props)
+{
+    const value = 420;
+    return <CountContext.Provider value={value} {...props} />
+}
 
 class LoginForm extends React.Component {
   mixins = [OverlayMixin];
@@ -56,20 +58,24 @@ class LoginForm extends React.Component {
   handleLogin(event) {
     console.log(JSON.stringify(this.state));
 
+    const appContext = getAppContext(null);
+    console.log("*************************************");
+    console.log(appContext.props.value);
+
     ReactDOM.unmountComponentAtNode(document.getElementById('system_error'));
     ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
     ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
 
     const apiUrl = 'http://localhost:8080/registration/login/';
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
-          /*this.props.history.push({
+          this.props.history.push({
             pathname: "/home",
             state: response.data
-          });*/
-          this.props.history.push({
+          });
+          /*this.props.history.push({
                       pathname: "/dropOffHome",
                       state: response.data
-                    });
+                    });*/
     }).catch(err => {
 
            if(err.response != null && err.response.status == 401)

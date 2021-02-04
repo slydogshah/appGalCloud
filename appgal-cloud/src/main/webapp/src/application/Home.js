@@ -45,6 +45,8 @@ import WidgetsDropdown from './WidgetsDropdown'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
+import CountProvider from './count-context.js';
+import useCount from './count-context.js';
 
 const PendingTransactionView = ({pending}) => {
     const txs = []
