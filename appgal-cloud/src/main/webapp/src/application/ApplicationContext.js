@@ -1,25 +1,28 @@
-import React, { Component } from 'react';
+import * as React from 'react'
+const CountContext = React.createContext()
+function useCount() {
+  const context = React.useContext(CountContext)
+  if (!context) {
+    throw new Error(`useCount must be used within a CountProvider`)
+  }
 
+  /*const [count, setCount] = React.useState(0);
 
-const ApplicationContext = React.createContext();
-const planets = [
-          {
-            name: 'earth',
-            occupied: false,
-          },
-          {
-            name: 'mars',
-            occupied: false,
-          },
-          {
-            name: 'piers morgan`s forehead',
-            occupied: true,
-          }
-        ];
+  const value = React.useMemo(() => [count, setCount], [count]);
+  console.log("************VALUE*************************");
+  console.log(value);
 
-const PrintApplicationContext = () => {
-    const { data } = React.useContext(ApplicationContext);
-    console.log(JSON.stringify(data));
+  const value2 = React.useMemo(() => [count, setCount], [count]);
+  console.log("************VALUE*************************");
+  console.log(value2);
+  console.log("*************************************");*/
+
+  return context
 }
-
-export default PrintApplicationContext;
+function CountProvider(props) {
+  const [count, setCount] = React.useState(0)
+  const value = React.useMemo(() => [count, setCount], [count])
+  return <CountContext.Provider value={value} {...props} />
+}
+//export {CountProvider, useCount}
+export default CountContext

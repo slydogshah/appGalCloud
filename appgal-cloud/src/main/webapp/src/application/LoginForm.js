@@ -28,11 +28,11 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import CountContext from './count-context.js';
+import CountContext from './ApplicationContext';
 
 function getAppContext(props)
 {
-    const value = 420;
+    const value = props.location;
     return <CountContext.Provider value={value} {...props} />
 }
 
@@ -40,6 +40,13 @@ class LoginForm extends React.Component {
   mixins = [OverlayMixin];
   constructor(props) {
     super(props);
+
+
+    const appContext = getAppContext(this.props);
+    console.log("*************************************");
+    console.log(appContext.props.value);
+
+
     //console.log("Constructor: "+JSON.stringify(this.props));
     this.state = {username:'',password:'',isModalOpen:false};
     this.handleChange = this.handleChange.bind(this);
@@ -57,10 +64,6 @@ class LoginForm extends React.Component {
 
   handleLogin(event) {
     console.log(JSON.stringify(this.state));
-
-    const appContext = getAppContext(null);
-    console.log("*************************************");
-    console.log(appContext.props.value);
 
     ReactDOM.unmountComponentAtNode(document.getElementById('system_error'));
     ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));

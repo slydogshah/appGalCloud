@@ -45,8 +45,13 @@ import WidgetsDropdown from './WidgetsDropdown'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
-import CountProvider from './count-context.js';
-import useCount from './count-context.js';
+import CountContext from './ApplicationContext';
+
+function getAppContext(props)
+{
+    const value = props.location;
+    return <CountContext.Provider value={value} {...props} />
+}
 
 const PendingTransactionView = ({pending}) => {
     const txs = []
@@ -100,6 +105,13 @@ class Home extends React.Component {
   element;
   constructor(props) {
       super(props);
+
+
+      const appContext = getAppContext(this.props);
+      console.log("*************************************");
+      console.log(appContext.props.value);
+
+
       //console.log("State: "+this.props.location.state);
       this.state = {username:'',password:'',isModalOpen:false};
       this.handlePickup = this.handlePickup.bind(this);
