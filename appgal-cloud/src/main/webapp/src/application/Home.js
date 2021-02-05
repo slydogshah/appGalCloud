@@ -104,19 +104,6 @@ const InProgressTransactionView = ({inProgress}) => {
     )
 }
 
-//<CCol xs="12" md="6" xl="6">
-                                            //  <CRow>
-                                            //    <CCol sm="6">
-                                            //      <CCallout color="success">
-                                            //        <small className="text-muted">Accepted</small>
-                                            //        <br />
-                                            //        <strong className="h4"></strong>
-                                            //      </CCallout>
-                                            //    </CCol>
-
-                                            //<hr className="mt-0" />
-                                            //                                            </CCol>
-                                            //                                            </CRow>
 const WaitOnData = ({state}) => {
     if (state.data === null) {
       return <p>Loading...</p>;
@@ -179,6 +166,36 @@ const WaitOnData = ({state}) => {
                                                   </CRow>
                                                   <hr className="mt-0" />
                                                   <PendingTransactionView pending={state.data.pending}/>
+                                                  <hr className="mt-0" />
+                                                </CCol>
+                                            </CRow>
+                                        </CCardBody>
+                                      </CCard>
+                                    </CCol>
+                            </CRow>
+                        </CCol>
+                        <CCol>
+                            <CRow>
+                                    <CCol>
+                                      <CCard>
+                                        <CCardHeader>
+                                          Pickups In-Progress
+                                        </CCardHeader>
+                                        <CCardBody>
+                                          <CRow>
+                                                <CCol xs="12" md="6" xl="6">
+                                                  <CRow>
+                                                    <CCol sm="6">
+                                                      <CCallout color="info">
+                                                        <small className="text-muted">Pending</small>
+                                                        <br />
+                                                        <strong className="h4">{state.data.pending.length}</strong>
+                                                      </CCallout>
+                                                    </CCol>
+                                                  </CRow>
+                                                  <hr className="mt-0" />
+                                                  <PendingTransactionView pending={state.data.pending}/>
+                                                  <hr className="mt-0" />
                                                 </CCol>
                                             </CRow>
                                         </CCardBody>
@@ -207,7 +224,7 @@ class Home extends React.Component {
     const apiUrl = 'http://localhost:8080/tx/recovery/?email=cindu@zoe.com';
     axios.get(apiUrl).then((response) => {
         this.setState({data: response.data});
-        console.log("RESPONSE: "+JSON.stringify(response.data));
+        //console.log("RESPONSE: "+JSON.stringify(response.data));
     });
   }
 
