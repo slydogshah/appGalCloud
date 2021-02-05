@@ -80,7 +80,8 @@ public class NotificationReceiverTest extends BaseTest {
 
         Response response = given().when().get("/tx/recovery/?email=bugs.bunny.shah@gmail.com")
                 .andReturn();
-        JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
+        JsonObject object = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        JsonArray array = object.getAsJsonArray("pending");
         JsonUtil.print(array);
 
         response = given().when().get("/notification/pickup/notifications?email=bugs.bunny.shah@gmail.com")

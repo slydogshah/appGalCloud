@@ -46,14 +46,6 @@ import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
 
-import CountContext from './ApplicationContext';
-
-function getAppContext(props, data)
-{
-    //console.log(JSON.stringify(data));
-    return <CountContext.Provider value={data} {...props} />
-}
-
 const PendingTransactionView = ({pending}) => {
     const txs = []
     for (const [index, value] of pending.entries()) {
@@ -61,7 +53,7 @@ const PendingTransactionView = ({pending}) => {
              <div className="progress-group mb-4">
                     <div className="progress-group-prepend">
                       <span className="progress-group-text">
-                        {value.state}
+                        {value.transactionState}
                       </span>
                     </div>
                     <div className="progress-group-bars">
@@ -72,11 +64,9 @@ const PendingTransactionView = ({pending}) => {
          )
     }
     return(
-        <>
         <div>
             {txs}
         </div>
-        </>
     )
 }
 
@@ -87,7 +77,7 @@ const InProgressTransactionView = ({inProgress}) => {
              <div className="progress-group mb-4">
                     <div className="progress-group-prepend">
                       <span className="progress-group-text">
-                        {value.state}
+                        {value.transactionState}
                       </span>
                     </div>
                     <div className="progress-group-bars">
@@ -104,106 +94,107 @@ const InProgressTransactionView = ({inProgress}) => {
     )
 }
 
+/**/
+
 const WaitOnData = ({state}) => {
     if (state.data === null) {
       return <p>Loading...</p>;
     }
     return (
       <>
-        <h1><div>{state.data.length}</div></h1>
-        <div id="schedulePickup"></div>
-                  <CRow>
-                      <CCol>
-                          <CCardGroup className="mb-4">
-                                 <CWidgetDropdown
-                                           color="gradient-primary"
-                                           header={state.data.length}
-                                           text="Pickups In-Progress"
-                                           footerSlot={
-                                             <ChartLineSimple
-                                               pointed
-                                               className="c-chart-wrapper mt-3 mx-3"
-                                               style={{height: '70px'}}
-                                               dataPoints={[65, 59, 84, 84, 51, 55, 40]}
-                                               pointHoverBackgroundColor="primary"
-                                               label="Members"
-                                               labels="months"
-                                             />
-                                           }
-                                         >
-                                       <CDropdown>
-                                         <CDropdownToggle color="transparent">
-                                           <CIcon name="cil-settings"/>
-                                         </CDropdownToggle>
-                                         <CDropdownMenu className="pt-0" placement="bottom-end">
-                                           <CDropdownItem>Schedule</CDropdownItem>
-                                           <CDropdownItem>History</CDropdownItem>
-                                         </CDropdownMenu>
-                                       </CDropdown>
-                                     </CWidgetDropdown>
-                          </CCardGroup>
-                      </CCol>
-                  </CRow>
-                  <CRow>
-                        <CCol>
-                            <CRow>
-                                    <CCol>
-                                      <CCard>
-                                        <CCardHeader>
-                                          Pickups In-Progress
-                                        </CCardHeader>
-                                        <CCardBody>
-                                          <CRow>
-                                                <CCol xs="12" md="6" xl="6">
-                                                  <CRow>
-                                                    <CCol sm="6">
-                                                      <CCallout color="info">
-                                                        <small className="text-muted">Pending</small>
-                                                        <br />
-                                                        <strong className="h4">{state.data.pending.length}</strong>
-                                                      </CCallout>
-                                                    </CCol>
-                                                  </CRow>
-                                                  <hr className="mt-0" />
-                                                  <PendingTransactionView pending={state.data.pending}/>
-                                                  <hr className="mt-0" />
-                                                </CCol>
+      <div id="schedulePickup"></div>
+            <CRow>
+                <CCol>
+                    <CCardGroup className="mb-4">
+                           <CWidgetDropdown
+                                     color="gradient-primary"
+                                     header={state.data.inProgress.length}
+                                     text="Pickups In-Progress"
+                                     footerSlot={
+                                       <ChartLineSimple
+                                         pointed
+                                         className="c-chart-wrapper mt-3 mx-3"
+                                         style={{height: '70px'}}
+                                         dataPoints={[65, 59, 84, 84, 51, 55, 40]}
+                                         pointHoverBackgroundColor="primary"
+                                         label="Members"
+                                         labels="months"
+                                       />
+                                     }
+                                   >
+                                 <CDropdown>
+                                   <CDropdownToggle color="transparent">
+                                     <CIcon name="cil-settings"/>
+                                   </CDropdownToggle>
+                                   <CDropdownMenu className="pt-0" placement="bottom-end">
+                                     <CDropdownItem>Schedule</CDropdownItem>
+                                     <CDropdownItem>History</CDropdownItem>
+                                   </CDropdownMenu>
+                                 </CDropdown>
+                               </CWidgetDropdown>
+                    </CCardGroup>
+                </CCol>
+            </CRow>
+            <CRow>
+                  <CCol>
+                      <CRow>
+                              <CCol>
+                                <CCard>
+                                  <CCardHeader>
+                                    Pickups - Pending
+                                  </CCardHeader>
+                                  <CCardBody>
+                                    <CRow>
+                                          <CCol xs="12" md="6" xl="6">
+                                            <CRow>
+                                              <CCol sm="6">
+                                                <CCallout color="info">
+                                                  <small className="text-muted">Pending</small>
+                                                  <br />
+                                                  <strong className="h4">{state.data.pending.length}</strong>
+                                                </CCallout>
+                                              </CCol>
                                             </CRow>
-                                        </CCardBody>
-                                      </CCard>
-                                    </CCol>
-                            </CRow>
-                        </CCol>
-                        <CCol>
-                            <CRow>
-                                    <CCol>
-                                      <CCard>
-                                        <CCardHeader>
-                                          Pickups In-Progress
-                                        </CCardHeader>
-                                        <CCardBody>
-                                          <CRow>
-                                                <CCol xs="12" md="6" xl="6">
-                                                  <CRow>
-                                                    <CCol sm="6">
-                                                      <CCallout color="info">
-                                                        <small className="text-muted">Pending</small>
-                                                        <br />
-                                                        <strong className="h4">{state.data.pending.length}</strong>
-                                                      </CCallout>
-                                                    </CCol>
-                                                  </CRow>
-                                                  <hr className="mt-0" />
-                                                  <PendingTransactionView pending={state.data.pending}/>
-                                                  <hr className="mt-0" />
-                                                </CCol>
+                                            <hr className="mt-0" />
+                                            <PendingTransactionView pending={state.data.pending}/>
+                                            <hr className="mt-0" />
+                                          </CCol>
+                                      </CRow>
+                                  </CCardBody>
+                                </CCard>
+                              </CCol>
+                      </CRow>
+                  </CCol>
+                  <CCol>
+                      <CRow>
+                              <CCol>
+                                <CCard>
+                                  <CCardHeader>
+                                    Pickups - In-Progress
+                                  </CCardHeader>
+                                  <CCardBody>
+                                    <CRow>
+                                          <CCol xs="12" md="6" xl="6">
+                                            <CRow>
+                                              <CCol sm="6">
+                                                <CCallout color="info">
+                                                  <small className="text-muted">In-Progress</small>
+                                                  <br />
+                                                  <strong className="h4">{state.data.inProgress.length}</strong>
+                                                </CCallout>
+                                              </CCol>
                                             </CRow>
-                                        </CCardBody>
-                                      </CCard>
-                                    </CCol>
-                            </CRow>
-                        </CCol>
-                  </CRow>
+                                            <hr className="mt-0" />
+                                            <InProgressTransactionView inProgress={state.data.inProgress}/>
+                                            <hr className="mt-0" />
+                                          </CCol>
+                                      </CRow>
+                                  </CCardBody>
+                                </CCard>
+                              </CCol>
+                      </CRow>
+                  </CCol>
+            </CRow>
       </>
     )
 }
