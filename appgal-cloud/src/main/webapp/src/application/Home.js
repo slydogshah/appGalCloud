@@ -96,7 +96,7 @@ const InProgressTransactionView = ({inProgress}) => {
 
 /**/
 
-const WaitOnData = ({state}) => {
+const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
     if (state.data === null) {
       return <p>Loading...</p>;
     }
@@ -127,8 +127,8 @@ const WaitOnData = ({state}) => {
                                      <CIcon name="cil-settings"/>
                                    </CDropdownToggle>
                                    <CDropdownMenu className="pt-0" placement="bottom-end">
-                                     <CDropdownItem>Schedule</CDropdownItem>
-                                     <CDropdownItem>History</CDropdownItem>
+                                     <CDropdownItem onClick={handlePickup}>Schedule</CDropdownItem>
+                                     <CDropdownItem onClick={handlePickupHistory}>History</CDropdownItem>
                                    </CDropdownMenu>
                                  </CDropdown>
                                </CWidgetDropdown>
@@ -283,7 +283,7 @@ class Home extends React.Component {
   render() {
      return (
           <div>
-            <WaitOnData state={this.state}/>
+            <WaitOnData state={this.state} handlePickup={this.handlePickup} handlePickupHistory={this.handlePickupHistory}/>
           </div>
       );
   }
