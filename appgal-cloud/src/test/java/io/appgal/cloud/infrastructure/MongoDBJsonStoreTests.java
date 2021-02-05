@@ -318,7 +318,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     public void testFoodRecoveryTransactionHistory()
     {
         FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
-        tx.setState(TransactionState.CLOSED);
+        tx.setTransactionState(TransactionState.CLOSED);
         JsonUtil.print(tx.toJson());
 
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
@@ -333,7 +333,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
     public void testFoodRecoveryDropOffHistory()
     {
         FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
-        tx.setState(TransactionState.CLOSED);
+        tx.setTransactionState(TransactionState.CLOSED);
         JsonUtil.print(tx.toJson());
 
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);

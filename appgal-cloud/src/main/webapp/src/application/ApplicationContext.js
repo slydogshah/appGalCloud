@@ -1,4 +1,4 @@
-import * as React from 'react'
+/*import * as React from 'react'
 const CountContext = React.createContext()
 
 function useCount() {
@@ -7,7 +7,7 @@ function useCount() {
     throw new Error(`useCount must be used within a CountProvider`)
   }
 
-  /*const [count, setCount] = React.useState(0);
+  const [count, setCount] = React.useState(0);
 
   const value = React.useMemo(() => [count, setCount], [count]);
   console.log("************VALUE*************************");
@@ -16,7 +16,7 @@ function useCount() {
   const value2 = React.useMemo(() => [count, setCount], [count]);
   console.log("************VALUE*************************");
   console.log(value2);
-  console.log("*************************************");*/
+  console.log("*************************************");
 
   return context
 }
@@ -26,4 +26,4 @@ function CountProvider(props) {
   return <CountContext.Provider value={value} {...props} />
 }
 //export {CountProvider, useCount}
-export default CountContext
+export default CountContext*/

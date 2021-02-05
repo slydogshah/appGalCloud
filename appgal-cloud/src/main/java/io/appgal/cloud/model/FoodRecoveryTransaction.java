@@ -13,7 +13,7 @@ public class FoodRecoveryTransaction implements Serializable {
     private SchedulePickUpNotification pickUpNotification;
     private ScheduleDropOffNotification dropOffNotification;
     private FoodRunner foodRunner;
-    private TransactionState state = TransactionState.SUBMITTED;
+    private TransactionState transactionState = TransactionState.SUBMITTED;
 
     public FoodRecoveryTransaction()
     {
@@ -56,12 +56,12 @@ public class FoodRecoveryTransaction implements Serializable {
         this.foodRunner = foodRunner;
     }
 
-    public TransactionState getState() {
-        return state;
+    public TransactionState getTransactionState() {
+        return transactionState;
     }
 
-    public void setState(TransactionState state) {
-        this.state = state;
+    public void setTransactionState(TransactionState transactionState) {
+        this.transactionState = transactionState;
     }
 
     public static FoodRecoveryTransaction parse(String json)
@@ -85,10 +85,10 @@ public class FoodRecoveryTransaction implements Serializable {
             foodRecoveryTransaction.foodRunner = FoodRunner.parse(
                     jsonObject.get("foodRunner").toString());
         }
-        if(jsonObject.has("state"))
+        if(jsonObject.has("transactionState"))
         {
-            String txStateStriing = jsonObject.get("state").getAsString();
-            foodRecoveryTransaction.state = TransactionState.valueOf(txStateStriing);
+            String txStateString = jsonObject.get("transactionState").getAsString();
+            foodRecoveryTransaction.transactionState = TransactionState.valueOf(txStateString);
         }
 
         return foodRecoveryTransaction;
@@ -98,9 +98,9 @@ public class FoodRecoveryTransaction implements Serializable {
     {
         JsonObject jsonObject = new JsonObject();
 
-        if(this.state != null)
+        if(this.transactionState != null)
         {
-            jsonObject.addProperty("state", this.state.name());
+            jsonObject.addProperty("transactionState", this.transactionState.name());
         }
         if(this.pickUpNotification != null) {
             jsonObject.add("pickupNotification", this.pickUpNotification.toJson());

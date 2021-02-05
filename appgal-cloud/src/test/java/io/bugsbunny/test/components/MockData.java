@@ -3,7 +3,6 @@ package io.bugsbunny.test.components;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.appgal.cloud.model.*;
-import io.appgal.cloud.util.JsonUtil;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -32,7 +31,7 @@ public class MockData {
 
         FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,dropOffNotification, bugsBunny);
         TransactionState txState = TransactionState.INPROGRESS;
-        tx.setState(txState);
+        tx.setTransactionState(txState);
 
         return tx;
     }
