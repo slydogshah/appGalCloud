@@ -260,24 +260,16 @@ class Home extends React.Component {
 
   handlePickupProcess(event)
   {
-      const apiUrl = 'http://localhost:8080/notification/dropOffOrgs/?orgId='+'microsoft';
-      axios.get(apiUrl).then((response) => {
-        this.props.history.push({
-          pathname: "/schedulePickup",
-          state: response.data
-        });
+      this.props.history.push({
+                pathname: "/schedulePickup"
       });
   }
 
   handlePickupHistory(event)
   {
-    const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft'; //TODO: unmock
-    axios.get(apiUrl).then((response) => {
-          this.props.history.push({
-            pathname: "/pickupHistory",
-            state: response.data
+    this.props.history.push({
+                    pathname: "/pickupHistory"
           });
-    });
   }
 
   render() {

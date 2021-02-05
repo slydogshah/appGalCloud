@@ -72,6 +72,7 @@ const handle = (history) => {
 }
 
 const ClosedTransactionView = ({closed}) => {
+    console.log(JSON.stringify(closed));
     const txs = []
     for (const [index, value] of closed.entries()) {
         txs.push(
@@ -139,7 +140,38 @@ const WaitOnData = ({state}) => {
 
     return (
           <>
-            <div>MUMMA,SHAARO MUMMA, and PAARO MUMMA...I_LOUUUUUE YOU..ALSO ALSO....</div>
+            <CRow>
+                                            <CCol>
+                                                <CRow>
+                                                        <CCol>
+                                                          <CCard>
+                                                            <CCardHeader>
+                                                              Pickup History
+                                                            </CCardHeader>
+                                                            <CCardBody>
+                                                              <CRow>
+                                                                <CCol xs="12" md="6" xl="6">
+
+                                                                  <CRow>
+                                                                    <CCol sm="6">
+                                                                      <CCallout color="info">
+                                                                        <small className="text-muted">Closed</small>
+                                                                        <br />
+                                                                        <strong className="h4">10</strong>
+                                                                      </CCallout>
+                                                                    </CCol>
+                                                                  </CRow>
+
+                                                                  <hr className="mt-0" />
+                                                                  <ClosedTransactionView closed={state.data}/>
+                                                                </CCol>
+                                                              </CRow>
+                                                            </CCardBody>
+                                                          </CCard>
+                                                        </CCol>
+                                                      </CRow>
+                                            </CCol>
+                                            </CRow>
           </>
     )
 }
