@@ -100,19 +100,7 @@ const ClosedTransactionView = ({closed}) => {
     )
 }
 
-class PickupHistory extends React.Component
-{
-    constructor(props)
-    {
-        super(props);
-        //console.log("State: "+JSON.stringify(this.props.location.state));
-    }
-
-    render()
-    {
-        return(
-            <>
-                <CRow>
+/*<CRow>
                                 <CCol>
                                     <CRow>
                                             <CCol>
@@ -143,7 +131,42 @@ class PickupHistory extends React.Component
                                             </CCol>
                                           </CRow>
                                 </CCol>
-                                </CRow>
+                                </CRow>*/
+const WaitOnData = ({state}) => {
+    if (state.data === null) {
+          return <p>Loading...</p>;
+    }
+
+    return (
+          <>
+            <div>MUMMA,SHAARO MUMMA, and PAARO MUMMA...I_LOUUUUUE YOU..ALSO ALSO....</div>
+          </>
+    )
+}
+
+class PickupHistory extends React.Component
+{
+    constructor(props)
+    {
+        super(props);
+        //console.log("State: "+JSON.stringify(this.props.location.state));
+        this.state = {data: null};
+        this.renderMyData();
+    }
+
+    renderMyData()
+    {
+        const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft'; //TODO: unmock
+        axios.get(apiUrl).then((response) => {
+                  this.setState({data: response.data});
+        });
+    }
+
+    render()
+    {
+        return(
+            <>
+                <WaitOnData state={this.state} />
             </>
         );
     }

@@ -45,28 +45,9 @@ import { DocsLink } from 'src/reusable'
 
 import usersData from 'src/views/users/UsersData'
 
+//<DropOffOrgsView dropOffOrgs={this.props.location.state.dropOffOrgs} history={this.props.history}/>
 
-class DropOffOrgsView extends React.Component {
-    constructor(props) {
-        super(props);
-        console.log("DropOffOrgsView : "+JSON.stringify(this.props));
-        this.handleConfirm = this.handleConfirm.bind(this);
-    }
-
-    handleConfirm(event)
-    {
-      const apiUrl = 'http://localhost:8080/notification/schedulePickup/';
-      axios.post(apiUrl,{orgId: 'microsoft'}).then((response) => {
-        this.props.history.push({
-          pathname: "/dashboard",
-          state: response.data
-        });
-      });
-    }
-
-    render()
-    {
-          const components = []
+/*const components = []
               for (const [index, value] of this.props.dropOffOrgs.entries()) {
                   components.push(
                        <CRow>
@@ -106,6 +87,56 @@ class DropOffOrgsView extends React.Component {
                   <div>
                       {components}
                   </div>
+              )*/
+const WaitOnData = ({state, handleConfirm}) => {
+    if (state.data === null) {
+          return <p>Loading...</p>;
+    }
+
+    return (
+          <>
+            <div>Bindaas Bhiddu...I_LOUUUUUE YOU....</div>
+          </>
+    )
+}
+
+
+class DropOffOrgsView extends React.Component {
+    constructor(props) {
+        super(props);
+        console.log("DropOffOrgsView : "+JSON.stringify(this.props));
+        this.handleConfirm = this.handleConfirm.bind(this);
+
+        this.state = {data: null};
+        this.renderMyData();
+    }
+
+    renderMyData(){
+            const apiUrl = 'http://localhost:8080/notification/dropOffOrgs/?orgId='+'microsoft';
+            axios.get(apiUrl).then((response) => {
+                this.setState({data: response.data});
+            });
+    }
+
+    handleConfirm(event)
+    {
+      const apiUrl = 'http://localhost:8080/notification/schedulePickup/';
+      axios.post(apiUrl,{orgId: 'microsoft'}).then((response) => {
+        this.props.history.push({
+          pathname: "/dashboard",
+          state: response.data
+        });
+      });
+    }
+
+    render()
+    {
+        return (
+                <>
+                  <div>
+                    <WaitOnData state={this.state} handleConfirm={this.handleConfirm} />
+                  </div>
+                </>
               )
     }
 }
@@ -115,12 +146,24 @@ class SchedulePickup extends React.Component
     constructor(props) {
         super(props);
         console.log("SchedulePickup: "+JSON.stringify(this.props.location.state));
+        this.state = {data: null};
+        this.renderMyData();
     }
+
+    renderMyData(){
+        const apiUrl = 'http://localhost:8080/notification/dropOffOrgs/?orgId='+'microsoft';
+        axios.get(apiUrl).then((response) => {
+            this.setState({data: response.data});
+        });
+    }
+
 
     render() {
       return (
         <>
-          <DropOffOrgsView dropOffOrgs={this.props.location.state.dropOffOrgs} history={this.props.history}/>
+          <div>
+            <WaitOnData state={this.state} handleConfirm={this.handleConfirm} />
+          </div>
         </>
       )
     }
