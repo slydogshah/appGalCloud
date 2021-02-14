@@ -84,4 +84,9 @@ public class Location implements Serializable {
     public int hashCode() {
         return Objects.hash(latitude, longitude);
     }
+
+    @Override
+    public String toString() {
+        return this.toJson().toString();
+    }
 }
