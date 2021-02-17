@@ -122,6 +122,21 @@ public class MongoDBJsonStore {
         return null;
     }
 
+    public void updateActiveNetwork(ActiveNetwork activeNetwork)
+    {
+        /*MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        JsonObject stored = this.getScheduledPickUpNotification(schedulePickUpNotification.getId());
+        Bson bson = Document.parse(stored.toString());
+        collection.deleteOne(bson);
+
+        stored.remove("_id");
+        stored.addProperty("notificationSent", true);
+        this.storeScheduledPickUpNotification(SchedulePickUpNotification.parse(stored.toString()));*/
+    }
+
     public void storeSourceOrg(SourceOrg sourceOrg)
     {
         if(this.getSourceOrg(sourceOrg.getOrgId()) != null)
@@ -641,6 +656,11 @@ public class MongoDBJsonStore {
             list.add(FoodRecoveryTransaction.parse(documentJson));
         }
         return list;
+    }
+
+    public FoodRunner updateFoodRunner(FoodRunner foodRunner)
+    {
+        return null;
     }
 
     /*public void cleanup()
