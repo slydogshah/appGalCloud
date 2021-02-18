@@ -24,7 +24,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//@QuarkusTest
+@QuarkusTest
 public class MongoDBJsonStoreTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(MongoDBJsonStoreTests.class);
 
@@ -46,13 +46,13 @@ public class MongoDBJsonStoreTests extends BaseTest {
     {
     }
 
-    //@Test
+    @Test
     public void testGetAllFoodRunners()
     {
         this.mongoDBJsonStore.getAllFoodRunners();
     }
 
-    //@Test
+    @Test
     public void testStoreProfile()
     {
         Profile profile = MockData.mockProfile();
@@ -65,7 +65,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
     }
 
-    //@Test
+    @Test
     public void testSourceOrgLifecycle()
     {
         SourceOrg sourceOrg = MockData.mockProducerOrg();
