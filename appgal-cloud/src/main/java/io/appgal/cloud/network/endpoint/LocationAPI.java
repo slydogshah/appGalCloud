@@ -3,15 +3,14 @@ package io.appgal.cloud.network.endpoint;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.FoodRunner;
+import io.appgal.cloud.model.Location;
 import io.appgal.cloud.network.services.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -32,6 +31,21 @@ public class LocationAPI {
 
         JsonObject responseJson = new JsonObject();
         responseJson.addProperty("success",true);
+        return Response.ok(responseJson.toString()).build();
+    }
+
+    @Path("current")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCurrentLocation(@QueryParam("email") String email)
+    {
+        Location location = this.locationService.getCurrentLocation(email);
+
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("active",location == null?false:true);
+        if(location != null) {
+            responseJson.add("location", location.toJson());
+        }
         return Response.ok(responseJson.toString()).build();
     }
 }

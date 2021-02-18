@@ -31,6 +31,10 @@ public class LocationService {
     public Location getCurrentLocation(String foodRunnerEmail)
     {
         FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(foodRunnerEmail);
+        if(foodRunner == null)
+        {
+            return null;
+        }
         return foodRunner.getLocation();
     }
 }

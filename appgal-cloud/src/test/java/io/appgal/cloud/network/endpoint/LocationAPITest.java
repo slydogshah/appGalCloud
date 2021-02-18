@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,6 +54,26 @@ public class LocationAPITest extends BaseTest {
 
         JsonUtil.print(foodRunner.toJson());
         Response response = given().when().body(foodRunner.toString()).post("/location/update/")
+                .andReturn();
+        logger.info(response.asPrettyString());
+    }
+
+    @Test
+    public void testGetCurrentLocation() throws Exception
+    {
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
+        Location location = new Location(startLatitude, startLongitude);
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+
+        JsonUtil.print(foodRunner.toJson());
+        Response response = given().when().body(foodRunner.toString()).post("/location/update/")
+                .andReturn();
+        logger.info(response.asPrettyString());
+
+        response = given().when().body(foodRunner.toString()).get("/location/current/?email="+
+                foodRunner.getProfile().getEmail())
                 .andReturn();
         logger.info(response.asPrettyString());
     }
