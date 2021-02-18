@@ -1,7 +1,6 @@
 package io.appgal.cloud.network.endpoint;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.network.services.LocationService;
