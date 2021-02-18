@@ -124,6 +124,7 @@ public class MongoDBJsonStore {
 
     public void updateActiveNetwork(ActiveNetwork activeNetwork)
     {
+        //TODO: IMPLEMENT_ME
         /*MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
