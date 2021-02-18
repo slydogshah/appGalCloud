@@ -50,6 +50,7 @@ public class LocationAPITest extends BaseTest {
         Location location = new Location(startLatitude, startLongitude);
         FoodRunner foodRunner = new FoodRunner(profile, location);
 
+        JsonUtil.print(foodRunner.toJson());
         Response response = given().when().body(foodRunner.toString()).post("/location/update/")
                 .andReturn();
         logger.info(response.asPrettyString());
