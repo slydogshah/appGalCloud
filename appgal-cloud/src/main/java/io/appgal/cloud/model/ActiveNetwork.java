@@ -149,4 +149,8 @@ public class ActiveNetwork implements Serializable {
         }
         return array.toString();
     }
+
+    public void setMongoDBJsonStore(MongoDBJsonStore mongoDBJsonStore) {
+        this.mongoDBJsonStore = mongoDBJsonStore;
+    }
 }

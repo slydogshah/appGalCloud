@@ -233,6 +233,7 @@ public class MongoDBJsonStore {
     public ActiveNetwork getActiveNetwork()
     {
         ActiveNetwork activeNetwork = new ActiveNetwork();
+        activeNetwork.setMongoDBJsonStore(this);
 
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
