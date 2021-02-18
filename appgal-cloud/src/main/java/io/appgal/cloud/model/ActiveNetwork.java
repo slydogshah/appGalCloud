@@ -68,7 +68,7 @@ public class ActiveNetwork implements Serializable {
 
     public void flushToStore()
     {
-        this.mongoDBJsonStore.updateActiveNetwork(this);
+        this.mongoDBJsonStore.storeActiveNetwork(this.activeFoodRunners);
     }
 
     public FoodRunner findFoodRunner(String foodRunnerId)

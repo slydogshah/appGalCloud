@@ -23,14 +23,14 @@ public class LocationService {
 
     public void receiveUpdate(FoodRunner foodRunner)
     {
-
+        //TODO: IMPLEMENT_QUEUE_BASED
+        this.mongoDBJsonStore.updateFoodRunner(foodRunner);
+        this.activeNetwork.flushToStore();
     }
 
     public Location getCurrentLocation(String foodRunnerEmail)
     {
         FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(foodRunnerEmail);
-        this.mongoDBJsonStore.updateFoodRunner(foodRunner);
-        this.activeNetwork.flushToStore();
         return foodRunner.getLocation();
     }
 }

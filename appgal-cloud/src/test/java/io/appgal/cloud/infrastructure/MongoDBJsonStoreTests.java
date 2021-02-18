@@ -366,6 +366,6 @@ public class MongoDBJsonStoreTests extends BaseTest {
         logger.info(this.gson.toJson(array));
         logger.info("*******");
 
-        this.mongoDBJsonStore.updateActiveNetwork(activeNetwork);
+        this.mongoDBJsonStore.storeActiveNetwork(activeNetwork.getActiveFoodRunners());
     }
 }

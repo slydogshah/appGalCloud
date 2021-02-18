@@ -122,22 +122,6 @@ public class MongoDBJsonStore {
         return null;
     }
 
-    public void updateActiveNetwork(ActiveNetwork activeNetwork)
-    {
-        //TODO: IMPLEMENT_ME
-        /*MongoDatabase database = mongoClient.getDatabase("appgalcloud");
-
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        JsonObject stored = this.getScheduledPickUpNotification(schedulePickUpNotification.getId());
-        Bson bson = Document.parse(stored.toString());
-        collection.deleteOne(bson);
-
-        stored.remove("_id");
-        stored.addProperty("notificationSent", true);
-        this.storeScheduledPickUpNotification(SchedulePickUpNotification.parse(stored.toString()));*/
-    }
-
     public void storeSourceOrg(SourceOrg sourceOrg)
     {
         if(this.getSourceOrg(sourceOrg.getOrgId()) != null)
@@ -258,6 +242,18 @@ public class MongoDBJsonStore {
 
         return activeNetwork;
     }
+
+    /*public void updateActiveNetwork(ActiveNetwork activeNetwork)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeNetwork");
+
+        Bson bson = Document.parse(activeNetwork.toString());
+        collection.deleteOne(bson);
+
+        this.storeActiveNetwork(activeNetwork.getActiveFoodRunners());
+    }*/
 
     public void deleteFoodRunner(FoodRunner foodRunner)
     {
