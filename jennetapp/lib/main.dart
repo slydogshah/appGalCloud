@@ -20,6 +20,8 @@ Future<void> main() async {
   PermissionStatus _permissionGranted;
   LocationData _locationData;
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(new JenNetworkApp());
 
   print("********START**********");
