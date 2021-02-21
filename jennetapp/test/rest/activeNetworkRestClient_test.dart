@@ -30,6 +30,19 @@ test('getActiveView', () async {
     });
   });
 
+test('sendLocationUpdate', () async {
+  ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+  print("REQUEST STARTING....");
+  Location location = new Location(0.0, 0.0);
+  Future<String> response = activeNetworkClient.sendLocationUpdate(location);
+  response.then((activeView){
+    print("RESPONSE: "+activeView.toString());
+    //expect((activeView.activeFoodRunners)!=null, true);
+    //expect((activeView.activeFoodRunnerQueue)!=null, true);
+    //expect((activeView.finderResults)!=null, true);
+  });
+});
+
 /*  test('sendDeliveryNotification', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();

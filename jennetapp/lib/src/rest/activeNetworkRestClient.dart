@@ -1,5 +1,6 @@
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRequest.dart';
+import 'package:app/src/model/location.dart';
 import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/urlFunctions.dart';
@@ -122,5 +123,13 @@ class ActiveNetworkRestClient
         txs.add(local);
     }
     return txs;
+  }
+
+  Future<String> sendLocationUpdate(Location location) async
+  {
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/location/update/';
+    String jsonBody = location.toString();
+    var response = await http.post(remoteUrl, body: jsonBody);
+    return response.body;
   }
 }
