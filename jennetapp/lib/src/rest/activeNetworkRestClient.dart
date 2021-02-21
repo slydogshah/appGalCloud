@@ -115,7 +115,8 @@ class ActiveNetworkRestClient
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/tx/recovery';
     var response = await http.get(remoteUrl);
     String responseJson = response.body;
-    Iterable l = json.decode(responseJson);
+    Map<String,dynamic> object = json.decode(responseJson);
+    Iterable l = object['pending'];
     List<FoodRecoveryTransaction> txs = new List();
     for(Map<String, dynamic> tx in l)
     {
