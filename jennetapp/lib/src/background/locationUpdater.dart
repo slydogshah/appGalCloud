@@ -20,6 +20,7 @@ class LocationUpdater
   static bool _serviceEnabled;
   static PermissionStatus _permissionGranted;
   static LocationData _locationData;
+  static ActiveNetworkRestClient activeNetworkClient= new ActiveNetworkRestClient();
 
   static void startPolling(Profile profile) async
   {
@@ -95,9 +96,17 @@ class LocationUpdater
     print("********POLL**********");
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
-      print("******************");
-      print(data.latitude);
-      print(data.longitude);
+      Map<String,double> map = new Map();
+      map['latitude'] = 0.0;
+      map['longitude'] = 0.0;
+      LocationData location = LocationData.fromMap(map);
+      Future<String> response = activeNetworkClient.sendLocationUpdate(location);
+      response.then((activeView){
+        print("RESPONSE: "+activeView.toString());
+        //expect((activeView.activeFoodRunners)!=null, true);
+        //expect((activeView.activeFoodRunnerQueue)!=null, true);
+        //expect((activeView.finderResults)!=null, true);
+      });
     });
   }
 }

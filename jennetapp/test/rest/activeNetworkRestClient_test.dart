@@ -13,6 +13,7 @@ import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
+import 'package:location/location.dart';
 import 'package:test/test.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
 
@@ -33,7 +34,10 @@ test('getActiveView', () async {
 test('sendLocationUpdate', () async {
   ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
   print("REQUEST STARTING....");
-  Location location = new Location(0.0, 0.0);
+  Map<String,double> map = new Map();
+  map['latitude'] = 0.0;
+  map['longitude'] = 0.0;
+  LocationData location = LocationData.fromMap(map);
   Future<String> response = activeNetworkClient.sendLocationUpdate(location);
   response.then((activeView){
     print("RESPONSE: "+activeView.toString());

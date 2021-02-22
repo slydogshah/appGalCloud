@@ -12,6 +12,7 @@ import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:location/location.dart';
 
 import '../model/schedulePickupNotification.dart';
 
@@ -126,10 +127,13 @@ class ActiveNetworkRestClient
     return txs;
   }
 
-  Future<String> sendLocationUpdate(Location location) async
+  Future<String> sendLocationUpdate(LocationData locationData) async
   {
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/location/update/';
-    String jsonBody = location.toString();
+    Map<String,dynamic> jsonMap = new Map();
+    jsonMap['latitude'] = locationData.latitude;
+    jsonMap['longitude'] = locationData.longitude;
+    String jsonBody = jsonEncode(jsonMap);
     var response = await http.post(remoteUrl, body: jsonBody);
     return response.body;
   }
