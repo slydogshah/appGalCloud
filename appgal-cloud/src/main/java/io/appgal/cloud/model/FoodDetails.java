@@ -11,6 +11,8 @@ public class FoodDetails implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(FoodDetails.class);
 
     private FoodTypes foodTypes;
+    private String foodPic;
+
 
     public FoodDetails() {
     }
@@ -27,6 +29,14 @@ public class FoodDetails implements Serializable {
         this.foodTypes = foodTypes;
     }
 
+    public String getFoodPic() {
+        return foodPic;
+    }
+
+    public void setFoodPic(String foodPic) {
+        this.foodPic = foodPic;
+    }
+
     public static FoodDetails parse(String json)
     {
         FoodDetails foodDetails = new FoodDetails();
@@ -34,6 +44,10 @@ public class FoodDetails implements Serializable {
         if(jsonObject.has("type"))
         {
             foodDetails.foodTypes = FoodTypes.valueOf(jsonObject.get("type").getAsString());
+        }
+        if(jsonObject.has("foodPic"))
+        {
+            foodDetails.foodPic = jsonObject.get("foodPic").getAsString();
         }
         return foodDetails;
     }
@@ -44,6 +58,10 @@ public class FoodDetails implements Serializable {
         if(this.foodTypes != null)
         {
             jsonObject.addProperty("type",this.foodTypes.name());
+        }
+        if(this.foodPic != null)
+        {
+            jsonObject.addProperty("foodPic",this.foodPic);
         }
         return jsonObject;
     }
