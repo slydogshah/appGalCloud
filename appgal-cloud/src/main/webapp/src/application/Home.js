@@ -261,7 +261,7 @@ class Home extends React.Component {
   handlePickupProcess(event)
   {
       this.props.history.push({
-                pathname: "/schedulePickup"
+                pathname: "/addPickupDetails"
       });
   }
 
