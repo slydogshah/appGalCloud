@@ -1,14 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
-
-import 'package:background_fetch/background_fetch.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:location/location.dart';
 
 class LocationUpdater
@@ -36,9 +30,6 @@ class LocationUpdater
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
   {
-    print("********START**********");
-    print("LOCATION_DATA: $_locationData");
-
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
@@ -59,7 +50,7 @@ class LocationUpdater
       }
     }
 
-    print("********POLL**********");
+    print("********START_LOCATION_POLL_IOS**********");
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
       print("******************");
@@ -70,9 +61,6 @@ class LocationUpdater
   //--------android----------------------------------------
   static void startAndroidPolling(Profile profile) async
   {
-    print("********START**********");
-    print("LOCATION_DATA: $_locationData");
-
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
@@ -93,7 +81,7 @@ class LocationUpdater
       }
     }
 
-    print("********POLL**********");
+    print("********START_LOCATION_POLL_ANDROID**********");
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
       Map<String,double> map = new Map();
