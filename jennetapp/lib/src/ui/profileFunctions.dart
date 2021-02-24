@@ -1,3 +1,4 @@
+import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
@@ -171,6 +172,7 @@ class ProfileFunctions
 
   void showCards(BuildContext context, Profile profile) 
   {
-    //CloudDataPoller.startPolling(profile);
+    CloudDataPoller.startPolling(profile);
+    LocationUpdater.startPolling(profile);
   }  
 }

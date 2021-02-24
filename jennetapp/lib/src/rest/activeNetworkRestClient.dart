@@ -1,5 +1,6 @@
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRequest.dart';
+import 'package:app/src/model/location.dart';
 import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/urlFunctions.dart';
@@ -11,6 +12,7 @@ import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:location/location.dart';
 
 import '../model/schedulePickupNotification.dart';
 
@@ -114,7 +116,8 @@ class ActiveNetworkRestClient
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/tx/recovery';
     var response = await http.get(remoteUrl);
     String responseJson = response.body;
-    Iterable l = json.decode(responseJson);
+    Map<String,dynamic> object = json.decode(responseJson);
+    Iterable l = object['pending'];
     List<FoodRecoveryTransaction> txs = new List();
     for(Map<String, dynamic> tx in l)
     {
@@ -122,5 +125,16 @@ class ActiveNetworkRestClient
         txs.add(local);
     }
     return txs;
+  }
+
+  Future<String> sendLocationUpdate(LocationData locationData) async
+  {
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/location/update/';
+    Map<String,dynamic> jsonMap = new Map();
+    jsonMap['latitude'] = locationData.latitude;
+    jsonMap['longitude'] = locationData.longitude;
+    String jsonBody = jsonEncode(jsonMap);
+    var response = await http.post(remoteUrl, body: jsonBody);
+    return response.body;
   }
 }

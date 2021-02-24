@@ -51,6 +51,7 @@ public class ActiveNetwork implements Serializable {
         this.activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
 
         //persist the state of the network
+        this.flushToStore();
     }
 
     public void removeFoodRunner(FoodRunner foodRunner)
@@ -65,9 +66,27 @@ public class ActiveNetwork implements Serializable {
         this.sourceOrgs.clear();
     }
 
+    public void flushToStore()
+    {
+        this.mongoDBJsonStore.storeActiveNetwork(this.activeFoodRunners);
+    }
+
     public FoodRunner findFoodRunner(String foodRunnerId)
     {
         return this.activeFoodRunners.get(foodRunnerId);
+    }
+
+    public FoodRunner findFoodRunnerByEmail(String foodRunnerEmail)
+    {
+        Collection<FoodRunner> values = this.activeFoodRunners.values();
+        for(FoodRunner local:values)
+        {
+            if(local.getProfile().getEmail().equals(foodRunnerEmail))
+            {
+                return local;
+            }
+        }
+        return null;
     }
 
     public Collection<FoodRunner> readActiveFoodRunners()
@@ -129,5 +148,9 @@ public class ActiveNetwork implements Serializable {
             array.add(cour.toJson());
         }
         return array.toString();
+    }
+
+    public void setMongoDBJsonStore(MongoDBJsonStore mongoDBJsonStore) {
+        this.mongoDBJsonStore = mongoDBJsonStore;
     }
 }

@@ -218,6 +218,7 @@ public class MongoDBJsonStore {
     public ActiveNetwork getActiveNetwork()
     {
         ActiveNetwork activeNetwork = new ActiveNetwork();
+        activeNetwork.setMongoDBJsonStore(this);
 
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
@@ -241,6 +242,18 @@ public class MongoDBJsonStore {
 
         return activeNetwork;
     }
+
+    /*public void updateActiveNetwork(ActiveNetwork activeNetwork)
+    {
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+
+        MongoCollection<Document> collection = database.getCollection("activeNetwork");
+
+        Bson bson = Document.parse(activeNetwork.toString());
+        collection.deleteOne(bson);
+
+        this.storeActiveNetwork(activeNetwork.getActiveFoodRunners());
+    }*/
 
     public void deleteFoodRunner(FoodRunner foodRunner)
     {
@@ -608,7 +621,7 @@ public class MongoDBJsonStore {
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
-        String queryJson = "{$and:[{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"state\":\""+TransactionState.CLOSED+"\"}]}";
+        String queryJson = "{$and:[{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.CLOSED+"\"}]}";
         logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
@@ -629,7 +642,7 @@ public class MongoDBJsonStore {
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
-        String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"state\":\""+TransactionState.CLOSED+"\"}]}";
+        String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.CLOSED+"\"}]}";
         logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
@@ -641,6 +654,11 @@ public class MongoDBJsonStore {
             list.add(FoodRecoveryTransaction.parse(documentJson));
         }
         return list;
+    }
+
+    public FoodRunner updateFoodRunner(FoodRunner foodRunner)
+    {
+        return null;
     }
 
     /*public void cleanup()

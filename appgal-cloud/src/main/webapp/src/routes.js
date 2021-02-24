@@ -25,7 +25,7 @@ const ButtonDropdowns = React.lazy(() => import('./views/buttons/button-dropdown
 const ButtonGroups = React.lazy(() => import('./views/buttons/button-groups/ButtonGroups'));
 const Buttons = React.lazy(() => import('./views/buttons/buttons/Buttons'));
 const Charts = React.lazy(() => import('./views/charts/Charts'));
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
+//const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
 const CoreUIIcons = React.lazy(() => import('./views/icons/coreui-icons/CoreUIIcons'));
 const Flags = React.lazy(() => import('./views/icons/flags/Flags'));
 const Brands = React.lazy(() => import('./views/icons/brands/Brands'));
@@ -48,10 +48,10 @@ const Home = React.lazy(() => import('./application/Home'));
 const PickupHistory = React.lazy(() => import('./application/PickupHistory'));
 const DropOffHome = React.lazy(() => import('./application/DropOffHome'));
 const DropOffHistory = React.lazy(() => import('./application/DropOffHistory'));
+const AddPickupDetails = React.lazy(() => import('./application/AddPickupDetails'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },
@@ -97,6 +97,7 @@ const routes = [
   { path: '/pickupHistory', exact: true, name: 'Pickup History', component: PickupHistory },
   { path: '/dropOffHome', exact: true, name: 'DropOff Home', component: DropOffHome },
   { path: '/dropOffHistory', exact: true, name: 'DropOff History', component: DropOffHistory },
+  { path: '/addPickupDetails', exact: true, name: 'Add Pickup Details', component: AddPickupDetails },
   { path: '/sample', exact: true, name: 'Sample', component: Sample }
 ];
 

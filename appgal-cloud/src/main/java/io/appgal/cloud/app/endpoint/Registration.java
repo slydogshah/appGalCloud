@@ -167,11 +167,11 @@ public class Registration {
             JsonArray activeTransactions = new JsonArray();
             for(FoodRecoveryTransaction tx: txs)
             {
-                if(tx.getState() == TransactionState.SUBMITTED)
+                if(tx.getTransactionState() == TransactionState.SUBMITTED)
                 {
                     pendingTransactions.add(tx.toJson());
                 }
-                else if(tx.getState() == TransactionState.INPROGRESS || tx.getState() == TransactionState.ONTHEWAY)
+                else if(tx.getTransactionState() == TransactionState.INPROGRESS || tx.getTransactionState() == TransactionState.ONTHEWAY)
                 {
                     activeTransactions.add(tx.toJson());
                 }

@@ -72,6 +72,7 @@ const handle = (history) => {
 }
 
 const ClosedTransactionView = ({closed}) => {
+    console.log(JSON.stringify(closed));
     const txs = []
     for (const [index, value] of closed.entries()) {
         txs.push(
@@ -100,19 +101,7 @@ const ClosedTransactionView = ({closed}) => {
     )
 }
 
-class PickupHistory extends React.Component
-{
-    constructor(props)
-    {
-        super(props);
-        console.log("State: "+JSON.stringify(this.props.location.state));
-    }
-
-    render()
-    {
-        return(
-            <>
-                <CRow>
+/*<CRow>
                                 <CCol>
                                     <CRow>
                                             <CCol>
@@ -143,7 +132,73 @@ class PickupHistory extends React.Component
                                             </CCol>
                                           </CRow>
                                 </CCol>
-                                </CRow>
+                                </CRow>*/
+const WaitOnData = ({state}) => {
+    if (state.data === null) {
+          return <p>Loading...</p>;
+    }
+
+    return (
+          <>
+            <CRow>
+                                            <CCol>
+                                                <CRow>
+                                                        <CCol>
+                                                          <CCard>
+                                                            <CCardHeader>
+                                                              Pickup History
+                                                            </CCardHeader>
+                                                            <CCardBody>
+                                                              <CRow>
+                                                                <CCol xs="12" md="6" xl="6">
+
+                                                                  <CRow>
+                                                                    <CCol sm="6">
+                                                                      <CCallout color="info">
+                                                                        <small className="text-muted">Closed</small>
+                                                                        <br />
+                                                                        <strong className="h4">10</strong>
+                                                                      </CCallout>
+                                                                    </CCol>
+                                                                  </CRow>
+
+                                                                  <hr className="mt-0" />
+                                                                  <ClosedTransactionView closed={state.data}/>
+                                                                </CCol>
+                                                              </CRow>
+                                                            </CCardBody>
+                                                          </CCard>
+                                                        </CCol>
+                                                      </CRow>
+                                            </CCol>
+                                            </CRow>
+          </>
+    )
+}
+
+class PickupHistory extends React.Component
+{
+    constructor(props)
+    {
+        super(props);
+        //console.log("State: "+JSON.stringify(this.props.location.state));
+        this.state = {data: null};
+        this.renderMyData();
+    }
+
+    renderMyData()
+    {
+        const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft'; //TODO: unmock
+        axios.get(apiUrl).then((response) => {
+                  this.setState({data: response.data});
+        });
+    }
+
+    render()
+    {
+        return(
+            <>
+                <WaitOnData state={this.state} />
             </>
         );
     }

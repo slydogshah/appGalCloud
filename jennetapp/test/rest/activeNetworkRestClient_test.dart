@@ -13,6 +13,7 @@ import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
+import 'package:location/location.dart';
 import 'package:test/test.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
 
@@ -29,6 +30,22 @@ test('getActiveView', () async {
       expect((activeView.finderResults)!=null, true);
     });
   });
+
+test('sendLocationUpdate', () async {
+  ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+  print("REQUEST STARTING....");
+  Map<String,double> map = new Map();
+  map['latitude'] = 0.0;
+  map['longitude'] = 0.0;
+  LocationData location = LocationData.fromMap(map);
+  Future<String> response = activeNetworkClient.sendLocationUpdate(location);
+  response.then((activeView){
+    print("RESPONSE: "+activeView.toString());
+    //expect((activeView.activeFoodRunners)!=null, true);
+    //expect((activeView.activeFoodRunnerQueue)!=null, true);
+    //expect((activeView.finderResults)!=null, true);
+  });
+});
 
 /*  test('sendDeliveryNotification', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();

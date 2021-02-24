@@ -7,6 +7,8 @@ PODS:
   - flutter_mapbox_navigation (0.0.17):
     - Flutter
     - MapboxNavigation (~> 0.40.0)
+  - location (0.0.1):
+    - Flutter
   - Mapbox-iOS-SDK (5.9.0):
     - MapboxMobileEvents (= 0.10.2)
   - MapboxAccounts (2.2.0)
@@ -45,6 +47,7 @@ DEPENDENCIES:
   - external_app_launcher (from `.symlinks/plugins/external_app_launcher/ios`)
   - Flutter (from `Flutter`)
   - flutter_mapbox_navigation (from `.symlinks/plugins/flutter_mapbox_navigation/ios`)
+  - location (from `.symlinks/plugins/location/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
@@ -73,6 +76,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_mapbox_navigation:
     :path: ".symlinks/plugins/flutter_mapbox_navigation/ios"
+  location:
+    :path: ".symlinks/plugins/location/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
   path_provider:
@@ -87,6 +92,7 @@ SPEC CHECKSUMS:
   external_app_launcher: ad55ac844aa21f2d2197d7cec58ff0d0dc40bbc0
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_mapbox_navigation: a66c99eb5caac2fba63df3284e87c23bbc998362
+  location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
   Mapbox-iOS-SDK: a5915700ec84bc1a7f8b3e746d474789e35b7956
   MapboxAccounts: f9716ba2cc66013e44ef93e0e16cfa1049f3aeec
   MapboxCoreNavigation: 2856c46bd064bb11c406ba00191d579cda424efa
