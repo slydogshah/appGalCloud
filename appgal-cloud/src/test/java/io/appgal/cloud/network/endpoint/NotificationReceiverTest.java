@@ -63,7 +63,7 @@ public class NotificationReceiverTest extends BaseTest {
             schedulePickUpNotification.setFoodRunner(bugsBunny);
             schedulePickUpNotification.setStart(cour);
             logger.info("********************************************");
-            //JsonUtil.print(schedulePickUpNotification.toJson());
+            JsonUtil.print(schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
             this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
@@ -136,7 +136,7 @@ public class NotificationReceiverTest extends BaseTest {
             notification.setFoodRunner(bugsBunny);
             notification.setStart(cour);
             logger.info("********************************************");
-            //JsonUtil.print(schedulePickUpNotification.toJson());
+            JsonUtil.print(notification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
             this.networkOrchestrator.scheduleDropOff(notification);
