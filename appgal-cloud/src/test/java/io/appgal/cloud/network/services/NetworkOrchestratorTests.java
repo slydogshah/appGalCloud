@@ -185,7 +185,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             //JsonUtil.print(schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
-            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification.getSourceOrg().getOrgId());
+            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
         }
 
         Thread.sleep(45000);

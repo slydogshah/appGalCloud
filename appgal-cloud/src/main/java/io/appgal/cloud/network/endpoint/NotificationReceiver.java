@@ -59,13 +59,13 @@ public class NotificationReceiver {
     @Produces(MediaType.APPLICATION_JSON)
     public Response schedulePickUp(@RequestBody String jsonBody)
     {
-        JsonObject jsonObject = JsonParser.parseString(jsonBody).getAsJsonObject();
-        String orgId = jsonObject.get("orgId").getAsString();
-        this.networkOrchestrator.schedulePickUp(orgId);
+        SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
+        this.networkOrchestrator.schedulePickUp(notification);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("operationSuccessful",true);
-        return Response.ok(responseJson.toString()).build();
+        //JsonObject responseJson = new JsonObject();
+        //responseJson.addProperty("operationSuccessful",true);
+        //return Response.ok(responseJson.toString()).build();
+        return Response.ok().build();
     }
 
     @Path("/dropOff/notifications")

@@ -66,7 +66,7 @@ public class NotificationReceiverTest extends BaseTest {
             //JsonUtil.print(schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
-            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification.getSourceOrg().getOrgId());
+            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
 
             if(cour.toEpochSecond() == end.toEpochSecond())
             {

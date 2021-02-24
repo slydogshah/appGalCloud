@@ -106,25 +106,18 @@ public class NetworkOrchestrator {
         return JsonParser.parseString(registeredSources.toString()).getAsJsonArray();
     }
 
-    private void runFoodRunnerFinder()
-    {
-        //PickupRequest pickupRequest = this.activeFoodRunnerQueue.remove();
-        //Collection<FoodRunner> findResults = this.activeNetwork.findFoodRunners(pickupRequest);
-        //this.finderResults.put(pickupRequest.getRequestId(), findResults);
-    }
-
     public List<SourceOrg> findBestDestination(FoodRunner foodRunner)
     {
         List<SourceOrg> sourceOrgs = this.activeNetwork.matchFoodRunner(foodRunner);
         return sourceOrgs;
     }
     //--------FoodRunner Matching Process-----------------------------------------------
-    public void schedulePickUp(String orgId)
+    public void schedulePickUp(SchedulePickUpNotification notification)
     {
-        //this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
-        //this.requestPipeline.add(schedulePickUpNotification);
+        this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
+        this.requestPipeline.add(notification);
 
-        //this.foodRecoveryOrchestrator.notifyForPickUp(schedulePickUpNotification);
+        this.foodRecoveryOrchestrator.notifyForPickUp(notification);
     }
 
     public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)

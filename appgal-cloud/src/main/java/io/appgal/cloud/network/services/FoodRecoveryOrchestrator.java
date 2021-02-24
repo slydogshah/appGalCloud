@@ -29,11 +29,6 @@ public class FoodRecoveryOrchestrator {
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(recoveryTx);
     }
 
-    public void confirmPickUp(FoodRecoveryTransaction recoveryTransaction)
-    {
-
-    }
-
     public void notifyDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
     {
 
