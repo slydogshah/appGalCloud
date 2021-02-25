@@ -13,4 +13,10 @@ public class DynamicDropOffOrchestrator {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
+    public void orchestrateOfflineCommunity()
+    {
+        logger.info("*******");
+        logger.info("ORCHESTRATE_OFFLINE_COMMUNITY");
+        logger.info("*******");
+    }
 }
