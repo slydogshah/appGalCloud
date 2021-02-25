@@ -1,5 +1,6 @@
 package io.appgal.cloud.network.services;
 
+import com.google.gson.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,5 +19,14 @@ public class DynamicDropOffOrchestrator {
         logger.info("*******");
         logger.info("ORCHESTRATE_OFFLINE_COMMUNITY");
         logger.info("*******");
+
+        //TODO: Get Offline FoodRunner Pipeline
+
+        //TODO:
+    }
+
+    public JsonArray getOfflineDropOffPipeline()
+    {
+        return new JsonArray();
     }
 }

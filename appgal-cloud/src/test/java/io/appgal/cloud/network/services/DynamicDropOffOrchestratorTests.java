@@ -1,5 +1,7 @@
 package io.appgal.cloud.network.services;
 
+import com.google.gson.JsonArray;
+import io.appgal.cloud.util.JsonUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,5 +21,11 @@ public class DynamicDropOffOrchestratorTests {
     public void testOrchestrateOfflineCommunity()
     {
         this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
+    }
+
+    @Test
+    public void testGetOfflineDropOffPipeline()
+    {
+        JsonUtil.print(this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline());
     }
 }
