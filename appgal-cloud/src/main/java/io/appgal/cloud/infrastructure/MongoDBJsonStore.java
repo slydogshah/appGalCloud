@@ -124,17 +124,21 @@ public class MongoDBJsonStore {
 
     public void storeSourceOrg(SourceOrg sourceOrg)
     {
-        if(this.getSourceOrg(sourceOrg.getOrgId()) != null)
-        {
-            //it already exists
-            return;
-        }
+        SourceOrg existing = this.getSourceOrg(sourceOrg.getOrgId());
+
 
         MongoDatabase database = mongoClient.getDatabase("appgalcloud");
 
         MongoCollection<Document> collection = database.getCollection("customers");
 
-        Document doc = Document.parse(sourceOrg.toString());
+        if(existing != null)
+        {
+            Bson bson = Document.parse(existing.toString());
+            collection.deleteOne(bson);
+        }
+
+        String json = sourceOrg.toString();
+        Document doc = Document.parse(json);
         collection.insertOne(doc);
 
         for(Profile profile:sourceOrg.getProfiles())

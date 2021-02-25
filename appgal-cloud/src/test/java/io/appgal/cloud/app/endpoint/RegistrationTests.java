@@ -2,6 +2,7 @@ package io.appgal.cloud.app.endpoint;
 
 import com.google.gson.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
@@ -184,6 +185,7 @@ public class RegistrationTests extends BaseTest {
     @Test
     public void testLoginSuccessOrg() {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        sourceOrg.setLocation(new Location(9.0d, 10.0d));
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
 
         JsonObject registrationJson = new JsonObject();
@@ -201,9 +203,7 @@ public class RegistrationTests extends BaseTest {
         logger.info("***********************");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
-        logger.info("*********");
-        logger.info(response.getStatusLine());
-        logger.info("*********");
+        JsonUtil.print(sourceOrg.toJson());
         assertEquals(200, response.getStatusCode());
 
         JsonObject loginJson = new JsonObject();

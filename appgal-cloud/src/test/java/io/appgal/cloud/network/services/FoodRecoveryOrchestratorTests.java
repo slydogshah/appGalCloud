@@ -1,6 +1,8 @@
 package io.appgal.cloud.network.services;
 
 import com.google.gson.JsonParser;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.util.JsonUtil;
 import io.quarkus.test.junit.QuarkusTest;
@@ -18,8 +20,15 @@ public class FoodRecoveryOrchestratorTests {
     @Inject
     private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
 
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
     @Test
     public void testFindDropOffOrganizations() {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        sourceOrg.setLocation(new Location(9.0d, 10.0d));
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
         List<SourceOrg> sourceOrgList = this.foodRecoveryOrchestrator.findDropOffOrganizations("microsoft");
         JsonUtil.print(JsonParser.parseString(sourceOrgList.toString()));
     }
