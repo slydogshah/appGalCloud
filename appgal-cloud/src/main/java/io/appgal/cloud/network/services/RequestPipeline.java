@@ -121,6 +121,6 @@ public class RequestPipeline {
 
         //logger.info("*******4*********");
         //Send
-        this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
+        this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
     }
 }

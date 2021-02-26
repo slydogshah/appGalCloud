@@ -436,6 +436,30 @@ public class MongoDBJsonStore {
         return notifications;
     }
 
+    public List<SchedulePickUpNotification> getPickUpNotificationsWithoutDropOff()
+    {
+        List<SchedulePickUpNotification> notifications = new ArrayList<>();
+
+        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        //Query Ex: {$and:[{"foodRunner.profile.email":"bugs.bunny.shah@gmail.com"},{"notificationSent":true}]}
+        String queryJson = "{\"isDropOffDynamic\":"+Boolean.TRUE.booleanValue()+"}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
+            notifications.add(notification);
+        }
+
+        return notifications;
+    }
+
     public List<SchedulePickUpNotification> getUnsentSchedulePickUpNotifications(String email)
     {
         List<SchedulePickUpNotification> notifications = new ArrayList<>();
@@ -491,6 +515,7 @@ public class MongoDBJsonStore {
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
         String queryJson = "{\"id\":\""+id+"\"}";
+        logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
