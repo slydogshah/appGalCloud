@@ -1,9 +1,5 @@
 package io.appgal.cloud.infrastructure;
 
-import io.appgal.cloud.model.SchedulePickUpNotification;
-import io.appgal.cloud.network.services.DropOffPipeline;
-import io.appgal.cloud.network.services.RequestPipeline;
-import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.preprocess.SecurityToken;
 import io.bugsbunny.preprocess.SecurityTokenContainer;
 

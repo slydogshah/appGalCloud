@@ -1,6 +1,7 @@
 package io.appgal.cloud.network.services;
 
 import com.google.gson.JsonArray;
+import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;

@@ -3,7 +3,6 @@ package io.appgal.cloud.infrastructure;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.SchedulePickUpNotification;
-import io.appgal.cloud.network.services.RequestPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

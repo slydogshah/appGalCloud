@@ -1,6 +1,5 @@
-package io.appgal.cloud.network.services;
+package io.appgal.cloud.infrastructure;
 
-import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
