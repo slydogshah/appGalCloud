@@ -182,10 +182,10 @@ public class NetworkOrchestratorTests extends BaseTest {
             schedulePickUpNotification.setFoodRunner(bugsBunny);
             schedulePickUpNotification.setStart(cour);
             logger.info("********************************************");
-            //JsonUtil.print(schedulePickUpNotification.toJson());
+            JsonUtil.print(schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
-            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification.getSourceOrg().getOrgId());
+            this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
         }
 
         Thread.sleep(45000);

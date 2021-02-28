@@ -61,6 +61,7 @@ public class MockData {
     {
         SourceOrg sourceOrg1 = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
         sourceOrg1.setProducer(true);
+        sourceOrg1.setLocation(new Location(8d, 9d));
         return sourceOrg1;
     }
 

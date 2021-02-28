@@ -1,10 +1,8 @@
 package io.appgal.cloud.network.services;
 
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.model.FoodRecoveryTransaction;
-import io.appgal.cloud.model.ScheduleDropOffNotification;
-import io.appgal.cloud.model.SchedulePickUpNotification;
-import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.model.*;
+import io.appgal.cloud.network.geospatial.DistanceCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,19 +27,33 @@ public class FoodRecoveryOrchestrator {
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(recoveryTx);
     }
 
-    public void confirmPickUp(FoodRecoveryTransaction recoveryTransaction)
-    {
-
-    }
-
     public void notifyDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
     {
 
     }
 
-    public List<SourceOrg> findDropOffOrganizations(String orgId)
-    {
+    public List<SourceOrg> findDropOffOrganizations(String orgId) {
+        SourceOrg producer = this.mongoDBJsonStore.getSourceOrg(orgId);
         List<SourceOrg> dropOffOrgs = this.mongoDBJsonStore.getSourceOrgs();
-        return dropOffOrgs;
+
+        //TODO
+        DistanceCalculator distanceCalculator = new DistanceCalculator();
+        List<SourceOrg> dropOffOptions = new ArrayList<>();
+        for (SourceOrg dropOffOption : dropOffOrgs)
+        {
+            if(dropOffOption.getOrgId().equals(producer.getOrgId()))
+            {
+                continue;
+            }
+
+            Location location = dropOffOption.getLocation();
+            if(location != null) {
+                Double distance = distanceCalculator.calculateDistance(producer.getLocation(), location);
+                logger.info("DISTANCE: " + distance);
+            }
+            dropOffOptions.add(dropOffOption);
+        }
+
+        return dropOffOptions;
     }
 }

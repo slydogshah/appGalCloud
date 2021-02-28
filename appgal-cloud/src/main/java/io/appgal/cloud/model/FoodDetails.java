@@ -12,6 +12,7 @@ public class FoodDetails implements Serializable {
 
     private FoodTypes foodTypes;
     private String foodPic;
+    private int quantityInPounds;
 
 
     public FoodDetails() {
@@ -37,6 +38,14 @@ public class FoodDetails implements Serializable {
         this.foodPic = foodPic;
     }
 
+    public int getQuantityInPounds() {
+        return quantityInPounds;
+    }
+
+    public void setQuantityInPounds(int quantityInPounds) {
+        this.quantityInPounds = quantityInPounds;
+    }
+
     public static FoodDetails parse(String json)
     {
         FoodDetails foodDetails = new FoodDetails();
@@ -48,6 +57,10 @@ public class FoodDetails implements Serializable {
         if(jsonObject.has("foodPic"))
         {
             foodDetails.foodPic = jsonObject.get("foodPic").getAsString();
+        }
+        if(jsonObject.has("quantityInPounds"))
+        {
+            foodDetails.quantityInPounds = jsonObject.get("quantityInPounds").getAsInt();
         }
         return foodDetails;
     }
@@ -63,6 +76,7 @@ public class FoodDetails implements Serializable {
         {
             jsonObject.addProperty("foodPic",this.foodPic);
         }
+        jsonObject.addProperty("quantityInPounds", this.quantityInPounds);
         return jsonObject;
     }
 

@@ -54,20 +54,6 @@ public class NotificationReceiver {
         return Response.ok(responseJson.toString()).build();
     }
 
-    @Path("/schedulePickup")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response schedulePickUp(@RequestBody String jsonBody)
-    {
-        JsonObject jsonObject = JsonParser.parseString(jsonBody).getAsJsonObject();
-        String orgId = jsonObject.get("orgId").getAsString();
-        this.networkOrchestrator.schedulePickUp(orgId);
-
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("operationSuccessful",true);
-        return Response.ok(responseJson.toString()).build();
-    }
-
     @Path("/dropOff/notifications")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -75,6 +61,19 @@ public class NotificationReceiver {
     {
         List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
         return Response.ok(scheduleDropOffNotificationList.toString()).build();
+    }
+
+    @Path("/schedulePickup")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response schedulePickUp(@RequestBody String jsonBody)
+    {
+        SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
+        this.networkOrchestrator.schedulePickUp(notification);
+
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("success",true);
+        return Response.ok(responseJson.toString()).build();
     }
 
     @Path("/scheduleDropOff")
@@ -85,6 +84,8 @@ public class NotificationReceiver {
         ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
         this.networkOrchestrator.scheduleDropOff(notification);
 
-        return Response.ok().build();
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("success",true);
+        return Response.ok(responseJson.toString()).build();
     }
 }

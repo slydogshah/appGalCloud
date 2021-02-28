@@ -20,6 +20,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
     private static Logger logger = LoggerFactory.getLogger(SchedulePickUpNotification.class);
 
     private List<Note> pickupNotes;
+    private boolean isDropOffDynamic;
 
     public SchedulePickUpNotification()
     {
@@ -50,6 +51,14 @@ public class SchedulePickUpNotification extends ScheduleNotification
     public void addPickupNote(Note pickupNote)
     {
         this.pickupNotes.add(pickupNote);
+    }
+
+    public boolean isDropOffDynamic() {
+        return isDropOffDynamic;
+    }
+
+    public void setDropOffDynamic(boolean dropOffDynamic) {
+        isDropOffDynamic = dropOffDynamic;
     }
 
     public static SchedulePickUpNotification parse(String json)
@@ -92,6 +101,10 @@ public class SchedulePickUpNotification extends ScheduleNotification
         {
             schedulePickUpNotification.foodDetails = FoodDetails.parse(jsonObject.get("foodDetails").toString());
         }
+        if(jsonObject.has("isDropOffDynamic"))
+        {
+            schedulePickUpNotification.isDropOffDynamic = jsonObject.get("isDropOffDynamic").getAsBoolean();
+        }
         return schedulePickUpNotification;
     }
 
@@ -122,6 +135,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
         }
 
         jsonObject.addProperty("notificationSent", this.notificationSent);
+        jsonObject.addProperty("isDropOffDynamic", this.isDropOffDynamic);
 
         return jsonObject;
     }

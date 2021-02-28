@@ -69,13 +69,16 @@ public class MongoDBJsonStoreTests extends BaseTest {
     public void testSourceOrgLifecycle()
     {
         SourceOrg sourceOrg = MockData.mockProducerOrg();
+        //JsonUtil.print(sourceOrg.toJson());
+
+
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+
         List<SourceOrg> stored = this.mongoDBJsonStore.getSourceOrgs();
 
         JsonArray array = JsonParser.parseString(stored.toString()).getAsJsonArray();
-        logger.info("*******");
-        logger.info(this.gson.toJson(array));
-        logger.info("*******");
+        JsonUtil.print(array);
         assertNotNull(stored);
     }
 
