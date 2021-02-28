@@ -1,6 +1,7 @@
 package io.appgal.cloud.network.services;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import io.appgal.cloud.infrastructure.OfflineDropOffPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,19 +19,20 @@ public class DynamicDropOffOrchestrator {
     @Inject
     private OfflineDropOffPipeline offlineDropOffPipeline;
 
-    public void orchestrateOfflineCommunity()
+    public JsonObject orchestrateOfflineCommunity()
     {
-        logger.info("*******");
-        logger.info("ORCHESTRATE_OFFLINE_COMMUNITY");
-        logger.info("*******");
+        JsonObject pipelineData = new JsonObject();
 
-        //TODO: Get Offline FoodRunner Pipeline
+        //Get Offline FoodRunner Pipeline
+        JsonArray pipeline = this.getOfflineDropOffPipeline();
+        pipelineData.add("offlineDropOffs",pipeline);
 
-        //TODO:
+        return pipelineData;
     }
 
     public JsonArray getOfflineDropOffPipeline()
     {
-        return this.offlineDropOffPipeline.findRunnersWithDynamicDropOff();
+        JsonArray jsonArray = this.offlineDropOffPipeline.findRunnersWithDynamicDropOff();
+        return jsonArray;
     }
 }

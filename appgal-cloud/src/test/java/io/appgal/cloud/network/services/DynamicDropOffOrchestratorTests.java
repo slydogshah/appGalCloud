@@ -1,6 +1,7 @@
 package io.appgal.cloud.network.services;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
@@ -36,17 +37,7 @@ public class DynamicDropOffOrchestratorTests extends BaseTest {
     {
         super.setUp();
         this.requestPipeline.clear();
-    }
 
-    @Test
-    public void testOrchestrateOfflineCommunity()
-    {
-        this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
-    }
-
-    @Test
-    public void testGetOfflineDropOffPipeline() throws Exception
-    {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
 
         OffsetDateTime middle = OffsetDateTime.now(ZoneOffset.UTC).withHour(12).withMinute(0).withSecond(0);
@@ -79,7 +70,18 @@ public class DynamicDropOffOrchestratorTests extends BaseTest {
 
         this.requestPipeline.process();
         Thread.sleep(60000);
+    }
 
+    @Test
+    public void testOrchestrateOfflineCommunity()
+    {
+        JsonObject json = this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
+        JsonUtil.print(json);
+    }
+
+    @Test
+    public void testGetOfflineDropOffPipeline() throws Exception
+    {
         JsonArray pipeline = this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline();
         JsonUtil.print(pipeline);
     }
