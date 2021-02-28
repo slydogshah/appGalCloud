@@ -27,4 +27,12 @@ public class OfflineCommunityAPITest extends BaseTest {
                 .andReturn();
         logger.info(response.asPrettyString());
     }
+
+    @Test
+    public void testGetOfflineDropOffPipeline() throws Exception
+    {
+        Response response = given().when().get("/offline/pipeline/")
+                .andReturn();
+        logger.info(response.asPrettyString());
+    }
 }

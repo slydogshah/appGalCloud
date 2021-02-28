@@ -30,4 +30,13 @@ public class OfflineCommunityAPI {
         JsonObject offlineCommunity = this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
         return Response.ok(offlineCommunity.toString()).build();
     }
+
+    @Path("pipeline")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOfflineDropOffPipeline()
+    {
+        JsonArray pipeline = this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline();
+        return Response.ok(pipeline.toString()).build();
+    }
 }
