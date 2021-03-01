@@ -25,12 +25,21 @@ public class LocationAPI {
     @Produces(MediaType.APPLICATION_JSON)
     public Response receiveUpdate(@RequestBody String jsonBody)
     {
-        FoodRunner foodRunner = FoodRunner.parse(jsonBody);
-        this.locationService.receiveUpdate(foodRunner);
+        try {
+            FoodRunner foodRunner = FoodRunner.parse(jsonBody);
+            this.locationService.receiveUpdate(foodRunner);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("success",true);
-        return Response.ok(responseJson.toString()).build();
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success", true);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("current")
