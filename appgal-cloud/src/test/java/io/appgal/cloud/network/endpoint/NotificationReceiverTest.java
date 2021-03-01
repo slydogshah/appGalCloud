@@ -108,7 +108,7 @@ public class NotificationReceiverTest extends BaseTest {
     @Test
     public void testDropOffNotifications() throws Exception{
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
-        JsonUtil.print(this.networkOrchestrator.getActiveView());
+        //JsonUtil.print(this.networkOrchestrator.getActiveView());
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
 
@@ -121,7 +121,7 @@ public class NotificationReceiverTest extends BaseTest {
         notificationList.add(end);
         notificationList.add(start);
         List<String> excluded = new LinkedList<>();
-        logger.info(notificationList.toString());
+        //logger.info(notificationList.toString());
 
         for (int i=0; i<notificationList.size();i++) {
             OffsetDateTime cour = notificationList.get(i);
@@ -135,9 +135,9 @@ public class NotificationReceiverTest extends BaseTest {
             notification.setSourceOrg(sourceOrg);
             notification.setFoodRunner(bugsBunny);
             notification.setStart(cour);
-            logger.info("********************************************");
-            JsonUtil.print(notification.toJson());
-            logger.info(cour.toString() + ":" + cour.toEpochSecond());
+            //logger.info("********************************************");
+            //JsonUtil.print(notification.toJson());
+            //logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
             this.networkOrchestrator.scheduleDropOff(notification);
 
