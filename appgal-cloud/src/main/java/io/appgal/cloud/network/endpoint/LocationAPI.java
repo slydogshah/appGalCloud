@@ -47,13 +47,22 @@ public class LocationAPI {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCurrentLocation(@QueryParam("email") String email)
     {
-        Location location = this.locationService.getCurrentLocation(email);
+        try {
+            Location location = this.locationService.getCurrentLocation(email);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("active",location == null?false:true);
-        if(location != null) {
-            responseJson.add("location", location.toJson());
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("active", location == null ? false : true);
+            if (location != null) {
+                responseJson.add("location", location.toJson());
+            }
+            return Response.ok(responseJson.toString()).build();
         }
-        return Response.ok(responseJson.toString()).build();
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 }

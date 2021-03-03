@@ -4,3 +4,18 @@ MongoClientURI uri = new MongoClientURI(
 
 MongoClient mongoClient = new MongoClient(uri);
 MongoDatabase database = mongoClient.getDatabase("test");
+
+
+{
+  "clientId": "8dd67272-e2a6-4ebf-9031-e914b476b3c5",
+  "clientSecret": "lN3F2q_b5ErSj9p~4FPzBSjn2yn0oo1tmv",
+  "subscriptionId": "a89ff832-167b-4208-aded-7784e43249b4",
+  "tenantId": "ce0e9ab0-4f1a-44ef-9e7d-cee03b25b973",
+  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+  "resourceManagerEndpointUrl": "https://management.azure.com/",
+  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+  "galleryEndpointUrl": "https://gallery.azure.com/",
+  "managementEndpointUrl": "https://management.core.windows.net/"
+}
+

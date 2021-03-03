@@ -47,11 +47,20 @@ public class NotificationReceiver {
     @Produces(MediaType.APPLICATION_JSON)
     public Response dropOffOrgs(@QueryParam("orgId") String orgId)
     {
-        List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
+        try {
+            List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.add("dropOffOrgs", JsonParser.parseString(dropOffOrgs.toString()));
-        return Response.ok(responseJson.toString()).build();
+            JsonObject responseJson = new JsonObject();
+            responseJson.add("dropOffOrgs", JsonParser.parseString(dropOffOrgs.toString()));
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("/dropOff/notifications")
