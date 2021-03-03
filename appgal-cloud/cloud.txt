@@ -19,3 +19,22 @@ MongoDatabase database = mongoClient.getDatabase("test");
   "managementEndpointUrl": "https://management.core.windows.net/"
 }
 
+appgallabs-271922
+
+GCP:
+* mvn clean package -DskipTests
+* gcloud builds submit --tag gcr.io/appgallabs-271922/appgal-cloud:v1
+
+LABEL \
+  org.opencontainers.image.authors="AppGal Labs" \
+  org.opencontainers.image.vendor="AppGal Labs" \
+  org.opencontainers.image.url="local" \
+  org.opencontainers.image.source="https://github.com/slydogshah/appGalCloud/" \
+  org.opencontainers.image.version="$REVISION_ID" \
+  org.opencontainers.image.revision="$REVISION_ID" \
+  vendor="AppGal Labs" \
+  name="appgal-cloud" \
+  version="$REVISION_ID-$REVISION_ID" \
+  summary="Jen Network" \
+  description="Jen Network"
+
