@@ -55,7 +55,7 @@ public class LocationAPITest extends BaseTest {
         JsonUtil.print(foodRunner.toJson());
         Response response = given().when().body(foodRunner.toString()).post("/location/update/")
                 .andReturn();
-        logger.info(response.asPrettyString());
+        //logger.info(response.asPrettyString());
     }
 
     @Test
@@ -70,11 +70,11 @@ public class LocationAPITest extends BaseTest {
         JsonUtil.print(foodRunner.toJson());
         Response response = given().when().body(foodRunner.toString()).post("/location/update/")
                 .andReturn();
-        logger.info(response.asPrettyString());
+        //logger.info(response.asPrettyString());
 
         response = given().when().body(foodRunner.toString()).get("/location/current/?email="+
                 foodRunner.getProfile().getEmail())
                 .andReturn();
-        logger.info(response.asPrettyString());
+        //logger.info(response.asPrettyString());
     }
 }

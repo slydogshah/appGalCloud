@@ -81,6 +81,16 @@ class AddPickupDetails extends React.Component
                             </CFormGroup>
                           </CCol>
                       </CRow>
+                      <CRow>
+                        <CCol xs="6">
+                            <CButton color="primary" className="px-4">Space</CButton>
+                        </CCol>
+                      </CRow>
+                      <CRow>
+                          <CCol xs="6">
+                              <CButton color="primary" className="px-4">Send</CButton>
+                          </CCol>
+                      </CRow>
                     </CCardBody>
                   </CCard>
                 </CCol>

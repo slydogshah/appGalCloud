@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.bson.Document;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 @ApplicationScoped
@@ -27,11 +28,20 @@ public class MongoDBJsonStore {
     private static Logger logger = LoggerFactory.getLogger(MongoDBJsonStore.class);
 
     private MongoClient mongoClient;
+    private String database = "jennetwork";
 
     @PostConstruct
     public void start()
     {
-        this.mongoClient = MongoClients.create();
+        String password = "jen";
+        String host = "cluster0-shard-00-00.a16oh.mongodb.net";
+        //String template = "mongodb+srv://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
+        String template = "mongodb://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
+        String connectionString = MessageFormat.format(template,password,host,this.database);
+        logger.info("************");
+        logger.info(connectionString);
+        logger.info("************");
+        this.mongoClient = MongoClients.create(connectionString);
     }
 
     @PreDestroy
@@ -49,7 +59,7 @@ public class MongoDBJsonStore {
     {
         List<FoodRunner> foodRunners = new ArrayList<>();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("profile");
 
@@ -72,7 +82,7 @@ public class MongoDBJsonStore {
 
     public void clearAllProfiles()
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("profile");
 
@@ -91,7 +101,7 @@ public class MongoDBJsonStore {
         {
             throw new RuntimeException("ProfileType: ISNULL");
         }
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("profile");
 
@@ -103,7 +113,7 @@ public class MongoDBJsonStore {
     {
         Profile profile = null;
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("profile");
 
@@ -127,7 +137,7 @@ public class MongoDBJsonStore {
         SourceOrg existing = this.getSourceOrg(sourceOrg.getOrgId());
 
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("customers");
 
@@ -149,7 +159,7 @@ public class MongoDBJsonStore {
 
     public SourceOrg getSourceOrg(String orgId)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("customers");
 
@@ -170,7 +180,7 @@ public class MongoDBJsonStore {
     {
         List<SourceOrg> sourceOrgs = new ArrayList<>();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("customers");
 
@@ -196,7 +206,7 @@ public class MongoDBJsonStore {
             return;
         }
         
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
@@ -224,7 +234,7 @@ public class MongoDBJsonStore {
         ActiveNetwork activeNetwork = new ActiveNetwork();
         activeNetwork.setMongoDBJsonStore(this);
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
@@ -261,14 +271,14 @@ public class MongoDBJsonStore {
 
     public void deleteFoodRunner(FoodRunner foodRunner)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
         collection.deleteMany(new Document());
     }
 
     public void clearActiveNetwork()
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
@@ -279,7 +289,7 @@ public class MongoDBJsonStore {
 
     public void storeDropOffNotification(DropOffNotification dropOffNotification)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
 
@@ -293,7 +303,7 @@ public class MongoDBJsonStore {
     {
         DropOffNotification dropOffNotification = new DropOffNotification();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
 
@@ -315,7 +325,7 @@ public class MongoDBJsonStore {
     {
         DropOffNotification dropOffNotification = new DropOffNotification();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
 
@@ -339,7 +349,7 @@ public class MongoDBJsonStore {
 
     public void setCompletedTrip(CompletedTrip completedTrip)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
         collection.insertOne(Document.parse(completedTrip.getFoodRunner().toString()));
@@ -349,7 +359,7 @@ public class MongoDBJsonStore {
     {
         List<CompletedTrip> completedTrips = new ArrayList<>();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
         String queryJson = "{}";
@@ -377,7 +387,7 @@ public class MongoDBJsonStore {
 
     public void storeResults(List<FoodRunner> results)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("results");
         List<Document> documents = new ArrayList<>();
@@ -393,7 +403,7 @@ public class MongoDBJsonStore {
     {
         List<SchedulePickUpNotification> notifications = new ArrayList<>();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
         String queryJson = "{}";
@@ -416,7 +426,7 @@ public class MongoDBJsonStore {
     {
         List<SchedulePickUpNotification> notifications = new ArrayList<>();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
         //Query Ex: {$and:[{"foodRunner.profile.email":"bugs.bunny.shah@gmail.com"},{"notificationSent":true}]}
@@ -440,7 +450,7 @@ public class MongoDBJsonStore {
     {
         List<SchedulePickUpNotification> notifications = new ArrayList<>();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
         //Query Ex: {$and:[{"foodRunner.profile.email":"bugs.bunny.shah@gmail.com"},{"notificationSent":true}]}
@@ -464,7 +474,7 @@ public class MongoDBJsonStore {
     {
         List<SchedulePickUpNotification> notifications = new ArrayList<>();
 
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
         String queryJson = "{\"foodRunner.profile.email\":\""+email+"\"}";
@@ -486,7 +496,7 @@ public class MongoDBJsonStore {
 
     public void storeScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
@@ -496,7 +506,7 @@ public class MongoDBJsonStore {
 
     public void updateScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
@@ -511,7 +521,7 @@ public class MongoDBJsonStore {
 
     public JsonObject getScheduledPickUpNotification(String id)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
         String queryJson = "{\"id\":\""+id+"\"}";
@@ -531,7 +541,7 @@ public class MongoDBJsonStore {
 
     public void storeScheduledDropOffNotification(ScheduleDropOffNotification scheduleDropOffNotification)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
 
@@ -541,7 +551,7 @@ public class MongoDBJsonStore {
 
     public void updateScheduledDropOffNotification(ScheduleDropOffNotification notification)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
 
@@ -556,7 +566,7 @@ public class MongoDBJsonStore {
 
     public JsonObject getScheduledDropOffNotification(String id)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
 
         String queryJson = "{\"id\":\""+id+"\"}";
@@ -575,7 +585,7 @@ public class MongoDBJsonStore {
     public List<ScheduleDropOffNotification> getScheduledDropOffNotifications(String orgId)
     {
         List<ScheduleDropOffNotification> notifications = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
@@ -596,7 +606,7 @@ public class MongoDBJsonStore {
     public List<ScheduleDropOffNotification> getScheduledDropOffNotifications()
     {
         List<ScheduleDropOffNotification> notifications = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
 
         String queryJson = "{}";
@@ -615,7 +625,7 @@ public class MongoDBJsonStore {
 
     public void storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
 
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
@@ -626,7 +636,7 @@ public class MongoDBJsonStore {
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String email)
     {
         List<FoodRecoveryTransaction> list = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
         String queryJson = "{}";
@@ -646,7 +656,7 @@ public class MongoDBJsonStore {
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactionHistory(String orgId)
     {
         List<FoodRecoveryTransaction> list = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
@@ -667,7 +677,7 @@ public class MongoDBJsonStore {
     public List<FoodRecoveryTransaction> getFoodRecoveryDropOffHistory(String orgId)
     {
         List<FoodRecoveryTransaction> list = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase("appgalcloud");
+        MongoDatabase database = mongoClient.getDatabase(this.database);
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}

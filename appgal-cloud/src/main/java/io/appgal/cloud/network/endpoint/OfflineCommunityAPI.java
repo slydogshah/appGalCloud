@@ -27,8 +27,17 @@ public class OfflineCommunityAPI {
     @Produces(MediaType.APPLICATION_JSON)
     public Response orchestrateOfflineCommunity()
     {
-        JsonObject offlineCommunity = this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
-        return Response.ok(offlineCommunity.toString()).build();
+        try {
+            JsonObject offlineCommunity = this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
+            return Response.ok(offlineCommunity.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("pipeline")
@@ -36,7 +45,16 @@ public class OfflineCommunityAPI {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOfflineDropOffPipeline()
     {
-        JsonArray pipeline = this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline();
-        return Response.ok(pipeline.toString()).build();
+        try {
+            JsonArray pipeline = this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline();
+            return Response.ok(pipeline.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 }

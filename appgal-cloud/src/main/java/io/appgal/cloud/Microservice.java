@@ -28,6 +28,7 @@ public class Microservice {
     {
         JsonObject jsonObject = new JsonObject();
 
+        jsonObject.addProperty("product", "#Jen Network");
         jsonObject.addProperty("oid", UUID.randomUUID().toString());
         jsonObject.addProperty("message", "HELLO_TO_HUMANITY");
 

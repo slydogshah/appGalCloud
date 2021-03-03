@@ -1,0 +1,40 @@
+
+MongoClientURI uri = new MongoClientURI(
+    "mongodb://jen:<password>@cluster0.mongodb.net/jennetwork?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority");
+
+MongoClient mongoClient = new MongoClient(uri);
+MongoDatabase database = mongoClient.getDatabase("test");
+
+
+{
+  "clientId": "8dd67272-e2a6-4ebf-9031-e914b476b3c5",
+  "clientSecret": "lN3F2q_b5ErSj9p~4FPzBSjn2yn0oo1tmv",
+  "subscriptionId": "a89ff832-167b-4208-aded-7784e43249b4",
+  "tenantId": "ce0e9ab0-4f1a-44ef-9e7d-cee03b25b973",
+  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+  "resourceManagerEndpointUrl": "https://management.azure.com/",
+  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+  "galleryEndpointUrl": "https://gallery.azure.com/",
+  "managementEndpointUrl": "https://management.core.windows.net/"
+}
+
+appgallabs-271922
+
+GCP:
+* mvn clean package -DskipTests
+* gcloud builds submit --tag gcr.io/appgallabs-271922/appgal-cloud:v1
+
+LABEL \
+  org.opencontainers.image.authors="AppGal Labs" \
+  org.opencontainers.image.vendor="AppGal Labs" \
+  org.opencontainers.image.url="local" \
+  org.opencontainers.image.source="https://github.com/slydogshah/appGalCloud/" \
+  org.opencontainers.image.version="$REVISION_ID" \
+  org.opencontainers.image.revision="$REVISION_ID" \
+  vendor="AppGal Labs" \
+  name="appgal-cloud" \
+  version="$REVISION_ID-$REVISION_ID" \
+  summary="Jen Network" \
+  description="Jen Network"
+

@@ -25,7 +25,7 @@ public class OfflineCommunityAPITest extends BaseTest {
     {
         Response response = given().when().get("/offline/community/")
                 .andReturn();
-        logger.info(response.asPrettyString());
+        //logger.info(response.asPrettyString());
     }
 
     @Test
@@ -33,6 +33,6 @@ public class OfflineCommunityAPITest extends BaseTest {
     {
         Response response = given().when().get("/offline/pipeline/")
                 .andReturn();
-        logger.info(response.asPrettyString());
+        //logger.info(response.asPrettyString());
     }
 }
