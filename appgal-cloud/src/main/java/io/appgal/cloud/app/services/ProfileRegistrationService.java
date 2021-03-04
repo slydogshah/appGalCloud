@@ -97,9 +97,7 @@ public class ProfileRegistrationService {
             JsonObject authResponse = new JsonObject();
             authResponse.addProperty("statusCode", 200);
 
-            //TODO: Unmock
-            Location location = new Location(30.25860595703125d, -97.74873352050781d);
-            FoodRunner foodRunner = new FoodRunner(profile, location);
+            FoodRunner foodRunner = new FoodRunner(profile);
             this.networkOrchestrator.enterNetwork(foodRunner);
             foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
             if(foodRunner != null) {
@@ -112,7 +110,6 @@ public class ProfileRegistrationService {
                 authResponse.addProperty("longitude", -97.74873352050781d);
             }
 
-            profile.setLocation(location);
             authResponse.add("profile", profile.toJson());
 
             this.networkOrchestrator.enterNetwork(foodRunner);

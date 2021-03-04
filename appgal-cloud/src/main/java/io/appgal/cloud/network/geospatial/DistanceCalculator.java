@@ -7,10 +7,6 @@ import io.appgal.cloud.model.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO..
-//TODO * Find the closed SourceOrg for DropOff
-//TODO *
-
 public class DistanceCalculator {
     private static Logger logger = LoggerFactory.getLogger(DistanceCalculator.class);
 
