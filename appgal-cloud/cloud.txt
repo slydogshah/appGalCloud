@@ -22,8 +22,13 @@ MongoDatabase database = mongoClient.getDatabase("test");
 appgallabs-271922
 
 GCP:
+* How to get the code
+* git clone https://github.com/slydogshah/appGalCloud.git
+* git checkout ironman
 * mvn clean package -DskipTests
 * gcloud builds submit --tag gcr.io/appgallabs-271922/appgal-cloud:v1
+* https://github.com/slydogshah/appGalCloud/tree/ironman
+
 
 LABEL \
   org.opencontainers.image.authors="AppGal Labs" \
