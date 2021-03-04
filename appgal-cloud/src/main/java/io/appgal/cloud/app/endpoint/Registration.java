@@ -45,15 +45,23 @@ public class Registration {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProfile(@QueryParam("email") String email)
     {
-        Profile profile = this.profileRegistrationService.getProfile(email);
-        if(profile == null)
-        {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("message", "profile_not_found");
-            jsonObject.addProperty("email", email);
-            return Response.status(404).entity(jsonObject.toString()).build();
+        try {
+            Profile profile = this.profileRegistrationService.getProfile(email);
+            if (profile == null) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("message", "profile_not_found");
+                jsonObject.addProperty("email", email);
+                return Response.status(404).entity(jsonObject.toString()).build();
+            }
+            return Response.ok(profile.toString()).build();
         }
-        return Response.ok(profile.toString()).build();
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("profile")

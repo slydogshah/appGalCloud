@@ -33,7 +33,7 @@ public class MongoDBJsonStore {
     @PostConstruct
     public void start()
     {
-        String password = "jen";
+        /*String password = "jen";
         String host = "cluster0-shard-00-00.a16oh.mongodb.net";
         //String template = "mongodb+srv://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
         String template = "mongodb://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
@@ -41,7 +41,8 @@ public class MongoDBJsonStore {
         logger.info("************");
         logger.info(connectionString);
         logger.info("************");
-        this.mongoClient = MongoClients.create(connectionString);
+        this.mongoClient = MongoClients.create(connectionString);*/
+        this.mongoClient = MongoClients.create();
     }
 
     @PreDestroy

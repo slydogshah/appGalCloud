@@ -36,7 +36,6 @@ public class FoodRecoveryOrchestrator {
         SourceOrg producer = this.mongoDBJsonStore.getSourceOrg(orgId);
         List<SourceOrg> dropOffOrgs = this.mongoDBJsonStore.getSourceOrgs();
 
-        //TODO
         DistanceCalculator distanceCalculator = new DistanceCalculator();
         List<SourceOrg> dropOffOptions = new ArrayList<>();
         for (SourceOrg dropOffOption : dropOffOrgs)

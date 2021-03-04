@@ -37,9 +37,18 @@ public class NotificationReceiver {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPickUpNotifications(@QueryParam("email") String email)
     {
-        List<SchedulePickUpNotification> schedulePickUpNotificationList = this.mongoDBJsonStore.
-                getSchedulePickUpNotifications(email);
-        return Response.ok(schedulePickUpNotificationList.toString()).build();
+        try {
+            List<SchedulePickUpNotification> schedulePickUpNotificationList = this.mongoDBJsonStore.
+                    getSchedulePickUpNotifications(email);
+            return Response.ok(schedulePickUpNotificationList.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("/dropOffOrgs")
@@ -68,8 +77,17 @@ public class NotificationReceiver {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDropOffNotifications(@QueryParam("orgId") String orgId)
     {
-        List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
-        return Response.ok(scheduleDropOffNotificationList.toString()).build();
+        try {
+            List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
+            return Response.ok(scheduleDropOffNotificationList.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("/schedulePickup")
@@ -77,12 +95,21 @@ public class NotificationReceiver {
     @Produces(MediaType.APPLICATION_JSON)
     public Response schedulePickUp(@RequestBody String jsonBody)
     {
-        SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
-        this.networkOrchestrator.schedulePickUp(notification);
+        try {
+            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
+            this.networkOrchestrator.schedulePickUp(notification);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("success",true);
-        return Response.ok(responseJson.toString()).build();
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success", true);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("/scheduleDropOff")
@@ -90,11 +117,20 @@ public class NotificationReceiver {
     @Produces(MediaType.APPLICATION_JSON)
     public Response scheduleDropOff(@RequestBody String jsonBody)
     {
-        ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
-        this.networkOrchestrator.scheduleDropOff(notification);
+        try {
+            ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
+            this.networkOrchestrator.scheduleDropOff(notification);
 
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("success",true);
-        return Response.ok(responseJson.toString()).build();
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success", true);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 }

@@ -30,33 +30,39 @@ public class Transactions {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFoodRecoveryTransactions(@QueryParam("email") String email)
     {
-        List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
+        try {
+            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
 
-        JsonObject result = new JsonObject();
-        JsonArray pending = new JsonArray();
-        JsonArray inprogress = new JsonArray();
-        JsonArray transactions = JsonParser.parseString(txs.toString()).getAsJsonArray();
-        Iterator<JsonElement> itr = transactions.iterator();
-        while(itr.hasNext()) {
-            JsonObject transaction = itr.next().getAsJsonObject();
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(transaction.toString());
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            JsonArray inprogress = new JsonArray();
+            JsonArray transactions = JsonParser.parseString(txs.toString()).getAsJsonArray();
+            Iterator<JsonElement> itr = transactions.iterator();
+            while (itr.hasNext()) {
+                JsonObject transaction = itr.next().getAsJsonObject();
+                FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(transaction.toString());
 
-            if(tx.getTransactionState() == TransactionState.SUBMITTED)
-            {
-                pending.add(tx.toJson());
+                if (tx.getTransactionState() == TransactionState.SUBMITTED) {
+                    pending.add(tx.toJson());
+                } else if (tx.getTransactionState() == TransactionState.INPROGRESS || tx.getTransactionState() == TransactionState.ONTHEWAY) {
+                    inprogress.add(tx.toJson());
+                }
+
+                pending.add(transaction);
             }
-            else if(tx.getTransactionState() == TransactionState.INPROGRESS || tx.getTransactionState() == TransactionState.ONTHEWAY)
-            {
-                inprogress.add(tx.toJson());
-            }
+            result.add("pending", pending);
+            result.add("inProgress", inprogress);
 
-            pending.add(transaction);
+
+            return Response.ok(result.toString()).build();
         }
-        result.add("pending",pending);
-        result.add("inProgress",inprogress);
-
-
-        return Response.ok(result.toString()).build();
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("/recovery/history")
@@ -64,8 +70,17 @@ public class Transactions {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFoodRecoveryTransactionHistory(@QueryParam("orgId") String orgId)
     {
-        List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactionHistory(orgId);
-        return Response.ok(txs.toString()).build();
+        try {
+            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactionHistory(orgId);
+            return Response.ok(txs.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("/dropOff/history")
@@ -73,7 +88,16 @@ public class Transactions {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFoodRecoveryDropOffHistory(@QueryParam("orgId") String orgId)
     {
-        List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(orgId);
-        return Response.ok(txs.toString()).build();
+        try {
+            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(orgId);
+            return Response.ok(txs.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 }

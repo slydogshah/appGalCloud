@@ -31,8 +31,17 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getActiveView()
     {
-        JsonObject activeView = this.networkOrchestrator.getActiveView();
-        return Response.ok(activeView.toString()).build();
+        try {
+            JsonObject activeView = this.networkOrchestrator.getActiveView();
+            return Response.ok(activeView.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("/enterNetwork")
@@ -40,55 +49,77 @@ public class ActiveNetwork {
     @Produces(MediaType.APPLICATION_JSON)
     public Response enterNetwork(@QueryParam("email") String email)
     {
-        Profile profile = this.mongoDBJsonStore.getProfile(email);
-        if(profile == null)
-        {
+        try {
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            if (profile == null) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("message", "BAD_REQUEST: \"+email+\" is not a registered user");
+                jsonObject.addProperty("email", email);
+                return Response.status(400).entity(jsonObject.toString()).build();
+            }
+
+            FoodRunner foodRunner = new FoodRunner(profile);
+            this.networkOrchestrator.enterNetwork(foodRunner);
+
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("message", "BAD_REQUEST: \"+email+\" is not a registered user");
-            jsonObject.addProperty("email", email);
-            return Response.status(400).entity(jsonObject.toString()).build();
+            jsonObject.addProperty("success", true);
+            return Response.ok(jsonObject.toString()).build();
         }
-
-        //TODO: PLEASE_REMOVE_THIS
-        Location location = new Location(30.25860595703125d, -97.74873352050781d);
-
-        FoodRunner foodRunner = new FoodRunner(profile, location);
-        this.networkOrchestrator.enterNetwork(foodRunner);
-
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("success", true);
-        return Response.ok(jsonObject.toString()).build();
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
     @Path("/findBestDestination")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String findBestDestination(@RequestBody String jsonBody)
+    public Response findBestDestination(@RequestBody String jsonBody)
     {
-        Profile profile = this.mongoDBJsonStore.getProfile("bugs.bunny.shah@gmail.com");
-        FoodRunner foodRunner = new FoodRunner(profile, new Location(Double.parseDouble("30.25860595703125d"), Double.parseDouble("-97.74873352050781d")));
-        List<SourceOrg> sourceOrgs = this.networkOrchestrator.findBestDestination(foodRunner);
-        return sourceOrgs.toString();
+        try {
+            Profile profile = this.mongoDBJsonStore.getProfile("bugs.bunny.shah@gmail.com");
+            FoodRunner foodRunner = new FoodRunner(profile, new Location(Double.parseDouble("30.25860595703125d"), Double.parseDouble("-97.74873352050781d")));
+            List<SourceOrg> sourceOrgs = this.networkOrchestrator.findBestDestination(foodRunner);
+            return Response.ok(sourceOrgs.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 
-    @Path("/sendDeliveryNotification")
+    /*@Path("/sendDeliveryNotification")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendDeliveryNotification(@RequestBody String jsonBody)
     {
-        //TODO
         //DropOffNotification dropOffNotification = DropOffNotification.parse(jsonBody);
         //this.deliveryOrchestrator.sendDeliveryNotification(dropOffNotification);
 
         return Response.ok().build();
-    }
+    }*/
 
     @Path("sourceOrgs")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getSourceOrgs()
+    public Response getSourceOrgs()
     {
-        List<SourceOrg> sourceOrgs = this.mongoDBJsonStore.getSourceOrgs();
-        return sourceOrgs.toString();
+        try {
+            List<SourceOrg> sourceOrgs = this.mongoDBJsonStore.getSourceOrgs();
+            return Response.ok(sourceOrgs.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
     }
 }
