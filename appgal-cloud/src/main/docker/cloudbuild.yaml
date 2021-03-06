@@ -1,0 +1,3 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ["build","-t","gcr.io/appgallabs/github.com/sly.dog.shah/appgallabs.io:$COMMIT_SHA",]
