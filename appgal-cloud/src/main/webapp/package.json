@@ -59,7 +59,7 @@
     "test:debug": "react-scripts --inspect-brk test --runInBand",
     "eject": "react-scripts eject",
     "changelog": "auto-changelog --starting-version 3.0.0 --commit-limit false --hide-credit",
-    "prod": "react-scripts build --dest && rm -rf ../../resources/META-INF/resources/static  && mv build/* ../../resources/META-INF/resources"
+    "prod": "react-scripts build --dest && mv build/* ../resources/META-INF/resources"
   },
   "bugs": {
     "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"

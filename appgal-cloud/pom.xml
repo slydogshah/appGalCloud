@@ -266,7 +266,6 @@
               <arguments>install</arguments>
             </configuration>
           </execution>
-          <!--
           <execution>
             <id>npm run build</id>
             <goals>
@@ -276,7 +275,6 @@
               <arguments>run prod</arguments>
             </configuration>
           </execution>
-          -->
         </executions>
         <configuration>
           <workingDirectory>${project.basedir}/src/main/webapp</workingDirectory>
