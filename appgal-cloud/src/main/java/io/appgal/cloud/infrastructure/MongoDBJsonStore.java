@@ -36,8 +36,8 @@ public class MongoDBJsonStore {
     {
         //TODO: Pull from the environment
         //String host = "localhost";
-        String host = "cluster0.mongodb.net";
-        //String host = "cluster0.a16oh.mongodb.net";
+        //String host = "cluster0.mongodb.net";
+        String host = "cluster0.a16oh.mongodb.net";
 
         String template = "mongodb+srv://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
         //String template = "mongodb://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
