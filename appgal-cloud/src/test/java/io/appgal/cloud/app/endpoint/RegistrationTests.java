@@ -169,16 +169,12 @@ public class RegistrationTests extends BaseTest {
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         jsonObject = jsonObject.getAsJsonObject("profile");
-        assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
-        assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), email);
         assertEquals(profile.getMobile(), 8675309l);
         assertEquals(profile.getPassword(), "c");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
-        assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
-        assertEquals(profile.getLocation().getLongitude(), -97.74873352050781d);
 
     }
 
@@ -252,16 +248,11 @@ public class RegistrationTests extends BaseTest {
         //assert the body
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         jsonObject = jsonObject.getAsJsonObject("profile");
-        assertEquals(jsonObject.get("latitude").getAsDouble(), 30.25860595703125d);
-        assertEquals(jsonObject.get("longitude").getAsDouble(), -97.74873352050781d);
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), email);
         assertEquals(profile.getMobile(), 8675309l);
         assertEquals(profile.getPassword(), "c");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
-        assertEquals(profile.getLocation().getLatitude(), 30.25860595703125d);
-        assertEquals(profile.getLocation().getLongitude(), -97.74873352050781d);
-
     }
 }

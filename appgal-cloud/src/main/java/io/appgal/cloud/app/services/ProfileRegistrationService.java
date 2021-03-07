@@ -100,14 +100,9 @@ public class ProfileRegistrationService {
             FoodRunner foodRunner = new FoodRunner(profile);
             this.networkOrchestrator.enterNetwork(foodRunner);
             foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
-            if(foodRunner != null) {
+            if(foodRunner != null && foodRunner.getLocation() != null) {
                 authResponse.addProperty("latitude", foodRunner.getLocation().getLatitude());
                 authResponse.addProperty("longitude", foodRunner.getLocation().getLongitude());
-            }
-            else
-            {
-                authResponse.addProperty("latitude", 30.25860595703125d);
-                authResponse.addProperty("longitude", -97.74873352050781d);
             }
 
             authResponse.add("profile", profile.toJson());
