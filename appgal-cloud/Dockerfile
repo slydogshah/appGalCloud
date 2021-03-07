@@ -7,7 +7,8 @@ ARG RUN_JAVA_VERSION=1.3.8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 
 ENV mongodbHost='cluster0.mongodb.net'
-ENV mongodbPort='27017'
+ENV mongoDBConnectionString=mongodb://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority
+ENV mongodbPort=27017
 
 # Install java and the run-java script
 # Also set up permissions for user `1001`
