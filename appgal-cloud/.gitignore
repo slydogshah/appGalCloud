@@ -42,3 +42,4 @@ release.properties
 /kafka_2.12-2.5.1/*
 .eslintcache
 
+/src/main/resources/META-INF/resources/*
