@@ -43,5 +43,11 @@ LABEL \
   summary="Jen Network" \
   description="Jen Network"
 
+
+  #GCP Deployment
+  gcloud builds submit --tag gcr.io/appgallabs-271922/appgal-cloud:v1
   gcloud run deploy --image gcr.io/appgallabs-271922/appgal-cloud:v1 --platform managed
+
+  #Local
+
 

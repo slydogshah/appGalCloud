@@ -29,20 +29,27 @@ public class MongoDBJsonStore {
 
     private MongoClient mongoClient;
     private String database = "jennetwork";
+    private String password = "jen";
 
     @PostConstruct
     public void start()
     {
-        /*String password = "jen";
-        String host = "cluster0-shard-00-00.a16oh.mongodb.net";
-        //String template = "mongodb+srv://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
-        String template = "mongodb://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
+        //TODO: Pull from the environment
+        //String host = "localhost";
+        //String host = "cluster0.mongodb.net";
+        String host = "cluster0.a16oh.mongodb.net";
+
+        String template = "mongodb+srv://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
+        //String template = "mongodb://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
+        //String template = "mongodb://localhost:27017/"+database;
+
         String connectionString = MessageFormat.format(template,password,host,this.database);
         logger.info("************");
         logger.info(connectionString);
         logger.info("************");
-        this.mongoClient = MongoClients.create(connectionString);*/
-        this.mongoClient = MongoClients.create();
+        this.mongoClient = MongoClients.create(connectionString);
+
+        //this.mongoClient = MongoClients.create();
     }
 
     @PreDestroy
