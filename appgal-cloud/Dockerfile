@@ -32,8 +32,6 @@ ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jb
 # We make four distinct layers so if there are application changes the library layers can be re-used
 COPY --chown=1001 target/lib/ /deployments/lib/
 COPY --chown=1001 target/appgal-cloud-v1-runner.jar /deployments/
-#COPY --chown=1001 target/quarkus/ /deployments/quarkus/
-#COPY --chown=1001 deployments/aiplatform.json /deployments/
 
 EXPOSE 8080
 USER 1001
