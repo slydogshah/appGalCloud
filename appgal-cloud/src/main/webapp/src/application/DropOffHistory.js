@@ -61,16 +61,6 @@ const getBadge = (status)=>{
          }
      }
 
-const handle = (history) => {
-    const apiUrl = 'http://localhost:8080/registration/login/';
-    axios.post(apiUrl,{"email":"b@z.com","password":"by"}).then((response) => {
-          history.push({
-            pathname: "/schedulePickup",
-            state: response.data
-          });
-    });
-}
-
 const ClosedTransactionView = ({closed}) => {
     const txs = []
     for (const [index, value] of closed.entries()) {

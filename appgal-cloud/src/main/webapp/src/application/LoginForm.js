@@ -34,9 +34,6 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     //console.log("Constructor: "+JSON.stringify(this.props));
-    console.log("********LOGINFORM**************************");
-    console.log(process.env);
-
 
     this.state = {username:'',password:'',isModalOpen:false};
     this.handleChange = this.handleChange.bind(this);
@@ -60,7 +57,6 @@ class LoginForm extends React.Component {
     ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
 
     const apiUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/registration/login/";
-    console.log("APIURL: "+apiUrl);
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
           this.props.history.push({
             pathname: "/home"

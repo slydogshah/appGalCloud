@@ -76,10 +76,10 @@ class Register extends React.Component {
 
       if(validationSuccess)
       {
-          const apiUrl = 'http://localhost:8080/registration/org/';
+          const apiUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/registration/org/";
           axios.post(apiUrl,{"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).
           then((response) => {
-                    const loginUrl = 'http://localhost:8080/registration/login/';
+                    const loginUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/registration/login/";
                     axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
                     then((response) => {
                         console.log("**************************");

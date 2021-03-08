@@ -51,3 +51,5 @@ LABEL \
   #Local
 
 
+window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+
+

@@ -56,7 +56,8 @@ class DropOffHome extends React.Component {
 
   handleHistory(event)
   {
-        const apiUrl = 'http://localhost:8080/tx/dropOff/history/?orgId='+'church';
+        //TODO: unmock
+        const apiUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/tx/dropOff/history/?orgId='+'church";
               axios.get(apiUrl).then((response) => {
                 this.props.history.push({
                   pathname: "/dropOffHistory",
