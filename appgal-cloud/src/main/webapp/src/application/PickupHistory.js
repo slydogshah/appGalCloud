@@ -61,16 +61,6 @@ const getBadge = (status)=>{
          }
      }
 
-const handle = (history) => {
-    const apiUrl = 'http://localhost:8080/registration/login/';
-    axios.post(apiUrl,{"email":"b@z.com","password":"by"}).then((response) => {
-          history.push({
-            pathname: "/schedulePickup",
-            state: response.data
-          });
-    });
-}
-
 const ClosedTransactionView = ({closed}) => {
     console.log(JSON.stringify(closed));
     const txs = []
@@ -188,7 +178,8 @@ class PickupHistory extends React.Component
 
     renderMyData()
     {
-        const apiUrl = 'http://localhost:8080/tx/recovery/history/?orgId='+'microsoft'; //TODO: unmock
+        //TODO: unmock
+        const apiUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/tx/recovery/history/?orgId='+'microsoft";
         axios.get(apiUrl).then((response) => {
                   this.setState({data: response.data});
         });

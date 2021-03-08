@@ -212,7 +212,7 @@ class Home extends React.Component {
   }
 
   renderMyData(){
-    const apiUrl = 'http://localhost:8080/tx/recovery/?email=cindu@zoe.com';
+    const apiUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/tx/recovery/?email=cindu@zoe.com";
     axios.get(apiUrl).then((response) => {
         this.setState({data: response.data});
         //console.log("RESPONSE: "+JSON.stringify(response.data));

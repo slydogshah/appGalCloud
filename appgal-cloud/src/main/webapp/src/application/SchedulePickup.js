@@ -95,7 +95,8 @@ class SchedulePickup extends React.Component
     }
 
     renderMyData(){
-        const apiUrl = 'http://localhost:8080/notification/dropOffOrgs/?orgId='+'microsoft';
+        //TODO: unmock
+        const apiUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/notification/dropOffOrgs/?orgId='+'microsoft'";
         axios.get(apiUrl).then((response) => {
             this.setState({data: response.data});
         });
