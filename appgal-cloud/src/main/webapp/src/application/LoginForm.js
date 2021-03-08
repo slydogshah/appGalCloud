@@ -29,19 +29,13 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-/*import CountContext from './ApplicationContext';
-
-function getAppContext(props)
-{
-    const value = JSON.stringify(props.location);
-    return <CountContext.Provider value={value} {...props} />
-}*/
-
 class LoginForm extends React.Component {
   mixins = [OverlayMixin];
   constructor(props) {
     super(props);
     //console.log("Constructor: "+JSON.stringify(this.props));
+    console.log("********LOGINFORM**************************");
+    console.log(process.env);
 
 
     this.state = {username:'',password:'',isModalOpen:false};
@@ -65,7 +59,8 @@ class LoginForm extends React.Component {
     ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
     ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
 
-    const apiUrl = 'http://localhost:8080/registration/login/';
+    const apiUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/registration/login/";
+    console.log("APIURL: "+apiUrl);
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
           this.props.history.push({
             pathname: "/home"
@@ -75,7 +70,7 @@ class LoginForm extends React.Component {
                       state: response.data
                     });*/
     }).catch(err => {
-
+           console.log(JSON.stringify(err));
            if(err.response != null && err.response.status == 401)
            {
                 console.log(JSON.stringify(err.response.data));
