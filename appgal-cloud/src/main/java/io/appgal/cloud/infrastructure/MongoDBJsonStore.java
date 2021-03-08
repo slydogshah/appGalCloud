@@ -1,16 +1,13 @@
 package io.appgal.cloud.infrastructure;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mongodb.ClientSessionOptions;
 import com.mongodb.client.*;
-import com.mongodb.connection.ClusterDescription;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
-import io.appgal.cloud.util.JsonUtil;
 import org.bson.conversions.Bson;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,19 +28,19 @@ public class MongoDBJsonStore {
     private String database = "jennetwork";
     private String password = "jen";
 
+    @ConfigProperty(name = "mongodbHost")
+    private String mongodbHost;
+
+    @ConfigProperty(name = "mongoDBConnectionString")
+    private String mongodbConnectionString;
+
+    @ConfigProperty(name = "mongodbPort")
+    private String mongodbPort;
+
     @PostConstruct
     public void start()
     {
-        //TODO: Pull from the environment
-        //String host = "localhost";
-        //String host = "cluster0.mongodb.net";
-        String host = "cluster0.a16oh.mongodb.net";
-
-        String template = "mongodb+srv://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
-        //String template = "mongodb://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority";
-        //String template = "mongodb://localhost:27017/"+database;
-
-        String connectionString = MessageFormat.format(template,password,host,this.database);
+        String connectionString = MessageFormat.format(this.mongodbConnectionString,this.password,this.mongodbHost,this.database);
         logger.info("************");
         logger.info(connectionString);
         logger.info("************");

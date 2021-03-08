@@ -9,6 +9,8 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 ENV mongodbHost='cluster0.a16oh.mongodb.net'
 ENV mongoDBConnectionString=mongodb+srv://jen:{0}@{1}/{2}?ssl=true&replicaSet=atlas-eratv9-shard-0&authSource=admin&retryWrites=true&w=majority
 ENV mongodbPort=27017
+ENV WDS_SOCKET_HOST=appgal-cloud-do2cwgwhja-uc.a.run.app
+
 
 # Install java and the run-java script
 # Also set up permissions for user `1001`
