@@ -1,5 +1,11 @@
 Next: Add Offline Community Support on the App
 
-1/ Integrate offline community notification. I am ready for Offline Support
-2/ Receive pickup requests
-3/ Accept and start
+Integrate offline community notification. I am ready for Offline Support (Done)
+
+Integrate sending notification to the backend
+
+Receive pickup requests
+
+Accept and start
+
+Cleanup rm META_INF/resources issue

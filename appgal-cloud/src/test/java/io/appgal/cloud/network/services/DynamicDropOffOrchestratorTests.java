@@ -73,6 +73,12 @@ public class DynamicDropOffOrchestratorTests extends BaseTest {
     }
 
     @Test
+    public void notifyAvailability()
+    {
+        this.dynamicDropOffOrchestrator.notifyAvailability("123");
+    }
+
+    @Test
     public void testOrchestrateOfflineCommunity()
     {
         JsonObject json = this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
