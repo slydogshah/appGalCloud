@@ -44,6 +44,12 @@ public class MongoDBJsonStore {
     @Inject
     private OrgStore orgStore;
 
+    @Inject
+    private ProfileStore profileStore;
+
+    @Inject
+    private NetworkStore networkStore;
+
     @PostConstruct
     public void start()
     {
@@ -66,6 +72,35 @@ public class MongoDBJsonStore {
     public MongoClient getMongoClient()
     {
         return this.mongoClient;
+    }
+
+    public void clearAllProfiles()
+    {
+        this.profileStore.clearAllProfiles(this.mongoDatabase);
+    }
+
+    public void storeProfile(Profile profile)
+    {
+        this.profileStore.storeProfile(this.mongoDatabase,profile);
+    }
+
+    public Profile getProfile(String email)
+    {
+        return this.profileStore.getProfile(this.mongoDatabase,email);
+    }
+
+    public void storeSourceOrg(SourceOrg sourceOrg)
+    {
+        this.orgStore.storeSourceOrg(this.mongoDatabase, sourceOrg);
+    }
+    public List<SourceOrg> getSourceOrgs()
+    {
+        return this.orgStore.getSourceOrgs(this.mongoDatabase);
+    }
+
+    public SourceOrg getSourceOrg(String orgId)
+    {
+        return this.orgStore.getSourceOrg(this.mongoDatabase,orgId);
     }
 
     public List<FoodRunner> getAllFoodRunners()
@@ -93,84 +128,11 @@ public class MongoDBJsonStore {
         return foodRunners;
     }
 
-    public void clearAllProfiles()
+    public void deleteFoodRunner(FoodRunner foodRunner)
     {
         MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("profile");
-
-        String json = "{}";
-
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
         collection.deleteMany(new Document());
-    }
-
-    public void storeProfile(Profile profile)
-    {
-        if(this.getProfile(profile.getEmail()) != null)
-        {
-            return;
-        }
-        if(profile.getProfileType() == null)
-        {
-            throw new RuntimeException("ProfileType: ISNULL");
-        }
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("profile");
-
-        Document doc = Document.parse(profile.toString());
-        collection.insertOne(doc);
-    }
-
-    public Profile getProfile(String email)
-    {
-        Profile profile = null;
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("profile");
-
-        String queryJson = "{\"email\":\""+email+"\"}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            profile = Profile.parse(documentJson);
-            return profile;
-        }
-
-        return null;
-    }
-
-    public void storeSourceOrg(SourceOrg sourceOrg)
-    {
-        this.orgStore.storeSourceOrg(this.mongoDatabase, sourceOrg);
-    }
-    public List<SourceOrg> getSourceOrgs()
-    {
-        return this.orgStore.getSourceOrgs(this.mongoDatabase);
-    }
-
-    public SourceOrg getSourceOrg(String orgId)
-    {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("customers");
-
-        String queryJson = "{\"orgId\":\""+orgId+"\"}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            return SourceOrg.parse(documentJson);
-        }
-        return null;
     }
 
     public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
@@ -229,13 +191,6 @@ public class MongoDBJsonStore {
         activeNetwork.setSourceOrgs(this.getSourceOrgs());
 
         return activeNetwork;
-    }
-
-    public void deleteFoodRunner(FoodRunner foodRunner)
-    {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-        collection.deleteMany(new Document());
     }
 
     public void clearActiveNetwork()
