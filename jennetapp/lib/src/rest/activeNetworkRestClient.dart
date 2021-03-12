@@ -1,6 +1,5 @@
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRequest.dart';
-import 'package:app/src/model/location.dart';
 import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/urlFunctions.dart';
@@ -11,7 +10,6 @@ import 'package:app/src/model/activeView.dart' show ActiveView;
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
-import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:location/location.dart';
 
 import '../model/schedulePickupNotification.dart';

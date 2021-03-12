@@ -7,6 +7,7 @@ import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.network.services.DynamicDropOffOrchestrator;
 import io.appgal.cloud.network.services.LocationService;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +32,8 @@ public class OfflineCommunityAPI {
         try {
             JsonObject notification = JsonParser.parseString(jsonBody).getAsJsonObject();
             this.dynamicDropOffOrchestrator.notifyAvailability(notification.get("foodRunnerId").getAsString());
+
+            JsonUtil.print(this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline());
 
 
             JsonObject response = new JsonObject();
