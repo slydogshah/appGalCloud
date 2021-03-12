@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.bson.Document;
 
@@ -36,6 +37,9 @@ public class MongoDBJsonStore {
 
     @ConfigProperty(name = "mongodbPort")
     private String mongodbPort;
+
+    @Inject
+    private OrgStore orgStore;
 
     @PostConstruct
     public void start()
@@ -139,27 +143,8 @@ public class MongoDBJsonStore {
 
     public void storeSourceOrg(SourceOrg sourceOrg)
     {
-        SourceOrg existing = this.getSourceOrg(sourceOrg.getOrgId());
-
-
         MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("customers");
-
-        if(existing != null)
-        {
-            Bson bson = Document.parse(existing.toString());
-            collection.deleteOne(bson);
-        }
-
-        String json = sourceOrg.toString();
-        Document doc = Document.parse(json);
-        collection.insertOne(doc);
-
-        for(Profile profile:sourceOrg.getProfiles())
-        {
-            this.storeProfile(profile);
-        }
+        this.orgStore.storeSourceOrg(database, sourceOrg);
     }
 
     public SourceOrg getSourceOrg(String orgId)
