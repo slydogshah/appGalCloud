@@ -47,6 +47,18 @@ test('sendLocationUpdate', () async {
   });
 });
 
+test('notifyOfflineAvailability', () async {
+  ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+  print("REQUEST STARTING....");
+  Future<String> response = activeNetworkClient.notifyOfflineAvailability("123");
+  response.then((response){
+    print("RESPONSE: "+response.toString());
+    //expect((activeView.activeFoodRunners)!=null, true);
+    //expect((activeView.activeFoodRunnerQueue)!=null, true);
+    //expect((activeView.finderResults)!=null, true);
+  });
+});
+
 /*  test('sendDeliveryNotification', () {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();

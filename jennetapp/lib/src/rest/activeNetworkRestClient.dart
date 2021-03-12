@@ -137,4 +137,14 @@ class ActiveNetworkRestClient
     var response = await http.post(remoteUrl, body: jsonBody);
     return response.body;
   }
+
+  Future<String> notifyOfflineAvailability(String foodRunnerId) async
+  {
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/offline/notification/';
+    Map<String, dynamic> json = new Map();
+    json['foodRunnerId'] = foodRunnerId;
+    String jsonBody = jsonEncode(json);
+    var response = await http.post(remoteUrl, body: jsonBody);
+    return response.body;
+  }
 }
