@@ -1,13 +1,17 @@
 package io.appgal.cloud.infrastructure;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mongodb.client.*;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import com.mongodb.client.*;
+
 import org.bson.conversions.Bson;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.bson.Document;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
-import org.bson.Document;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -52,6 +55,9 @@ public class MongoDBJsonStore {
 
     @Inject
     private FoodRunnerStore foodRunnerStore;
+
+    @Inject
+    private DropOffStore dropOffStore;
 
     @PostConstruct
     public void start()
@@ -131,64 +137,35 @@ public class MongoDBJsonStore {
         this.networkStore.clearActiveNetwork(this.mongoDatabase);
     }
 
-    public void storeDropOffNotification(DropOffNotification dropOffNotification)
-    {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
-
-        String json = dropOffNotification.toString();
-        Document doc = Document.parse(json);
-
-        collection.insertOne(doc);
-    }
-
-    public DropOffNotification findDropOffNotification(String dropOffNotificationId)
-    {
-        DropOffNotification dropOffNotification = new DropOffNotification();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
-
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            dropOffNotification = DropOffNotification.parse(documentJson);
-        }
-
-        return dropOffNotification;
-    }
 
     public DropOffNotification findDropOffNotificationByFoodRunnerId(String foodRunnerId)
     {
-        DropOffNotification dropOffNotification = new DropOffNotification();
+        return this.dropOffStore.findDropOffNotificationByFoodRunnerId(this.mongoDatabase, foodRunnerId);
+    }
 
-        MongoDatabase database = mongoClient.getDatabase(this.database);
+    public void storeScheduledDropOffNotification(ScheduleDropOffNotification scheduleDropOffNotification)
+    {
+        this.dropOffStore.storeScheduledDropOffNotification(this.mongoDatabase,scheduleDropOffNotification);
+    }
 
-        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
+    public void updateScheduledDropOffNotification(ScheduleDropOffNotification notification)
+    {
+        this.dropOffStore.updateScheduledDropOffNotification(this.mongoDatabase, notification);
+    }
 
-        JsonObject foodRunnerJson = new JsonObject();
-        JsonObject profileJson = new JsonObject();
-        profileJson.addProperty("id", foodRunnerId);
-        foodRunnerJson.add("profile", profileJson);
-        String queryJson = foodRunnerJson.toString();
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            dropOffNotification = DropOffNotification.parse(documentJson);
-        }
+    public JsonObject getScheduledDropOffNotification(String id)
+    {
+        return this.dropOffStore.getScheduledDropOffNotification(this.mongoDatabase,id);
+    }
 
-        return dropOffNotification;
+    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications(String orgId)
+    {
+        return this.dropOffStore.getScheduledDropOffNotifications(this.mongoDatabase, orgId);
+    }
+
+    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications()
+    {
+        return this.dropOffStore.getScheduledDropOffNotifications(this.mongoDatabase);
     }
 
     public void setCompletedTrip(CompletedTrip completedTrip)
@@ -383,89 +360,7 @@ public class MongoDBJsonStore {
     }
 
 
-    public void storeScheduledDropOffNotification(ScheduleDropOffNotification scheduleDropOffNotification)
-    {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
 
-        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
-
-        Document doc = Document.parse(scheduleDropOffNotification.toString());
-        collection.insertOne(doc);
-    }
-
-    public void updateScheduledDropOffNotification(ScheduleDropOffNotification notification)
-    {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
-
-        JsonObject stored = this.getScheduledDropOffNotification(notification.getId());
-        Bson bson = Document.parse(stored.toString());
-        collection.deleteOne(bson);
-
-        stored.remove("_id");
-        stored.addProperty("notificationSent", true);
-        this.storeScheduledDropOffNotification(ScheduleDropOffNotification.parse(stored.toString()));
-    }
-
-    public JsonObject getScheduledDropOffNotification(String id)
-    {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
-
-        String queryJson = "{\"id\":\""+id+"\"}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            return JsonParser.parseString(documentJson).getAsJsonObject();
-        }
-        return null;
-    }
-
-    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications(String orgId)
-    {
-        List<ScheduleDropOffNotification> notifications = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
-
-        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
-        String queryJson = "{$and:[{\"sourceOrg.orgId\":\""+orgId+"\"},{\"notificationSent\":"+Boolean.TRUE.booleanValue()+"}]}";
-        logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            notifications.add(ScheduleDropOffNotification.parse(documentJson));
-        }
-        return notifications;
-    }
-
-    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications()
-    {
-        List<ScheduleDropOffNotification> notifications = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("scheduledDropOffNotifications");
-
-        String queryJson = "{}";
-        logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            notifications.add(ScheduleDropOffNotification.parse(documentJson));
-        }
-        return notifications;
-    }
 
     public void storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
@@ -544,3 +439,40 @@ public class MongoDBJsonStore {
         return null;
     }
 }
+
+
+
+
+/*public void storeDropOffNotification(DropOffNotification dropOffNotification)
+    {
+        MongoDatabase database = mongoClient.getDatabase(this.database);
+
+        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
+
+        String json = dropOffNotification.toString();
+        Document doc = Document.parse(json);
+
+        collection.insertOne(doc);
+    }
+
+    public DropOffNotification findDropOffNotification(String dropOffNotificationId)
+    {
+        DropOffNotification dropOffNotification = new DropOffNotification();
+
+        MongoDatabase database = mongoClient.getDatabase(this.database);
+
+        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
+
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            dropOffNotification = DropOffNotification.parse(documentJson);
+        }
+
+        return dropOffNotification;
+    }*/
