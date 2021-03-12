@@ -1,0 +1,1 @@
+rm -rf rm -rf src/main/resources/META-INF/resources/*
