@@ -59,6 +59,9 @@ public class MongoDBJsonStore {
     @Inject
     private DropOffStore dropOffStore;
 
+    @Inject
+    private TripStore tripStore;
+
     @PostConstruct
     public void start()
     {
@@ -122,6 +125,11 @@ public class MongoDBJsonStore {
         this.foodRunnerStore.deleteFoodRunner(this.mongoDatabase, foodRunner);
     }
 
+    public void storeResults(List<FoodRunner> results)
+    {
+        this.foodRunnerStore.storeResults(this.mongoDatabase, results);
+    }
+
     public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
     {
         this.networkStore.storeActiveNetwork(this.mongoDatabase, activeFoodRunners);
@@ -170,54 +178,12 @@ public class MongoDBJsonStore {
 
     public void setCompletedTrip(CompletedTrip completedTrip)
     {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-
-        collection.insertOne(Document.parse(completedTrip.getFoodRunner().toString()));
+        this.tripStore.setCompletedTrip(this.mongoDatabase,completedTrip);
     }
 
     public List<CompletedTrip> getCompletedTrips()
     {
-        List<CompletedTrip> completedTrips = new ArrayList<>();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            CompletedTrip completedTrip = new CompletedTrip();
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-
-            FoodRunner foodRunner = FoodRunner.parse(documentJson);
-            completedTrip.setFoodRunner(foodRunner);
-
-            DropOffNotification dropOffNotification = this.findDropOffNotificationByFoodRunnerId(foodRunner.getProfile().getId());
-            dropOffNotification.setFoodRunner(foodRunner);
-            completedTrip.setDropOffNotification(dropOffNotification);
-
-            completedTrips.add(completedTrip);
-        }
-
-        return completedTrips;
-    }
-
-    public void storeResults(List<FoodRunner> results)
-    {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("results");
-        List<Document> documents = new ArrayList<>();
-        for(FoodRunner foodRunner:results)
-        {
-            Document doc = Document.parse(foodRunner.toString());
-            documents.add(doc);
-        }
-        collection.insertMany(documents);
+        return this.tripStore.getCompletedTrips(this.mongoDatabase);
     }
 
     public List<SchedulePickUpNotification> getSchedulePickUpNotifications()

@@ -47,4 +47,16 @@ public class FoodRunnerStore {
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
         collection.deleteMany(new Document());
     }
+
+    public void storeResults(MongoDatabase database, List<FoodRunner> results)
+    {
+        MongoCollection<Document> collection = database.getCollection("results");
+        List<Document> documents = new ArrayList<>();
+        for(FoodRunner foodRunner:results)
+        {
+            Document doc = Document.parse(foodRunner.toString());
+            documents.add(doc);
+        }
+        collection.insertMany(documents);
+    }
 }
