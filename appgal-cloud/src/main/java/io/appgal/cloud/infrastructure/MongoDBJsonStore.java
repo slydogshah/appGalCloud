@@ -28,12 +28,11 @@ import java.util.*;
 public class MongoDBJsonStore {
     private static Logger logger = LoggerFactory.getLogger(MongoDBJsonStore.class);
 
-    private MongoClient mongoClient;
-    private MongoDatabase mongoDatabase;
-
-
     private String database = "jennetwork";
     private String password = "jen";
+
+    private MongoClient mongoClient;
+    private MongoDatabase mongoDatabase;
 
     @ConfigProperty(name = "mongodbHost")
     private String mongodbHost;
@@ -92,6 +91,11 @@ public class MongoDBJsonStore {
         return this.mongoClient;
     }
 
+    public MongoDatabase getMongoDatabase() {
+        return this.mongoDatabase;
+    }
+
+    //Profiles
     public void clearAllProfiles()
     {
         this.profileStore.clearAllProfiles(this.mongoDatabase);
@@ -107,6 +111,7 @@ public class MongoDBJsonStore {
         return this.profileStore.getProfile(this.mongoDatabase,email);
     }
 
+    //Orgs
     public void storeSourceOrg(SourceOrg sourceOrg)
     {
         this.orgStore.storeSourceOrg(this.mongoDatabase, sourceOrg);
@@ -121,6 +126,7 @@ public class MongoDBJsonStore {
         return this.orgStore.getSourceOrg(this.mongoDatabase,orgId);
     }
 
+    //FoodRunners
     public List<FoodRunner> getAllFoodRunners()
     {
         return this.foodRunnerStore.getAllFoodRunners(this.mongoDatabase);
@@ -141,6 +147,7 @@ public class MongoDBJsonStore {
         this.foodRunnerStore.storeResults(this.mongoDatabase, results);
     }
 
+    //Network
     public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
     {
         this.networkStore.storeActiveNetwork(this.mongoDatabase, activeFoodRunners);
@@ -156,7 +163,7 @@ public class MongoDBJsonStore {
         this.networkStore.clearActiveNetwork(this.mongoDatabase);
     }
 
-
+    //DropOff
     public DropOffNotification findDropOffNotificationByFoodRunnerId(String foodRunnerId)
     {
         return this.dropOffStore.findDropOffNotificationByFoodRunnerId(this.mongoDatabase, foodRunnerId);
@@ -187,6 +194,7 @@ public class MongoDBJsonStore {
         return this.dropOffStore.getScheduledDropOffNotifications(this.mongoDatabase);
     }
 
+    //Trips
     public void setCompletedTrip(CompletedTrip completedTrip)
     {
         this.tripStore.setCompletedTrip(this.mongoDatabase,completedTrip);
@@ -197,6 +205,7 @@ public class MongoDBJsonStore {
         return this.tripStore.getCompletedTrips(this.mongoDatabase);
     }
 
+    //Pickups
     public List<SchedulePickUpNotification> getSchedulePickUpNotifications()
     {
         List<SchedulePickUpNotification> notifications = new ArrayList<>();
@@ -336,115 +345,24 @@ public class MongoDBJsonStore {
         return null;
     }
 
-
-
-
+    //FoodRecovery
     public void storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
-
-        Document doc = Document.parse(foodRecoveryTransaction.toString());
-        collection.insertOne(doc);
+        this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase,foodRecoveryTransaction);
     }
 
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String email)
     {
-        List<FoodRecoveryTransaction> list = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
-
-        String queryJson = "{}";
-        logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            list.add(FoodRecoveryTransaction.parse(documentJson));
-        }
-        return list;
+        return this.foodRecoveryStore.getFoodRecoveryTransactions(this.mongoDatabase, email);
     }
 
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactionHistory(String orgId)
     {
-        List<FoodRecoveryTransaction> list = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
-
-        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
-        String queryJson = "{$and:[{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.CLOSED+"\"}]}";
-        logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            list.add(FoodRecoveryTransaction.parse(documentJson));
-        }
-        return list;
+        return this.foodRecoveryStore.getFoodRecoveryTransactionHistory(this.mongoDatabase, orgId);
     }
 
     public List<FoodRecoveryTransaction> getFoodRecoveryDropOffHistory(String orgId)
     {
-        List<FoodRecoveryTransaction> list = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
-
-        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
-        String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.CLOSED+"\"}]}";
-        logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            list.add(FoodRecoveryTransaction.parse(documentJson));
-        }
-        return list;
+        return this.foodRecoveryStore.getFoodRecoveryDropOffHistory(this.mongoDatabase, orgId);
     }
 }
-
-
-
-
-/*public void storeDropOffNotification(DropOffNotification dropOffNotification)
-    {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
-
-        String json = dropOffNotification.toString();
-        Document doc = Document.parse(json);
-
-        collection.insertOne(doc);
-    }
-
-    public DropOffNotification findDropOffNotification(String dropOffNotificationId)
-    {
-        DropOffNotification dropOffNotification = new DropOffNotification();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("dropOffNotifications");
-
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            dropOffNotification = DropOffNotification.parse(documentJson);
-        }
-
-        return dropOffNotification;
-    }*/
