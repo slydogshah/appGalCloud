@@ -146,7 +146,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         this.mongoDBJsonStore.storeActiveNetwork(activeNetwork.getActiveFoodRunners());
     }
 
-    //@Test
+    @Test
     public void testGetCompletedTrips()
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
@@ -164,7 +164,8 @@ public class MongoDBJsonStoreTests extends BaseTest {
         logger.info("*******");
     }
 
-    //@Test
+    //
+    @Test
     public void testSourceOrgProfileRelationship()
     {
         SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com",true);
@@ -182,7 +183,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         logger.info(this.gson.toJson(array));
     }
 
-    //@Test
+    @Test
     public void testStoreScheduledPickUpNotification() throws Exception
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
@@ -214,7 +215,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         assertTrue(notifications.isEmpty());
     }
 
-    //@Test
+    @Test
     public void testUpdateScheduledPickUpNotification() throws Exception
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
@@ -246,7 +247,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         assertTrue(storedNotification.isNotificationSent());
     }
 
-    //@Test
+    @Test
     public void testStoreScheduledDropOffNotification() throws Exception
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
@@ -268,7 +269,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         assertFalse(storedNotification.isNotificationSent());
     }
 
-    //@Test
+    @Test
     public void testUpdateScheduledDropOffNotification() throws Exception
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
@@ -299,7 +300,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         assertTrue(storedNotification.isNotificationSent());
     }
 
-    //@Test
+    @Test
     public void testGetScheduledDropOffNotifications() throws Exception
     {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
@@ -331,7 +332,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         }
     }
 
-    //@Test
+    @Test
     public void testFoodRecoveryTransactionLifeCycle()
     {
         FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
@@ -345,7 +346,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         assertFalse(list.isEmpty());
     }
 
-    //@Test
+    @Test
     public void testFoodRecoveryTransactionHistory()
     {
         FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
@@ -360,7 +361,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         assertFalse(list.isEmpty());
     }
 
-    //@Test
+    @Test
     public void testFoodRecoveryDropOffHistory()
     {
         FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();

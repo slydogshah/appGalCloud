@@ -50,6 +50,9 @@ public class MongoDBJsonStore {
     @Inject
     private NetworkStore networkStore;
 
+    @Inject
+    private FoodRunnerStore foodRunnerStore;
+
     @PostConstruct
     public void start()
     {
@@ -105,103 +108,27 @@ public class MongoDBJsonStore {
 
     public List<FoodRunner> getAllFoodRunners()
     {
-        List<FoodRunner> foodRunners = new ArrayList<>();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("profile");
-
-        FindIterable<Document> iterable = collection.find();
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            Profile profile = Profile.parse(documentJson);
-            if(profile.getProfileType() == ProfileType.FOOD_RUNNER)
-            {
-                FoodRunner foodRunner = new FoodRunner(profile);
-                foodRunners.add(foodRunner);
-            }
-        }
-
-        return foodRunners;
+        return this.foodRunnerStore.getAllFoodRunners(this.mongoDatabase);
     }
 
     public void deleteFoodRunner(FoodRunner foodRunner)
     {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-        collection.deleteMany(new Document());
+        this.foodRunnerStore.deleteFoodRunner(this.mongoDatabase, foodRunner);
     }
 
     public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
     {
-        if(activeFoodRunners.isEmpty())
-        {
-            return;
-        }
-        
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-
-        List<Document> activeFoodRunnerDocs = new ArrayList<>();
-        final Iterator<FoodRunner> iterator = activeFoodRunners.values().iterator();
-        while(iterator.hasNext())
-        {
-            FoodRunner foodRunner = iterator.next();
-            if(foodRunner.getProfile().getProfileType()==null || !foodRunner.getProfile().getProfileType().equals(ProfileType.FOOD_RUNNER))
-            {
-                continue;
-            }
-            String json = foodRunner.toString();
-            Document doc = Document.parse(json);
-            activeFoodRunnerDocs.add(doc);
-        }
-
-        if(!activeFoodRunnerDocs.isEmpty()) {
-            collection.insertMany(activeFoodRunnerDocs);
-        }
+        this.networkStore.storeActiveNetwork(this.mongoDatabase, activeFoodRunners);
     }
 
     public ActiveNetwork getActiveNetwork()
     {
-        ActiveNetwork activeNetwork = new ActiveNetwork();
-        activeNetwork.setMongoDBJsonStore(this);
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-
-            FoodRunner foodRunner = FoodRunner.parse(documentJson);
-            activeNetwork.addActiveFoodRunner(foodRunner);
-        }
-
-        //Load the SourceOrgs
-        activeNetwork.setSourceOrgs(this.getSourceOrgs());
-
-        return activeNetwork;
+        return this.networkStore.getActiveNetwork(this.mongoDatabase);
     }
 
     public void clearActiveNetwork()
     {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
-
-        String json = "{}";
-
-        collection.deleteMany(new Document());
+        this.networkStore.clearActiveNetwork(this.mongoDatabase);
     }
 
     public void storeDropOffNotification(DropOffNotification dropOffNotification)
