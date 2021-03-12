@@ -5,12 +5,8 @@ import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import com.mongodb.client.*;
-
-import org.bson.conversions.Bson;
-import org.bson.Document;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,141 +204,37 @@ public class MongoDBJsonStore {
     //Pickups
     public List<SchedulePickUpNotification> getSchedulePickUpNotifications()
     {
-        List<SchedulePickUpNotification> notifications = new ArrayList<>();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
-
-            notifications.add(notification);
-        }
-
-        return notifications;
+        return this.pickupRequestStore.getSchedulePickUpNotifications();
     }
 
     public List<SchedulePickUpNotification> getSchedulePickUpNotifications(String email)
     {
-        List<SchedulePickUpNotification> notifications = new ArrayList<>();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        //Query Ex: {$and:[{"foodRunner.profile.email":"bugs.bunny.shah@gmail.com"},{"notificationSent":true}]}
-        String queryJson = "{$and:[{\"foodRunner.profile.email\":\""+email+"\"},{\"notificationSent\":"+Boolean.TRUE.booleanValue()+"}]}";
-        logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
-            notifications.add(notification);
-        }
-
-        return notifications;
+        return this.pickupRequestStore.getSchedulePickUpNotifications(email);
     }
 
     public List<SchedulePickUpNotification> getPickUpNotificationsWithoutDropOff()
     {
-        List<SchedulePickUpNotification> notifications = new ArrayList<>();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        //Query Ex: {$and:[{"foodRunner.profile.email":"bugs.bunny.shah@gmail.com"},{"notificationSent":true}]}
-        String queryJson = "{\"isDropOffDynamic\":"+Boolean.TRUE.booleanValue()+"}";
-        logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
-            notifications.add(notification);
-        }
-
-        return notifications;
+        return this.pickupRequestStore.getPickUpNotificationsWithoutDropOff();
     }
 
     public List<SchedulePickUpNotification> getUnsentSchedulePickUpNotifications(String email)
     {
-        List<SchedulePickUpNotification> notifications = new ArrayList<>();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        String queryJson = "{\"foodRunner.profile.email\":\""+email+"\"}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
-            if(!notification.isNotificationSent()) {
-                notifications.add(notification);
-            }
-        }
-
-        return notifications;
+        return this.pickupRequestStore.getUnsentSchedulePickUpNotifications(email);
     }
 
     public void storeScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        Document doc = Document.parse(schedulePickUpNotification.toString());
-        collection.insertOne(doc);
+        this.pickupRequestStore.storeScheduledPickUpNotification(schedulePickUpNotification);
     }
 
     public void updateScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        JsonObject stored = this.getScheduledPickUpNotification(schedulePickUpNotification.getId());
-        Bson bson = Document.parse(stored.toString());
-        collection.deleteOne(bson);
-
-        stored.remove("_id");
-        stored.addProperty("notificationSent", true);
-        this.storeScheduledPickUpNotification(SchedulePickUpNotification.parse(stored.toString()));
+        this.pickupRequestStore.updateScheduledPickUpNotification(schedulePickUpNotification);
     }
 
     public JsonObject getScheduledPickUpNotification(String id)
     {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
-
-        String queryJson = "{\"id\":\""+id+"\"}";
-        logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            return JsonParser.parseString(documentJson).getAsJsonObject();
-        }
-        return null;
+        return this.pickupRequestStore.getScheduledPickUpNotification(id);
     }
 
     //FoodRecovery
