@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 public class OrgStore {
@@ -35,6 +37,27 @@ public class OrgStore {
         }
     }
 
+    public List<SourceOrg> getSourceOrgs(MongoDatabase database)
+    {
+        List<SourceOrg> sourceOrgs = new ArrayList<>();
+
+        MongoCollection<Document> collection = database.getCollection("customers");
+
+        String queryJson = "{}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            SourceOrg sourceOrg = SourceOrg.parse(documentJson);
+            sourceOrgs.add(sourceOrg);
+        }
+
+        return sourceOrgs;
+    }
+    //---------------------------------------------------------------------------------------------------------------
     public void storeProfile(MongoDatabase database,Profile profile)
     {
         if(this.getProfile(database,profile.getEmail()) != null)

@@ -26,6 +26,9 @@ public class MongoDBJsonStore {
     private static Logger logger = LoggerFactory.getLogger(MongoDBJsonStore.class);
 
     private MongoClient mongoClient;
+    private MongoDatabase mongoDatabase;
+
+
     private String database = "jennetwork";
     private String password = "jen";
 
@@ -49,6 +52,7 @@ public class MongoDBJsonStore {
         logger.info(connectionString);
         logger.info("************");
         this.mongoClient = MongoClients.create(connectionString);
+        this.mongoDatabase = mongoClient.getDatabase(this.database);
 
         //this.mongoClient = MongoClients.create();
     }
@@ -143,8 +147,11 @@ public class MongoDBJsonStore {
 
     public void storeSourceOrg(SourceOrg sourceOrg)
     {
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-        this.orgStore.storeSourceOrg(database, sourceOrg);
+        this.orgStore.storeSourceOrg(this.mongoDatabase, sourceOrg);
+    }
+    public List<SourceOrg> getSourceOrgs()
+    {
+        return this.orgStore.getSourceOrgs(this.mongoDatabase);
     }
 
     public SourceOrg getSourceOrg(String orgId)
@@ -164,29 +171,6 @@ public class MongoDBJsonStore {
             return SourceOrg.parse(documentJson);
         }
         return null;
-    }
-
-    public List<SourceOrg> getSourceOrgs()
-    {
-        List<SourceOrg> sourceOrgs = new ArrayList<>();
-
-        MongoDatabase database = mongoClient.getDatabase(this.database);
-
-        MongoCollection<Document> collection = database.getCollection("customers");
-
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
-        MongoCursor<Document> cursor = iterable.cursor();
-        while(cursor.hasNext())
-        {
-            Document document = cursor.next();
-            String documentJson = document.toJson();
-            SourceOrg sourceOrg = SourceOrg.parse(documentJson);
-            sourceOrgs.add(sourceOrg);
-        }
-
-        return sourceOrgs;
     }
 
     public void storeActiveNetwork(Map<String, FoodRunner> activeFoodRunners)
