@@ -62,6 +62,12 @@ public class MongoDBJsonStore {
     @Inject
     private TripStore tripStore;
 
+    @Inject
+    private FoodRecoveryStore foodRecoveryStore;
+
+    @Inject
+    private PickupRequestStore pickupRequestStore;
+
     @PostConstruct
     public void start()
     {
@@ -123,6 +129,11 @@ public class MongoDBJsonStore {
     public void deleteFoodRunner(FoodRunner foodRunner)
     {
         this.foodRunnerStore.deleteFoodRunner(this.mongoDatabase, foodRunner);
+    }
+
+    public FoodRunner updateFoodRunner(FoodRunner foodRunner)
+    {
+       return this.foodRunnerStore.updateFoodRunner(this.mongoDatabase, foodRunner);
     }
 
     public void storeResults(List<FoodRunner> results)
@@ -398,11 +409,6 @@ public class MongoDBJsonStore {
             list.add(FoodRecoveryTransaction.parse(documentJson));
         }
         return list;
-    }
-
-    public FoodRunner updateFoodRunner(FoodRunner foodRunner)
-    {
-        return null;
     }
 }
 

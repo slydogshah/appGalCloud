@@ -59,4 +59,10 @@ public class FoodRunnerStore {
         }
         collection.insertMany(documents);
     }
+
+    public FoodRunner updateFoodRunner(MongoDatabase database, FoodRunner foodRunner)
+    {
+        //TODO: IMPLEMENT_ME
+        return null;
+    }
 }
