@@ -11,28 +11,27 @@ import 'package:flutter/rendering.dart';
 
 import 'profileFunctions.dart';
 
-class JenNetworkApp extends StatelessWidget {
+class JenNetworkApp extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
-    MaterialApp materialApp = new MaterialApp(home: new Login());
+    MaterialApp materialApp = new MaterialApp(
+        //home: new Login(),
+        theme: ThemeData(
+            primaryColor: Colors.purple[800],
+            accentColor: Colors.amber,
+            accentColorBrightness: Brightness.dark
+        )
+    );
     return materialApp;
+  }
+
+  @override
+  State<StatefulWidget> createState() {
+    return new LoginState();
   }
 }
 
-
-class Login extends StatefulWidget
-{
-  @override
-  LoginState createState() => LoginState();
-
-  @override
-  Widget build(BuildContext context) {
-    MaterialApp materialApp = new MaterialApp(home: new Login());
-    return materialApp;
-  }
-}
-
-class LoginState extends State<Login> {
+class LoginState extends State<JenNetworkApp> {
   String email;
   String password;
   bool authenticationFailed = false;
