@@ -10,7 +10,7 @@ import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:app/src/ui/registration.dart';
-import 'package:app/src/ui/jenNetworkApp.dart';
+import 'package:app/src/ui/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
