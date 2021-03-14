@@ -1,6 +1,5 @@
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRequest.dart';
-import 'package:app/src/model/location.dart';
 import 'package:app/src/model/pickupRequest.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/urlFunctions.dart';
@@ -11,7 +10,6 @@ import 'package:app/src/model/activeView.dart' show ActiveView;
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
-import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:location/location.dart';
 
 import '../model/schedulePickupNotification.dart';
@@ -134,6 +132,16 @@ class ActiveNetworkRestClient
     jsonMap['latitude'] = locationData.latitude;
     jsonMap['longitude'] = locationData.longitude;
     String jsonBody = jsonEncode(jsonMap);
+    var response = await http.post(remoteUrl, body: jsonBody);
+    return response.body;
+  }
+
+  Future<String> notifyOfflineAvailability(String foodRunnerId) async
+  {
+    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/offline/notification/';
+    Map<String, dynamic> json = new Map();
+    json['foodRunnerId'] = foodRunnerId;
+    String jsonBody = jsonEncode(json);
     var response = await http.post(remoteUrl, body: jsonBody);
     return response.body;
   }

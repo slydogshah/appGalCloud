@@ -2,6 +2,7 @@ package io.appgal.cloud.infrastructure;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,11 @@ public class OfflineDropOffPipeline {
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
+
+    public void joinDropOffPipeline(FoodRunner foodRunner)
+    {
+
+    }
 
     public JsonArray findRunnersWithDynamicDropOff()
     {

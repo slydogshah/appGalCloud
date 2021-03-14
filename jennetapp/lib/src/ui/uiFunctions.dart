@@ -1,60 +1,43 @@
-import 'package:app/src/model/foodRequest.dart';
-import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:flutter/material.dart';
 
 class UiFunctions{
+  BottomNavigationBarItem offlineSupport;
+
+  UiFunctions()
+  {
+    offlineSupport = new BottomNavigationBarItem(
+      icon: new Icon(Icons.mail),
+      title: new Text('Offline Support'),
+    );
+  }
+
   static BottomNavigationBar bottomNavigationBar(BuildContext context)
   {
+    UiFunctions uiFunctions = new UiFunctions();
     BottomNavigationBar bottomNavigationBar = new BottomNavigationBar(
           currentIndex: 0, // this will be set when a new tab is tapped
           items: [
             BottomNavigationBarItem(
               icon: new Icon(Icons.home),
-              title: new Text('Home')
+              title: new Text('Home'),
             ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.mail),
-              title: new Text('PickUp Request'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.mail),
-              title: Text('Send Food Request')
-            )
+            uiFunctions.offlineSupport
           ],
           onTap: (index){
-            if(index == 0)
+            if(index == 1)
             {
-            }
-            else if(index == 1)
-            {
-              /*ActiveNetworkRestClient client = ActiveNetworkRestClient();
-              SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com", null);
-              PickupRequest pickupRequest = new PickupRequest(sourceOrg);
-              Future<Iterable> future = client.sendPickupRequest(pickupRequest);
-              future.then((profiles){
-                for(Map<String, dynamic> json in profiles)
-                {
-                  Profile profile = Profile.fromJson(json);
-                  print(profile.toString());
-                }
-              });*/
-              //TODO:REMOVE_MOCK_DATA
-              SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null, true);
-              List<SourceOrg> sourceOrgs = new List();
-              sourceOrgs.add(sourceOrg);
-              //Navigator.push(context,MaterialPageRoute(builder: (context) => PickupSource(sourceOrgs))); 
-            }
-            else if(index == 2)
-            {
-              ActiveNetworkRestClient client = ActiveNetworkRestClient();
-              //TODO:REMOVE_MOCK_DATA
-              SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", null, true);
-              FoodRequest foodRequest = new FoodRequest("id", "VEG", sourceOrg);
-              Future<String> future = client.sendFoodRequest(foodRequest);
-              future.then((jsonString){
-                    print(jsonString);
-                    //Navigator.push(context,MaterialPageRoute(builder: (context) => ApplicableSources()));
+              print("ANNOUNCING_OFFLINE_AVAILABILITY");
+              ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+              Future<String> response = activeNetworkClient.notifyOfflineAvailability("123");
+              response.then((response){
+                print("RESPONSE: "+response.toString());
+
+                //TODO: Change icon to hot
+                uiFunctions.offlineSupport = new BottomNavigationBarItem(
+                  icon: new Icon(Icons.home),
+                  title: new Text('Offline Support'),
+                );
               });
             }
           },

@@ -14,7 +14,17 @@ import 'profileFunctions.dart';
 class JenNetworkApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    MaterialApp materialApp = new MaterialApp(home: new Login());
+    Color primaryColor = Color(0xFF383EDB);
+    Color backgroundColor = Color(0xFF383EDB);
+    MaterialApp materialApp = new MaterialApp(
+        home: new Login(),
+        theme: ThemeData(
+            primaryColor: primaryColor,
+            backgroundColor: backgroundColor,
+            accentColor: backgroundColor,
+            accentColorBrightness: Brightness.dark
+        )
+    );
     return materialApp;
   }
 }

@@ -82,7 +82,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                               FlatButton(
                                 child: const Text('Accept', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                    handleAccept(context, tx);
+                                  handleAccept(context, tx);
                                 },
                               ),
                             ],

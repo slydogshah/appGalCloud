@@ -56,7 +56,7 @@ class LoginForm extends React.Component {
     ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
     ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
 
-    const apiUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/registration/login/";
+    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
           this.props.history.push({
             pathname: "/home"

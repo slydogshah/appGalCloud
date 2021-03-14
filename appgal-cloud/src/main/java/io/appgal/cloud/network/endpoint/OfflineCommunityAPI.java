@@ -2,10 +2,12 @@ package io.appgal.cloud.network.endpoint;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.network.services.DynamicDropOffOrchestrator;
 import io.appgal.cloud.network.services.LocationService;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +23,31 @@ public class OfflineCommunityAPI {
 
     @Inject
     private DynamicDropOffOrchestrator dynamicDropOffOrchestrator;
+
+    @Path("notification")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response notifyAvailability(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject notification = JsonParser.parseString(jsonBody).getAsJsonObject();
+            this.dynamicDropOffOrchestrator.notifyAvailability(notification.get("foodRunnerId").getAsString());
+
+            JsonUtil.print(this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline());
+
+
+            JsonObject response = new JsonObject();
+            response.addProperty("success", true);
+            return Response.ok(response.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
 
     @Path("community")
     @GET
