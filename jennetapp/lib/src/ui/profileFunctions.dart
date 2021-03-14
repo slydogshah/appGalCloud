@@ -115,59 +115,75 @@ class ProfileFunctions
   void loginAfterRegistration (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
-    future.then((FoodRunnerLoginData){
-      Navigator.of(context, rootNavigator: true).pop();
+    try {
+      future.then((FoodRunnerLoginData) {
+        Navigator.of(context, rootNavigator: true).pop();
 
 
-      AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
+        AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
 
-      //TODO: UI_HANDLING
-      if(authCredentials.statusCode == 401)
-      {
+        //TODO: UI_HANDLING
+        if (authCredentials.statusCode == 401) {
           return;
-      }
+        }
 
-      ActiveSession activeSession = ActiveSession.getInstance();
-      activeSession.setProfile(authCredentials.getProfile());
-      Profile profile = activeSession.getProfile();
+        ActiveSession activeSession = ActiveSession.getInstance();
+        activeSession.setProfile(authCredentials.getProfile());
+        Profile profile = activeSession.getProfile();
 
-      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client.getFoodRecoveryTransaction();
-      future.then((txs){
-        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(txs)));
+        ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+        Future<List<FoodRecoveryTransaction>> future = client
+            .getFoodRecoveryTransaction();
+        future.then((txs) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        });
+
+        showCards(context, profile);
       });
-
-      showCards(context, profile);
-    });
+    }
+    catch(cbe)
+    {
+      print("*******CBE************");
+      print(cbe);
+    }
   }
 
   void login (BuildContext context, SimpleDialog dialog, LoginState loginState, AuthCredentials authCredentials) {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
-    future.then((foodRunnerLoginData){
-      Navigator.of(context, rootNavigator: true).pop();
+    try {
+      future.then((foodRunnerLoginData) {
+        Navigator.of(context, rootNavigator: true).pop();
 
 
-      AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
+        AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
 
-      if(authCredentials.statusCode == 401)
-      {
-        loginState.notifyLoginFailed(foodRunnerLoginData.authFailure);
-        return;
-      }
+        if (authCredentials.statusCode == 401) {
+          loginState.notifyLoginFailed(foodRunnerLoginData.authFailure);
+          return;
+        }
 
-      ActiveSession activeSession = ActiveSession.getInstance();
-      activeSession.setProfile(authCredentials.getProfile());
-      Profile profile = activeSession.getProfile();
+        ActiveSession activeSession = ActiveSession.getInstance();
+        activeSession.setProfile(authCredentials.getProfile());
+        Profile profile = activeSession.getProfile();
 
-      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client.getFoodRecoveryTransaction();
-      future.then((txs){
-        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(txs)));
+        ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+        Future<List<FoodRecoveryTransaction>> future = client
+            .getFoodRecoveryTransaction();
+        future.then((txs) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        });
+
+        showCards(context, profile);
       });
-
-      showCards(context, profile);
-    });
+    }
+    catch(cbe)
+    {
+        print("*******CBE************");
+        print(cbe);
+    }
   }
 
   void showCards(BuildContext context, Profile profile) 

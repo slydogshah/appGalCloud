@@ -1,12 +1,13 @@
+import '../model/profile.dart';
+
 import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import 'package:app/src/model/authCredentials.dart';
-import '../model/profile.dart';
+
+import 'dart:convert';
 
 class ProfileRestClient
 {
@@ -48,11 +49,31 @@ class ProfileRestClient
 
   Future<FoodRunnerLoginData> login(AuthCredentials credentials) async
   {
+    var response;
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
 
-
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/login/';
-    var response = await http.post(remoteUrl, body: credentials.toString());
+    try {
+       response = await http.post(remoteUrl, body: credentials.toString())
+          .timeout(
+        Duration(seconds: 1),
+        onTimeout: () {
+          print("NETWORK_TIMEOUT");
+          Map<String,dynamic> exception = new Map();
+          exception["exception"] = "NETWORK_TIME_OUT";
+          response = jsonEncode(exception);
+          throw new CloudBusinessException(500, response);
+        },
+      );
+    }
+    catch (e) {
+      print(e);
+      Map<String,dynamic> exception = new Map();
+      exception["exception"] = "NETWORK_ERROR";
+      response = jsonEncode(exception);
+      throw new CloudBusinessException(500, response);
+    }
+
     String responseJson = response.body;
 
     if(response.statusCode == 401)
