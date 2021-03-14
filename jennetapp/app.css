@@ -1,0 +1,21 @@
+.register-form p {
+  margin-bottom: 0;
+}
+.button-primary {
+  background-color: #383edb;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  color: #fff;
+  padding: 10px 10px;
+  border-bottom-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+}
+.bg-color-custom {
+  background-color: #2e237f !important;
+}
+.twist-btn {
+  border-bottom-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+}
