@@ -90,7 +90,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   background_fetch: 9e1c6c010f2bafe94108358405b7f2a08d6b5ab1
   external_app_launcher: ad55ac844aa21f2d2197d7cec58ff0d0dc40bbc0
-  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_mapbox_navigation: a66c99eb5caac2fba63df3284e87c23bbc998362
   location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
   Mapbox-iOS-SDK: a5915700ec84bc1a7f8b3e746d474789e35b7956
