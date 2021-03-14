@@ -32,6 +32,7 @@ public class FoodRecoveryOrchestrator {
 
     }
 
+    //DropOff Location Recommendation Algorithm
     public List<SourceOrg> findDropOffOrganizations(String orgId) {
         SourceOrg producer = this.mongoDBJsonStore.getSourceOrg(orgId);
         List<SourceOrg> dropOffOrgs = this.mongoDBJsonStore.getSourceOrgs();
