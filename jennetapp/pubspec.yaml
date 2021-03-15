@@ -40,9 +40,10 @@ dependencies:
   background_fetch: ^0.5.1
   uuid: ^2.2.2
   location: ^3.2.4
-  flutter_mapbox_navigation:
-    git:
-      url: git://github.com/eopeter/flutter_mapbox_navigation.git
+  flutter_mapbox_navigation: ^0.0.19
+  #flutter_mapbox_navigation:
+  #  git:
+  #    url: git://github.com/eopeter/flutter_mapbox_navigation.git
 
 dev_dependencies:
   flutter_test:
