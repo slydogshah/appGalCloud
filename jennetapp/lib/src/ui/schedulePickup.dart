@@ -2,7 +2,7 @@ import 'package:app/src/navigation/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mapbox_navigation/library.dart';
+//import 'package:flutter_mapbox_navigation/library.dart';
 import 'package:flutter/services.dart';
 import 'package:app/src/model/sourceOrg.dart';
 
@@ -46,7 +46,7 @@ class SchedulePickupState extends State<SchedulePickup> {
 
   String _platformVersion = 'Unknown';
   String _instruction = "";
-  final _origin = WayPoint(
+  /*final _origin = WayPoint(
       name: "The Monarch",
       latitude: 30.269040,
       longitude: -97.751840);
@@ -71,11 +71,11 @@ class SchedulePickupState extends State<SchedulePickup> {
 
   MapBoxNavigation _directions;
   MapBoxOptions _options;
+  MapBoxNavigationViewController _controller;*/
 
   bool _arrived = false;
   bool _isMultipleStop = false;
   double _distanceRemaining, _durationRemaining;
-  MapBoxNavigationViewController _controller;
   bool _routeBuilt = false;
   bool _isNavigating = false;
 
@@ -307,7 +307,7 @@ void startTurnByTurnNavigation() async
   // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    if (!mounted) return;
+    /*if (!mounted) return;
 
     _directions = MapBoxNavigation(onRouteEvent: _onEmbeddedRouteEvent);
     _options = MapBoxOptions(
@@ -351,11 +351,11 @@ void startTurnByTurnNavigation() async
                                         MapBoxNavigationMode.drivingWithTraffic,
                                     simulateRoute: true,
                                     language: "en",
-                                    units: VoiceUnits.metric));
+                                    units: VoiceUnits.metric));*/
 }
 
 Future<void> _onEmbeddedRouteEvent(e) async {
-    _distanceRemaining = await _directions.distanceRemaining;
+    /*_distanceRemaining = await _directions.distanceRemaining;
     _durationRemaining = await _directions.durationRemaining;
 
     switch (e.eventType) {
@@ -398,7 +398,7 @@ Future<void> _onEmbeddedRouteEvent(e) async {
       default:
         break;
     }
-    setState(() {});
+    setState(() {});*/
   }
 
 void schedulePickup (BuildContext context, SchedulePickupNotification notification) {

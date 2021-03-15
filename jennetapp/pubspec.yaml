@@ -1,9 +1,5 @@
-#name: gallery
-#description: A resource to help developers evaluate and use Flutter.
-#repository: https://github.com/flutter/gallery
-#version: 2.6.0+020600
 name: app
-description: AppGal Labs, Food Recovery Optimization Network (FutureGeniuses)
+description: AppGal Labs, Food Recovery Optimization Network
 version: 1.0.0+1
 
 environment:
@@ -17,6 +13,7 @@ dependencies:
   #  sdk: flutter
   #intl: ^0.17.0
   #flutter_localized_locales: ^2.0.1
+  #background_fetch: '^0.7.0'
   cupertino_icons: ^1.0.0
   rally_assets: ^2.0.0
   meta: ^1.1.8
@@ -37,13 +34,15 @@ dependencies:
   adaptive_breakpoints: ^0.0.2
   http: ^0.12.0+4
   external_app_launcher: ^0.0.1
-  background_fetch: ^0.5.1
   uuid: ^2.2.2
-  location: ^3.2.4
-  flutter_mapbox_navigation: ^0.0.19
+  #location: ^3.2.4
+  #flutter_mapbox_navigation: ^0.0.19
   #flutter_mapbox_navigation:
   #  git:
-  #    url: git://github.com/eopeter/flutter_mapbox_navigation.git
+  #     url: git://github.com/eopeter/flutter_mapbox_navigation.git
+  #background_fetch:
+  #  git:
+  #    url: git://github.com/transistorsoft/flutter_background_fetch
 
 dev_dependencies:
   flutter_test:
