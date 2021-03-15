@@ -76,18 +76,18 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                           labelText: 'Est DropOff Trip: 15 minutes',
                           ),
                         ),
-                        ButtonTheme.bar(
-                          child: ButtonBar(
-                            children: <Widget>[
-                              FlatButton(
-                                child: const Text('Accept', style: TextStyle(color: Colors.white)),
-                                onPressed: () {
-                                  handleAccept(context, tx);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
+                        //ButtonTheme.bar(
+                        //  child: ButtonBar(
+                        //    children: <Widget>[
+                        //      FlatButton(
+                        //        child: const Text('Accept', style: TextStyle(color: Colors.white)),
+                        //        onPressed: () {
+                        //          handleAccept(context, tx);
+                        //        },
+                        //      ),
+                        //    ],
+                        //  ),
+                        //),
                       ],
                     ),
                   );
@@ -117,7 +117,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
   void handleAccept(BuildContext context, FoodRecoveryTransaction tx)
   {
     //Navigator.push(context,MaterialPageRoute(builder: (context) => Navigation()));
-    EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation();
-    embeddedNavigation.start();
+    //EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation();
+    //embeddedNavigation.start();
   }
 }

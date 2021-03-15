@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 
-import 'package:background_fetch/background_fetch.dart';
+//import 'package:background_fetch/background_fetch.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +28,7 @@ class CloudDataPoller
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
   {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    /*SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Read fetch_events from SharedPreferences
     List<String> events = [];
@@ -66,12 +66,12 @@ class CloudDataPoller
       print('[StandardFetch] configure ERROR: $e');
     });
 
-    BackgroundFetch.finish(standardTaskId);
+    BackgroundFetch.finish(standardTaskId);*/
   }
   //--------android----------------------------------------
   static void startAndroidPolling(Profile profile) async
   {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    /*SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Read fetch_events from SharedPreferences
     List<String> events = [];
@@ -97,7 +97,7 @@ class CloudDataPoller
           forceAlarmManager: true,
           stopOnTerminate: false,
           enableHeadless: true
-    ));
+    ));*/
   }
   //--------------------------------------------------------
   static void pollData(Profile profile)
@@ -113,7 +113,7 @@ class CloudDataPoller
 
   /// This "Headless Task" is run when app is terminated.
   static void scheduledTask(String taskId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    /*SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Read fetch_events from SharedPreferences
     List<String> events = [];
@@ -137,12 +137,12 @@ class CloudDataPoller
           forceAlarmManager: true,
           stopOnTerminate: false,
           enableHeadless: true
-    ));
+    ));*/
   }
 
   static void standardTask(String taskId) async
   {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    /*SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Read fetch_events from SharedPreferences
     List<String> events = [];
@@ -157,6 +157,6 @@ class CloudDataPoller
 
     pollData(profile);
 
-    BackgroundFetch.finish(taskId);
+    BackgroundFetch.finish(taskId);*/
   }
 }

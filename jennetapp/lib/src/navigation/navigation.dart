@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_mapbox_navigation/library.dart';
+//import 'package:flutter_mapbox_navigation/library.dart';
 
 class Navigation extends StatefulWidget
 {
@@ -17,7 +17,15 @@ class NavigationState extends State<Navigation>
 {
   String _platformVersion = 'Unknown';
   String _instruction = "";
-  final _origin = WayPoint(
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return null;
+  }
+
+
+  /*final _origin = WayPoint(
       name: "Way Point 1",
       latitude: 38.9111117447887,
       longitude: -77.04012393951416);
@@ -364,5 +372,5 @@ class NavigationState extends State<Navigation>
         break;
     }
     setState(() {});
-  }
+  }*/
 }
