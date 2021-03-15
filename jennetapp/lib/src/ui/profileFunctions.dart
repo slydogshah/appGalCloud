@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
@@ -6,7 +8,6 @@ import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
-import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:app/src/ui/registration.dart';
@@ -113,28 +114,23 @@ class ProfileFunctions
   }
 
   void loginAfterRegistration (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
+    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
+    foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
-    future.then((FoodRunnerLoginData){
+    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+    future.then((json) {
       Navigator.of(context, rootNavigator: true).pop();
-
-
-      AuthCredentials authCredentials = FoodRunnerLoginData.authCredentials;
-
-      //TODO: UI_HANDLING
-      if(authCredentials.statusCode == 401)
-      {
-          return;
-      }
 
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(authCredentials.getProfile());
       Profile profile = activeSession.getProfile();
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client.getFoodRecoveryTransaction();
-      future.then((txs){
-        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(txs)));
+      Future<List<FoodRecoveryTransaction>> future = client
+          .getFoodRecoveryTransaction();
+      future.then((txs) {
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
       });
 
       showCards(context, profile);
@@ -142,28 +138,27 @@ class ProfileFunctions
   }
 
   void login (BuildContext context, SimpleDialog dialog, LoginState loginState, AuthCredentials authCredentials) {
+    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
+    foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<FoodRunnerLoginData> future = profileRestClient.login(authCredentials);
-    future.then((foodRunnerLoginData){
+    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+    future.then((json) {
       Navigator.of(context, rootNavigator: true).pop();
 
-
-      AuthCredentials authCredentials = foodRunnerLoginData.authCredentials;
-
-      if(authCredentials.statusCode == 401)
-      {
-        loginState.notifyLoginFailed(foodRunnerLoginData.authFailure);
-        return;
-      }
+      print("*********LOGIN*************");
+      print(json["statusCode"]);
+      print("*********LOGIN*************");
 
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(authCredentials.getProfile());
       Profile profile = activeSession.getProfile();
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client.getFoodRecoveryTransaction();
-      future.then((txs){
-        Navigator.push(context,MaterialPageRoute(builder: (context) => FoodRunnerMainScene(txs)));
+      Future<List<FoodRecoveryTransaction>> future = client
+          .getFoodRecoveryTransaction();
+      future.then((txs) {
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
       });
 
       showCards(context, profile);

@@ -53,3 +53,6 @@ LABEL \
 
 window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+
 
+local
+ mvn clean package -DskipTests && java -Dquarkus.http.port=80 -jar target/*runner.jar
+
