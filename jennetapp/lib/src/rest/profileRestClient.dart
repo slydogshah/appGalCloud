@@ -47,49 +47,42 @@ class ProfileRestClient
     return result;
   }
 
-  Future<FoodRunnerLoginData> login(AuthCredentials credentials) async
+  Future<Map<String,dynamic>> login(AuthCredentials credentials) async
   {
     var response;
-    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
+    Map<String, dynamic> json;
 
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/login/';
     try {
-       response = await http.post(remoteUrl, body: credentials.toString())
-          .timeout(
-        Duration(seconds: 1),
-        onTimeout: () {
-          print("NETWORK_TIMEOUT");
-          Map<String,dynamic> exception = new Map();
-          exception["exception"] = "NETWORK_TIME_OUT";
-          response = jsonEncode(exception);
-          throw new CloudBusinessException(500, response);
-        },
-      );
+       response = await http.post(remoteUrl, body: credentials.toString());
     }
     catch (e) {
       print(e);
-      Map<String,dynamic> exception = new Map();
-      exception["exception"] = "NETWORK_ERROR";
-      response = jsonEncode(exception);
-      throw new CloudBusinessException(500, response);
+      json = new Map();
+      json["exception"] = "NETWORK_ERROR";
+      json["statusCode"] = 500;
+      return json;
     }
 
     String responseJson = response.body;
 
     if(response.statusCode == 401)
     {
-        AuthCredentials authCredentials = new AuthCredentials();
-        authCredentials.statusCode = 401;
-        foodRunnerLoginData.setAuthCredentials(authCredentials);
-        foodRunnerLoginData.authFailure = jsonDecode(responseJson);
-        return foodRunnerLoginData;
+      json = new Map();
+      json["exception"] = "AUTH_FAILURE";
+      json["statusCode"] = 401;
+      return json;
     }
     else if(response.statusCode != 200)
     {
-      throw new CloudBusinessException(response.statusCode, response.body);
+      json = new Map();
+      json["exception"] = "AUTH_FAILURE";
+      json["statusCode"] = response.statusCode;
+      return json;
     }
 
-    Map<String, dynamic> json  = jsonDecode(responseJson);
+    //TODO: cleanup
+    json  = jsonDecode(responseJson);
     var json2 = json['profile'];
     Iterable sourceOrgIterable = json2['sourceOrgs'];
     List<SourceOrg> sourceOrgs = new List();
@@ -98,11 +91,19 @@ class ProfileRestClient
         SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
         sourceOrgs.add(sourceOrg);
     }
-    foodRunnerLoginData.setSourceOrgs(sourceOrgs);
 
-    AuthCredentials authResponse = AuthCredentials.fromJson(json);
-    foodRunnerLoginData.setAuthCredentials(authResponse);
-
-    return foodRunnerLoginData;
+    return json;
   }
 }
+
+
+
+//.timeout(
+//Duration(seconds: 1),
+//onTimeout: () {
+//print("NETWORK_TIMEOUT");
+//json = new Map();
+//json["exception"] = "NETWORK_TIME_OUT";
+//json["statusCode"] = 500;
+//},
+//);
