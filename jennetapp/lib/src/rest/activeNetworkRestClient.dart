@@ -10,6 +10,7 @@ import 'package:app/src/model/activeView.dart' show ActiveView;
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/dropOffNotification.dart';
 import 'package:app/src/model/schedulePickupNotification.dart';
+import 'package:location/location.dart';
 //import 'package:location/location.dart';
 
 import '../model/schedulePickupNotification.dart';
@@ -125,16 +126,16 @@ class ActiveNetworkRestClient
     return txs;
   }
 
-  /*Future<String> sendLocationUpdate(LocationData locationData) async
+  Future<String> sendLocationUpdate(LocationData locationData) async
   {
     String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/location/update/';
     Map<String,dynamic> jsonMap = new Map();
     jsonMap['latitude'] = locationData.latitude;
     jsonMap['longitude'] = locationData.longitude;
     String jsonBody = jsonEncode(jsonMap);
-    var response = await http.post(remoteUrl, body: jsonBody);
+    var response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     return response.body;
-  }*/
+  }
 
   Future<String> notifyOfflineAvailability(String foodRunnerId) async
   {
