@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-//import 'package:location/location.dart';
+import 'package:location/location.dart';
 
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
@@ -10,10 +10,10 @@ class LocationUpdater
   static String scheduledTaskId = "com.transistersoft.io.appgallabs.jen.network";
   static String standardTaskId = "com.transistorsoft.fetch";
 
-  //static Location location = new Location();
+  static Location location = new Location();
   static bool _serviceEnabled;
-  //static PermissionStatus _permissionGranted;
-  //static LocationData _locationData;
+  static PermissionStatus _permissionGranted;
+  static LocationData _locationData;
   static ActiveNetworkRestClient activeNetworkClient= new ActiveNetworkRestClient();
 
   static void startPolling(Profile profile) async
@@ -30,7 +30,7 @@ class LocationUpdater
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
   {
-    /*_serviceEnabled = await location.serviceEnabled();
+    _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
       if (!_serviceEnabled) {
@@ -56,12 +56,12 @@ class LocationUpdater
       print("******************");
       print(data.latitude);
       print(data.longitude);
-    });*/
+    });
   }
   //--------android----------------------------------------
   static void startAndroidPolling(Profile profile) async
   {
-    /*_serviceEnabled = await location.serviceEnabled();
+    _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
       if (!_serviceEnabled) {
@@ -95,6 +95,6 @@ class LocationUpdater
         //expect((activeView.activeFoodRunnerQueue)!=null, true);
         //expect((activeView.finderResults)!=null, true);
       });
-    });*/
+    });
   }
 }
