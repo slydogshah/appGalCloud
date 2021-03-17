@@ -1,0 +1,1 @@
+npm install --save react-native-background-fetch
