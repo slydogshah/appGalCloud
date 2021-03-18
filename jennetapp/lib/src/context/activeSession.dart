@@ -1,4 +1,5 @@
 import 'package:app/src/model/location.dart';
+import 'package:app/src/rest/urlFunctions.dart';
 
 import '../model/profile.dart';
 
@@ -9,6 +10,7 @@ class ActiveSession
   Profile profile;
   Location location;
   String environment;
+  String apiUrl;
 
   ActiveSession();
 
@@ -35,11 +37,20 @@ class ActiveSession
   void setEnvironment(String environment)
   {
     this.environment = environment;
+    Future<String> config = UrlFunctions.getConfig();
+    config.then((url) {
+      this.apiUrl = url;
+    });
   }
 
   String getEnvironment()
   {
     return this.environment;
+  }
+
+  String getApiUrl()
+  {
+    return this.apiUrl;
   }
 
   static ActiveSession getInstance()

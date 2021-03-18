@@ -60,31 +60,17 @@ class ProfileRestClient
     }
     catch (e) {
       print(e);
-      json = new Map();
-      json["exception"] = "NETWORK_ERROR";
-      json["statusCode"] = 500;
+      json = UrlFunctions.handleError(e, response);
       return json;
     }
 
-    String responseJson = response.body;
-
-    if(response.statusCode == 401)
+    json = UrlFunctions.handleError(null, response);
+    if(json != null)
     {
-      json = new Map();
-      json["exception"] = "AUTH_FAILURE";
-      json["statusCode"] = 401;
-      return json;
-    }
-    else if(response.statusCode != 200)
-    {
-      json = new Map();
-      json["exception"] = "AUTH_FAILURE";
-      json["statusCode"] = response.statusCode;
       return json;
     }
 
-    //TODO: cleanup
-    json  = jsonDecode(responseJson);
+    json  = jsonDecode(response.body);
     var json2 = json['profile'];
     Iterable sourceOrgIterable = json2['sourceOrgs'];
     List<SourceOrg> sourceOrgs = new List();
