@@ -1,29 +1,31 @@
-import 'dart:io';
 import 'dart:convert';
 import 'package:app/src/context/activeSession.dart';
 import 'package:flutter/services.dart';
 
 class UrlFunctions
 {
-  static String resolveHost()
+  static final UrlFunctions singleton = new UrlFunctions();
+
+  String apiUrl;
+
+  static UrlFunctions getInstance()
   {
-    /*if(Platform.isAndroid)
-    {
-        //return "10.0.2.2";
-        return 'https://10.0.2.2/';
-    }
-    else if(Platform.isIOS)
-    {
-        return 'https://localhost/';
-    }
-    return "https://localhost/";*/
-    String apiUrl = ActiveSession.getInstance().getApiUrl();
-    return apiUrl;
+    return UrlFunctions.singleton;
   }
 
-  static Future<String> getConfig() async
+  void setApiUrl(String apiUrl)
   {
-    String env = ActiveSession.getInstance().getEnvironment();
+    this.apiUrl = apiUrl;
+  }
+
+
+  String resolveHost()
+  {
+    return this.apiUrl;
+  }
+
+  static Future<String> getConfig(String env) async
+  {
     final contents = await rootBundle.loadString(
       'assets/config/$env.json',
     );

@@ -9,8 +9,6 @@ class ActiveSession
 
   Profile profile;
   Location location;
-  String environment;
-  String apiUrl;
 
   ActiveSession();
 
@@ -32,25 +30,6 @@ class ActiveSession
   void setLocation(Location location)
   {
     this.location = location;
-  }
-
-  void setEnvironment(String environment)
-  {
-    this.environment = environment;
-    Future<String> config = UrlFunctions.getConfig();
-    config.then((url) {
-      this.apiUrl = url;
-    });
-  }
-
-  String getEnvironment()
-  {
-    return this.environment;
-  }
-
-  String getApiUrl()
-  {
-    return this.apiUrl;
   }
 
   static ActiveSession getInstance()

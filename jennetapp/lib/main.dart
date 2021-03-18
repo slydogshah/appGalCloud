@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app/src/rest/urlFunctions.dart';
 import 'package:app/src/ui/app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,5 +17,12 @@ void main(String env)
 {
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
-  runApp(new JenNetworkApp(env));
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  Future<String> config = UrlFunctions.getConfig(env);
+  config.then((url) {
+    UrlFunctions.getInstance().setApiUrl(url);
+    runApp(new JenNetworkApp());
+  });
 }
