@@ -19,7 +19,7 @@ class ActiveNetworkRestClient
 {
   Future<ActiveView> getActiveView() async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'activeNetwork/activeView/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'activeNetwork/activeView/';
     var response = await http.get(Uri.parse(remoteUrl));
     String activeViewJson = response.body;
     ActiveView activeView = ActiveView.fromJson(jsonDecode(activeViewJson));
@@ -28,7 +28,7 @@ class ActiveNetworkRestClient
 
   Future<String> sendDeliveryNotification(DropOffNotification dropOffNotification) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'activeNetwork/sendDeliveryNotification/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'activeNetwork/sendDeliveryNotification/';
     String jsonBody = dropOffNotification.toString();
     var response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     return response.body;
@@ -36,7 +36,7 @@ class ActiveNetworkRestClient
 
   Future<List<SourceOrg>> findBestDestination(FoodRunner foodRunner) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'activeNetwork/findBestDestination/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'activeNetwork/findBestDestination/';
     String inputJson = foodRunner.toString();
     var response = await http.post(Uri.parse(remoteUrl), body: inputJson);
     String responseJson = response.body;
@@ -54,7 +54,7 @@ class ActiveNetworkRestClient
 
   Future<Iterable> sendPickupRequest(PickupRequest pickupRequest) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'activeNetwork/pickUpRequest/send/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'activeNetwork/pickUpRequest/send/';
     String jsonBody = pickupRequest.toJson().toString();
     var response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     String responseJson = response.body;
@@ -64,7 +64,7 @@ class ActiveNetworkRestClient
 
   Future<String> sendFoodRequest(FoodRequest foodRequest) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'activeNetwork/sendFoodRequest/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'activeNetwork/sendFoodRequest/';
     String jsonBody = foodRequest.toJson().toString();
     var response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     String responseJson = response.body;
@@ -73,7 +73,7 @@ class ActiveNetworkRestClient
 
   Future<List<SourceOrg>> getSourceOrgs() async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'activeNetwork/sourceOrgs/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'activeNetwork/sourceOrgs/';
     var response = await http.get(Uri.parse(remoteUrl));
     String responseJson = response.body;
     Iterable l = json.decode(responseJson);
@@ -88,7 +88,7 @@ class ActiveNetworkRestClient
 
   Future<String> getSchedulePickUpNotification(String email) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'notification/pickup/notifications/?email='+email;
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'notification/pickup/notifications/?email='+email;
     var response = await http.get(Uri.parse(remoteUrl));
     String responseJson = response.body;
     /*Iterable l = json.decode(responseJson);
@@ -104,7 +104,7 @@ class ActiveNetworkRestClient
 
   Future<int> sendSchedulePickupNotification(SchedulePickupNotification notification) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'activeNetwork/schedulePickUp/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'activeNetwork/schedulePickUp/';
     String jsonBody = notification.toJson().toString();
     var response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     return response.statusCode;
@@ -112,7 +112,7 @@ class ActiveNetworkRestClient
 
   Future<List<FoodRecoveryTransaction>> getFoodRecoveryTransaction() async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'tx/recovery';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'tx/recovery';
     var response = await http.get(Uri.parse(remoteUrl));
     String responseJson = response.body;
     Map<String,dynamic> object = json.decode(responseJson);
@@ -128,7 +128,7 @@ class ActiveNetworkRestClient
 
   Future<String> sendLocationUpdate(LocationData locationData) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'location/update/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'location/update/';
     Map<String,dynamic> jsonMap = new Map();
     jsonMap['latitude'] = locationData.latitude;
     jsonMap['longitude'] = locationData.longitude;
@@ -139,7 +139,7 @@ class ActiveNetworkRestClient
 
   Future<String> notifyOfflineAvailability(String foodRunnerId) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'offline/notification/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'offline/notification/';
     Map<String, dynamic> json = new Map();
     json['foodRunnerId'] = foodRunnerId;
     String jsonBody = jsonEncode(json);

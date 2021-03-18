@@ -15,7 +15,7 @@ class ProfileRestClient
 {
   Future<Profile> getProfile(String email) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+"registration/profile/?email="+email;
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/profile/?email="+email;
     var response = await http.get(Uri.parse(remoteUrl));
     if(response.statusCode != 200)
     {
@@ -28,7 +28,7 @@ class ProfileRestClient
 
   Future<Profile> register(Profile profile) async
   {
-    String remoteUrl = UrlFunctions.resolveHost()+'registration/profile/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'registration/profile/';
     var response = await http.post(Uri.parse(remoteUrl), body: profile.toString());
 
     //print(response.body);
@@ -54,37 +54,26 @@ class ProfileRestClient
     var response;
     Map<String, dynamic> json;
 
-    String remoteUrl = UrlFunctions.resolveHost()+'registration/login/';
+    print("*********HOST***********");
+    print(UrlFunctions.getInstance().resolveHost());
+
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/login/";
     try {
        response = await http.post(Uri.parse(remoteUrl), body: credentials.toString());
     }
     catch (e) {
       print(e);
-      json = new Map();
-      json["exception"] = "NETWORK_ERROR";
-      json["statusCode"] = 500;
+      json = UrlFunctions.handleError(e, response);
       return json;
     }
 
-    String responseJson = response.body;
-
-    if(response.statusCode == 401)
+    json = UrlFunctions.handleError(null, response);
+    if(json != null)
     {
-      json = new Map();
-      json["exception"] = "AUTH_FAILURE";
-      json["statusCode"] = 401;
-      return json;
-    }
-    else if(response.statusCode != 200)
-    {
-      json = new Map();
-      json["exception"] = "AUTH_FAILURE";
-      json["statusCode"] = response.statusCode;
       return json;
     }
 
-    //TODO: cleanup
-    json  = jsonDecode(responseJson);
+    json  = jsonDecode(response.body);
     var json2 = json['profile'];
     Iterable sourceOrgIterable = json2['sourceOrgs'];
     List<SourceOrg> sourceOrgs = new List();

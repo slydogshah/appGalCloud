@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app/src/rest/urlFunctions.dart';
 import 'package:app/src/ui/app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,5 +17,13 @@ void main(String env)
 {
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
-  runApp(new JenNetworkApp(env));
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  Future<Map<String,dynamic>> config = UrlFunctions.getConfig(env);
+  config.then((jsonMap) {
+    UrlFunctions.getInstance().androidApiUrl = jsonMap['androidApiUrl'];
+    UrlFunctions.getInstance().iosApiUrl = jsonMap['iosApiUrl'];
+    runApp(new JenNetworkApp());
+  });
 }

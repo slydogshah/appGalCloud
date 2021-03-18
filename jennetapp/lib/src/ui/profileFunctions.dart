@@ -165,11 +165,6 @@ class ProfileFunctions
 
       showCards(context, profile);
     });
-
-    Future<String> config = UrlFunctions.getConfig();
-    config.then((json) {
-        print(json);
-    });
   }
 
   void showCards(BuildContext context, Profile profile) 
