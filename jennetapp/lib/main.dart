@@ -20,9 +20,10 @@ void main(String env)
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  Future<String> config = UrlFunctions.getConfig(env);
-  config.then((url) {
-    UrlFunctions.getInstance().setApiUrl(url);
+  Future<Map<String,dynamic>> config = UrlFunctions.getConfig(env);
+  config.then((jsonMap) {
+    UrlFunctions.getInstance().androidApiUrl = jsonMap['androidApiUrl'];
+    UrlFunctions.getInstance().iosApiUrl = jsonMap['iosApiUrl'];
     runApp(new JenNetworkApp());
   });
 }
