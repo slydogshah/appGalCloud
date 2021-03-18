@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:app/main.dart' as App;
+
 import 'package:app/src/ui/app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +14,10 @@ class MyHttpOverrides extends HttpOverrides{
 }
 
 
-void main(String s)
+void main()
 {
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
+  App.main("prod");
   runApp(new JenNetworkApp());
 }
