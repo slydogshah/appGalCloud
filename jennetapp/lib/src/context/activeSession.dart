@@ -8,6 +8,7 @@ class ActiveSession
 
   Profile profile;
   Location location;
+  String environment;
 
   ActiveSession();
 
@@ -29,6 +30,16 @@ class ActiveSession
   void setLocation(Location location)
   {
     this.location = location;
+  }
+
+  void setEnvironment(String environment)
+  {
+    this.environment = environment;
+  }
+
+  String getEnvironment()
+  {
+    return this.environment;
   }
 
   static ActiveSession getInstance()

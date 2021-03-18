@@ -76,18 +76,15 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                           labelText: 'Est DropOff Trip: 15 minutes',
                           ),
                         ),
-                        //ButtonTheme.bar(
-                        //  child: ButtonBar(
-                        //    children: <Widget>[
-                        //      FlatButton(
-                        //        child: const Text('Accept', style: TextStyle(color: Colors.white)),
-                        //        onPressed: () {
-                        //          handleAccept(context, tx);
-                        //        },
-                        //      ),
-                        //    ],
-                        //  ),
-                        //),
+                        ElevatedButton(
+                          child: Text('Accept'),
+                          style: ElevatedButton.styleFrom(
+                            primary: Color(0xFF383EDB)
+                          ),
+                          onPressed: () {
+                            handleAccept(context, tx);
+                          },
+                        ),
                       ],
                     ),
                   );
