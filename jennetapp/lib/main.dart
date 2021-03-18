@@ -12,9 +12,9 @@ class MyHttpOverrides extends HttpOverrides{
 }
 
 
-void main(String s)
+void main(String env)
 {
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
-  runApp(new JenNetworkApp());
+  runApp(new JenNetworkApp(env));
 }

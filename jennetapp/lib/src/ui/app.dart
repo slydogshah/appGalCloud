@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/ui/profileOptions.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:flutter/gestures.dart';
@@ -12,6 +13,12 @@ import 'package:flutter/rendering.dart';
 import 'profileFunctions.dart';
 
 class JenNetworkApp extends StatelessWidget {
+
+  JenNetworkApp(String environment)
+  {
+    ActiveSession.getInstance().setEnvironment(environment);
+  }
+
   @override
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:app/src/context/activeSession.dart';
 import 'package:flutter/services.dart';
 
 class UrlFunctions
@@ -20,8 +21,9 @@ class UrlFunctions
 
   static Future<String> getConfig() async
   {
+    String env = ActiveSession.getInstance().getEnvironment();
     final contents = await rootBundle.loadString(
-      'assets/config/dev.json',
+      'assets/config/$env.json',
     );
     final Map<String,dynamic> json = jsonDecode(contents);
     print("******CONFIG***********");
