@@ -15,6 +15,8 @@ import 'package:app/src/ui/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:app/src/rest/urlFunctions.dart';
+
 class ProfileFunctions
 {
   void showAlertDialog(BuildContext context, final LoginState loginState, final TextFormField emailField, final TextFormField passwordField)
@@ -162,6 +164,11 @@ class ProfileFunctions
       });
 
       showCards(context, profile);
+    });
+
+    Future<String> config = UrlFunctions.getConfig();
+    config.then((json) {
+        print(json);
     });
   }
 
