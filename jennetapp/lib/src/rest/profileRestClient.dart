@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../model/profile.dart';
 
 import 'package:app/src/model/foodRunnerLoginData.dart';
@@ -13,7 +15,7 @@ class ProfileRestClient
 {
   Future<Profile> getProfile(String email) async
   {
-    String remoteUrl = Uri.encodeFull('http://'+UrlFunctions.resolveHost()+':8080/registration/profile/?email='+email);
+    String remoteUrl = UrlFunctions.resolveHost()+"registration/profile/?email="+email;
     var response = await http.get(Uri.parse(remoteUrl));
     if(response.statusCode != 200)
     {
@@ -26,7 +28,7 @@ class ProfileRestClient
 
   Future<Profile> register(Profile profile) async
   {
-    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/profile/';
+    String remoteUrl = UrlFunctions.resolveHost()+'registration/profile/';
     var response = await http.post(Uri.parse(remoteUrl), body: profile.toString());
 
     //print(response.body);
@@ -52,7 +54,7 @@ class ProfileRestClient
     var response;
     Map<String, dynamic> json;
 
-    String remoteUrl = 'http://'+UrlFunctions.resolveHost()+':8080/registration/login/';
+    String remoteUrl = UrlFunctions.resolveHost()+'registration/login/';
     try {
        response = await http.post(Uri.parse(remoteUrl), body: credentials.toString());
     }

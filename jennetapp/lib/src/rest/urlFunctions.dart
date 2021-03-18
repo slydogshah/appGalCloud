@@ -6,12 +6,13 @@ class UrlFunctions
   {
     if(Platform.isAndroid)
     {
-        return "10.0.2.2";
+        //return "10.0.2.2";
+        return 'https://10.0.2.2/';
     }
     else if(Platform.isIOS)
     {
-        return "localhost";
+        return 'https://localhost/';
     }
-    return "localhost";
+    return "https://localhost/";
   }
 }
