@@ -76,14 +76,13 @@ class ProfileFunctions
     Profile profile = new Profile("", email, mobile, "", password);
     profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Profile> future = profileRestClient.register(profile);
-    future.then((profile){
+    Future<Map<String,dynamic>> future = profileRestClient.register(profile);
+    future.then((json){
       Navigator.of(context, rootNavigator: true).pop();
-      print("&&&&&&&&&&&&");
-      print(profile);
-      if(profile.validationError != null)
+
+      if(json['violations'] != null)
       {
-        List<dynamic> errors = profile.validationError['violations'];
+        List<dynamic> errors = json['violations'];
         bool emailIsInvalid = false;
         bool passwordIsRequired = false;
         bool phoneIsInvalid = false;
@@ -146,10 +145,6 @@ class ProfileFunctions
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
       Navigator.of(context, rootNavigator: true).pop();
-
-      print("*********LOGIN*************");
-      print(json["statusCode"]);
-      print("*********LOGIN*************");
 
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(authCredentials.getProfile());

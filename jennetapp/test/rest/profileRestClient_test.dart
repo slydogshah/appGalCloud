@@ -51,18 +51,6 @@ void main() {
     expect("email_invalid", values.elementAt(0));
   });
 
-  test('profile404', () async {
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    try {
-      await profileRestClient.getProfile(
-          "notFound@blah.com");
-    }on CloudBusinessException catch(e)
-    {
-      print(e);
-      expect(e.statusCode, 404);
-    }
-  });
-
   test('loginFail', () async {
     ProfileRestClient profileRestClient = new ProfileRestClient();
     AuthCredentials credentials = new AuthCredentials();

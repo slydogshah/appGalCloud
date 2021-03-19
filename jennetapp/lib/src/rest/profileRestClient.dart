@@ -1,61 +1,50 @@
-import 'dart:io';
-
 import '../model/profile.dart';
 
-import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/sourceOrg.dart';
-import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/urlFunctions.dart';
-import 'package:http/http.dart' as http;
 import 'package:app/src/model/authCredentials.dart';
 
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ProfileRestClient
 {
-  Future<Profile> getProfile(String email) async
+  Future<Map<String,dynamic>> register(Profile profile) async
   {
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/profile/?email="+email;
-    var response = await http.get(Uri.parse(remoteUrl));
-    if(response.statusCode != 200)
-    {
-      throw new CloudBusinessException(response.statusCode, response.body);
-    }
-    String profileJson = response.body;
-    Profile profile = Profile.fromJson(jsonDecode(profileJson));
-    return profile;
-  }
+    var response;
+    Map<String, dynamic> json;
 
-  Future<Profile> register(Profile profile) async
-  {
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+'registration/profile/';
-    var response = await http.post(Uri.parse(remoteUrl), body: profile.toString());
+    try {
+      response = await http.post(Uri.parse(remoteUrl), body: profile.toString());
+    }
+    catch (e) {
+      print(e);
+      json = UrlFunctions.handleError(e, response);
+      return json;
+    }
 
-    //print(response.body);
-    //print(response.statusCode);
-    //print(response.headers);
     if(response.statusCode == 400)
     {
-      Map<String,dynamic> validationError = jsonDecode(response.body);
-      profile.setValidationError(validationError);
-      return profile;
-    }
-    else if(response.statusCode != 200)
-    {
-      throw new CloudBusinessException(response.statusCode, response.body);
+      //validation error
+      json  = jsonDecode(response.body);
+      return json;
     }
 
-    Profile result = Profile.fromJson(jsonDecode(response.body));
-    return result;
+    json = UrlFunctions.handleError(null, response);
+    if(json != null)
+    {
+      return json;
+    }
+
+    json  = jsonDecode(response.body);
+    return json;
   }
 
   Future<Map<String,dynamic>> login(AuthCredentials credentials) async
   {
     var response;
     Map<String, dynamic> json;
-
-    print("*********HOST***********");
-    print(UrlFunctions.getInstance().resolveHost());
 
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/login/";
     try {
