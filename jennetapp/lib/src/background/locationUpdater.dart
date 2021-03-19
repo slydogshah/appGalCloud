@@ -50,12 +50,15 @@ class LocationUpdater
       }
     }
 
+    //TODO: SEND_REAL_LOCATION
     print("********START_LOCATION_POLL_IOS**********");
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
-      print("******************");
-      print(data.latitude);
-      print(data.longitude);
+      Map<String,double> map = new Map();
+      map['latitude'] = 0.0;
+      map['longitude'] = 0.0;
+      LocationData location = LocationData.fromMap(map);
+      activeNetworkClient.sendLocationUpdate(location);
     });
   }
   //--------android----------------------------------------
@@ -81,6 +84,7 @@ class LocationUpdater
       }
     }
 
+    //TODO: SEND_REAL_LOCATION
     print("********START_LOCATION_POLL_ANDROID**********");
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
@@ -88,13 +92,7 @@ class LocationUpdater
       map['latitude'] = 0.0;
       map['longitude'] = 0.0;
       LocationData location = LocationData.fromMap(map);
-      Future<String> response = activeNetworkClient.sendLocationUpdate(location);
-      response.then((activeView){
-        print("RESPONSE: "+activeView.toString());
-        //expect((activeView.activeFoodRunners)!=null, true);
-        //expect((activeView.activeFoodRunnerQueue)!=null, true);
-        //expect((activeView.finderResults)!=null, true);
-      });
+      activeNetworkClient.sendLocationUpdate(location);
     });
   }
 }
