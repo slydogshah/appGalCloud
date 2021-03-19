@@ -49,6 +49,14 @@ class AddPickupDetails extends React.Component
 {
     constructor(props) {
         super(props);
+        this.handleDetails = this.handleDetails.bind(this);
+    }
+
+    handleDetails(event) {
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId=microsoft";
+        axios.get(apiUrl).then((response) => {
+              console.log(response);
+        });
     }
 
     render() {
@@ -82,13 +90,8 @@ class AddPickupDetails extends React.Component
                           </CCol>
                       </CRow>
                       <CRow>
-                        <CCol xs="6">
-                            <CButton color="primary" className="px-4">Space</CButton>
-                        </CCol>
-                      </CRow>
-                      <CRow>
                           <CCol xs="6">
-                              <CButton color="primary" className="px-4">Send</CButton>
+                              <CButton color="primary" className="px-4" onClick={this.handleDetails}>Send</CButton>
                           </CCol>
                       </CRow>
                     </CCardBody>
