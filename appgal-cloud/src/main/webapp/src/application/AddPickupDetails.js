@@ -55,7 +55,10 @@ class AddPickupDetails extends React.Component
     handleDetails(event) {
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId=microsoft";
         axios.get(apiUrl).then((response) => {
-              console.log(response);
+              this.props.history.push({
+                pathname: "/dropOffOptions",
+                state: { data: response.data }
+              });
         });
     }
 

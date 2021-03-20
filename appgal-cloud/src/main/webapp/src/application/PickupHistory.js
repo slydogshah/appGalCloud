@@ -91,38 +91,6 @@ const ClosedTransactionView = ({closed}) => {
     )
 }
 
-/*<CRow>
-                                <CCol>
-                                    <CRow>
-                                            <CCol>
-                                              <CCard>
-                                                <CCardHeader>
-                                                  Pickup History
-                                                </CCardHeader>
-                                                <CCardBody>
-                                                  <CRow>
-                                                    <CCol xs="12" md="6" xl="6">
-
-                                                      <CRow>
-                                                        <CCol sm="6">
-                                                          <CCallout color="info">
-                                                            <small className="text-muted">Closed</small>
-                                                            <br />
-                                                            <strong className="h4">10</strong>
-                                                          </CCallout>
-                                                        </CCol>
-                                                      </CRow>
-
-                                                      <hr className="mt-0" />
-                                                      <ClosedTransactionView closed={this.props.location.state}/>
-                                                    </CCol>
-                                                  </CRow>
-                                                </CCardBody>
-                                              </CCard>
-                                            </CCol>
-                                          </CRow>
-                                </CCol>
-                                </CRow>*/
 const WaitOnData = ({state}) => {
     if (state.data === null) {
           return <p>Loading...</p>;
