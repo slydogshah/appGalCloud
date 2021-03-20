@@ -52,21 +52,21 @@ const DropOffOptionsView = ({dropOffOrgs}) => {
     for (const [index, value] of dropOffOrgs.entries()) {
         array.push(
              <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                        {value.orgName}
-                      </span>
-                    </div>
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                        {value.orgContactEmail}
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="34" />
-                      <CProgress className="progress-xs" color="danger" value="78" />
-                    </div>
-              </div>
+                 <div className="progress-group-prepend">
+                   <span className="progress-group-text">
+                     {value.orgName}
+                   </span>
+                 </div>
+                 <div className="progress-group-prepend">
+                   <span className="progress-group-text">
+                     {value.orgContactEmail}
+                   </span>
+                 </div>
+                 <div className="progress-group-bars">
+                   <CProgress className="progress-xs" color="info" value="34" />
+                   <CProgress className="progress-xs" color="danger" value="78" />
+                 </div>
+           </div>
          )
     }
     return(
@@ -89,7 +89,27 @@ class DropOffOptions extends React.Component
         const dropOffOrgs = this.props.location.state.data.dropOffOrgs;
         return(
             <>
-                <DropOffOptionsView dropOffOrgs={dropOffOrgs}/>
+                <CRow>
+                    <CCol>
+                        <CRow>
+                                <CCol>
+                                  <CCard>
+                                    <CCardHeader>
+                                      DropOff Options
+                                    </CCardHeader>
+                                    <CCardBody>
+                                      <CRow>
+                                        <CCol xs="12" md="6" xl="6">
+                                          <hr className="mt-0" />
+                                          <DropOffOptionsView dropOffOrgs={dropOffOrgs}/>
+                                        </CCol>
+                                      </CRow>
+                                    </CCardBody>
+                                  </CCard>
+                                </CCol>
+                              </CRow>
+                    </CCol>
+                </CRow>
             </>
         );
     }
