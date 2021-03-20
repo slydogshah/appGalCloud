@@ -69,7 +69,7 @@ public class DynamicDropOffOrchestratorTests extends BaseTest {
         }
 
         this.requestPipeline.process();
-        Thread.sleep(60000);
+        Thread.sleep(5000);
     }
 
     @Test

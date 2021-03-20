@@ -76,7 +76,7 @@ public class NotificationReceiverTest extends BaseTest {
 
         logger.info(excluded.toString());
         assertTrue(excluded.size()==1);
-        Thread.sleep(15000);
+        Thread.sleep(5000);
 
         Response response = given().when().get("/tx/recovery/?email=bugs.bunny.shah@gmail.com")
                 .andReturn();
@@ -149,7 +149,7 @@ public class NotificationReceiverTest extends BaseTest {
 
         logger.info(excluded.toString());
         assertTrue(excluded.size()==1);
-        Thread.sleep(15000);
+        Thread.sleep(5000);
 
 
         Response response = given().when().get("/notification/dropOff/notifications?orgId=microsoft")
@@ -217,7 +217,7 @@ public class NotificationReceiverTest extends BaseTest {
 
         logger.info(excluded.toString());
         assertTrue(excluded.size()==1);
-        Thread.sleep(15000);
+        Thread.sleep(5000);
 
 
         Response response = given().when().get("/notification/dropOff/notifications?orgId=microsoft")

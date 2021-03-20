@@ -33,7 +33,7 @@ public class SchedulePickupNotificationAutomatedTest extends BaseTest {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
-    @Test
+    //@Test
     public void testPickUpNotificationsAutomation() throws Exception{
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
         JsonUtil.print(this.networkOrchestrator.getActiveView());
@@ -76,7 +76,7 @@ public class SchedulePickupNotificationAutomatedTest extends BaseTest {
         }
 
         logger.info(excluded.toString());
-        Thread.sleep(15000);
+        Thread.sleep(5000);
 
 
         Response response = given().when().get("/notification/pickup/notifications?email=b@z.com")

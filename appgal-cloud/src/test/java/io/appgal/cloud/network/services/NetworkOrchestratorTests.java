@@ -188,7 +188,7 @@ public class NetworkOrchestratorTests extends BaseTest {
             this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
         }
 
-        Thread.sleep(45000);
+        Thread.sleep(5000);
     }
 
     /*@Test
@@ -226,6 +226,6 @@ public class NetworkOrchestratorTests extends BaseTest {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         this.networkOrchestrator.schedulePickUp(new SchedulePickUpNotification(sourceOrg,start));
 
-        Thread.sleep(45000);
+        Thread.sleep(5000);
     }*/
 }
