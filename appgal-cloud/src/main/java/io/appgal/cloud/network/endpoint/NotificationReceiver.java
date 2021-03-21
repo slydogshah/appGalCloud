@@ -96,6 +96,9 @@ public class NotificationReceiver {
     public Response schedulePickUp(@RequestBody String jsonBody)
     {
         try {
+            logger.info("******SCHEDULE_PICKUO**********");
+            logger.info(jsonBody);
+
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
             this.networkOrchestrator.schedulePickUp(notification);
 

@@ -6,6 +6,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -21,11 +22,6 @@ public class SchedulePickUpNotification extends ScheduleNotification
 
     private List<Note> pickupNotes;
     private boolean isDropOffDynamic;
-
-    public SchedulePickUpNotification()
-    {
-        super();
-    }
 
     public SchedulePickUpNotification(String id)
     {
@@ -64,7 +60,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
     public static SchedulePickUpNotification parse(String json)
     {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String id = jsonObject.get("id").getAsString();
+        String id = UUID.randomUUID().toString();
 
         SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(id);
 

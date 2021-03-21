@@ -59,6 +59,8 @@ public class RequestPipeline {
 
     public void add(SchedulePickUpNotification schedulePickUpNotification)
     {
+        logger.info("NOTIFICATION: "+schedulePickUpNotification.toString());
+
         this.queue.add(schedulePickUpNotification);
         logger.info("PICKUP_QUEUE_SIZE: "+this.queue.size());
     }

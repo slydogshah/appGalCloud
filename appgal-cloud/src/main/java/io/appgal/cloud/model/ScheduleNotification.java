@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 public abstract class ScheduleNotification implements Serializable {
@@ -17,12 +18,10 @@ public abstract class ScheduleNotification implements Serializable {
     protected boolean notificationSent;
     protected FoodDetails foodDetails;
 
-    public ScheduleNotification() {
-    }
-
     public ScheduleNotification(String id)
     {
         this.id = id;
+        this.start = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     public ScheduleNotification(String id, SourceOrg sourceOrg,OffsetDateTime start)
