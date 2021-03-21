@@ -83,7 +83,47 @@ class DropOffOptions extends React.Component
         super(props);
         //console.log("State: "+JSON.stringify(this.props.location.state.data));
         this.handlePickupProcess = this.handlePickupProcess.bind(this);
+        this.handlePickup = this.handlePickup.bind(this);
     }
+
+    handlePickup(event)
+      {
+         this.element = (
+              <CModal
+                size="sm"
+                show={true}
+                color="success"
+                fade="true"
+              >
+                <CModalHeader>
+                  <CModalTitle>Schedule A Pickup</CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                     <CCard>
+                         <CCardBody>
+                           <CRow>
+                             <CCol>
+                               <CFormGroup>
+                                 <CLabel htmlFor="ccmonth">Preferred Pickup Time</CLabel>
+                                 <CSelect custom name="ccmonth" id="ccmonth">
+                                   <option value="0">12:00 AM</option>
+                                   <option value="12">12:00 PM</option>
+                                   <option value="23">11:59 PM</option>
+                                 </CSelect>
+                               </CFormGroup>
+                             </CCol>
+                           </CRow>
+                         </CCardBody>
+                       </CCard>
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="success" onClick={this.handlePickupProcess}>Schedule</CButton>
+                </CModalFooter>
+              </CModal>
+         );
+         ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
+         ReactDOM.render(this.element,document.getElementById('schedulePickup'));
+      }
 
     handlePickupProcess(event)
     {
@@ -97,6 +137,7 @@ class DropOffOptions extends React.Component
         const dropOffOrgs = this.props.location.state.data.dropOffOrgs;
         return(
             <>
+                <div id="schedulePickup"></div>
                 <CRow>
                     <CCol>
                         <CRow>
@@ -113,7 +154,7 @@ class DropOffOptions extends React.Component
                                         </CCol>
                                         <CCol xs="12" md="6" xl="6">
                                             <hr className="mt-0" />
-                                            <CButton color="success" onClick={this.handlePickupProcess}>Schedule</CButton>
+                                            <CButton color="success" onClick={this.handlePickup}>Schedule</CButton>
                                         </CCol>
                                       </CRow>
                                     </CCardBody>
