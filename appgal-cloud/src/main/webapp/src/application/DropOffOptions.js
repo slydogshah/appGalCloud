@@ -82,6 +82,14 @@ class DropOffOptions extends React.Component
     {
         super(props);
         //console.log("State: "+JSON.stringify(this.props.location.state.data));
+        this.handlePickupProcess = this.handlePickupProcess.bind(this);
+    }
+
+    handlePickupProcess(event)
+    {
+        this.props.history.push({
+            pathname: "/home"
+        });
     }
 
     render()
@@ -102,6 +110,10 @@ class DropOffOptions extends React.Component
                                         <CCol xs="12" md="6" xl="6">
                                           <hr className="mt-0" />
                                           <DropOffOptionsView dropOffOrgs={dropOffOrgs}/>
+                                        </CCol>
+                                        <CCol xs="12" md="6" xl="6">
+                                            <hr className="mt-0" />
+                                            <CButton color="success" onClick={this.handlePickupProcess}>Schedule</CButton>
                                         </CCol>
                                       </CRow>
                                     </CCardBody>
