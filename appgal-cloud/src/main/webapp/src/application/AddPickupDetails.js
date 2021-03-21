@@ -42,7 +42,6 @@ import WidgetsDropdown from './WidgetsDropdown'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 
 import { DocsLink } from 'src/reusable'
-import usersData from 'src/views/users/UsersData'
 
 
 class AddPickupDetails extends React.Component
