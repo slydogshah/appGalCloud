@@ -46,6 +46,90 @@ public class MongoDBJsonStoreTests extends BaseTest {
     {
     }
 
+    //TODO: SPEEDUP
+    //@Test
+    public void testDeleteFoodRunner()
+    {
+        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
+        logger.info("***BEFORE****");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+
+        this.mongoDBJsonStore.deleteFoodRunner(null);
+
+        activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
+        logger.info("***AFTER****");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+    }
+
+    //TODO: SPEEDUP
+    //@Test
+    public void testStoreActiveNetwork()
+    {
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        Location location = new Location(startLatitude, startLongitude);
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+
+        Map<String, FoodRunner> activeFoodRunners = new HashMap<>();
+        activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
+
+        this.mongoDBJsonStore.storeActiveNetwork(activeFoodRunners);
+
+        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
+        logger.info("*******");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+    }
+
+    //TODO: SPEEDUP
+    //@Test
+    public void updateActiveNetwork()
+    {
+        double startLatitude = 30.25860595703125d;
+        double startLongitude = -97.74873352050781d;
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        Location location = new Location(startLatitude, startLongitude);
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+
+        Map<String, FoodRunner> activeFoodRunners = new HashMap<>();
+        activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
+
+        this.mongoDBJsonStore.storeActiveNetwork(activeFoodRunners);
+
+        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
+        logger.info("*******");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+
+        this.mongoDBJsonStore.storeActiveNetwork(activeNetwork.getActiveFoodRunners());
+    }
+
+    //TODO: SPEEDUP
+    //@Test
+    public void testGetCompletedTrips()
+    {
+        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        Location location = new Location(30.25860595703125d,-97.74873352050781d);
+        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+        DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
+        CompletedTrip completedTrip = new CompletedTrip(foodRunner, dropOffNotification);
+        this.mongoDBJsonStore.setCompletedTrip(completedTrip);
+
+        List<CompletedTrip> completedTrips = this.mongoDBJsonStore.getCompletedTrips();
+        JsonArray array = JsonParser.parseString(completedTrips.toString()).getAsJsonArray();
+        logger.info("*******");
+        logger.info(this.gson.toJson(array));
+        logger.info("*******");
+    }
+
 
     @Test
     public void testStoreProfile()
@@ -84,87 +168,6 @@ public class MongoDBJsonStoreTests extends BaseTest {
         logger.info(allFoodRunners.toString());
     }
 
-    @Test
-    public void testDeleteFoodRunner()
-    {
-        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
-        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
-        logger.info("***BEFORE****");
-        logger.info(this.gson.toJson(array));
-        logger.info("*******");
-
-        this.mongoDBJsonStore.deleteFoodRunner(null);
-
-        activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
-        array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
-        logger.info("***AFTER****");
-        logger.info(this.gson.toJson(array));
-        logger.info("*******");
-    }
-
-    @Test
-    public void testStoreActiveNetwork()
-    {
-        double startLatitude = 30.25860595703125d;
-        double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
-        Location location = new Location(startLatitude, startLongitude);
-        FoodRunner foodRunner = new FoodRunner(profile, location);
-
-        Map<String, FoodRunner> activeFoodRunners = new HashMap<>();
-        activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
-
-        this.mongoDBJsonStore.storeActiveNetwork(activeFoodRunners);
-
-        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
-        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
-        logger.info("*******");
-        logger.info(this.gson.toJson(array));
-        logger.info("*******");
-    }
-
-    @Test
-    public void updateActiveNetwork()
-    {
-        double startLatitude = 30.25860595703125d;
-        double startLongitude = -97.74873352050781d;
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
-        Location location = new Location(startLatitude, startLongitude);
-        FoodRunner foodRunner = new FoodRunner(profile, location);
-
-        Map<String, FoodRunner> activeFoodRunners = new HashMap<>();
-        activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
-
-        this.mongoDBJsonStore.storeActiveNetwork(activeFoodRunners);
-
-        ActiveNetwork activeNetwork = this.mongoDBJsonStore.getActiveNetwork();
-        JsonArray array = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
-        logger.info("*******");
-        logger.info(this.gson.toJson(array));
-        logger.info("*******");
-
-        this.mongoDBJsonStore.storeActiveNetwork(activeNetwork.getActiveFoodRunners());
-    }
-
-    @Test
-    public void testGetCompletedTrips()
-    {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        Location location = new Location(30.25860595703125d,-97.74873352050781d);
-        Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
-        FoodRunner foodRunner = new FoodRunner(profile, location);
-        DropOffNotification dropOffNotification = new DropOffNotification(sourceOrg, location, foodRunner);
-        CompletedTrip completedTrip = new CompletedTrip(foodRunner, dropOffNotification);
-        this.mongoDBJsonStore.setCompletedTrip(completedTrip);
-
-        List<CompletedTrip> completedTrips = this.mongoDBJsonStore.getCompletedTrips();
-        JsonArray array = JsonParser.parseString(completedTrips.toString()).getAsJsonArray();
-        logger.info("*******");
-        logger.info(this.gson.toJson(array));
-        logger.info("*******");
-    }
-
-    //
     @Test
     public void testSourceOrgProfileRelationship()
     {
