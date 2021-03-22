@@ -3,6 +3,7 @@ package io.appgal.cloud.network.services;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.network.geospatial.DistanceCalculator;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,8 @@ public class FoodRecoveryOrchestrator {
         List<SourceOrg> dropOffOptions = new ArrayList<>();
         for (SourceOrg dropOffOption : dropOffOrgs)
         {
+            JsonUtil.print(this.getClass(),dropOffOption.toJson());
+
             if(dropOffOption.getOrgId().equals(producer.getOrgId()))
             {
                 continue;
