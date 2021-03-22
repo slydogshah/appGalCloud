@@ -21,10 +21,10 @@ public class FoodRecoveryTransactionTests {
     public void testJson()
     {
         FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
-        JsonUtil.print(tx.toJson());
+        JsonUtil.print(this.getClass(),tx.toJson());
 
         String jsonString = tx.toString();
         FoodRecoveryTransaction deser = FoodRecoveryTransaction.parse(jsonString);
-        JsonUtil.print(deser.toJson());
+        JsonUtil.print(this.getClass(),deser.toJson());
     }
 }

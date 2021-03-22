@@ -20,7 +20,7 @@ import java.util.List;
 
 @ApplicationScoped
 public class PickupRequestStore {
-    //private static Logger logger = LoggerFactory.getLogger(PickupRequestStore.class);
+    private static Logger logger = LoggerFactory.getLogger(PickupRequestStore.class);
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
@@ -134,15 +134,10 @@ public class PickupRequestStore {
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
         System.out.println("*************************************************");
-        JsonUtil.print(schedulePickUpNotification.toJson());
+        JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
         System.out.println("*************************************************");
 
         JsonObject stored = this.getScheduledPickUpNotification(schedulePickUpNotification.getId());
-        //TODO: remove
-        if(stored == null)
-        {
-            return;
-        }
 
         Bson bson = Document.parse(stored.toString());
         collection.deleteOne(bson);

@@ -62,7 +62,7 @@ public class DynamicDropOffOrchestratorTests extends BaseTest {
             notification.setFoodRunner(bugsBunny);
             notification.setStart(cour);
             logger.info("********************************************");
-            JsonUtil.print(notification.toJson());
+            JsonUtil.print(this.getClass(),notification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
             this.requestPipeline.add(notification);
@@ -82,13 +82,13 @@ public class DynamicDropOffOrchestratorTests extends BaseTest {
     public void testOrchestrateOfflineCommunity()
     {
         JsonObject json = this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
-        JsonUtil.print(json);
+        JsonUtil.print(this.getClass(),json);
     }
 
     @Test
     public void testGetOfflineDropOffPipeline() throws Exception
     {
         JsonArray pipeline = this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline();
-        JsonUtil.print(pipeline);
+        JsonUtil.print(this.getClass(),pipeline);
     }
 }

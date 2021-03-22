@@ -33,7 +33,7 @@ public class OfflineCommunityAPI {
             JsonObject notification = JsonParser.parseString(jsonBody).getAsJsonObject();
             this.dynamicDropOffOrchestrator.notifyAvailability(notification.get("foodRunnerId").getAsString());
 
-            JsonUtil.print(this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline());
+            JsonUtil.print(this.getClass(),this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline());
 
 
             JsonObject response = new JsonObject();

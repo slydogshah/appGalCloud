@@ -35,7 +35,7 @@ public class NotificationReceiverTest extends BaseTest {
     @Test
     public void testPickUpNotifications() throws Exception{
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
-        JsonUtil.print(this.networkOrchestrator.getActiveView());
+        JsonUtil.print(this.getClass(),this.networkOrchestrator.getActiveView());
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
 
@@ -63,7 +63,7 @@ public class NotificationReceiverTest extends BaseTest {
             schedulePickUpNotification.setFoodRunner(bugsBunny);
             schedulePickUpNotification.setStart(cour);
             logger.info("********************************************");
-            JsonUtil.print(schedulePickUpNotification.toJson());
+            JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
             this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
@@ -82,12 +82,12 @@ public class NotificationReceiverTest extends BaseTest {
                 .andReturn();
         JsonObject object = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
         JsonArray array = object.getAsJsonArray("pending");
-        JsonUtil.print(array);
+        JsonUtil.print(this.getClass(),array);
 
         response = given().when().get("/notification/pickup/notifications?email=bugs.bunny.shah@gmail.com")
                 .andReturn();
         array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
-        JsonUtil.print(array);
+        JsonUtil.print(this.getClass(),array);
         //assertTrue(array.size() > 0);
         Iterator<JsonElement> itr = array.iterator();
         while(itr.hasNext())
@@ -156,7 +156,7 @@ public class NotificationReceiverTest extends BaseTest {
                 .andReturn();
         logger.info(response.getBody().prettyPrint());
         JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
-        JsonUtil.print(array);
+        JsonUtil.print(this.getClass(),array);
         //assertTrue(array.size() > 0);
         Iterator<JsonElement> itr = array.iterator();
         while(itr.hasNext())
@@ -177,7 +177,7 @@ public class NotificationReceiverTest extends BaseTest {
     @Test
     public void testDropOffInFuture() throws Exception{
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
-        JsonUtil.print(this.networkOrchestrator.getActiveView());
+        JsonUtil.print(this.getClass(),this.networkOrchestrator.getActiveView());
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
 
@@ -204,7 +204,7 @@ public class NotificationReceiverTest extends BaseTest {
             notification.setFoodRunner(bugsBunny);
             notification.setStart(cour);
             logger.info("********************************************");
-            JsonUtil.print(notification.toJson());
+            JsonUtil.print(this.getClass(),notification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
             this.networkOrchestrator.scheduleDropOff(notification);
@@ -224,7 +224,7 @@ public class NotificationReceiverTest extends BaseTest {
                 .andReturn();
         logger.info(response.getBody().prettyPrint());
         JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
-        JsonUtil.print(array);
+        JsonUtil.print(this.getClass(),array);
         //assertTrue(array.size() > 0);
         Iterator<JsonElement> itr = array.iterator();
         while(itr.hasNext())
