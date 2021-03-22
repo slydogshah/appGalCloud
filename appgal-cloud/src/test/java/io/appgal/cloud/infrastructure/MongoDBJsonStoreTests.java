@@ -171,15 +171,17 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void testSourceOrgProfileRelationship()
     {
-        SourceOrg sourceOrg = new SourceOrg("test", "TEST", "testing@test.com",true);
         for(int i=0; i<2; i++)
         {
-            Profile profile = new Profile(UUID.randomUUID().toString(), "test"+i+"@test.com", 8675309l, "", "test", ProfileType.ORG);
+            SourceOrg sourceOrg = new SourceOrg("test"+i, "TEST"+i,
+                    "testing"+i+"@test.com",true);
+            Profile profile = new Profile(UUID.randomUUID().toString(),
+                    UUID.randomUUID().toString()+"@test.com", 8675309l, "", "test", ProfileType.ORG);
             profile.setSourceOrgId(sourceOrg.getOrgId());
             sourceOrg.getProfiles().add(profile);
+            this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
         }
 
-        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
 
         List<SourceOrg> sourceOrg1 = this.mongoDBJsonStore.getSourceOrgs();
         JsonArray array = JsonParser.parseString(sourceOrg1.toString()).getAsJsonArray();

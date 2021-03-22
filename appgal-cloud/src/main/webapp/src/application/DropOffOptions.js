@@ -75,26 +75,6 @@ const DropOffOptionsView = ({dropOffOrgs,widget}) => {
                                </CRow>
                              </CCol>
                        </CRow>
-                       <CRow>
-                                                    <CCol xs="12" md="6" xl="6">
-                                                      <CRow>
-                                                        <CCol sm="6">
-                                                          <CCallout color="info">
-                                                            <strong className="h4">Organization</strong>
-                                                            <br />
-                                                            <div className="progress-group-prepend">
-                                                               <small className="text-muted">{value.orgName}</small>
-                                                            </div>
-                                                            <div className="progress-group-prepend">
-                                                               <span className="progress-group-text">
-                                                                   <CButton color="success" onClick={widget.handlePickup}>Schedule</CButton>
-                                                               </span>
-                                                            </div>
-                                                          </CCallout>
-                                                        </CCol>
-                                                      </CRow>
-                                                    </CCol>
-                                              </CRow>
                      </CCardBody>
                    </CCard>
                 </CCol>
