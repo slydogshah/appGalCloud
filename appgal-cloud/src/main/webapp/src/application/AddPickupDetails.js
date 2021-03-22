@@ -35,6 +35,7 @@ import {
     CCardFooter,
     CProgress,
     CCardGroup,
+    CContainer,
     CWidgetDropdown
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -63,44 +64,40 @@ class AddPickupDetails extends React.Component
 
     render() {
       return (
-        <div>
-            <CRow>
-                <CCol xs="12" sm="6">
-                  <CCard>
-                    <CCardHeader>
-                      Pickup Details
-                    </CCardHeader>
-                    <CCardBody>
-                      <CRow>
-                          <CCol>
-                              <CFormGroup>
-                                  <CLabel htmlFor="foodType">Food Type</CLabel>
-                                  <CSelect custom name="foodType" id="foodType">
-                                      <option value="VEG">VEG</option>
-                                      <option value="NON_VEG">NON-VEG</option>
-                                  </CSelect>
-                              </CFormGroup>
-                          </CCol>
-                      </CRow>
-                      <CRow>
-                          <CCol>
-                            <CFormGroup>
+        <div className="c-app c-default-layout flex-row align-items-center">
+                  <CContainer>
+                    <CRow className="justify-content-center">
+                      <CCol md="9" lg="7" xl="6">
+                        <CCard className="mx-4">
+                          <CCardBody className="p-4">
+                            <CForm>
+                              <h1>Add Pickup Details</h1>
+                              <CLabel htmlFor="foodType">Food Type</CLabel>
+                              <CInputGroup className="mb-3">
+                                <CSelect custom name="foodType" id="foodType">
+                                    <option value="VEG">VEG</option>
+                                    <option value="NON_VEG">NON-VEG</option>
+                                </CSelect>
+                              </CInputGroup>
+                              <CInputGroup className="mb-3">
+                                <CInputGroupPrepend>
+                                  <CInputGroupText>
+                                    <CIcon name="cil-lock-locked" />
+                                  </CInputGroupText>
+                                </CInputGroupPrepend>
                                 <CLabel htmlFor="file-multiple-input" variant="custom-file">
-                                    Food Picture...
+                                        Food Picture...
                                 </CLabel>
-                            </CFormGroup>
-                          </CCol>
-                      </CRow>
-                      <CRow>
-                          <CCol xs="6">
+                              </CInputGroup>
                               <CButton color="primary" className="px-4" onClick={this.handleDetails}>Send</CButton>
-                          </CCol>
-                      </CRow>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-            </CRow>
-        </div>
+                              <div id="errorAlert" />
+                            </CForm>
+                          </CCardBody>
+                        </CCard>
+                      </CCol>
+                    </CRow>
+                  </CContainer>
+                </div>
       )
     }
 }
