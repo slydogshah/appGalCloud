@@ -34,14 +34,14 @@ public class SchedulePickUpNotificationTests extends BaseTest {
         long epochSecond = schedulePickUpNotification.start.toEpochSecond();
 
         String ser = schedulePickUpNotification.toString();
-        JsonUtil.print(schedulePickUpNotification.toJson());
+        JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
 
         SchedulePickUpNotification deser = SchedulePickUpNotification.parse(ser);
         assertEquals(0.0d, deser.getFoodRunner().getLocation().getLatitude());
         assertEquals(epochSecond, deser.getStart().toEpochSecond());
         assertEquals("microsoft", deser.getSourceOrg().getOrgId());
         assertEquals("bugs.bunny.shah@gmail.com", deser.getFoodRunner().getProfile().getEmail());
-        JsonUtil.print(deser.toJson());
+        JsonUtil.print(this.getClass(),deser.toJson());
     }
 
     @Test

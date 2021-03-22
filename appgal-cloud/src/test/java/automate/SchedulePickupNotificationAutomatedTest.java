@@ -33,10 +33,10 @@ public class SchedulePickupNotificationAutomatedTest extends BaseTest {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
-    @Test
+    //@Test
     public void testPickUpNotificationsAutomation() throws Exception{
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
-        JsonUtil.print(this.networkOrchestrator.getActiveView());
+        JsonUtil.print(this.getClass(),this.networkOrchestrator.getActiveView());
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
 
@@ -76,13 +76,13 @@ public class SchedulePickupNotificationAutomatedTest extends BaseTest {
         }
 
         logger.info(excluded.toString());
-        Thread.sleep(15000);
+        Thread.sleep(5000);
 
 
         Response response = given().when().get("/notification/pickup/notifications?email=b@z.com")
                 .andReturn();
         JsonArray array = JsonParser.parseString(response.getBody().asString()).getAsJsonArray();
-        JsonUtil.print(array);
+        JsonUtil.print(this.getClass(),array);
         Iterator<JsonElement> itr = array.iterator();
         while(itr.hasNext())
         {

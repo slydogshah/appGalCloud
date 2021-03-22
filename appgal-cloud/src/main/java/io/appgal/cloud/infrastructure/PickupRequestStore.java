@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import io.appgal.cloud.model.SchedulePickUpNotification;
+import io.appgal.cloud.util.JsonUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -56,7 +57,6 @@ public class PickupRequestStore {
 
         //Query Ex: {$and:[{"foodRunner.profile.email":"bugs.bunny.shah@gmail.com"},{"notificationSent":true}]}
         String queryJson = "{$and:[{\"foodRunner.profile.email\":\""+email+"\"},{\"notificationSent\":"+Boolean.TRUE.booleanValue()+"}]}";
-        logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -80,7 +80,6 @@ public class PickupRequestStore {
 
         //Query Ex: {$and:[{"foodRunner.profile.email":"bugs.bunny.shah@gmail.com"},{"notificationSent":true}]}
         String queryJson = "{\"isDropOffDynamic\":"+Boolean.TRUE.booleanValue()+"}";
-        logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -132,10 +131,14 @@ public class PickupRequestStore {
     public void updateScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
         MongoDatabase database = this.mongoDBJsonStore.getMongoDatabase();
-
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
+        System.out.println("*************************************************");
+        JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
+        System.out.println("*************************************************");
+
         JsonObject stored = this.getScheduledPickUpNotification(schedulePickUpNotification.getId());
+
         Bson bson = Document.parse(stored.toString());
         collection.deleteOne(bson);
 
@@ -150,7 +153,6 @@ public class PickupRequestStore {
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
         String queryJson = "{\"id\":\""+id+"\"}";
-        logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();

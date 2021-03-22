@@ -36,14 +36,14 @@ public class FoodRecoveryOrchestratorTests {
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
 
         List<SourceOrg> sourceOrgList = this.foodRecoveryOrchestrator.findDropOffOrganizations("microsoft");
-        JsonUtil.print(JsonParser.parseString(sourceOrgList.toString()));
+        JsonUtil.print(this.getClass(),JsonParser.parseString(sourceOrgList.toString()));
     }
 
     @Test
     public void testDropOffRecommender()
     {
         Location location = new Location(30.25860595703125d, -97.74873352050781d);
-        JsonUtil.print(this.networkOrchestrator.getActiveView());
+        JsonUtil.print(this.getClass(),this.networkOrchestrator.getActiveView());
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
 
@@ -69,7 +69,7 @@ public class FoodRecoveryOrchestratorTests {
             schedulePickUpNotification.setFoodRunner(bugsBunny);
             schedulePickUpNotification.setStart(cour);
             logger.info("********************************************");
-            JsonUtil.print(schedulePickUpNotification.toJson());
+            JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
             this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);

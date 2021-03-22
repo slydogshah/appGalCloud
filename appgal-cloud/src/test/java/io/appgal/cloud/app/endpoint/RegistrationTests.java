@@ -163,7 +163,7 @@ public class RegistrationTests extends BaseTest {
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
-        JsonUtil.print(JsonParser.parseString(jsonString));
+        JsonUtil.print(this.getClass(),JsonParser.parseString(jsonString));
         logger.info("****");
 
         //assert the body
@@ -199,7 +199,7 @@ public class RegistrationTests extends BaseTest {
         logger.info("***********************");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
-        JsonUtil.print(sourceOrg.toJson());
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
         assertEquals(200, response.getStatusCode());
 
         JsonObject loginJson = new JsonObject();
@@ -242,7 +242,7 @@ public class RegistrationTests extends BaseTest {
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
-        JsonUtil.print(JsonParser.parseString(jsonString));
+        JsonUtil.print(this.getClass(),JsonParser.parseString(jsonString));
         logger.info("****");
 
         //assert the body

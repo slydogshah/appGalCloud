@@ -44,16 +44,23 @@ public class DropOffPipeline {
     @PostConstruct
     public void start()
     {
-        List<ScheduleDropOffNotification> dnotifications = this.mongoDBJsonStore.getScheduledDropOffNotifications();
-        for(ScheduleDropOffNotification scheduleDropOffNotification:dnotifications)
-        {
-            this.add(scheduleDropOffNotification);
-        }
+        Thread loader = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<ScheduleDropOffNotification> dnotifications = mongoDBJsonStore.getScheduledDropOffNotifications();
+                for(ScheduleDropOffNotification scheduleDropOffNotification:dnotifications)
+                {
+                    add(scheduleDropOffNotification);
+                }
+            }
+        });
+        loader.start();
     }
 
     public void add(ScheduleDropOffNotification notification)
     {
         this.dropOffQueue.add(notification);
+        logger.info("DROPOFF_QUEUE_SIZE: "+this.dropOffQueue.size());
     }
 
     public ScheduleDropOffNotification next()
@@ -91,22 +98,17 @@ public class DropOffPipeline {
     {
         ScheduleDropOffNotification notification = this.peek();
         if (notification == null) {
-            //logger.info("*******1*********");
             return;
         }
         //Check
         if (!notification.activateNotification()) {
-            //logger.info("*******2*********");
             this.remove(notification);
             return;
         }
 
-        logger.info("*******3*********");
         notification = this.next();
         notification.setNotificationSent(true);
 
-
-        //logger.info("*******4*********");
         //Send
         this.mongoDBJsonStore.updateScheduledDropOffNotification(notification);
     }

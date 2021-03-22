@@ -45,15 +45,13 @@ public class NetworkOrchestrator {
 
     private Map<String, Collection<FoodRunner>> finderResults;
 
+    @Inject
     private NotificationEngine notificationEngine;
 
     @PostConstruct
     public void start()
     {
         this.finderResults = new HashMap<>();
-        this.notificationEngine = new NotificationEngine(this.securityTokenContainer, this.requestPipeline, this.dropOffPipeline,
-                this.mongoDBJsonStore);
-        this.notificationEngine.start();
         logger.info("*******");
         logger.info("NETWORK_ORCHESTRATOR_IS_ONLINE_NOW");
         logger.info("*******");

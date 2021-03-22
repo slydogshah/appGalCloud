@@ -6,27 +6,29 @@ import io.bugsbunny.preprocess.SecurityTokenContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.*;
 
+
+@Singleton
 public class NotificationEngine extends TimerTask {
     private static Logger logger = LoggerFactory.getLogger(NotificationEngine.class);
 
     private Timer timer;
-    private SecurityTokenContainer securityTokenContainer;
     private SecurityToken securityToken;
 
-    private RequestPipeline requestPipeline;
-    private MongoDBJsonStore mongoDBJsonStore;
-    private DropOffPipeline dropOffPipeline;
+    @Inject
+    private SecurityTokenContainer securityTokenContainer;
 
-    public NotificationEngine(SecurityTokenContainer securityTokenContainer, RequestPipeline requestPipeline, DropOffPipeline dropOffPipeline, MongoDBJsonStore mongoDBJsonStore)
-    {
-        this.securityTokenContainer = securityTokenContainer;
-        this.securityToken = this.securityTokenContainer.getSecurityToken();
-        this.requestPipeline = requestPipeline;
-        this.dropOffPipeline = dropOffPipeline;
-        this.mongoDBJsonStore = mongoDBJsonStore;
-    }
+    @Inject
+    private RequestPipeline requestPipeline;
+
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
+    @Inject
+    private DropOffPipeline dropOffPipeline;
 
     public void start()
     {
@@ -49,7 +51,6 @@ public class NotificationEngine extends TimerTask {
     {
         try
         {
-            //logger.info("***********NOTIFICATION_ENGINE**********");
             while(true)
             {
                 this.requestPipeline.process();

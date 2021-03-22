@@ -44,17 +44,25 @@ public class RequestPipeline {
     @PostConstruct
     public void start()
     {
-        List<SchedulePickUpNotification> notifications = this.mongoDBJsonStore.getSchedulePickUpNotifications();
-        for(SchedulePickUpNotification schedulePickUpNotification:notifications)
-        {
-            this.add(schedulePickUpNotification);
-        }
+        Thread loader = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<SchedulePickUpNotification> notifications = mongoDBJsonStore.getSchedulePickUpNotifications();
+                for(SchedulePickUpNotification schedulePickUpNotification:notifications)
+                {
+                    add(schedulePickUpNotification);
+                }
+            }
+        });
+        loader.start();
     }
 
     public void add(SchedulePickUpNotification schedulePickUpNotification)
     {
+        logger.info("NOTIFICATION: "+schedulePickUpNotification.toString());
+
         this.queue.add(schedulePickUpNotification);
-        logger.info("QUEUE_SIZE: "+this.queue.size());
+        logger.info("PICKUP_QUEUE_SIZE: "+this.queue.size());
     }
 
     public SchedulePickUpNotification next()
@@ -85,7 +93,6 @@ public class RequestPipeline {
     @Override
     public String toString()
     {
-        //return this.queue.toString();
         return "QUEUE_SIZE: "+this.queue.size();
     }
 
@@ -93,19 +100,9 @@ public class RequestPipeline {
     {
         if(this.size() == 0)
         {
-            //logger.info("NOTIFICATION_PIPELINE_IS_EMPTY");
-            /*try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
             return;
         }
         SchedulePickUpNotification notification = this.peek();
-        /*if (notification == null) {
-            //logger.info("*******1*********");
-            return;
-        }*/
 
         //Check
         if (!notification.activateNotification()) {
@@ -114,11 +111,9 @@ public class RequestPipeline {
             return;
         }
 
-        //logger.info("*******3*********");
         notification = this.next();
         notification.setNotificationSent(true);
 
-        //logger.info("*******4*********");
         //Send
         this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
     }

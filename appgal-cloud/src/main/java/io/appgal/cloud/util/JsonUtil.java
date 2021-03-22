@@ -11,8 +11,10 @@ public class JsonUtil {
 
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public static void print(JsonElement jsonElement)
+    public static void print(Class caller,JsonElement jsonElement)
     {
+        logger.info("*****JSONUtil*********************");
+        logger.info("CALLER: "+caller.toString());
         if(jsonElement.isJsonArray())
         {
             logger.info("******ARRAY_SIZE: "+jsonElement.getAsJsonArray().size()+"**********");

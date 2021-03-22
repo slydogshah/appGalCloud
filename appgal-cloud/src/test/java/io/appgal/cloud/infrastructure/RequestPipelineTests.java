@@ -93,7 +93,7 @@ public class RequestPipelineTests extends BaseTest {
                     break;
                 }
 
-                JsonUtil.print(current.toJson());
+                JsonUtil.print(this.getClass(),current.toJson());
 
                 if (counter == 0) {
                     assertEquals(start, current.getStart());

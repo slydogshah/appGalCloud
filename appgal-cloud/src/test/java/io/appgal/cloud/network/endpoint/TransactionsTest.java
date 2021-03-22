@@ -22,7 +22,7 @@ public class TransactionsTest {
                 .when().get("/tx/recovery/?email=" + email)
                 .andReturn();
 
-        JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().asString()));
     }
 
     @Test
@@ -33,7 +33,7 @@ public class TransactionsTest {
                 .when().get("/tx/recovery/history/?orgId=" + orgId)
                 .andReturn();
 
-        JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().asString()));
     }
 
     @Test
@@ -44,6 +44,6 @@ public class TransactionsTest {
                 .when().get("/tx/dropOff/history/?orgId=" + orgId)
                 .andReturn();
 
-        JsonUtil.print(JsonParser.parseString(response.getBody().asString()));
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().asString()));
     }
 }
