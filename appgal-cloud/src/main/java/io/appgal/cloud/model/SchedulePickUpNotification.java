@@ -60,8 +60,12 @@ public class SchedulePickUpNotification extends ScheduleNotification
     public static SchedulePickUpNotification parse(String json)
     {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        String id = jsonObject.get("id").getAsString();
-        if(id == null)
+        String id;
+        if(jsonObject.has("id"))
+        {
+            id = jsonObject.get("id").getAsString();
+        }
+        else
         {
             id = UUID.randomUUID().toString();
         }
