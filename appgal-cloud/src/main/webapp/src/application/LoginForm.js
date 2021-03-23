@@ -35,9 +35,11 @@ class LoginForm extends React.Component {
     super(props);
     //console.log("Constructor: "+JSON.stringify(this.props));
 
-    this.state = {username:'',password:'',isModalOpen:false};
+    this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'',confirmPassword:'',isModalOpen:false};
+    //this.state = {username:'',password:'',isModalOpen:false};
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
+    this.handleRegistration = this.handleRegistration.bind(this);
   }
 
   handleChange(event) {
@@ -109,6 +111,143 @@ class LoginForm extends React.Component {
     event.preventDefault();
   }
 
+  handleRegistration(event)
+      {
+        ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('mobileRequired'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('phoneInvalid'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
+        const required = (
+                         <CAlert
+                         color="warning"
+                         >
+                            Required
+                        </CAlert>
+                     );
+        let validationSuccess = true;
+        if(this.state.email == null || this.state.email == "")
+        {
+          ReactDOM.render(required,document.getElementById('emailRequired'));
+          validationSuccess = false;
+        }
+        if(this.state.password == null || this.state.password == "")
+        {
+            ReactDOM.render(required,document.getElementById('passwordRequired'));
+            validationSuccess = false;
+        }
+        if(this.state.mobile == null || this.state.mobile == "")
+        {
+          ReactDOM.render(required,document.getElementById('mobileRequired'));
+          validationSuccess = false;
+        }
+        if(this.state.sourceOrgId == null || this.state.sourceOrgId == "")
+        {
+          ReactDOM.render(required,document.getElementById('organizationRequired'));
+          validationSuccess = false;
+        }
+
+        if(validationSuccess)
+        {
+            const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
+            axios.post(apiUrl,{"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).
+            then((response) => {
+                      const loginUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/registration/login/";
+                      axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
+                      then((response) => {
+                          console.log("**************************");
+                          console.log(JSON.stringify(response.data));
+                          /*this.props.history.push({
+                              pathname: "/dropOffHome",
+                              state: response.data
+                          });*/
+                          this.props.history.push({
+                              pathname: "/home",
+                              state: response.data
+                          });
+                      });
+            }).catch(err => {
+                      if(err.response != null && err.response.status == 401)
+                      {
+                           this.setState({
+                             "errorMessage": "Login Failed. Please check your Username and/or Password"
+                           });
+                           const element = (
+                                                                         <CAlert
+                                                                         color="dark"
+                                                                         closeButton
+                                                                         >
+                                                                            {this.state.errorMessage}
+                                                                        </CAlert>
+                                                                     );
+
+                                               ReactDOM.render(element,document.getElementById('errorAlert'));
+                      }
+                      else if(err.response != null && err.response.status == 409)
+                      {
+                           this.setState({
+                             "errorMessage": "This email is already registered"
+                           });
+                           const element = (
+                                                                                                  <CAlert
+                                                                                                  color="dark"
+                                                                                                  closeButton
+                                                                                                  >
+                                                                                                     {this.state.errorMessage}
+                                                                                                 </CAlert>
+                                                                                              );
+
+                                                                        ReactDOM.render(element,document.getElementById('errorAlert'));
+                      }
+                      else if(err.response != null && err.response.status == 400)
+                      {
+                          const violations = err.response.data.violations;
+                          if(violations.includes("email_invalid"))
+                          {
+                          const emailInvalid = (
+                                                 <CAlert
+                                                 color="warning"
+                                                 >
+                                                    Email is not valid
+                                                </CAlert>
+                                             );
+                          ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
+                          }
+                          if(violations.includes("phone_invalid"))
+                          {
+                              const phoneInvalid = (
+                                                                             <CAlert
+                                                                             color="warning"
+                                                                             >
+                                                                                Phone is not valid
+                                                                            </CAlert>
+                                                                         );
+                              ReactDOM.render(phoneInvalid,document.getElementById('phoneInvalid'));
+                          }
+                      }
+                      else
+                      {
+                           this.setState({
+                               "errorMessage": "Unknown Error. Please check your Network Connection"
+                           });
+                           const element = (
+                                                                                                  <CAlert
+                                                                                                  color="dark"
+                                                                                                  closeButton
+                                                                                                  >
+                                                                                                     {this.state.errorMessage}
+                                                                                                 </CAlert>
+                                                                                              );
+
+                                                                        ReactDOM.render(element,document.getElementById('errorAlert'));
+                      }
+                });
+
+        }
+    }
+
   render() {
     return (
       <div className="c-app c-default-layout flex-row align-items-center">
@@ -168,7 +307,8 @@ class LoginForm extends React.Component {
                                 </CInputGroupPrepend>
                                 <CInput type="text" placeholder="Username" autoComplete="username"
                                 name="username" onChange={this.handleChange}/>
-                                <div id="profile_not_found"/>
+                                <div id="emailRequired"/>
+                                <div id="emailInvalid"/>
                               </CInputGroup>
                               <CInputGroup className="mb-4">
                                 <CInputGroupPrepend>
@@ -178,6 +318,7 @@ class LoginForm extends React.Component {
                                 </CInputGroupPrepend>
                                 <CInput type="password" placeholder="Password" autoComplete="current-password"
                                 name="password" onChange={this.handleChange}/>
+                                <div id="passwordRequired"/>
                                 <div id="password_mismatch"/>
                               </CInputGroup>
                               <CInputGroup className="mb-4">
@@ -204,15 +345,8 @@ class LoginForm extends React.Component {
                                   <CInput type="text" placeholder="Organization" autoComplete="organization" name="sourceOrgId" onChange={this.handleChange}/>
                                   <div id="organizationRequired"/>
                               </CInputGroup>
-                              <CRow>
-                                <CCol xs="6">
-                                    <Link to="/registration">
-                                        <CButton color="primary" className="mt-3" active tabIndex={-1}>Register Now!</CButton>
-                                    </Link>
-                                </CCol>
-                                <CCol xs="6" className="text-right">
-                                </CCol>
-                              </CRow>
+                              <CButton color="success" block onClick={this.handleRegistration}>Create Account</CButton>
+                              <div id="errorAlert" />
                             </CForm>
                           </CCardBody>
                         </CCard>
