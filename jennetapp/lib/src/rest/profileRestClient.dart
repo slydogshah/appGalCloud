@@ -1,3 +1,5 @@
+import 'package:app/src/rest/cloudBusinessException.dart';
+
 import '../model/profile.dart';
 
 import 'package:app/src/model/sourceOrg.dart';
@@ -48,7 +50,14 @@ class ProfileRestClient
 
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/login/";
     try {
-       response = await http.post(Uri.parse(remoteUrl), body: credentials.toString());
+       response = await http.post(Uri.parse(remoteUrl), body: credentials.toString()).
+       timeout(Duration(seconds: 30),onTimeout: () {
+         print("NETWORK_TIMEOUT");
+         //json = new Map();
+         //json["exception"] = "NETWORK_TIME_OUT";
+         //json["statusCode"] = 500;
+         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
+       });
     }
     catch (e) {
       print(e);
@@ -75,15 +84,3 @@ class ProfileRestClient
     return json;
   }
 }
-
-
-
-//.timeout(
-//Duration(seconds: 1),
-//onTimeout: () {
-//print("NETWORK_TIMEOUT");
-//json = new Map();
-//json["exception"] = "NETWORK_TIME_OUT";
-//json["statusCode"] = 500;
-//},
-//);
