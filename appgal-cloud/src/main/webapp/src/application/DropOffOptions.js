@@ -119,28 +119,12 @@ class DropOffOptions extends React.Component
                                fade="true"
                              >
                                <CModalHeader>
-                                 <CModalTitle>Schedule A Pickup-Debug</CModalTitle>
+                                 <CModalTitle>Pickup Confirmation</CModalTitle>
                                </CModalHeader>
                                <CModalBody>
-                                    <CCard>
-                                        <CCardBody>
-                                          <CRow>
-                                            <CCol>
-                                              <CFormGroup>
-                                                <CLabel htmlFor="ccmonth">Preferred Pickup Time</CLabel>
-                                                <CSelect custom name="ccmonth" id="ccmonth">
-                                                  <option value="0">12:00 AM</option>
-                                                  <option value="12">12:00 PM</option>
-                                                  <option value="23">11:59 PM</option>
-                                                </CSelect>
-                                              </CFormGroup>
-                                            </CCol>
-                                          </CRow>
-                                        </CCardBody>
-                                      </CCard>
                                </CModalBody>
                                <CModalFooter>
-                                   <CButton color="success" onClick={this.handlePickupProcess}>Schedule</CButton>
+                                   <CButton color="success" onClick={this.handlePickupProcess}>OK</CButton>
                                </CModalFooter>
                              </CModal>
                         );
