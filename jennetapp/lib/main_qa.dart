@@ -18,5 +18,5 @@ void main()
 {
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
-  App.main("prod");
+  App.main("qa");
 }
