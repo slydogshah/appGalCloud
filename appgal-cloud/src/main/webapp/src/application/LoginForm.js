@@ -154,18 +154,68 @@ class LoginForm extends React.Component {
                         </CForm>
                       </CCardBody>
                     </CCard>
-                    <CCard className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
-                      <CCardBody className="text-center">
-                        <div>
-                          <h2>Sign up</h2>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua.</p>
-                          <Link to="/registration">
-                            <CButton color="primary" className="mt-3" active tabIndex={-1}>Register Now!</CButton>
-                          </Link>
-                        </div>
-                      </CCardBody>
-                    </CCard>
+                    <CCard className="p-4">
+                          <CCardBody>
+                            <CForm>
+                              <h1>Register</h1>
+                              <p className="text-muted">Create your account</p>
+                              <div id="system_error"/>
+                              <CInputGroup className="mb-3">
+                                <CInputGroupPrepend>
+                                  <CInputGroupText>
+                                    <CIcon name="cil-user" />
+                                  </CInputGroupText>
+                                </CInputGroupPrepend>
+                                <CInput type="text" placeholder="Username" autoComplete="username"
+                                name="username" onChange={this.handleChange}/>
+                                <div id="profile_not_found"/>
+                              </CInputGroup>
+                              <CInputGroup className="mb-4">
+                                <CInputGroupPrepend>
+                                  <CInputGroupText>
+                                    <CIcon name="cil-lock-locked" />
+                                  </CInputGroupText>
+                                </CInputGroupPrepend>
+                                <CInput type="password" placeholder="Password" autoComplete="current-password"
+                                name="password" onChange={this.handleChange}/>
+                                <div id="password_mismatch"/>
+                              </CInputGroup>
+                              <CInputGroup className="mb-4">
+                                  <CInputGroupPrepend>
+                                    <CInputGroupText>
+                                      <CIcon name="cil-lock-locked" />
+                                    </CInputGroupText>
+                                  </CInputGroupPrepend>
+                                  <CInput type="password" placeholder="Confirm password" autoComplete="new-password" name="confirmPassword" onChange={this.handleChange}/>
+                                  <div id="confirmPasswordRequired"/>
+                                </CInputGroup>
+                                <CInputGroup className="mb-5">
+                                  <CInputGroupText>
+                                      <CIcon name="cil-lock-locked" />
+                                  </CInputGroupText>
+                                  <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={this.handleChange}/>
+                                  <div id="mobileRequired"/>
+                                  <div id="phoneInvalid"/>
+                                </CInputGroup>
+                                <CInputGroup className="mb-6">
+                                  <CInputGroupText>
+                                      <CIcon name="cil-lock-locked" />
+                                  </CInputGroupText>
+                                  <CInput type="text" placeholder="Organization" autoComplete="organization" name="sourceOrgId" onChange={this.handleChange}/>
+                                  <div id="organizationRequired"/>
+                              </CInputGroup>
+                              <CRow>
+                                <CCol xs="6">
+                                    <Link to="/registration">
+                                        <CButton color="primary" className="mt-3" active tabIndex={-1}>Register Now!</CButton>
+                                    </Link>
+                                </CCol>
+                                <CCol xs="6" className="text-right">
+                                </CCol>
+                              </CRow>
+                            </CForm>
+                          </CCardBody>
+                        </CCard>
                   </CCardGroup>
                 </CCol>
               </CRow>

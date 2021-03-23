@@ -122,6 +122,11 @@ class DropOffOptions extends React.Component
                                  <CModalTitle>Pickup Confirmation</CModalTitle>
                                </CModalHeader>
                                <CModalBody>
+                                    <CCallout color="info">
+                                     <div className="progress-group-prepend">
+                                        <small className="text-muted">Your Pickup is scheduled</small>
+                                     </div>
+                                   </CCallout>
                                </CModalBody>
                                <CModalFooter>
                                    <CButton color="success" onClick={this.handlePickupProcess}>OK</CButton>
