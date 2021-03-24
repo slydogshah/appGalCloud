@@ -102,6 +102,10 @@ const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
     }
     return (
       <>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
       <div id="schedulePickup"></div>
             <CRow>
                 <CCol>
