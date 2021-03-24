@@ -157,7 +157,7 @@ class LoginForm extends React.Component {
             });
             axios.post(apiUrl,{httpsAgent: agent,"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).
             then((response) => {
-                      const loginUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/registration/login/";
+                      const loginUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
                       axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
                       then((response) => {
                           console.log("**************************");
