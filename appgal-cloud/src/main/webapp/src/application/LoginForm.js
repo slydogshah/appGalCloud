@@ -5,6 +5,7 @@ import { withRouter } from "react-router";
 import Modal from 'react-modal';
 import OverlayMixin from 'react-overlays';
 import axios from 'axios'
+import https from 'http';
 import {
   CButton,
   CCard,
@@ -33,10 +34,8 @@ class LoginForm extends React.Component {
   mixins = [OverlayMixin];
   constructor(props) {
     super(props);
-    //console.log("Constructor: "+JSON.stringify(this.props));
 
-    this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'',confirmPassword:'',isModalOpen:false};
-    //this.state = {username:'',password:'',isModalOpen:false};
+    this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'',isModalOpen:false};
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleRegistration = this.handleRegistration.bind(this);
@@ -152,7 +151,11 @@ class LoginForm extends React.Component {
         if(validationSuccess)
         {
             const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
-            axios.post(apiUrl,{"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).
+            // At request level
+            const agent = new https.Agent({
+              rejectUnauthorized: false
+            });
+            axios.post(apiUrl,{httpsAgent: agent,"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).
             then((response) => {
                       const loginUrl = window.location.protocol +"//"+process.env.WDS_SOCKET_HOST+"/registration/login/";
                       axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
@@ -306,7 +309,7 @@ class LoginForm extends React.Component {
                                   </CInputGroupText>
                                 </CInputGroupPrepend>
                                 <CInput type="text" placeholder="Username" autoComplete="username"
-                                name="username" onChange={this.handleChange}/>
+                                name="email" onChange={this.handleChange}/>
                                 <div id="emailRequired"/>
                                 <div id="emailInvalid"/>
                               </CInputGroup>
@@ -321,27 +324,22 @@ class LoginForm extends React.Component {
                                 <div id="passwordRequired"/>
                                 <div id="password_mismatch"/>
                               </CInputGroup>
-                              <CInputGroup className="mb-4">
+                              <CInputGroup className="mb-5">
                                   <CInputGroupPrepend>
-                                    <CInputGroupText>
-                                      <CIcon name="cil-lock-locked" />
-                                    </CInputGroupText>
-                                  </CInputGroupPrepend>
-                                  <CInput type="password" placeholder="Confirm password" autoComplete="new-password" name="confirmPassword" onChange={this.handleChange}/>
-                                  <div id="confirmPasswordRequired"/>
-                                </CInputGroup>
-                                <CInputGroup className="mb-5">
-                                  <CInputGroupText>
-                                      <CIcon name="cil-lock-locked" />
-                                  </CInputGroupText>
+                                                                      <CInputGroupText>
+                                                                        <CIcon name="cil-lock-locked" />
+                                                                      </CInputGroupText>
+                                                                    </CInputGroupPrepend>
                                   <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={this.handleChange}/>
                                   <div id="mobileRequired"/>
                                   <div id="phoneInvalid"/>
-                                </CInputGroup>
-                                <CInputGroup className="mb-6">
-                                  <CInputGroupText>
-                                      <CIcon name="cil-lock-locked" />
-                                  </CInputGroupText>
+                              </CInputGroup>
+                              <CInputGroup className="mb-6">
+                                  <CInputGroupPrepend>
+                                                                      <CInputGroupText>
+                                                                        <CIcon name="cil-lock-locked" />
+                                                                      </CInputGroupText>
+                                                                    </CInputGroupPrepend>
                                   <CInput type="text" placeholder="Organization" autoComplete="organization" name="sourceOrgId" onChange={this.handleChange}/>
                                   <div id="organizationRequired"/>
                               </CInputGroup>
