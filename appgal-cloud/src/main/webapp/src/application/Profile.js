@@ -258,48 +258,9 @@ class LoginForm extends React.Component {
                 <CCol md="8">
                   <CCardGroup>
                     <CCard className="p-4">
-                      <CCardBody>
-                        <CForm>
-                          <h1>Login</h1>
-                          <p className="text-muted">Sign In to your account</p>
-                          <div id="system_error"/>
-                          <CInputGroup className="mb-3">
-                            <CInputGroupPrepend>
-                              <CInputGroupText>
-                                <CIcon name="cil-user" />
-                              </CInputGroupText>
-                            </CInputGroupPrepend>
-                            <CInput type="text" placeholder="Username" autoComplete="username"
-                            name="username" onChange={this.handleChange}/>
-                            <div id="profile_not_found"/>
-                          </CInputGroup>
-                          <CInputGroup className="mb-4">
-                            <CInputGroupPrepend>
-                              <CInputGroupText>
-                                <CIcon name="cil-lock-locked" />
-                              </CInputGroupText>
-                            </CInputGroupPrepend>
-                            <CInput type="password" placeholder="Password" autoComplete="current-password"
-                            name="password" onChange={this.handleChange}/>
-                            <div id="password_mismatch"/>
-                          </CInputGroup>
-                          <CRow>
-                            <CCol xs="6">
-                                <CButton color="primary" className="px-4" onClick={this.handleLogin}>Login</CButton>
-                                <div id="loginErrorAlert"></div>
-                            </CCol>
-                            <CCol xs="6" className="text-right">
-                              <CButton color="link" className="px-0">Forgot password?</CButton>
-                            </CCol>
-                          </CRow>
-                        </CForm>
-                      </CCardBody>
-                    </CCard>
-                    <CCard className="p-4">
                           <CCardBody>
                             <CForm>
-                              <h1>Register</h1>
-                              <p className="text-muted">Create your account</p>
+                              <h1>Profile</h1>
                               <div id="system_error"/>
                               <CInputGroup className="mb-3">
                                 <CInputGroupPrepend>
@@ -343,7 +304,7 @@ class LoginForm extends React.Component {
                                   <div id="organizationRequired"/>
                               </CInputGroup>
                               <br/><br/>
-                              <CButton color="success" block onClick={this.handleRegistration}>Create Account</CButton>
+                              <CButton color="success" block onClick={this.handleRegistration}>Save</CButton>
                               <div id="errorAlert" />
                             </CForm>
                           </CCardBody>
