@@ -34,7 +34,6 @@ class LoginForm extends React.Component {
   mixins = [OverlayMixin];
   constructor(props) {
     super(props);
-
     this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'',isModalOpen:false};
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
