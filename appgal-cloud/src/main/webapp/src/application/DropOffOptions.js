@@ -152,6 +152,10 @@ class DropOffOptions extends React.Component
         const dropOffOrgs = this.props.location.state.data.dropOffOrgs;
         return(
             <>
+                <br/>
+                      <br/>
+                      <br/>
+                      <br/>
                 <div id="schedulePickup"></div>
                 <CRow>
                     <CCol>

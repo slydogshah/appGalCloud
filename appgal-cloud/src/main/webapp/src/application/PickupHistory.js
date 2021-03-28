@@ -98,6 +98,10 @@ const WaitOnData = ({state}) => {
 
     return (
           <>
+          <br/>
+                <br/>
+                <br/>
+                <br/>
             <CRow>
                                             <CCol>
                                                 <CRow>
