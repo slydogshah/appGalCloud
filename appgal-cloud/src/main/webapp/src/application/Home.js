@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef, lazy } from 'react'
+import React, { useEffect, useState, createRef, lazy, useContext, createContext } from 'react'
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
 import axios from 'axios'
@@ -45,6 +45,7 @@ import WidgetsDropdown from './WidgetsDropdown'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
+import { AppContext} from "./AppContext"
 
 const PendingTransactionView = ({pending}) => {
     const txs = []
@@ -97,6 +98,7 @@ const InProgressTransactionView = ({inProgress}) => {
 /**/
 
 const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
+    console.log("AppContext: "+useContext(AppContext).auth);
     if (state.data === null) {
       return <p>Loading...</p>;
     }
@@ -207,11 +209,11 @@ class Home extends React.Component {
   element;
   constructor(props) {
       super(props);
+
       this.handlePickup = this.handlePickup.bind(this);
       this.handlePickupProcess = this.handlePickupProcess.bind(this);
       this.handlePickupHistory = this.handlePickupHistory.bind(this);
       this.state = {data: null};
-
       this.renderMyData();
   }
 
