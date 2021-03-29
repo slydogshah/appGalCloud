@@ -30,7 +30,10 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-const WaitOnData = ({state},{handleRegistration}) => {
+const WaitOnData = ({state, handleRegistration, handleChange}) => {
+          if (state.data === null) {
+                return <p>Loading...</p>;
+              }
           return(
             <div className="c-app c-default-layout flex-row align-items-center">
                         <CContainer>
@@ -49,7 +52,7 @@ const WaitOnData = ({state},{handleRegistration}) => {
                                               </CInputGroupText>
                                             </CInputGroupPrepend>
                                             <CInput type="text" placeholder="Username" autoComplete="username"
-                                            name="email"/>
+                                            name="email" onChange={handleChange} value={state.data.email}/>
                                             <div id="emailRequired"/>
                                             <div id="emailInvalid"/>
                                           </CInputGroup>
@@ -60,7 +63,7 @@ const WaitOnData = ({state},{handleRegistration}) => {
                                               </CInputGroupText>
                                             </CInputGroupPrepend>
                                             <CInput type="password" placeholder="Password" autoComplete="current-password"
-                                            name="password"/>
+                                            name="password" onChange={handleChange}/>
                                             <div id="passwordRequired"/>
                                             <div id="password_mismatch"/>
                                           </CInputGroup>
@@ -70,7 +73,8 @@ const WaitOnData = ({state},{handleRegistration}) => {
                                                                                     <CIcon name="cil-lock-locked" />
                                                                                   </CInputGroupText>
                                                                                 </CInputGroupPrepend>
-                                              <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile"/>
+                                              <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={handleChange}
+                                              value={state.data.mobile}/>
                                               <div id="mobileRequired"/>
                                               <div id="phoneInvalid"/>
                                           </CInputGroup>
@@ -80,7 +84,8 @@ const WaitOnData = ({state},{handleRegistration}) => {
                                                                                     <CIcon name="cil-lock-locked" />
                                                                                   </CInputGroupText>
                                                                                 </CInputGroupPrepend>
-                                              <CInput type="text" placeholder="Organization" autoComplete="organization" name="sourceOrgId"/>
+                                              <CInput type="text" placeholder="Organization" autoComplete="organization"
+                                              name="sourceOrgId" onChange={handleChange}/>
                                               <div id="organizationRequired"/>
                                           </CInputGroup>
                                           <br/><br/>
@@ -262,14 +267,13 @@ class Profile extends React.Component {
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email=jen@appgallabs.io";
         axios.get(apiUrl).then((response) => {
             this.setState({data: response.data});
-            console.log("RESPONSE: "+JSON.stringify(response.data));
         });
     }
 
   render() {
     return (
             <div>
-                <WaitOnData state={this.state} handleRegistration={this.handleRegistration}/>
+                <WaitOnData state={this.state} handleRegistration={this.handleRegistration} handleChange={this.handleChange}/>
             </div>
     );
   }
