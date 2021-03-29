@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, createRef, lazy } from 'react'
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom'
 import { withRouter } from "react-router";
@@ -30,14 +30,82 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-class LoginForm extends React.Component {
+const WaitOnData = ({state},{handleRegistration}) => {
+          return(
+            <div className="c-app c-default-layout flex-row align-items-center">
+                        <CContainer>
+                          <CRow className="justify-content-center">
+                            <CCol md="8">
+                              <CCardGroup>
+                                <CCard className="p-4">
+                                      <CCardBody>
+                                        <CForm>
+                                          <h1>Profile</h1>
+                                          <div id="system_error"/>
+                                          <CInputGroup className="mb-3">
+                                            <CInputGroupPrepend>
+                                              <CInputGroupText>
+                                                <CIcon name="cil-user" />
+                                              </CInputGroupText>
+                                            </CInputGroupPrepend>
+                                            <CInput type="text" placeholder="Username" autoComplete="username"
+                                            name="email"/>
+                                            <div id="emailRequired"/>
+                                            <div id="emailInvalid"/>
+                                          </CInputGroup>
+                                          <CInputGroup className="mb-4">
+                                            <CInputGroupPrepend>
+                                              <CInputGroupText>
+                                                <CIcon name="cil-lock-locked" />
+                                              </CInputGroupText>
+                                            </CInputGroupPrepend>
+                                            <CInput type="password" placeholder="Password" autoComplete="current-password"
+                                            name="password"/>
+                                            <div id="passwordRequired"/>
+                                            <div id="password_mismatch"/>
+                                          </CInputGroup>
+                                          <CInputGroup className="mb-5">
+                                              <CInputGroupPrepend>
+                                                                                  <CInputGroupText>
+                                                                                    <CIcon name="cil-lock-locked" />
+                                                                                  </CInputGroupText>
+                                                                                </CInputGroupPrepend>
+                                              <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile"/>
+                                              <div id="mobileRequired"/>
+                                              <div id="phoneInvalid"/>
+                                          </CInputGroup>
+                                          <CInputGroup className="mb-6">
+                                              <CInputGroupPrepend>
+                                                                                  <CInputGroupText>
+                                                                                    <CIcon name="cil-lock-locked" />
+                                                                                  </CInputGroupText>
+                                                                                </CInputGroupPrepend>
+                                              <CInput type="text" placeholder="Organization" autoComplete="organization" name="sourceOrgId"/>
+                                              <div id="organizationRequired"/>
+                                          </CInputGroup>
+                                          <br/><br/>
+                                          <CButton color="success" block onClick={handleRegistration}>Save</CButton>
+                                          <div id="errorAlert" />
+                                        </CForm>
+                                      </CCardBody>
+                                    </CCard>
+                              </CCardGroup>
+                            </CCol>
+                          </CRow>
+                        </CContainer>
+                      </div>
+          );
+}
+
+class Profile extends React.Component {
   mixins = [OverlayMixin];
   constructor(props) {
     super(props);
-    this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'',isModalOpen:false};
+    this.state = {data: null};
     this.handleChange = this.handleChange.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
     this.handleRegistration = this.handleRegistration.bind(this);
+
+    this.renderMyData();
   }
 
   handleChange(event) {
@@ -47,66 +115,6 @@ class LoginForm extends React.Component {
     this.setState({
           [name]: value
     });
-  }
-
-  handleLogin(event) {
-    console.log(JSON.stringify(this.state));
-
-    ReactDOM.unmountComponentAtNode(document.getElementById('system_error'));
-    ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
-    ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
-
-    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
-    axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
-          this.props.history.push({
-            pathname: "/home"
-          });
-          /*this.props.history.push({
-                      pathname: "/dropOffHome",
-                      state: response.data
-                    });*/
-    }).catch(err => {
-           console.log(JSON.stringify(err));
-           if(err.response != null && err.response.status == 401)
-           {
-                console.log(JSON.stringify(err.response.data));
-                if(err.response.data.message == "profile_not_found")
-                {
-                    const profile_not_found = (
-                                          <CAlert
-                                          color="warning"
-                                          >
-                                             The email is not registered.
-                                         </CAlert>
-                                      );
-                    ReactDOM.render(profile_not_found,document.getElementById('profile_not_found'));
-                }
-                else if(err.response.data.message == "password_mismatch")
-                {
-                    const password_mismatch = (
-                                                              <CAlert
-                                                              color="warning"
-                                                              >
-                                                                 Password does not match.
-                                                             </CAlert>
-                                                          );
-                                        ReactDOM.render(password_mismatch,document.getElementById('password_mismatch'));
-                }
-           }
-           else
-           {
-               const system_error = (
-                                                                             <CAlert
-                                                                             color="warning"
-                                                                             >
-                                                                                Unknown Error. Please check your Network Connection
-                                                                            </CAlert>
-                                                                         );
-                                                       ReactDOM.render(system_error,document.getElementById('system_error'));
-           }
-    });
-
-    event.preventDefault();
   }
 
   handleRegistration(event)
@@ -250,72 +258,21 @@ class LoginForm extends React.Component {
         }
     }
 
+    renderMyData(){
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email=jen@appgallabs.io";
+        axios.get(apiUrl).then((response) => {
+            this.setState({data: response.data});
+            console.log("RESPONSE: "+JSON.stringify(response.data));
+        });
+    }
+
   render() {
     return (
-      <div className="c-app c-default-layout flex-row align-items-center">
-            <CContainer>
-              <CRow className="justify-content-center">
-                <CCol md="8">
-                  <CCardGroup>
-                    <CCard className="p-4">
-                          <CCardBody>
-                            <CForm>
-                              <h1>Profile</h1>
-                              <div id="system_error"/>
-                              <CInputGroup className="mb-3">
-                                <CInputGroupPrepend>
-                                  <CInputGroupText>
-                                    <CIcon name="cil-user" />
-                                  </CInputGroupText>
-                                </CInputGroupPrepend>
-                                <CInput type="text" placeholder="Username" autoComplete="username"
-                                name="email" onChange={this.handleChange}/>
-                                <div id="emailRequired"/>
-                                <div id="emailInvalid"/>
-                              </CInputGroup>
-                              <CInputGroup className="mb-4">
-                                <CInputGroupPrepend>
-                                  <CInputGroupText>
-                                    <CIcon name="cil-lock-locked" />
-                                  </CInputGroupText>
-                                </CInputGroupPrepend>
-                                <CInput type="password" placeholder="Password" autoComplete="current-password"
-                                name="password" onChange={this.handleChange}/>
-                                <div id="passwordRequired"/>
-                                <div id="password_mismatch"/>
-                              </CInputGroup>
-                              <CInputGroup className="mb-5">
-                                  <CInputGroupPrepend>
-                                                                      <CInputGroupText>
-                                                                        <CIcon name="cil-lock-locked" />
-                                                                      </CInputGroupText>
-                                                                    </CInputGroupPrepend>
-                                  <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={this.handleChange}/>
-                                  <div id="mobileRequired"/>
-                                  <div id="phoneInvalid"/>
-                              </CInputGroup>
-                              <CInputGroup className="mb-6">
-                                  <CInputGroupPrepend>
-                                                                      <CInputGroupText>
-                                                                        <CIcon name="cil-lock-locked" />
-                                                                      </CInputGroupText>
-                                                                    </CInputGroupPrepend>
-                                  <CInput type="text" placeholder="Organization" autoComplete="organization" name="sourceOrgId" onChange={this.handleChange}/>
-                                  <div id="organizationRequired"/>
-                              </CInputGroup>
-                              <br/><br/>
-                              <CButton color="success" block onClick={this.handleRegistration}>Save</CButton>
-                              <div id="errorAlert" />
-                            </CForm>
-                          </CCardBody>
-                        </CCard>
-                  </CCardGroup>
-                </CCol>
-              </CRow>
-            </CContainer>
-          </div>
+            <div>
+                <WaitOnData state={this.state} handleRegistration={this.handleRegistration}/>
+            </div>
     );
   }
 }
 
-export default withRouter(LoginForm)
+export default withRouter(Profile)

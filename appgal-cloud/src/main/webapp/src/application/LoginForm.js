@@ -50,8 +50,6 @@ class LoginForm extends React.Component {
   }
 
   handleLogin(event) {
-    console.log(JSON.stringify(this.state));
-
     ReactDOM.unmountComponentAtNode(document.getElementById('system_error'));
     ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
     ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
@@ -66,10 +64,8 @@ class LoginForm extends React.Component {
                       state: response.data
                     });*/
     }).catch(err => {
-           console.log(JSON.stringify(err));
            if(err.response != null && err.response.status == 401)
            {
-                console.log(JSON.stringify(err.response.data));
                 if(err.response.data.message == "profile_not_found")
                 {
                     const profile_not_found = (
@@ -159,8 +155,6 @@ class LoginForm extends React.Component {
                       const loginUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
                       axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
                       then((response) => {
-                          console.log("**************************");
-                          console.log(JSON.stringify(response.data));
                           /*this.props.history.push({
                               pathname: "/dropOffHome",
                               state: response.data
