@@ -47,7 +47,6 @@ import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
 
 const DropOffOptionsView = ({dropOffOrgs,widget}) => {
-    console.log("ARRAY: "+JSON.stringify(dropOffOrgs));
     const array = []
     for (const [index, value] of dropOffOrgs.entries()) {
         array.push(
@@ -101,14 +100,11 @@ class DropOffOptions extends React.Component
     handlePickup(event)
     {
          var schedulePickupData;
-         //TODO: remove_me
          for (const [index, value] of this.props.location.state.data.dropOffOrgs.entries()) {
              schedulePickupData = value;
          }
          console.log(JSON.stringify(schedulePickupData));
          const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
-         //const schedulePickupData = {};
-         //schedulePickupData.id = "a3f499d6-106d-40da-a608-b36029b5ac42";
          axios.post(apiUrl,schedulePickupData).then((response) => {
                console.log(JSON.stringify(response.data));
                this.element = (

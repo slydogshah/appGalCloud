@@ -151,7 +151,8 @@ class PickupHistory extends React.Component
     renderMyData()
     {
         //TODO: unmock
-        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/history/?orgId='+'microsoft";
+        const orgId = "microsoft";
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/history/?orgId="+orgId;
         axios.get(apiUrl).then((response) => {
                   this.setState({data: response.data});
         });

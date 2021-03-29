@@ -216,10 +216,10 @@ class Home extends React.Component {
   }
 
   renderMyData(){
-    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?email=cindu@zoe.com";
+    const email = "jen@appgallabs.io"; //TODO: unmock
+    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?email="+email;
     axios.get(apiUrl).then((response) => {
         this.setState({data: response.data});
-        //console.log("RESPONSE: "+JSON.stringify(response.data));
     });
   }
 

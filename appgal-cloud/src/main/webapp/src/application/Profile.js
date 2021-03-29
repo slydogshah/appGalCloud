@@ -172,12 +172,6 @@ class Profile extends React.Component {
                       const loginUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
                       axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
                       then((response) => {
-                          console.log("**************************");
-                          console.log(JSON.stringify(response.data));
-                          /*this.props.history.push({
-                              pathname: "/dropOffHome",
-                              state: response.data
-                          });*/
                           this.props.history.push({
                               pathname: "/home",
                               state: response.data
@@ -264,7 +258,9 @@ class Profile extends React.Component {
     }
 
     renderMyData(){
-        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email=jen@appgallabs.io";
+        //TODO: unmock
+        const email = "jen@appgallabs.io";
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
         axios.get(apiUrl).then((response) => {
             this.setState({data: response.data});
         });

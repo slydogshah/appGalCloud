@@ -95,7 +95,7 @@ class DropOffHistory extends React.Component
     constructor(props)
     {
         super(props);
-        console.log("DropOffHistory: "+JSON.stringify(this.props.location.state));
+        //console.log("DropOffHistory: "+JSON.stringify(this.props.location.state));
     }
 
     render()

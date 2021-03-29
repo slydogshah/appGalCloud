@@ -53,6 +53,7 @@ class AddPickupDetails extends React.Component
     }
 
     handleDetails(event) {
+        //TODO: unmock
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId=microsoft";
         axios.get(apiUrl).then((response) => {
               this.props.history.push({
