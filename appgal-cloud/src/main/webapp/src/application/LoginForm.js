@@ -71,10 +71,13 @@ class LoginForm extends React.Component {
 
     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
+          console.log(response.data);
+          //window.location.reload();
           this.props.history.push({
             pathname: "/home"
           });
     }).catch(err => {
+           console.log("ERROR(LOGIN): "+JSON.stringify(err));
            if(err.response != null && err.response.status == 401)
            {
                 if(err.response.data.message == "profile_not_found")

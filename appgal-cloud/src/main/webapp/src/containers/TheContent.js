@@ -1,10 +1,11 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useContext } from 'react'
 import {
   Redirect,
   Route,
   Switch
 } from 'react-router-dom'
 import { CContainer, CFade } from '@coreui/react'
+import { AppContext} from "./../application/AppContext"
 
 // routes config
 import routes from '../routes'
@@ -16,26 +17,55 @@ const loading = (
 )
 
 const TheContent = () => {
+  //const auth = useContext(AppContext).auth;
+  //const counter = useContext(AppContext).counter;
+  //console.log("AppContext(CONTENT): "+auth);
+  //console.log("AppContextCounter(CONTENT): "+counter);
+  //useContext(AppContext).counter = 123;
   return (
     <main className="c-main">
       <CContainer fluid>
         <Suspense fallback={loading}>
           <Switch>
             {routes.map((route, idx) => {
+
+              /*if(auth || route.path === "/")
+              {
+                    return route.component && (
+                                        <Route
+                                          key={idx}
+                                          path={route.path}
+                                          exact={route.exact}
+                                          name={route.name}
+                                          render={props => (
+                                            <CFade>
+                                              <route.component {...props} />
+                                            </CFade>
+                                          )} />
+                                      )
+              }
+              else
+              {
+                return (
+                    <>
+                        <Redirect from={route.path} to="/" />
+                    </>
+                )
+              }*/
+
               return route.component && (
-                <Route
-                  key={idx}
-                  path={route.path}
-                  exact={route.exact}
-                  name={route.name}
-                  render={props => (
-                    <CFade>
-                      <route.component {...props} />
-                    </CFade>
-                  )} />
-              )
+                                                      <Route
+                                                        key={idx}
+                                                        path={route.path}
+                                                        exact={route.exact}
+                                                        name={route.name}
+                                                        render={props => (
+                                                          <CFade>
+                                                            <route.component {...props} />
+                                                          </CFade>
+                                                        )} />
+                                                    )
             })}
-            <Redirect from="/" to="/home" />
           </Switch>
         </Suspense>
       </CContainer>
