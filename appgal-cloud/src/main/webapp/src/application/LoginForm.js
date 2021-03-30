@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom'
 import { withRouter } from "react-router";
@@ -29,6 +29,21 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { AppContext} from "./AppContext"
+
+/*function UpdateContext()
+{
+    console.log("AppContext: "+useContext(AppContext).auth);
+    useContext(AppContext).auth = true;
+}
+
+function BackgroundUpdate()
+{
+    useEffect(() => {
+        console.log("***********BACKGROUND_UPDATE_INVOKED***********");
+        UpdateContext();
+    });
+}*/
 
 class LoginForm extends React.Component {
   mixins = [OverlayMixin];
@@ -59,10 +74,6 @@ class LoginForm extends React.Component {
           this.props.history.push({
             pathname: "/home"
           });
-          /*this.props.history.push({
-                      pathname: "/dropOffHome",
-                      state: response.data
-                    });*/
     }).catch(err => {
            if(err.response != null && err.response.status == 401)
            {

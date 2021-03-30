@@ -98,6 +98,7 @@ const InProgressTransactionView = ({inProgress}) => {
 /**/
 
 const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
+    useContext(AppContext).auth = true;
     console.log("AppContext: "+useContext(AppContext).auth);
     if (state.data === null) {
       return <p>Loading...</p>;
