@@ -17,41 +17,12 @@ const loading = (
 )
 
 const TheContent = () => {
-  //const auth = useContext(AppContext).auth;
-  //const counter = useContext(AppContext).counter;
-  //console.log("AppContext(CONTENT): "+auth);
-  //console.log("AppContextCounter(CONTENT): "+counter);
-  //useContext(AppContext).counter = 123;
   return (
     <main className="c-main">
       <CContainer fluid>
         <Suspense fallback={loading}>
           <Switch>
             {routes.map((route, idx) => {
-
-              /*if(auth || route.path === "/")
-              {
-                    return route.component && (
-                                        <Route
-                                          key={idx}
-                                          path={route.path}
-                                          exact={route.exact}
-                                          name={route.name}
-                                          render={props => (
-                                            <CFade>
-                                              <route.component {...props} />
-                                            </CFade>
-                                          )} />
-                                      )
-              }
-              else
-              {
-                return (
-                    <>
-                        <Redirect from={route.path} to="/" />
-                    </>
-                )
-              }*/
 
               return route.component && (
                                                       <Route

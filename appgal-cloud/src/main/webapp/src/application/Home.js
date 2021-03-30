@@ -98,7 +98,6 @@ const InProgressTransactionView = ({inProgress}) => {
 /**/
 
 const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
-    //useContext(AppContext).auth = true;
     //console.log("AppContext(HOME): "+useContext(AppContext).auth);
     if (state.data === null) {
       return <p>Loading...</p>;
@@ -210,8 +209,8 @@ class Home extends React.Component {
   element;
   constructor(props) {
       super(props);
+      //console.log("***********LOAD_HOME***************");
 
-      console.log("***********LOAD_HOME***************");
 
       this.handlePickup = this.handlePickup.bind(this);
       this.handlePickupProcess = this.handlePickupProcess.bind(this);

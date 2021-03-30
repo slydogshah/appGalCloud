@@ -29,21 +29,8 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { AppContext} from "./AppContext"
+import { AppContext,store} from "./AppContext"
 
-/*function UpdateContext()
-{
-    console.log("AppContext: "+useContext(AppContext).auth);
-    useContext(AppContext).auth = true;
-}
-
-function BackgroundUpdate()
-{
-    useEffect(() => {
-        console.log("***********BACKGROUND_UPDATE_INVOKED***********");
-        UpdateContext();
-    });
-}*/
 
 class LoginForm extends React.Component {
   mixins = [OverlayMixin];
@@ -71,13 +58,18 @@ class LoginForm extends React.Component {
 
     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
-          console.log(response.data);
-          //window.location.reload();
+          //console.log(response.data);
+
+          store.setState(state => ({
+            ...state,
+            auth: true,
+          }));
+
           this.props.history.push({
             pathname: "/home"
           });
     }).catch(err => {
-           console.log("ERROR(LOGIN): "+JSON.stringify(err));
+           //console.log("ERROR(LOGIN): "+JSON.stringify(err));
            if(err.response != null && err.response.status == 401)
            {
                 if(err.response.data.message == "profile_not_found")
