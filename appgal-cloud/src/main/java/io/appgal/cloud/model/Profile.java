@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Objects;
 
 @ValidProfileSourceOrg
 public class Profile implements Serializable {
@@ -241,5 +242,18 @@ public class Profile implements Serializable {
         }
 
         return profile;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Profile profile = (Profile) o;
+        return Objects.equals(email, profile.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
     }
 }

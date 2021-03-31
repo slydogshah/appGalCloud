@@ -63,6 +63,7 @@ class LoginForm extends React.Component {
           store.setState(state => ({
             ...state,
             auth: true,
+            email:this.state.username
           }));
 
           this.props.history.push({

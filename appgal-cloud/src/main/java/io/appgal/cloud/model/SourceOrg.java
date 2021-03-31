@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SourceOrg implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(SourceOrg.class);
@@ -20,18 +17,18 @@ public class SourceOrg implements Serializable {
     private String orgName;
     private String orgContactEmail;
     private DeliveryPreference deliveryPreference;
-    private List<Profile> profiles;
+    private Set<Profile> profiles;
     private Location location;
     private boolean isProducer;
     private Address address;
 
     public SourceOrg()
     {
-        this.profiles = new ArrayList<>();
+        this.profiles = new HashSet<>();
     }
 
     public SourceOrg(String orgId, String orgName, String orgContactEmail, DeliveryPreference deliveryPreference,
-                     List<Profile> profiles, Location location, boolean isProducer) {
+                     Set<Profile> profiles, Location location, boolean isProducer) {
         this();
         this.orgId = orgId;
         this.orgName = orgName;
@@ -103,12 +100,17 @@ public class SourceOrg implements Serializable {
         this.deliveryPreference = deliveryPreference;
     }
 
-    public List<Profile> getProfiles() {
+    public Set<Profile> getProfiles() {
         return profiles;
     }
 
-    public void setProfiles(List<Profile> profiles) {
+    public void setProfiles(Set<Profile> profiles) {
         this.profiles = profiles;
+    }
+
+    public void addProfile(Profile profile)
+    {
+        this.profiles.add(profile);
     }
 
     public boolean isProducer() {

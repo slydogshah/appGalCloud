@@ -32,7 +32,8 @@ public class FoodRecoveryStore {
         List<FoodRecoveryTransaction> list = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
-        String queryJson = "{}";
+        String queryJson = "{\"pickupNotification.sourceOrg.orgContactEmail\":\""+email+"\"}";
+        //String queryJson = "{}";
         logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);

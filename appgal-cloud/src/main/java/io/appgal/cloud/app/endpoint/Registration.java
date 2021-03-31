@@ -105,11 +105,14 @@ public class Registration {
     @Path("org")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerOrg(@RequestBody String profileJson)
+    public Response registerOrg(@RequestBody String json)
     {
         try {
-            JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
+            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+
             Profile profile = Profile.parse(jsonObject.toString());
+            SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
+            sourceOrg.addProfile(profile);
 
             Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
             if(!violations.isEmpty())
@@ -124,7 +127,7 @@ public class Registration {
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
-            this.profileRegistrationService.register(profile);
+            this.profileRegistrationService.registerSourceOrg(sourceOrg);
 
             return Response.ok().build();
         }

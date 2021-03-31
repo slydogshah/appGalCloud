@@ -13,6 +13,8 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
+//TODO: hook the actual logout routine
+
 class TheHeaderDropdown extends React.Component {
    constructor(props) {
        super(props);

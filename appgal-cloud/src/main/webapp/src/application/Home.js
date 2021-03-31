@@ -45,7 +45,7 @@ import WidgetsDropdown from './WidgetsDropdown'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
-import { AppContext} from "./AppContext"
+import { AppContext,store} from "./AppContext"
 
 const PendingTransactionView = ({pending}) => {
     const txs = []
@@ -98,7 +98,6 @@ const InProgressTransactionView = ({inProgress}) => {
 /**/
 
 const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
-    //console.log("AppContext(HOME): "+useContext(AppContext).auth);
     if (state.data === null) {
       return <p>Loading...</p>;
     }
@@ -220,7 +219,7 @@ class Home extends React.Component {
   }
 
   renderMyData(){
-    const email = "jen@appgallabs.io"; //TODO: unmock
+    const email = store.getState().email;
     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?email="+email;
     axios.get(apiUrl).then((response) => {
         this.setState({data: response.data});

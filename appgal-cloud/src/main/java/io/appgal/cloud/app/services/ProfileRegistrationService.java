@@ -53,11 +53,17 @@ public class ProfileRegistrationService {
     public void registerSourceOrg(SourceOrg sourceOrg) throws ResourceExistsException
     {
         String sourceOrgId = sourceOrg.getOrgId();
-        SourceOrg exists = this.mongoDBJsonStore.getSourceOrg(sourceOrgId);
-        if(exists != null)
+        SourceOrg storedSourceOrg = this.mongoDBJsonStore.getSourceOrg(sourceOrgId);
+        if(storedSourceOrg == null)
+        {
+            this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+        }
+
+        Profile newProfile = sourceOrg.getProfiles().iterator().next();
+        if(storedSourceOrg.getProfiles().contains(newProfile))
         {
             JsonObject message = new JsonObject();
-            message.addProperty("sourceOrgId",sourceOrgId);
+            message.addProperty("email", newProfile.getEmail());
             throw new ResourceExistsException(message.toString());
         }
 

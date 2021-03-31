@@ -180,19 +180,25 @@ public class RegistrationTests extends BaseTest {
 
     @Test
     public void testLoginSuccessOrg() {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setLocation(new Location(9.0d, 10.0d));
-        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
 
         JsonObject registrationJson = new JsonObject();
         String id = UUID.randomUUID().toString();
-        String email = id+"@blah.com";
+        String email = id+"@microsoft.com";
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
-        registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
         registrationJson.addProperty("sourceOrgId", sourceOrg.getOrgId());
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+
 
         logger.info("******NEW_ORG******");
         logger.info(registrationJson.toString());
