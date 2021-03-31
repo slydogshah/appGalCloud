@@ -1,0 +1,1 @@
+java -jar -Dquarkus.http.port=80 target/*runner.jar
