@@ -43,6 +43,7 @@ import WidgetsDropdown from './WidgetsDropdown'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 
 import { DocsLink } from 'src/reusable'
+import { AppContext,store} from "./AppContext"
 
 
 class AddPickupDetails extends React.Component
@@ -53,8 +54,8 @@ class AddPickupDetails extends React.Component
     }
 
     handleDetails(event) {
-        //TODO: unmock
-        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId=microsoft";
+        const orgId = store.getState().sourceOrg.orgId;
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId="+orgId;
         axios.get(apiUrl).then((response) => {
               this.props.history.push({
                 pathname: "/dropOffOptions",

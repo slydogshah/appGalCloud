@@ -4,6 +4,7 @@ import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 
+import io.appgal.cloud.model.SourceOrg;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +32,32 @@ public class PreProcessor implements ContainerRequestFilter {
     public void filter(ContainerRequestContext context) {
         if(this.profileRegistrationService.getProfile(this.admin) == null) {
             logger.info("CREATING_ADMIN_PROFILE");
-            try {
+            try
+            {
+                SourceOrg sourceOrg = new SourceOrg();
+                sourceOrg.setOrgId("AppGal Labs");
+                sourceOrg.setOrgName("AppGal Labs");
+                sourceOrg.setProducer(true);
+                sourceOrg.setOrgContactEmail(this.admin);
                 Profile profile = new Profile();
                 profile.setEmail(this.admin);
                 profile.setPassword(this.password);
                 profile.setMobile(123);
-                profile.setProfileType(ProfileType.FOOD_RUNNER);
-                this.profileRegistrationService.register(profile);
-            } catch (Exception e) {
+                profile.setProfileType(ProfileType.ORG);
+                sourceOrg.addProfile(profile);
+                this.profileRegistrationService.registerSourceOrg(sourceOrg);
+
+
+                SourceOrg dropOffOrg = new SourceOrg();
+                dropOffOrg.setOrgId("Church");
+                dropOffOrg.setOrgName("Church");
+                dropOffOrg.setProducer(false);
+                dropOffOrg.setOrgContactEmail("church@gmail.com");
+                this.profileRegistrationService.registerSourceOrg(dropOffOrg);
+
+            }
+            catch (Exception e)
+            {
             }
         }
         else

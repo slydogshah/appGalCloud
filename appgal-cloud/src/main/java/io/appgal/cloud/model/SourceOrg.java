@@ -110,6 +110,7 @@ public class SourceOrg implements Serializable {
 
     public void addProfile(Profile profile)
     {
+        profile.setSourceOrgId(this.orgId);
         this.profiles.add(profile);
     }
 
