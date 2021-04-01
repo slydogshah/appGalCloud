@@ -248,6 +248,11 @@ public class MongoDBJsonStore {
         return this.foodRecoveryStore.getFoodRecoveryTransactions(this.mongoDatabase, email);
     }
 
+    public List<FoodRecoveryTransaction> getFoodRecoveryDropOffTransactions(String orgId)
+    {
+        return this.foodRecoveryStore.getFoodRecoveryDropOffTransactions(this.mongoDatabase,orgId);
+    }
+
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactionHistory(String orgId)
     {
         return this.foodRecoveryStore.getFoodRecoveryTransactionHistory(this.mongoDatabase, orgId);

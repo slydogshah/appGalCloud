@@ -91,9 +91,13 @@ class LoginForm extends React.Component {
             sourceOrg: response.data.sourceOrg
           }));
 
-          this.props.history.push({
+          /*this.props.history.push({
             pathname: "/home"
-          });
+          });*/
+
+          this.props.history.push({
+                      pathname: "/dropOffHome"
+                    });
     }).catch(err => {
            //console.log("ERROR(LOGIN): "+JSON.stringify(err));
            if(err.response != null && err.response.status == 401)

@@ -65,6 +65,46 @@ public class Transactions {
         }
     }
 
+    @Path("/dropoff")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodRecoveryDropOffTransactions(@QueryParam("orgId") String orgId)
+    {
+        try
+        {
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            JsonArray inProgress = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryDropOffTransactions(orgId);
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED) {
+                    pending.add(cour.toJson());
+                } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
+                        cour.getTransactionState() == TransactionState.ONTHEWAY) {
+                    inProgress.add(cour.toJson());
+                }
+            }
+            result.add("pending", pending);
+            result.add("inProgress", inProgress);
+
+            List<FoodRecoveryTransaction> history = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(orgId);
+            boolean historyExists = false;
+            if(!history.isEmpty())
+            {
+                historyExists = true;
+            }
+            result.addProperty("historyExists",historyExists);
+            return Response.ok(result.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
     @Path("/recovery/history")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

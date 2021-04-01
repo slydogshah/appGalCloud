@@ -23,9 +23,9 @@ public class FoodRecoveryStore {
     public void storeFoodRecoveryTransaction(MongoDatabase database,FoodRecoveryTransaction foodRecoveryTransaction)
     {
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
-        logger.info("*******************************STORE************************************************************************************");
-        JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
-        logger.info("*******************************************************************************************************************");
+        //logger.info("*******************************STORE************************************************************************************");
+        //JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
+        //logger.info("*******************************************************************************************************************");
 
         Document doc = Document.parse(foodRecoveryTransaction.toString());
         collection.insertOne(doc);
@@ -38,6 +38,26 @@ public class FoodRecoveryStore {
 
         String queryJson = "{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"}";
         //String queryJson = "{}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryDropOffTransactions(MongoDatabase database,String orgId)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.INPROGRESS+"\"}]}";
         logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
