@@ -42,6 +42,11 @@ public class FoodRecoveryOrchestrator {
         List<SourceOrg> dropOffOptions = new ArrayList<>();
         for (SourceOrg dropOffOption : dropOffOrgs)
         {
+            if(dropOffOption.isProducer())
+            {
+                continue;
+            }
+
             JsonUtil.print(this.getClass(),dropOffOption.toJson());
 
             if(dropOffOption.getOrgId().equals(producer.getOrgId()))
