@@ -30,30 +30,22 @@ public class Transactions {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFoodRecoveryTransactions(@QueryParam("email") String email)
     {
-        try {
-            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
-
+        try
+        {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
-            JsonArray inprogress = new JsonArray();
-            JsonArray transactions = JsonParser.parseString(txs.toString()).getAsJsonArray();
-            Iterator<JsonElement> itr = transactions.iterator();
-            while (itr.hasNext()) {
-                JsonObject transaction = itr.next().getAsJsonObject();
-                FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(transaction.toString());
-
-                if (tx.getTransactionState() == TransactionState.SUBMITTED) {
-                    pending.add(tx.toJson());
-                } else if (tx.getTransactionState() == TransactionState.INPROGRESS || tx.getTransactionState() == TransactionState.ONTHEWAY) {
-                    inprogress.add(tx.toJson());
+            JsonArray inProgress = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED) {
+                    pending.add(cour.toJson());
+                } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
+                        cour.getTransactionState() == TransactionState.ONTHEWAY) {
+                    inProgress.add(cour.toJson());
                 }
-
-                pending.add(transaction);
             }
             result.add("pending", pending);
-            result.add("inProgress", inprogress);
-
-
+            result.add("inProgress", inProgress);
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)

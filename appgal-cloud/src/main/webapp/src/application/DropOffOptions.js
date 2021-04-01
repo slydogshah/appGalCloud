@@ -112,30 +112,9 @@ class DropOffOptions extends React.Component
          const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
          axios.post(apiUrl,schedulePickupData).then((response) => {
                console.log(JSON.stringify(response.data));
-               this.element = (
-                             <CModal
-                               size="sm"
-                               show={true}
-                               color="success"
-                               fade="true"
-                             >
-                               <CModalHeader>
-                                 <CModalTitle>Pickup Confirmation</CModalTitle>
-                               </CModalHeader>
-                               <CModalBody>
-                                    <CCallout color="info">
-                                     <div className="progress-group-prepend">
-                                        <small className="text-muted">Your Pickup is scheduled</small>
-                                     </div>
-                                   </CCallout>
-                               </CModalBody>
-                               <CModalFooter>
-                                   <CButton color="success" onClick={this.handlePickupProcess}>OK</CButton>
-                               </CModalFooter>
-                             </CModal>
-                        );
-                        ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
-                        ReactDOM.render(this.element,document.getElementById('schedulePickup'));
+               this.props.history.push({
+                           pathname: "/home"
+                       });
          }).catch(err => {
           console.log(JSON.stringify(err));
          });

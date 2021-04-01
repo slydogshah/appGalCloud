@@ -222,6 +222,7 @@ class Home extends React.Component {
     const email = store.getState().email;
     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?email="+email;
     axios.get(apiUrl).then((response) => {
+        console.log("MY_DATA: "+JSON.stringify(response.data));
         this.setState({data: response.data});
     });
   }
