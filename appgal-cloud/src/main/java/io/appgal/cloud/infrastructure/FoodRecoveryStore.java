@@ -31,12 +31,12 @@ public class FoodRecoveryStore {
         collection.insertOne(doc);
     }
 
-    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(MongoDatabase database,String email)
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(MongoDatabase database,String orgId)
     {
         List<FoodRecoveryTransaction> list = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
-        String queryJson = "{\"pickupNotification.sourceOrg.orgContactEmail\":\""+email+"\"}";
+        String queryJson = "{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"}";
         //String queryJson = "{}";
         logger.info(queryJson);
         Bson bson = Document.parse(queryJson);

@@ -45,6 +45,7 @@ import WidgetsDropdown from './WidgetsDropdown'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
+import { AppContext,store} from "./AppContext"
 
 const fields = [
           { key: 'dropOffNotification', label:'Organization', _style: { width: '40%'} },
@@ -62,6 +63,7 @@ const getBadge = (status)=>{
      }
 
 const ClosedTransactionView = ({closed}) => {
+    console.log("******CLOSED_TX_VIEW****************");
     console.log(JSON.stringify(closed));
     const txs = []
     for (const [index, value] of closed.entries()) {
@@ -95,45 +97,13 @@ const WaitOnData = ({state}) => {
     if (state.data === null) {
           return <p>Loading...</p>;
     }
-
     return (
           <>
           <br/>
-                <br/>
-                <br/>
-                <br/>
-            <CRow>
-                                            <CCol>
-                                                <CRow>
-                                                        <CCol>
-                                                          <CCard>
-                                                            <CCardHeader>
-                                                              Pickup History
-                                                            </CCardHeader>
-                                                            <CCardBody>
-                                                              <CRow>
-                                                                <CCol xs="12" md="6" xl="6">
-
-                                                                  <CRow>
-                                                                    <CCol sm="6">
-                                                                      <CCallout color="info">
-                                                                        <small className="text-muted">Closed</small>
-                                                                        <br />
-                                                                        <strong className="h4">10</strong>
-                                                                      </CCallout>
-                                                                    </CCol>
-                                                                  </CRow>
-
-                                                                  <hr className="mt-0" />
-                                                                  <ClosedTransactionView closed={state.data}/>
-                                                                </CCol>
-                                                              </CRow>
-                                                            </CCardBody>
-                                                          </CCard>
-                                                        </CCol>
-                                                      </CRow>
-                                            </CCol>
-                                            </CRow>
+          <br/>
+          <br/>
+          <br/>
+          <ClosedTransactionView closed={state.data}/>
           </>
     )
 }
@@ -143,18 +113,16 @@ class PickupHistory extends React.Component
     constructor(props)
     {
         super(props);
-        //console.log("State: "+JSON.stringify(this.props.location.state));
         this.state = {data: null};
         this.renderMyData();
     }
 
     renderMyData()
     {
-        //TODO: unmock
-        const orgId = "microsoft";
+        const orgId = store.getState().sourceOrg.orgId;
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/history/?orgId="+orgId;
         axios.get(apiUrl).then((response) => {
-                  this.setState({data: response.data});
+            this.setState({data: response.data});
         });
     }
 

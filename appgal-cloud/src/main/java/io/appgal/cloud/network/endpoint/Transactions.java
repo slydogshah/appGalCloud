@@ -28,14 +28,14 @@ public class Transactions {
     @Path("/recovery")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFoodRecoveryTransactions(@QueryParam("email") String email)
+    public Response getFoodRecoveryTransactions(@QueryParam("orgId") String orgId)
     {
         try
         {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
-            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
+            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(orgId);
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
                     pending.add(cour.toJson());
@@ -46,6 +46,14 @@ public class Transactions {
             }
             result.add("pending", pending);
             result.add("inProgress", inProgress);
+
+            List<FoodRecoveryTransaction> history = this.mongoDBJsonStore.getFoodRecoveryTransactionHistory(orgId);
+            boolean historyExists = false;
+            if(!history.isEmpty())
+            {
+                historyExists = true;
+            }
+            result.addProperty("historyExists",historyExists);
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)

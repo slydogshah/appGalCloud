@@ -95,8 +95,6 @@ const InProgressTransactionView = ({inProgress}) => {
     )
 }
 
-/**/
-
 const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
     if (state.data === null) {
       return <p>Loading...</p>;
@@ -133,7 +131,9 @@ const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
                                    </CDropdownToggle>
                                    <CDropdownMenu className="pt-0" placement="bottom-end">
                                      <CDropdownItem onClick={handlePickup}>Schedule</CDropdownItem>
-                                     <CDropdownItem onClick={handlePickupHistory}>History</CDropdownItem>
+                                     {state.data.historyExists && (
+                                        <CDropdownItem onClick={handlePickupHistory}>History</CDropdownItem>
+                                     )}
                                    </CDropdownMenu>
                                  </CDropdown>
                                </CWidgetDropdown>
@@ -219,8 +219,8 @@ class Home extends React.Component {
   }
 
   renderMyData(){
-    const email = store.getState().email;
-    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?email="+email;
+    const orgId = store.getState().sourceOrg.orgId;
+    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
     axios.get(apiUrl).then((response) => {
         console.log("MY_DATA: "+JSON.stringify(response.data));
         this.setState({data: response.data});

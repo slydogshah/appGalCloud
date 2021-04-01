@@ -29,6 +29,7 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { AppContext,store} from "./AppContext"
 
 const WaitOnData = ({state, handleRegistration, handleChange}) => {
           if (state.data === null) {
@@ -258,8 +259,7 @@ class Profile extends React.Component {
     }
 
     renderMyData(){
-        //TODO: unmock
-        const email = "jen@appgallabs.io";
+        const email = store.getState().email;
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
         axios.get(apiUrl).then((response) => {
             this.setState({data: response.data});
