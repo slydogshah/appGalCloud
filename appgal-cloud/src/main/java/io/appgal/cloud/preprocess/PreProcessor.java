@@ -1,6 +1,7 @@
 package io.appgal.cloud.preprocess;
 
 import io.appgal.cloud.app.services.ProfileRegistrationService;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 
@@ -20,6 +21,9 @@ public class PreProcessor implements ContainerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(PreProcessor.class);
 
     @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
+    @Inject
     private ProfileRegistrationService profileRegistrationService;
 
     @ConfigProperty(name = "admin")
@@ -30,31 +34,17 @@ public class PreProcessor implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext context) {
-        if(this.profileRegistrationService.getProfile(this.admin) == null) {
-            logger.info("CREATING_ADMIN_PROFILE");
+        if(this.mongoDBJsonStore.getSourceOrg("church") == null) {
             try
             {
-                /*SourceOrg sourceOrg = new SourceOrg();
-                sourceOrg.setOrgId("AppGal Labs");
-                sourceOrg.setOrgName("AppGal Labs");
-                sourceOrg.setProducer(true);
-                sourceOrg.setOrgContactEmail(this.admin);
-                Profile profile = new Profile();
-                profile.setEmail(this.admin);
-                profile.setPassword(this.password);
-                profile.setMobile(123);
-                profile.setProfileType(ProfileType.ORG);
-                sourceOrg.addProfile(profile);
-                this.profileRegistrationService.registerSourceOrg(sourceOrg);*/
-
-
                 SourceOrg dropOffOrg = new SourceOrg();
-                dropOffOrg.setOrgId("Church");
-                dropOffOrg.setOrgName("Church");
+                dropOffOrg.setOrgId("church");
+                dropOffOrg.setOrgName("church");
                 dropOffOrg.setProducer(false);
                 dropOffOrg.setOrgContactEmail("church@gmail.com");
                 this.profileRegistrationService.registerSourceOrg(dropOffOrg);
 
+                logger.info("CREATING_ADMIN_PROFILE");
             }
             catch (Exception e)
             {
