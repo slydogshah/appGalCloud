@@ -27,11 +27,16 @@ public abstract class BaseTest
     @AfterEach
     public void tearDown() throws Exception
     {
-        if(this.mongoDBJsonStore == null)
-        {
-            this.mongoDBJsonStore = new MongoDBJsonStore();
+        try {
+            if (this.mongoDBJsonStore == null) {
+                this.mongoDBJsonStore = new MongoDBJsonStore();
+            }
+            this.mongoDBJsonStore.start();
+            this.mongoDBJsonStore.getMongoClient().getDatabase("jennetwork").drop();
         }
-        this.mongoDBJsonStore.start();
-        this.mongoDBJsonStore.getMongoClient().getDatabase("jennetwork").drop();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
