@@ -133,7 +133,7 @@ public class ProfileRegistrationService {
         throw new AuthenticationException(authFailure);
     }
 
-    public JsonArray orgLogin(String userAgent, String email, String password) throws AuthenticationException
+    public JsonObject orgLogin(String userAgent, String email, String password) throws AuthenticationException
     {
         JsonObject authFailure = new JsonObject();
         Profile profile = this.mongoDBJsonStore.getProfile(email);
@@ -154,19 +154,13 @@ public class ProfileRegistrationService {
 
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
-            final JsonObject activeView = this.networkOrchestrator.getActiveView();
-            JsonArray activeProfiles = new JsonArray();
-
-            JsonArray activeFoodRunners = activeView.getAsJsonArray("activeFoodRunners");
-            Iterator<JsonElement> itr = activeFoodRunners.iterator();
-            while(itr.hasNext())
-            {
-                JsonObject cour = itr.next().getAsJsonObject();
-                Profile courProfile = Profile.parse(cour.get("profile").getAsJsonObject().toString());
-                activeProfiles.add(courProfile.toJson());
-            }
-
-            return activeProfiles;
+            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(profile.getSourceOrgId());
+            JsonObject jsonObject = new JsonObject();
+            JsonObject profileJson = profile.toJson();
+            profileJson.remove("password");
+            jsonObject.add("profile", profileJson);
+            jsonObject.add("sourceOrg", sourceOrg.toJson());
+            return jsonObject;
         }
 
         authFailure.addProperty("message", "password_mismatch");

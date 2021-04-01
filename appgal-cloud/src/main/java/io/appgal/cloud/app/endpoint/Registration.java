@@ -174,9 +174,11 @@ public class Registration {
             }
             else
             {
-                this.profileRegistrationService.orgLogin(userAgent, email, password);
+                responseJson = this.profileRegistrationService.orgLogin(userAgent, email, password);
             }
-            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
+
+
+            /*List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
             JsonArray pendingTransactions = new JsonArray();
             JsonArray activeTransactions = new JsonArray();
             for(FoodRecoveryTransaction tx: txs)
@@ -191,7 +193,7 @@ public class Registration {
                 }
             }
             responseJson.add("pending", pendingTransactions);
-            responseJson.add("inProgress", activeTransactions);
+            responseJson.add("inProgress", activeTransactions);*/
 
             return Response.ok(responseJson.toString()).build();
         }

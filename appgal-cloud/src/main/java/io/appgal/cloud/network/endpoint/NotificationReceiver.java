@@ -8,6 +8,7 @@ import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.network.services.FoodRecoveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -96,11 +97,14 @@ public class NotificationReceiver {
     public Response schedulePickUp(@RequestBody String jsonBody)
     {
         try {
-            logger.info("******SCHEDULE_PICKUO**********");
-            logger.info(jsonBody);
+            logger.info("******SCHEDULE_PICKUP**********");
 
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
+
+            JsonUtil.print(this.getClass(), notification.toJson());
+
             this.networkOrchestrator.schedulePickUp(notification);
+
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);

@@ -341,8 +341,8 @@ public class MongoDBJsonStoreTests extends BaseTest {
 
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
 
-        List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryTransactions(tx.getFoodRunner().
-                getProfile().getEmail());
+        List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryTransactions(tx.getPickUpNotification()
+        .getSourceOrg().getOrgContactEmail());
         JsonUtil.print(this.getClass(),JsonParser.parseString(list.toString()));
         assertFalse(list.isEmpty());
     }

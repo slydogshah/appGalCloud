@@ -192,7 +192,6 @@ public class RegistrationTests extends BaseTest {
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("password", "c");
-        registrationJson.addProperty("sourceOrgId", sourceOrg.getOrgId());
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
         registrationJson.addProperty("orgName",sourceOrg.getOrgName());
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());

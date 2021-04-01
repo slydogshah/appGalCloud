@@ -45,6 +45,7 @@ import WidgetsDropdown from './WidgetsDropdown'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
+import { AppContext,store} from "./AppContext"
 
 const DropOffOptionsView = ({dropOffOrgs,widget}) => {
     const array = []
@@ -103,7 +104,11 @@ class DropOffOptions extends React.Component
          for (const [index, value] of this.props.location.state.data.dropOffOrgs.entries()) {
              schedulePickupData = value;
          }
+         const contextData = store.getState();
+         schedulePickupData.sourceOrg = contextData.sourceOrg;
+
          console.log(JSON.stringify(schedulePickupData));
+
          const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
          axios.post(apiUrl,schedulePickupData).then((response) => {
                console.log(JSON.stringify(response.data));

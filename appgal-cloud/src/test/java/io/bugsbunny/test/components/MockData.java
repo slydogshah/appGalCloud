@@ -12,7 +12,7 @@ public class MockData {
     public static FoodRecoveryTransaction mockFoodRecoveryTransaction()
     {
         //pickup
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
+        SourceOrg sourceOrg = new SourceOrg("Irenes", "Irenes", "z@c.com",true);
         sourceOrg.setProducer(true);
         SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
         schedulePickUpNotification.setSourceOrg(sourceOrg);

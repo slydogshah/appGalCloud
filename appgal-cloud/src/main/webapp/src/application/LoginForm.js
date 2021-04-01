@@ -82,12 +82,13 @@ class LoginForm extends React.Component {
 
     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
     axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
-          //console.log(response.data);
+          console.log(response.data);
 
           store.setState(state => ({
             ...state,
             auth: true,
-            email:this.state.username
+            email:this.state.username,
+            sourceOrg: response.data.sourceOrg
           }));
 
           this.props.history.push({

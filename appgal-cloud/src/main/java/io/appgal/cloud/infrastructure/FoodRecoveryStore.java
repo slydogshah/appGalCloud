@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import io.appgal.cloud.model.FoodRecoveryTransaction;
 import io.appgal.cloud.model.TransactionState;
+import io.appgal.cloud.util.JsonUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -22,6 +23,9 @@ public class FoodRecoveryStore {
     public void storeFoodRecoveryTransaction(MongoDatabase database,FoodRecoveryTransaction foodRecoveryTransaction)
     {
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+        logger.info("*******************************STORE************************************************************************************");
+        JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
+        logger.info("*******************************************************************************************************************");
 
         Document doc = Document.parse(foodRecoveryTransaction.toString());
         collection.insertOne(doc);
