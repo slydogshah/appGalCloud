@@ -109,10 +109,12 @@ public class Registration {
     {
         try {
             JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+            jsonObject.remove("httpsAgent");
 
             Profile profile = Profile.parse(jsonObject.toString());
             SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
             sourceOrg.addProfile(profile);
+            profile.setSourceOrgId(sourceOrg.getOrgId());
 
             Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
             if(!violations.isEmpty())
@@ -121,6 +123,7 @@ public class Registration {
                 JsonArray violationsArray = new JsonArray();
                 for(ConstraintViolation violation:violations)
                 {
+                    logger.info("VIOLATION: "+violation.getMessage());
                     violationsArray.add(violation.getMessage());
                 }
                 responseJson.add("violations", violationsArray);

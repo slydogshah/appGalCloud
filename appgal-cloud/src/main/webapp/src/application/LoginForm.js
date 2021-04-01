@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext,Component } from 'react'
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom'
 import { withRouter } from "react-router";
@@ -26,6 +26,7 @@ import {
   CPopover,
   CAlert,
   CProgress,
+  CSelect,
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -36,19 +37,42 @@ class LoginForm extends React.Component {
   mixins = [OverlayMixin];
   constructor(props) {
     super(props);
-    this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'',isModalOpen:false};
+    this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'',isModalOpen:false,activeElementType: "dropdown"};
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleRegistration = this.handleRegistration.bind(this);
   }
 
+  inputFieldComp() {
+      return <CInput type="text" placeholder="Organization" autoComplete="sourceOrgId" name="sourceOrgId" onChange={this.handleChange}/>;
+    }
+
+  dropDownComp() {
+      return (
+        <CSelect custom name="sourceOrgId" onChange={this.handleChange}>
+          <option value="0">--Select--</option>
+          <option value="Irenes">Irenes</option>
+          <option value="TraderJoe's">Trader Joe's</option>
+          <option value="ChiliParlor">Chili Parlor</option>
+          <option value="custom">Register New Organization</option>
+        </CSelect>
+      );
+    }
+
   handleChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    this.setState({
-          [name]: value
-    });
+    if (event.target.value === "custom") {
+          this.setState({ activeElementType: "input" });
+    }
+    else
+    {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+                  [name]: value
+        });
+    }
   }
 
   handleLogin(event) {
@@ -157,19 +181,35 @@ class LoginForm extends React.Component {
             const agent = new https.Agent({
               rejectUnauthorized: false
             });
-            axios.post(apiUrl,{httpsAgent: agent,"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).
+
+            const payload = {httpsAgent: agent,
+                                        "email":this.state.email,
+                                        "mobile":this.state.mobile,
+                                        "password":this.state.password,
+                                        "orgId":this.state.sourceOrgId,
+                                        "orgName":this.state.sourceOrgId,
+                                        "profileType":this.state.profileType,
+                                        "orgContactEmail":this.state.email,
+                                        "profileType":this.state.profileType,
+                                        "producer":true};
+            console.log("PAYLOAD: "+JSON.stringify(payload));
+
+            axios.post(apiUrl,payload).
             then((response) => {
+                      console.log("RESPONSE: "+JSON.stringify(response));
                       const loginUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
                       axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
                       then((response) => {
-                          /*this.props.history.push({
-                              pathname: "/dropOffHome",
-                              state: response.data
-                          });*/
-                          this.props.history.push({
-                              pathname: "/home",
-                              state: response.data
-                          });
+                        console.log("RESPONSE: "+JSON.stringify(response));
+                        store.setState(state => ({
+                                 ...state,
+                                 auth: true,
+                                 email:this.state.email
+                               }));
+
+                       this.props.history.push({
+                         pathname: "/home"
+                       });
                       });
             }).catch(err => {
                       if(err.response != null && err.response.status == 401)
@@ -206,6 +246,8 @@ class LoginForm extends React.Component {
                       }
                       else if(err.response != null && err.response.status == 400)
                       {
+                           console.log("ERROR(REG): "+JSON.stringify(err.response.data));
+
                           const violations = err.response.data.violations;
                           if(violations.includes("email_invalid"))
                           {
@@ -326,21 +368,25 @@ class LoginForm extends React.Component {
                               </CInputGroup>
                               <CInputGroup className="mb-5">
                                   <CInputGroupPrepend>
-                                                                      <CInputGroupText>
-                                                                        <CIcon name="cil-lock-locked" />
-                                                                      </CInputGroupText>
-                                                                    </CInputGroupPrepend>
+                                      <CInputGroupText>
+                                        <CIcon name="cil-lock-locked" />
+                                      </CInputGroupText>
+                                  </CInputGroupPrepend>
                                   <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={this.handleChange}/>
                                   <div id="mobileRequired"/>
                                   <div id="phoneInvalid"/>
                               </CInputGroup>
                               <CInputGroup className="mb-6">
                                   <CInputGroupPrepend>
-                                                                      <CInputGroupText>
-                                                                        <CIcon name="cil-lock-locked" />
-                                                                      </CInputGroupText>
-                                                                    </CInputGroupPrepend>
-                                  <CInput type="text" placeholder="Organization" autoComplete="organization" name="sourceOrgId" onChange={this.handleChange}/>
+                                      <CInputGroupText>
+                                        <CIcon name="cil-lock-locked" />
+                                      </CInputGroupText>
+                                  </CInputGroupPrepend>
+                                  <div>
+                                          {this.state.activeElementType === "dropdown"
+                                            ? this.dropDownComp()
+                                            : this.inputFieldComp()}
+                                   </div>
                                   <div id="organizationRequired"/>
                               </CInputGroup>
                               <br/><br/>

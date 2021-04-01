@@ -57,6 +57,7 @@ public class ProfileRegistrationService {
         if(storedSourceOrg == null)
         {
             this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+            return;
         }
 
         Profile newProfile = sourceOrg.getProfiles().iterator().next();
