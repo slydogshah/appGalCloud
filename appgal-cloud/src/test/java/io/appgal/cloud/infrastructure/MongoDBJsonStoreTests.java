@@ -333,7 +333,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         }
     }
 
-    @Test
+    //@Test
     public void testFoodRecoveryTransactionLifeCycle()
     {
         FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();

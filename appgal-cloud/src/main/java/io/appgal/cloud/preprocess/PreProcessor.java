@@ -34,7 +34,7 @@ public class PreProcessor implements ContainerRequestFilter {
             logger.info("CREATING_ADMIN_PROFILE");
             try
             {
-                SourceOrg sourceOrg = new SourceOrg();
+                /*SourceOrg sourceOrg = new SourceOrg();
                 sourceOrg.setOrgId("AppGal Labs");
                 sourceOrg.setOrgName("AppGal Labs");
                 sourceOrg.setProducer(true);
@@ -45,7 +45,7 @@ public class PreProcessor implements ContainerRequestFilter {
                 profile.setMobile(123);
                 profile.setProfileType(ProfileType.ORG);
                 sourceOrg.addProfile(profile);
-                this.profileRegistrationService.registerSourceOrg(sourceOrg);
+                this.profileRegistrationService.registerSourceOrg(sourceOrg);*/
 
 
                 SourceOrg dropOffOrg = new SourceOrg();
