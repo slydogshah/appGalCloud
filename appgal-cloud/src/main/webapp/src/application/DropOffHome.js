@@ -108,7 +108,7 @@ class DropOffHome extends React.Component {
       //const orgId = "church";
       const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropoff/?orgId="+orgId;
       axios.get(apiUrl).then((response) => {
-          console.log("MY_DATA: "+JSON.stringify(response.data));
+          //console.log("MY_DATA: "+JSON.stringify(response.data));
           this.setState({data: response.data});
       });
     }
@@ -119,7 +119,7 @@ class DropOffHome extends React.Component {
         //const orgId = "church";
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropOff/history/?orgId="+orgId;
               axios.get(apiUrl).then((response) => {
-                console.log("MY_DATA: "+JSON.stringify(response.data));
+                //console.log("MY_DATA: "+JSON.stringify(response.data));
                 this.props.history.push({
                   pathname: "/dropOffHistory",
                   state: response.data
