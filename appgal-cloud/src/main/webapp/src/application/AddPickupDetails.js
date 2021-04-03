@@ -117,19 +117,20 @@ class AddPickupDetails extends React.Component
 
     handleDetails(event) {
         const payload = {
+            orgId: store.getState().sourceOrg.orgId,
             foodType: this.state.foodType,
-            upload: store.getState().upload
+            foodPic: store.getState().upload
         };
 
-        const orgId = store.getState().sourceOrg.orgId;
-        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId="+orgId;
-
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/";
         axios.post(apiUrl,payload).then((response) => {
               this.props.history.push({
                 pathname: "/dropOffOptions",
                 state: { data: response.data }
               });
         }).catch(err => {
+
+            //TODO
             console.log(JSON.stringify(err));
         });
     }

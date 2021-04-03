@@ -22,6 +22,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
 
     private List<Note> pickupNotes;
     private boolean isDropOffDynamic;
+    private String dropOffOrgId;
 
     public SchedulePickUpNotification(String id)
     {
@@ -55,6 +56,14 @@ public class SchedulePickUpNotification extends ScheduleNotification
 
     public void setDropOffDynamic(boolean dropOffDynamic) {
         isDropOffDynamic = dropOffDynamic;
+    }
+
+    public String getDropOffOrgId() {
+        return dropOffOrgId;
+    }
+
+    public void setDropOffOrgId(String dropOffOrgId) {
+        this.dropOffOrgId = dropOffOrgId;
     }
 
     public static SchedulePickUpNotification parse(String json)
@@ -115,10 +124,6 @@ public class SchedulePickUpNotification extends ScheduleNotification
     {
         JsonObject jsonObject = new JsonObject();
 
-        if(this.id != null)
-        {
-            jsonObject.addProperty("id", this.id);
-        }
         if(this.sourceOrg != null) {
             jsonObject.add("sourceOrg", this.sourceOrg.toJson());
         }
@@ -139,6 +144,15 @@ public class SchedulePickUpNotification extends ScheduleNotification
 
         jsonObject.addProperty("notificationSent", this.notificationSent);
         jsonObject.addProperty("isDropOffDynamic", this.isDropOffDynamic);
+
+        if(this.id != null)
+        {
+            jsonObject.addProperty("id", this.id);
+        }
+        if(this.dropOffOrgId != null)
+        {
+            jsonObject.addProperty("dropOffOrgId", this.dropOffOrgId);
+        }
 
         return jsonObject;
     }

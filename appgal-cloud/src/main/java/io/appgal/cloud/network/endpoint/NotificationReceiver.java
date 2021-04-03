@@ -3,6 +3,7 @@ package io.appgal.cloud.network.endpoint;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.FoodDetails;
 import io.appgal.cloud.model.ScheduleDropOffNotification;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.SourceOrg;
@@ -18,6 +19,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.UUID;
 
 @Path("notification")
 public class NotificationReceiver {
@@ -73,6 +75,36 @@ public class NotificationReceiver {
         }
     }
 
+    @Path("/addPickupDetails")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addPickupDetails(@RequestBody String payload)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
+            String orgId = json.get("orgId").getAsString();
+
+            FoodDetails foodDetails = FoodDetails.parse(payload);
+            SchedulePickUpNotification notification = new SchedulePickUpNotification(UUID.randomUUID().toString());
+            notification.setFoodDetails(foodDetails);
+            this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
+
+            List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("pickupNotificationId",notification.getId());
+            responseJson.add("dropOffOrgs", JsonParser.parseString(dropOffOrgs.toString()));
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
     @Path("/dropOff/notifications")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -97,10 +129,13 @@ public class NotificationReceiver {
     public Response schedulePickUp(@RequestBody String jsonBody)
     {
         try {
-            logger.info("******SCHEDULE_PICKUP**********");
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String pickupNotificationId = json.get("pickupNotificationId").getAsString();
+            String dropOffOrgId = json.get("dropOffOrgId").getAsString();
 
-            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(jsonBody);
-
+            SchedulePickUpNotification notification = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
+                    getScheduledPickUpNotification(pickupNotificationId).toString());
+            notification.setDropOffOrgId(dropOffOrgId);
             JsonUtil.print(this.getClass(), notification.toJson());
 
             this.networkOrchestrator.schedulePickUp(notification);

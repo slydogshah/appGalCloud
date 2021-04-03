@@ -67,7 +67,7 @@ const DropOffOptionsView = ({dropOffOrgs,widget}) => {
                                      </div>
                                      <div className="progress-group-prepend">
                                         <span className="progress-group-text">
-                                            <CButton color="success" onClick={widget.handlePickup}>Schedule</CButton>
+                                            <CButton color="success" value={value.orgId} onClick={widget.handlePickup}>Schedule</CButton>
                                         </span>
                                      </div>
                                    </CCallout>
@@ -100,24 +100,46 @@ class DropOffOptions extends React.Component
 
     handlePickup(event)
     {
-         var schedulePickupData;
-         for (const [index, value] of this.props.location.state.data.dropOffOrgs.entries()) {
-             schedulePickupData = value;
-         }
-         const contextData = store.getState();
-         schedulePickupData.sourceOrg = contextData.sourceOrg;
+         const dropOffOrgId = event.target.value;
+         const payload = {
+            pickupNotificationId:this.props.location.state.data.pickupNotificationId,
+            dropOffOrgId: dropOffOrgId,
+            sourceOrg:store.getState().sourceOrg
+         };
 
-         console.log(JSON.stringify(schedulePickupData));
+         //console.log(JSON.stringify(payload));
 
          const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
-         axios.post(apiUrl,schedulePickupData).then((response) => {
-               console.log(JSON.stringify(response.data));
-               this.props.history.push({
-                           pathname: "/home"
-                       });
-         }).catch(err => {
-          console.log(JSON.stringify(err));
-         });
+                  axios.post(apiUrl,payload).then((response) => {
+                        console.log(JSON.stringify(response.data));
+                        this.element = (
+                                      <CModal
+                                        size="sm"
+                                        show={true}
+                                        color="success"
+                                        fade="true"
+                                      >
+                                        <CModalHeader>
+                                          <CModalTitle>Pickup Confirmation</CModalTitle>
+                                        </CModalHeader>
+                                        <CModalBody>
+                                             <CCallout color="info">
+                                              <div className="progress-group-prepend">
+                                                 <small className="text-muted">Your Pickup is scheduled</small>
+                                              </div>
+                                            </CCallout>
+                                        </CModalBody>
+                                        <CModalFooter>
+                                            <CButton color="success" onClick={this.handlePickupProcess}>OK</CButton>
+                                        </CModalFooter>
+                                      </CModal>
+                                 );
+                                 ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
+                                 ReactDOM.render(this.element,document.getElementById('schedulePickup'));
+          }).catch(err => {
+           //TODO
+           console.log(JSON.stringify(err));
+          });
     }
 
     handlePickupProcess(event)
