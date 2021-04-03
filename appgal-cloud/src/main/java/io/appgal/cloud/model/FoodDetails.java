@@ -72,10 +72,11 @@ public class FoodDetails implements Serializable {
         {
             jsonObject.addProperty("type",this.foodTypes.name());
         }
-        if(this.foodPic != null)
+        //TODO
+        /*if(this.foodPic != null)
         {
             jsonObject.addProperty("foodPic",this.foodPic);
-        }
+        }*/
         jsonObject.addProperty("quantityInPounds", this.quantityInPounds);
         return jsonObject;
     }

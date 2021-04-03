@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.FoodRecoveryTransaction;
 import io.appgal.cloud.model.TransactionState;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,10 @@ public class Transactions {
             JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(orgId);
+
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+
+
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
                     pending.add(cour.toJson());

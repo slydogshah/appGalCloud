@@ -1,5 +1,6 @@
 package io.appgal.cloud.infrastructure;
 
+import com.google.gson.JsonParser;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -38,7 +39,7 @@ public class FoodRecoveryStore {
 
         String queryJson = "{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"}";
         //String queryJson = "{}";
-        logger.info(queryJson);
+        //logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -58,7 +59,7 @@ public class FoodRecoveryStore {
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
         String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.INPROGRESS+"\"}]}";
-        logger.info(queryJson);
+        //logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -78,7 +79,7 @@ public class FoodRecoveryStore {
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
         String queryJson = "{$and:[{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+ TransactionState.CLOSED+"\"}]}";
-        logger.info(queryJson);
+        //JsonUtil.print(this.getClass(), JsonParser.parseString(queryJson));
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -98,7 +99,7 @@ public class FoodRecoveryStore {
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
         String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.CLOSED+"\"}]}";
-        logger.info(queryJson);
+        //logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();

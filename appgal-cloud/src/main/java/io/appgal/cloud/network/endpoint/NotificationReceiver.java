@@ -84,9 +84,11 @@ public class NotificationReceiver {
             JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
             String orgId = json.get("orgId").getAsString();
 
+            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
             FoodDetails foodDetails = FoodDetails.parse(payload);
             SchedulePickUpNotification notification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             notification.setFoodDetails(foodDetails);
+            notification.setSourceOrg(sourceOrg);
             this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
 
             List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
@@ -95,24 +97,6 @@ public class NotificationReceiver {
             responseJson.addProperty("pickupNotificationId",notification.getId());
             responseJson.add("dropOffOrgs", JsonParser.parseString(dropOffOrgs.toString()));
             return Response.ok(responseJson.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
-
-    @Path("/dropOff/notifications")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getDropOffNotifications(@QueryParam("orgId") String orgId)
-    {
-        try {
-            List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
-            return Response.ok(scheduleDropOffNotificationList.toString()).build();
         }
         catch(Exception e)
         {
@@ -144,6 +128,24 @@ public class NotificationReceiver {
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);
             return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/dropOff/notifications")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDropOffNotifications(@QueryParam("orgId") String orgId)
+    {
+        try {
+            List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
+            return Response.ok(scheduleDropOffNotificationList.toString()).build();
         }
         catch(Exception e)
         {
