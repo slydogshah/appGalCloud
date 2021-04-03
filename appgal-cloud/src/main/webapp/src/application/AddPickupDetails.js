@@ -85,7 +85,7 @@ class Thumb extends React.Component {
 
 class AddPickupDetails extends React.Component
 {
-    constructor(props) {
+    /*constructor(props) {
         super(props);
         this.state = {
             foodType: '',
@@ -100,14 +100,14 @@ class AddPickupDetails extends React.Component
         alert(
           JSON.stringify(this.state)
         );
-        /*const orgId = store.getState().sourceOrg.orgId;
+        const orgId = store.getState().sourceOrg.orgId;
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId="+orgId;
         axios.get(apiUrl).then((response) => {
               this.props.history.push({
                 pathname: "/dropOffOptions",
                 state: { data: response.data }
               });
-        });*/
+        });
     }
 
     render() {
@@ -170,7 +170,70 @@ class AddPickupDetails extends React.Component
             );
         }}/>
       )
+    }*/
+
+    constructor(props)
+    {
+        super(props);
+        this.state = {
+            foodType: '',
+            file: null,
+            loading: false,
+            thumb: undefined
+        };
+        this.handleDetails = this.handleDetails.bind(this);
     }
+
+    handleDetails(event) {
+        /*alert(
+          JSON.stringify(this.state)
+        );
+        const orgId = store.getState().sourceOrg.orgId;
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId="+orgId;
+        axios.get(apiUrl).then((response) => {
+              this.props.history.push({
+                pathname: "/dropOffOptions",
+                state: { data: response.data }
+              });
+        });*/
+    }
+
+    render() {
+        return (
+          <div className="container">
+            <Formik
+              initialValues={{ file: null }}
+              onSubmit={(values) => {
+                alert(
+                  JSON.stringify(
+                    {
+                      fileName: values.file.name,
+                      type: values.file.type,
+                      size: `${values.file.size} bytes`
+                    },
+                    null,
+                    2
+                  )
+                );
+              }}
+              render={({ values, handleSubmit, setFieldValue }) => {
+                return (
+                  <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                      <label for="file">File upload</label>
+                      <input id="file" name="file" type="file" onChange={(event) => {
+                        setFieldValue("file", event.currentTarget.files[0]);
+                      }} className="form-control" />
+                      <Thumb file={values.file} />
+                    </div>
+                    <button type="submit" className="btn btn-primary">submit</button>
+                  </form>
+                );
+              }} />
+          </div>
+        );
+    }
+
 }
 
 export default AddPickupDetails
