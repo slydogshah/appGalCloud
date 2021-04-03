@@ -37,7 +37,8 @@ class LoginForm extends React.Component {
   mixins = [OverlayMixin];
   constructor(props) {
     super(props);
-    this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'',isModalOpen:false,activeElementType: "dropdown"};
+    this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'', producer:'',isModalOpen:false,
+    activeElementType: "dropdown"};
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleRegistration = this.handleRegistration.bind(this);
@@ -91,13 +92,19 @@ class LoginForm extends React.Component {
             sourceOrg: response.data.sourceOrg
           }));
 
-          /*this.props.history.push({
-            pathname: "/home"
-          });*/
+          if(response.data.sourceOrg.producer)
+             {
+                 this.props.history.push({
+                   pathname: "/home"
+                 });
+            }
+            else
+            {
+                  this.props.history.push({
+                    pathname: "/dropOffHome"
+                  });
+            }
 
-          this.props.history.push({
-                      pathname: "/dropOffHome"
-                    });
     }).catch(err => {
            //console.log("ERROR(LOGIN): "+JSON.stringify(err));
            if(err.response != null && err.response.status == 401)
@@ -193,10 +200,11 @@ class LoginForm extends React.Component {
                                         "password":this.state.password,
                                         "orgId":this.state.sourceOrgId,
                                         "orgName":this.state.sourceOrgId,
+                                        "orgType":this.state.orgType,
                                         "profileType":this.state.profileType,
                                         "orgContactEmail":this.state.email,
                                         "profileType":this.state.profileType,
-                                        "producer":true};
+                                        "producer":this.state.producer};
             console.log("PAYLOAD: "+JSON.stringify(payload));
 
             axios.post(apiUrl,payload).
@@ -213,10 +221,19 @@ class LoginForm extends React.Component {
                                  sourceOrg: response.data.sourceOrg
                                }));
 
-                       this.props.history.push({
-                         pathname: "/home"
-                       });
-                      });
+                       if(response.data.sourceOrg.producer)
+                       {
+                           this.props.history.push({
+                             pathname: "/home"
+                           });
+                      }
+                      else
+                      {
+                            this.props.history.push({
+                              pathname: "/dropOffHome"
+                            });
+                      }
+               });
             }).catch(err => {
                       if(err.response != null && err.response.status == 401)
                       {
@@ -381,6 +398,18 @@ class LoginForm extends React.Component {
                                   <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={this.handleChange}/>
                                   <div id="mobileRequired"/>
                                   <div id="phoneInvalid"/>
+                              </CInputGroup>
+                              <CInputGroup className="mb-5">
+                                <CInputGroupPrepend>
+                                    <CInputGroupText>
+                                      <CIcon name="cil-lock-locked" />
+                                    </CInputGroupText>
+                                </CInputGroupPrepend>
+                                <CSelect custom name="producer" onChange={this.handleChange}>
+                                 <option value="0">--Select--</option>
+                                 <option value={true}>Pickup</option>
+                                 <option value={false}>DropOff</option>
+                               </CSelect>
                               </CInputGroup>
                               <CInputGroup className="mb-6">
                                   <CInputGroupPrepend>
