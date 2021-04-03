@@ -188,7 +188,7 @@ class AddPickupDetails extends React.Component
                                         </div>
                                     </CInputGroup>
                                     <div id="errorAlert" />
-                                    <CButton color="success" block onClick={this.handleDetails}>Create Account</CButton>
+                                    <CButton color="success" block onClick={this.handleDetails}>Add Details</CButton>
                                 </CCardBody>
                                 </CCard>
                             </CCol>
