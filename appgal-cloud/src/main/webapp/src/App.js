@@ -23,7 +23,7 @@ const PickupHistory = React.lazy(() => import('./application/PickupHistory'))
 //https://ui.dev/react-router-v5-protected-routes-authentication/
 function PrivateRoute ({ children, ...rest }) {
   const auth = store.getState().auth;
-  console.log("STORE_STATE: "+JSON.stringify(store.getState()));
+  //console.log("STORE_STATE: "+JSON.stringify(store.getState()));
   return (
     <Route {...rest} render={() => {
       return auth === true

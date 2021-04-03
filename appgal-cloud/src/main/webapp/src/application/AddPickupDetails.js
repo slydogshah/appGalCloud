@@ -74,6 +74,12 @@ class Thumb extends React.Component {
 
     if (loading) { return <p>loading...</p>; }
 
+
+    store.setState(state => ({
+                          ...state,
+                          upload: thumb
+                        }));
+
     return (<img src={thumb}
       alt={file.name}
       className="img-thumbnail mt-2"
@@ -92,7 +98,8 @@ class AddPickupDetails extends React.Component
             foodType: '',
             file: null,
             loading: false,
-            thumb: undefined
+            thumb: undefined,
+            upload: null
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleDetails = this.handleDetails.bind(this);
@@ -109,17 +116,22 @@ class AddPickupDetails extends React.Component
     }
 
     handleDetails(event) {
-        alert(
-          JSON.stringify(this.state)
-        );
-        /*const orgId = store.getState().sourceOrg.orgId;
+        const payload = {
+            foodType: this.state.foodType,
+            upload: store.getState().upload
+        };
+
+        const orgId = store.getState().sourceOrg.orgId;
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId="+orgId;
-        axios.get(apiUrl).then((response) => {
+
+        axios.post(apiUrl,payload).then((response) => {
               this.props.history.push({
                 pathname: "/dropOffOptions",
                 state: { data: response.data }
               });
-        });*/
+        }).catch(err => {
+            console.log(JSON.stringify(err));
+        });
     }
 
     render() {
@@ -167,11 +179,12 @@ class AddPickupDetails extends React.Component
                                         <div className="form-group">
                                           <label for="file">File upload</label>
                                           <input id="file" name="file" type="file" onChange={(event) => {
-                                            setFieldValue("file", event.currentTarget.files[0]);
+                                            const fileUpload = event.currentTarget.files[0];
+                                            setFieldValue("file", fileUpload);
+                                            this.state.upload = fileUpload;
                                           }} className="form-control" />
                                           <Thumb file={values.file} />
                                         </div>
-                                        <button type="submit" className="btn btn-primary">Upload</button>
                                     </CInputGroup>
                                     <div id="errorAlert" />
                                     <CButton color="success" block onClick={this.handleDetails}>Create Account</CButton>
