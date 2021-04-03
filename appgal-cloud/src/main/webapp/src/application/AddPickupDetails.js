@@ -219,14 +219,43 @@ class AddPickupDetails extends React.Component
               render={({ values, handleSubmit, setFieldValue }) => {
                 return (
                   <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                      <label for="file">File upload</label>
-                      <input id="file" name="file" type="file" onChange={(event) => {
-                        setFieldValue("file", event.currentTarget.files[0]);
-                      }} className="form-control" />
-                      <Thumb file={values.file} />
-                    </div>
-                    <button type="submit" className="btn btn-primary">submit</button>
+                  <div className="c-app c-default-layout flex-row align-items-center">
+                      <CContainer>
+                        <CRow className="justify-content-center">
+                            <CCol md="9" lg="7" xl="6">
+                                <CCard className="mx-4">
+                                <CCardBody className="p-4">
+                                    <h1>Add Pickup Details</h1>
+                                    <CLabel htmlFor="foodType">Food Type</CLabel>
+                                    <CInputGroup className="mb-3">
+                                        <CSelect custom name="foodType" id="foodType">
+                                            <option value="0">--Select--</option>
+                                            <option value="VEG">VEG</option>
+                                            <option value="NON_VEG">NON-VEG</option>
+                                        </CSelect>
+                                    </CInputGroup>
+                                    <CInputGroup className="mb-3">
+                                        <CInputGroupPrepend>
+                                          <CInputGroupText>
+                                            <CIcon name="cil-lock-locked" />
+                                          </CInputGroupText>
+                                        </CInputGroupPrepend>
+                                        <div className="form-group">
+                                          <label for="file">File upload</label>
+                                          <input id="file" name="file" type="file" onChange={(event) => {
+                                            setFieldValue("file", event.currentTarget.files[0]);
+                                          }} className="form-control" />
+                                          <Thumb file={values.file} />
+                                        </div>
+                                    </CInputGroup>
+                                    <div id="errorAlert" />
+                                    <button type="submit" className="btn btn-primary">submit</button>
+                                </CCardBody>
+                                </CCard>
+                            </CCol>
+                        </CRow>
+                      </CContainer>
+                  </div>
                   </form>
                 );
               }} />
