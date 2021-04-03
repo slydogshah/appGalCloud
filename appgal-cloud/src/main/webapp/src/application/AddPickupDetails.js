@@ -85,93 +85,6 @@ class Thumb extends React.Component {
 
 class AddPickupDetails extends React.Component
 {
-    /*constructor(props) {
-        super(props);
-        this.state = {
-            foodType: '',
-            file: null,
-            loading: false,
-            thumb: undefined
-        };
-        this.handleDetails = this.handleDetails.bind(this);
-    }
-
-    handleDetails(event) {
-        alert(
-          JSON.stringify(this.state)
-        );
-        const orgId = store.getState().sourceOrg.orgId;
-        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId="+orgId;
-        axios.get(apiUrl).then((response) => {
-              this.props.history.push({
-                pathname: "/dropOffOptions",
-                state: { data: response.data }
-              });
-        });
-    }
-
-    render() {
-      return (
-        <Formik initialValues={{ file: null }}
-        onSubmit={(values) => {
-                    alert(
-                      JSON.stringify(
-                        {
-                          fileName: values.file.name,
-                          type: values.file.type,
-                          size: `${values.file.size} bytes`
-                        },
-                        null,
-                        2
-                      )
-                    );
-                  }}
-        render={(values,handleSubmit,setFieldValue) => {
-            return (
-                <form onSubmit={handleSubmit}>
-                <div className="c-app c-default-layout flex-row align-items-center">
-                  <CContainer>
-                    <CRow className="justify-content-center">
-                      <CCol md="9" lg="7" xl="6">
-                        <CCard className="mx-4">
-                          <CCardBody className="p-4">
-                              <h1>Add Pickup Details</h1>
-                              <CLabel htmlFor="foodType">Food Type</CLabel>
-                              <CInputGroup className="mb-3">
-                                <CSelect custom name="foodType" id="foodType">
-                                    <option value="0">--Select--</option>
-                                    <option value="VEG">VEG</option>
-                                    <option value="NON_VEG">NON-VEG</option>
-                                </CSelect>
-                              </CInputGroup>
-                              <CInputGroup className="mb-3">
-                                <CInputGroupPrepend>
-                                  <CInputGroupText>
-                                    <CIcon name="cil-lock-locked" />
-                                  </CInputGroupText>
-                                </CInputGroupPrepend>
-                                <div className="form-group">
-                                    <label for="file">File upload</label>
-                                    <input id="file" name="file" type="file" onChange={async event => {
-                                      await setFieldValue("file", event.currentTarget.files[0]);
-                                    }} className="form-control" />
-                                    <Thumb file={values.file} />
-                                </div>
-                              </CInputGroup>
-                              <div id="errorAlert" />
-                              <button type="submit" className="btn btn-primary">Send</button>
-                          </CCardBody>
-                        </CCard>
-                      </CCol>
-                    </CRow>
-                  </CContainer>
-                </div>
-                </form>
-            );
-        }}/>
-      )
-    }*/
-
     constructor(props)
     {
         super(props);
@@ -181,14 +94,25 @@ class AddPickupDetails extends React.Component
             loading: false,
             thumb: undefined
         };
+        this.handleChange = this.handleChange.bind(this);
         this.handleDetails = this.handleDetails.bind(this);
     }
 
+    handleChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+                  [name]: value
+        });
+    }
+
     handleDetails(event) {
-        /*alert(
+        alert(
           JSON.stringify(this.state)
         );
-        const orgId = store.getState().sourceOrg.orgId;
+        /*const orgId = store.getState().sourceOrg.orgId;
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/dropOffOrgs/?orgId="+orgId;
         axios.get(apiUrl).then((response) => {
               this.props.history.push({
@@ -228,7 +152,7 @@ class AddPickupDetails extends React.Component
                                     <h1>Add Pickup Details</h1>
                                     <CLabel htmlFor="foodType">Food Type</CLabel>
                                     <CInputGroup className="mb-3">
-                                        <CSelect custom name="foodType" id="foodType">
+                                        <CSelect custom name="foodType" id="foodType" onChange={this.handleChange}>
                                             <option value="0">--Select--</option>
                                             <option value="VEG">VEG</option>
                                             <option value="NON_VEG">NON-VEG</option>
@@ -247,9 +171,10 @@ class AddPickupDetails extends React.Component
                                           }} className="form-control" />
                                           <Thumb file={values.file} />
                                         </div>
+                                        <button type="submit" className="btn btn-primary">Upload</button>
                                     </CInputGroup>
                                     <div id="errorAlert" />
-                                    <button type="submit" className="btn btn-primary">submit</button>
+                                    <CButton color="success" block onClick={this.handleDetails}>Create Account</CButton>
                                 </CCardBody>
                                 </CCard>
                             </CCol>
