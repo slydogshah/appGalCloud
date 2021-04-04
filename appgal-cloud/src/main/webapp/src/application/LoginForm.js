@@ -203,7 +203,6 @@ class LoginForm extends React.Component {
                                         "orgType":this.state.orgType,
                                         "profileType":this.state.profileType,
                                         "orgContactEmail":this.state.email,
-                                        "profileType":this.state.profileType,
                                         "producer":this.state.producer};
             console.log("PAYLOAD: "+JSON.stringify(payload));
 
