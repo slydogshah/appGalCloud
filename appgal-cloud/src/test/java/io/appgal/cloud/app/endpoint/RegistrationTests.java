@@ -141,26 +141,27 @@ public class RegistrationTests extends BaseTest {
 
     @Test
     public void testLoginSuccess() {
-        JsonObject registrationJson = new JsonObject();
+        JsonObject json = new JsonObject();
         String id = UUID.randomUUID().toString();
         String email = id+"@blah.com";
-        registrationJson.addProperty("email", email);
-        registrationJson.addProperty("mobile", 8675309l);
-        registrationJson.addProperty("photo", "photu");
-        registrationJson.addProperty("password", "c");
-        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
-        Response response = given().body(registrationJson.toString()).post("/registration/profile");
-        logger.info("*********");
-        logger.info(response.asString());
-        logger.info("*********");
+        json.addProperty("id", id);
+        json.addProperty("email", email);
+        json.addProperty("password", "password");
+        json.addProperty("mobile", "123");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        Response response = given().body(json.toString()).post("/registration/profile");
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
 
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
-        loginJson.addProperty("password", "c");
+        loginJson.addProperty("password", "password");
         response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
-        String jsonString = response.getBody().prettyPrint();
+        jsonString = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
         JsonUtil.print(this.getClass(),JsonParser.parseString(jsonString));
@@ -172,8 +173,8 @@ public class RegistrationTests extends BaseTest {
         Profile profile = Profile.parse(jsonObject.get("profile").toString());
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), email);
-        assertEquals(profile.getMobile(), 8675309l);
-        assertEquals(profile.getPassword(), "c");
+        assertEquals(profile.getMobile(), 123);
+        assertEquals(profile.getPassword(), "password");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
 
     }

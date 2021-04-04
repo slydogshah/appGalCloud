@@ -9,6 +9,7 @@ import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.util.JsonUtil;
 import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,8 @@ public class Registration {
     public Response register(@RequestBody String profileJson)
     {
         try {
+            JsonUtil.print(this.getClass(),JsonParser.parseString(profileJson));
+
             JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
             Profile profile = Profile.parse(jsonObject.toString());
 

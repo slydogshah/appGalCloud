@@ -104,17 +104,15 @@ public class ProfileRegistrationService {
             JsonObject authResponse = new JsonObject();
             authResponse.addProperty("statusCode", 200);
 
-            FoodRunner foodRunner = new FoodRunner(profile);
-            this.networkOrchestrator.enterNetwork(foodRunner);
+            authResponse.add("profile", profile.toJson());
+
+            //TODO
+            /*FoodRunner foodRunner = this.mongoDBJsonStore.getF
             foodRunner = this.activeNetwork.findFoodRunner(profile.getId());
             if(foodRunner != null && foodRunner.getLocation() != null) {
                 authResponse.addProperty("latitude", foodRunner.getLocation().getLatitude());
                 authResponse.addProperty("longitude", foodRunner.getLocation().getLongitude());
             }
-
-            authResponse.add("profile", profile.toJson());
-
-            this.networkOrchestrator.enterNetwork(foodRunner);
             List<SourceOrg> match = this.activeNetwork.matchFoodRunner(foodRunner);
             JsonArray matchArray = new JsonArray();
             for(SourceOrg sourceOrg:match)
@@ -123,7 +121,7 @@ public class ProfileRegistrationService {
                     matchArray.add(sourceOrg.toJson());
                 }
             }
-            authResponse.add("sourceOrgs", matchArray);
+            authResponse.add("sourceOrgs", matchArray);*/
 
             //logger.info("AUTHENTICATION_SUCCESS");
             return authResponse;
