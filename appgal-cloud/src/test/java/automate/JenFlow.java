@@ -42,6 +42,9 @@ public class JenFlow {
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
 
         //Notify a FoodRunner
+        JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
+                foodRunner.getProfile().getPassword());
+        JsonUtil.print(this.getClass(),loginRunner);
 
         //FoodRunner accepts
 
@@ -123,7 +126,10 @@ public class JenFlow {
             JsonUtil.print(this.getClass(), responseJson);
         }
 
-        return FoodRunner.parse(jsonString);
+        Profile profile = Profile.parse(jsonString);
+        FoodRunner foodRunner = new FoodRunner();
+        foodRunner.setProfile(profile);
+        return foodRunner;
     }
 
     private String sendPickUpDetails(String orgId,String foodType,String foodPic)
@@ -154,5 +160,18 @@ public class JenFlow {
         JsonElement responseJson = JsonParser.parseString(jsonString);
         JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
+    }
+
+    private JsonObject loginFoodRunner(String email,String password)
+    {
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", email);
+        loginJson.addProperty("password", "password");
+        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+        return responseJson.getAsJsonObject();
     }
 }
