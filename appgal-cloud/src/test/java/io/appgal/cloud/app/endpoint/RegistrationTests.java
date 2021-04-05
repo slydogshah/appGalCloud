@@ -168,9 +168,8 @@ public class RegistrationTests extends BaseTest {
         logger.info("****");
 
         //assert the body
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        jsonObject = jsonObject.getAsJsonObject("profile");
-        Profile profile = Profile.parse(jsonObject.get("profile").toString());
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject().get("profile").getAsJsonObject();
+        Profile profile = Profile.parse(jsonObject.toString());
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), email);
         assertEquals(profile.getMobile(), 123);
@@ -252,9 +251,8 @@ public class RegistrationTests extends BaseTest {
         logger.info("****");
 
         //assert the body
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        jsonObject = jsonObject.getAsJsonObject("profile");
-        Profile profile = Profile.parse(jsonObject.get("profile").toString());
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject().get("profile").getAsJsonObject();
+        Profile profile = Profile.parse(jsonObject.toString());
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), email);
         assertEquals(profile.getMobile(), 8675309l);
