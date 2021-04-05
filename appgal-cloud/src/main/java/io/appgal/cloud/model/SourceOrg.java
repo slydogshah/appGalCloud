@@ -169,11 +169,11 @@ public class SourceOrg implements Serializable {
             jsonObject.add("profiles", jsonArray);
         }
 
-        if(this.address.getStreet() != null)
+        if(this.address!= null && this.address.getStreet() != null)
         {
             jsonObject.addProperty("street",this.address.getStreet());
         }
-        if(this.address.getZip() != null)
+        if(this.address!= null && this.address.getZip() != null)
         {
             jsonObject.addProperty("zip",this.address.getZip());
         }
