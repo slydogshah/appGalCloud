@@ -243,9 +243,14 @@ public class MongoDBJsonStore {
         this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase,foodRecoveryTransaction);
     }
 
-    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String email)
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String orgId)
     {
-        return this.foodRecoveryStore.getFoodRecoveryTransactions(this.mongoDatabase, email);
+        return this.foodRecoveryStore.getFoodRecoveryTransactions(this.mongoDatabase, orgId);
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions()
+    {
+        return this.foodRecoveryStore.getFoodRecoveryTransactions(this.mongoDatabase);
     }
 
     public List<FoodRecoveryTransaction> getFoodRecoveryDropOffTransactions(String orgId)

@@ -102,22 +102,12 @@ public class ProfileRegistrationService {
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
             JsonObject authResponse = new JsonObject();
-            authResponse.addProperty("statusCode", 200);
 
             authResponse.add("profile", profile.toJson());
 
             FoodRunner foodRunner = new FoodRunner();
             foodRunner.setProfile(profile);
             this.networkOrchestrator.enterNetwork(foodRunner);
-            List<SourceOrg> match = this.activeNetwork.matchFoodRunner(foodRunner);
-            JsonArray matchArray = new JsonArray();
-            for(SourceOrg sourceOrg:match)
-            {
-                if(sourceOrg.isProducer()) {
-                    matchArray.add(sourceOrg.toJson());
-                }
-            }
-            authResponse.add("sourceOrgs", matchArray);
 
             //logger.info("AUTHENTICATION_SUCCESS");
             return authResponse;

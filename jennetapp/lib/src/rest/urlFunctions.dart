@@ -34,29 +34,28 @@ class UrlFunctions
 
   static Map<String,dynamic> handleError(Exception exception, var response)
   {
-    //print(response.body);
-    //print(response.statusCode);
-
-    Map<String,dynamic> json = new Map();
-
     if(exception != null) {
+      Map<String,dynamic> json = new Map();
       json["exception"] = "NETWORK_ERROR";
       json["statusCode"] = 500;
+      return json;
     }
 
     if(response.statusCode == 401)
     {
-      json = new Map();
+      Map<String,dynamic> json = new Map();
       json["exception"] = "AUTH_FAILURE";
       json["statusCode"] = 401;
+      return json;
     }
     else if(response.statusCode != 200)
     {
-      json = new Map();
+      Map<String,dynamic> json = new Map();
       json["exception"] = "UNKNOWN_ERROR";
       json["statusCode"] = response.statusCode;
+      return json;
     }
 
-    return json;
+    return null;
   }
 }

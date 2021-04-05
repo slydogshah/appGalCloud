@@ -65,6 +65,8 @@ class ProfileRestClient
       return json;
     }
 
+    json  = jsonDecode(response.body);
+
     json = UrlFunctions.handleError(null, response);
     if(json != null)
     {
@@ -72,15 +74,15 @@ class ProfileRestClient
     }
 
     json  = jsonDecode(response.body);
-    var json2 = json['profile'];
-    Iterable sourceOrgIterable = json2['sourceOrgs'];
+
+    /*Iterable sourceOrgIterable = json['sourceOrgs'];
     List<SourceOrg> sourceOrgs = new List();
     for(Map<String, dynamic> sourceOrgJson in sourceOrgIterable)
     {
         SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
         sourceOrgs.add(sourceOrg);
-    }
+    }*/
 
-    return json;
+    return json["profile"];
   }
 }

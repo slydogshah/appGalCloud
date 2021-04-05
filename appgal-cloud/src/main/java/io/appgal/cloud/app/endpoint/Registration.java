@@ -163,8 +163,6 @@ public class Registration {
         String password = jsonObject.get("password").getAsString();
 
         try {
-            JsonObject responseJson = new JsonObject();
-
             Profile profile = this.profileRegistrationService.getProfile(email);
             if(profile == null)
             {
@@ -172,33 +170,15 @@ public class Registration {
                 profileNotFound.addProperty("message", "profile_not_found");
                 return Response.status(401).entity(profileNotFound.toString()).build();
             }
-            JsonElement profileJson;
+
+            JsonObject responseJson;
             if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
-                profileJson = this.profileRegistrationService.login(userAgent, email, password);
-                responseJson.add("profile", profileJson);
+                responseJson = this.profileRegistrationService.login(userAgent, email, password);
             }
             else
             {
                 responseJson = this.profileRegistrationService.orgLogin(userAgent, email, password);
             }
-
-
-            /*List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
-            JsonArray pendingTransactions = new JsonArray();
-            JsonArray activeTransactions = new JsonArray();
-            for(FoodRecoveryTransaction tx: txs)
-            {
-                if(tx.getTransactionState() == TransactionState.SUBMITTED)
-                {
-                    pendingTransactions.add(tx.toJson());
-                }
-                else if(tx.getTransactionState() == TransactionState.INPROGRESS || tx.getTransactionState() == TransactionState.ONTHEWAY)
-                {
-                    activeTransactions.add(tx.toJson());
-                }
-            }
-            responseJson.add("pending", pendingTransactions);
-            responseJson.add("inProgress", activeTransactions);*/
 
             return Response.ok(responseJson.toString()).build();
         }

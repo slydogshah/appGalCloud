@@ -70,6 +70,38 @@ public class Transactions {
         }
     }
 
+    @Path("/recovery/foodRunner")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodRecoveryTransactionsByRunner(@QueryParam("email") String email)
+    {
+        try
+        {
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            JsonArray inProgress = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions();
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED)
+                {
+                    pending.add(cour.toJson());
+                }
+            }
+            result.add("pending", pending);
+
+            return Response.ok(result.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
     @Path("/dropoff")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -25,11 +25,11 @@ class ActiveNetworkRestClient
     return response.body;
   }
 
-  Future<List<FoodRecoveryTransaction>> getFoodRecoveryTransaction() async
+  Future<List<FoodRecoveryTransaction>> getFoodRecoveryTransaction(String email) async
   {
     List<FoodRecoveryTransaction> txs = new List();
     var response;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'tx/recovery';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'tx/recovery/foodRunner/?email'+email;
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }

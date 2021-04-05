@@ -52,6 +52,25 @@ public class FoodRecoveryStore {
         return list;
     }
 
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(MongoDatabase database)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        String queryJson = "{}";
+        //logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
+    }
+
     public List<FoodRecoveryTransaction> getFoodRecoveryDropOffTransactions(MongoDatabase database,String orgId)
     {
         List<FoodRecoveryTransaction> list = new ArrayList<>();

@@ -34,11 +34,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     List<Card> cards = new List();
     for(FoodRecoveryTransaction tx in this.recoveryTxs)
     {
-      if(tx.dropOffNotification == null)
-      {
-        continue;
-      }
-
       Location location = new Location(0.0, 0.0);
       Card card = Card(shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -61,7 +56,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'DropOff: '+tx.dropOffNotification.sourceOrg.orgName,
+                          labelText: 'DropOff: '+tx.schedulePickupNotification.sourceOrg.orgName,
                           ),
                         ),
                         TextField(
