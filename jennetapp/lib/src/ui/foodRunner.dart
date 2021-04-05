@@ -108,6 +108,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
 
   void handleAccept(BuildContext context, FoodRecoveryTransaction tx)
   {
+    //TODO
     EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation();
     embeddedNavigation.start();
   }

@@ -11,6 +11,9 @@ import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -47,8 +50,11 @@ public class JenFlow {
         JsonUtil.print(this.getClass(),loginRunner);
 
         //FoodRunner accepts
+        List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        FoodRecoveryTransaction accepted = myTransactions.get(0);
+        this.acceptTransaction(accepted);
 
-        //Food Runner notfies DropOff org
+        //FoodRunner notifies DropOffOrg
     }
 
     private SourceOrg registerPickupOrg()
@@ -173,5 +179,30 @@ public class JenFlow {
         JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
         return responseJson.getAsJsonObject();
+    }
+
+    private List<FoodRecoveryTransaction> getMyTransactions(String email)
+    {
+        Response response = given().get("/tx/recovery/foodRunner/?email="+email);
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+
+        JsonArray pending = responseJson.getAsJsonObject().get("pending").getAsJsonArray();
+        List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
+        Iterator<JsonElement> itr = pending.iterator();
+        while(itr.hasNext())
+        {
+            FoodRecoveryTransaction cour = FoodRecoveryTransaction.parse(itr.next().getAsJsonObject().toString());
+            myTransactions.add(cour);
+        }
+
+        return myTransactions;
+    }
+
+    private void acceptTransaction(FoodRecoveryTransaction accepted)
+    {
+        JsonUtil.print(this.getClass(),accepted.toJson());
     }
 }
