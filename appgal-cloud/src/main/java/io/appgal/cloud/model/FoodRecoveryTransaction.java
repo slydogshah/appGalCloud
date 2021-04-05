@@ -6,10 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class FoodRecoveryTransaction implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(FoodRecoveryTransaction.class);
 
+    private String id;
     private SchedulePickUpNotification pickUpNotification;
     private ScheduleDropOffNotification dropOffNotification;
     private FoodRunner foodRunner;
@@ -64,6 +66,14 @@ public class FoodRecoveryTransaction implements Serializable {
         this.transactionState = transactionState;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public static FoodRecoveryTransaction parse(String json)
     {
         FoodRecoveryTransaction foodRecoveryTransaction = new FoodRecoveryTransaction();
@@ -90,6 +100,14 @@ public class FoodRecoveryTransaction implements Serializable {
             String txStateString = jsonObject.get("transactionState").getAsString();
             foodRecoveryTransaction.transactionState = TransactionState.valueOf(txStateString);
         }
+        if(jsonObject.has("id"))
+        {
+            foodRecoveryTransaction.id = jsonObject.get("id").getAsString();
+        }
+        else
+        {
+            foodRecoveryTransaction.id = UUID.randomUUID().toString();
+        }
 
         return foodRecoveryTransaction;
     }
@@ -111,6 +129,11 @@ public class FoodRecoveryTransaction implements Serializable {
         if(this.foodRunner != null)
         {
             jsonObject.add("foodRunner", this.foodRunner.toJson());
+        }
+
+        if(this.id != null)
+        {
+            jsonObject.addProperty("id", this.id);
         }
 
         return jsonObject;

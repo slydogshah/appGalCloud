@@ -132,4 +132,13 @@ public class NetworkOrchestrator {
     {
         return this.notificationEngine;
     }
+
+    public JsonObject acceptRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
+    {
+        this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+
+        JsonObject json = new JsonObject();
+        json.addProperty("recoveryTransactionId", foodRecoveryTransaction.getId());
+        return json;
+    }
 }

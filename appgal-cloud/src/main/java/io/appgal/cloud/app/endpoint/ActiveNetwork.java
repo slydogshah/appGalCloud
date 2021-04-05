@@ -2,10 +2,12 @@ package io.appgal.cloud.app.endpoint;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +17,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @Path("activeNetwork")
 public class ActiveNetwork {
@@ -113,6 +117,51 @@ public class ActiveNetwork {
         try {
             List<SourceOrg> sourceOrgs = this.mongoDBJsonStore.getSourceOrgs();
             return Response.ok(sourceOrgs.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/accept")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response acceptRecoveryTransaction(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            JsonUtil.print(this.getClass(),json);
+            String email = json.get("email").getAsString();
+            String dropOffOrgId = json.get("dropOffOrgId").getAsString();
+            JsonObject accepted = json.get("accepted").getAsJsonObject();
+
+            FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
+            SourceOrg dropoffOrg = this.mongoDBJsonStore.getSourceOrg(dropOffOrgId);
+
+            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(accepted.toString());
+            tx.setFoodRunner(foodRunner);
+            tx.setTransactionState(TransactionState.INPROGRESS);
+
+            SchedulePickUpNotification pickUpNotification = tx.getPickUpNotification();
+            pickUpNotification.setDropOffOrgId(dropOffOrgId);
+            pickUpNotification.setFoodRunner(foodRunner);
+            pickUpNotification.setNotificationSent(true);
+
+            ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
+            dropOffNotification.setNotificationSent(true);
+            dropOffNotification.setSourceOrg(dropoffOrg);
+
+            tx.setDropOffNotification(dropOffNotification);
+
+            JsonUtil.print(this.getClass(),tx.toJson());
+
+            JsonObject responseJson = this.networkOrchestrator.acceptRecoveryTransaction(tx);
+
+            return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)
         {

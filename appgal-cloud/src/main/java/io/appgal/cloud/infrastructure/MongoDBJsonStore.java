@@ -138,6 +138,11 @@ public class MongoDBJsonStore {
        return this.foodRunnerStore.updateFoodRunner(this.mongoDatabase, foodRunner);
     }
 
+    public FoodRunner getFoodRunner(String email)
+    {
+        return this.foodRunnerStore.getFoodRunner(this.mongoDatabase,email);
+    }
+
     public void storeResults(List<FoodRunner> results)
     {
         this.foodRunnerStore.storeResults(this.mongoDatabase, results);

@@ -52,7 +52,7 @@ public class JenFlow {
         //FoodRunner accepts
         List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
         FoodRecoveryTransaction accepted = myTransactions.get(0);
-        this.acceptTransaction(accepted);
+        this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         //FoodRunner notifies DropOffOrg
     }
@@ -201,8 +201,16 @@ public class JenFlow {
         return myTransactions;
     }
 
-    private void acceptTransaction(FoodRecoveryTransaction accepted)
+    private void acceptTransaction(String email,String dropOffOrgId,FoodRecoveryTransaction accepted)
     {
-        JsonUtil.print(this.getClass(),accepted.toJson());
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("dropOffOrgId",dropOffOrgId);
+        json.add("accepted",accepted.toJson());
+        Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
     }
 }
