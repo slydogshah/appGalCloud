@@ -18,9 +18,9 @@ public class SourceOrg implements Serializable {
     private String orgContactEmail;
     private DeliveryPreference deliveryPreference;
     private Set<Profile> profiles;
-    private Location location;
     private boolean isProducer;
     private Address address;
+    private Location location;
 
     public SourceOrg()
     {
@@ -122,6 +122,14 @@ public class SourceOrg implements Serializable {
         isProducer = producer;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -161,10 +169,19 @@ public class SourceOrg implements Serializable {
             jsonObject.add("profiles", jsonArray);
         }
 
+        if(this.address.getStreet() != null)
+        {
+            jsonObject.addProperty("street",this.address.getStreet());
+        }
+        if(this.address.getZip() != null)
+        {
+            jsonObject.addProperty("zip",this.address.getZip());
+        }
+
         if(this.location != null)
         {
-            JsonObject json = this.location.toJson();
-            jsonObject.add("location", json);
+            jsonObject.addProperty("latitude",this.location.getLatitude());
+            jsonObject.addProperty("longitude",this.location.getLongitude());
         }
 
         jsonObject.addProperty("producer", this.isProducer);
@@ -206,11 +223,17 @@ public class SourceOrg implements Serializable {
             JsonArray jsonArray = jsonObject.getAsJsonArray("deliveryPreference");
             sourceOrg.deliveryPreference = DeliveryPreference.parse(jsonArray.toString());
         }
-        if(jsonObject.has("location"))
+
+        Address address = new Address();
+        if(jsonObject.has("street"))
         {
-            JsonObject locationJson = jsonObject.getAsJsonObject("location");
-            sourceOrg.location = Location.parse(locationJson.toString());
+            address.setStreet(jsonObject.get("street").getAsString());
         }
+        if(jsonObject.has("zip"))
+        {
+            address.setZip(jsonObject.get("zip").getAsString());
+        }
+        sourceOrg.address = address;
 
         sourceOrg.isProducer = jsonObject.get("producer").getAsBoolean();
 

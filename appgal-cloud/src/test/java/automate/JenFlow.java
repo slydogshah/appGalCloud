@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 
+import io.appgal.cloud.util.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +21,17 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 public class JenFlow {
     private static Logger logger = LoggerFactory.getLogger(JenFlow.class);
+
+    @Inject
+    private MapUtils mapUtils;
 
 
     @Test
@@ -71,6 +77,8 @@ public class JenFlow {
         registrationJson.addProperty("orgContactEmail", email);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
         registrationJson.addProperty("producer", true);
+        registrationJson.addProperty("street","506 West Ave");
+        registrationJson.addProperty("zip","78701");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -96,6 +104,8 @@ public class JenFlow {
         registrationJson.addProperty("orgContactEmail", email);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
         registrationJson.addProperty("producer", false);
+        registrationJson.addProperty("street","801 West Fifth Street");
+        registrationJson.addProperty("zip","78703");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -173,6 +183,8 @@ public class JenFlow {
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
         loginJson.addProperty("password", "password");
+        loginJson.addProperty("latitude", 30.2698104d);
+        loginJson.addProperty("longitude",-97.75115579999999);
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);

@@ -6,7 +6,6 @@ public class Address implements Serializable {
 
     private String street;
     private String zip;
-    private Location location;
 
     public Address() {
     }
@@ -25,13 +24,5 @@ public class Address implements Serializable {
 
     public void setZip(String zip) {
         this.zip = zip;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 }

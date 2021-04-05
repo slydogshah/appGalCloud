@@ -8,6 +8,7 @@ import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.util.MapUtils;
 import io.bugsbunny.data.history.service.DataReplayService;
 import io.bugsbunny.preprocess.SecurityTokenContainer;
 import org.slf4j.Logger;
@@ -47,6 +48,9 @@ public class NetworkOrchestrator {
 
     @Inject
     private NotificationEngine notificationEngine;
+
+    @Inject
+    private MapUtils mapUtils;
 
     @PostConstruct
     public void start()

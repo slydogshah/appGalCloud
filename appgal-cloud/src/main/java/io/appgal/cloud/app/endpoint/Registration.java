@@ -173,7 +173,8 @@ public class Registration {
 
             JsonObject responseJson;
             if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
-                responseJson = this.profileRegistrationService.login(userAgent, email, password);
+                Location location = Location.parse(credentialsJson);
+                responseJson = this.profileRegistrationService.login(userAgent, email, password, location);
             }
             else
             {

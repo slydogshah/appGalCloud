@@ -6,6 +6,7 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 
 import io.appgal.cloud.network.services.NetworkOrchestrator;
+import io.appgal.cloud.util.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,9 @@ public class ProfileRegistrationService {
 
     @Inject
     private NetworkOrchestrator networkOrchestrator;
+
+    @Inject
+    private MapUtils mapUtils;
 
     public Profile getProfile(String email)
     {
@@ -54,6 +58,10 @@ public class ProfileRegistrationService {
     {
         String sourceOrgId = sourceOrg.getOrgId();
         SourceOrg storedSourceOrg = this.mongoDBJsonStore.getSourceOrg(sourceOrgId);
+
+        Location location = this.mapUtils.calculateCoordinates(sourceOrg.getAddress());
+        sourceOrg.setLocation(location);
+
         if(storedSourceOrg == null)
         {
             this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
@@ -71,7 +79,7 @@ public class ProfileRegistrationService {
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
     }
 
-    public JsonObject login(String userAgent, String email, String password)
+    public JsonObject login(String userAgent, String email, String password, Location location)
             throws AuthenticationException
     {
         //logger.info("*****LOGIN_USER_AGENT******");
@@ -107,6 +115,7 @@ public class ProfileRegistrationService {
 
             FoodRunner foodRunner = new FoodRunner();
             foodRunner.setProfile(profile);
+            foodRunner.setLocation(location);
             this.networkOrchestrator.enterNetwork(foodRunner);
 
             //logger.info("AUTHENTICATION_SUCCESS");
