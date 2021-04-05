@@ -6,6 +6,7 @@ import 'package:app/src/model/schedulePickupNotification.dart';
 import 'package:location/location.dart';
 
 import '../model/schedulePickupNotification.dart';
+import 'cloudBusinessException.dart';
 
 class ActiveNetworkRestClient
 {
@@ -82,12 +83,33 @@ class ActiveNetworkRestClient
     return response.body;
   }
 
-  //TODO: REMOVE_THIS_LATER
-  Future<int> sendSchedulePickupNotification(SchedulePickupNotification notification) async
+  Future<int> accept(String email, String dropOffOrgId,FoodRecoveryTransaction tx) async
   {
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'activeNetwork/schedulePickUp/';
-    String jsonBody = notification.toJson().toString();
-    var response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
+    var json;
+    Map<String,dynamic> payload = new Map();
+    payload["email"] = email;
+    payload["dropOffOrgId"] = dropOffOrgId;
+    payload["accepted"] = tx;
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'/activeNetwork/accept/';
+    var response;
+    try {
+      response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).
+      timeout(Duration(seconds: 30),onTimeout: () {
+        throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
+      });
+    }
+    catch (e) {
+      print(e);
+      json = UrlFunctions.handleError(e, response);
+      return json["statusCode"];
+    }
+
+    json = UrlFunctions.handleError(null, response);
+    if(json != null)
+    {
+      return json["statusCode"];
+    }
+
     return response.statusCode;
   }
 }

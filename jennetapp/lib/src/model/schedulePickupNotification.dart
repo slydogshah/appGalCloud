@@ -8,6 +8,7 @@ class SchedulePickupNotification
   SourceOrg sourceOrg;
   FoodRunner foodRunner;
   int  start;
+  SourceOrg dropOffOrg;
   
   SchedulePickupNotification(SourceOrg sourceOrg, FoodRunner foodRunner, int start)
   {
@@ -41,8 +42,18 @@ class SchedulePickupNotification
     return this.start;
   }
 
+  void setDropOffOrg(SourceOrg dropOffOrg)
+  {
+    this.dropOffOrg = dropOffOrg;
+  }
+
+  SourceOrg getDropOffOrg()
+  {
+    return this.dropOffOrg;
+  }
+
   SchedulePickupNotification.fromJson(Map<String, dynamic> json)
-  { 
+  {
     if(json["sourceOrg"] != null)
     {
       this.sourceOrg = SourceOrg.fromJson(json["sourceOrg"]);
@@ -54,6 +65,10 @@ class SchedulePickupNotification
     if(json["start"] != null)
     {
       this.start = json['start'];
+    }
+    if(json["dropOffOrg"] != null)
+    {
+      this.dropOffOrg = SourceOrg.fromJson(json["dropOffOrg"]);
     }
   }
 
@@ -71,6 +86,10 @@ class SchedulePickupNotification
     if(this.start != null)
     {
       json['start'] = this.start;
+    }
+    if(this.dropOffOrg != null)
+    {
+      json['dropOffOrg'] = this.dropOffOrg;
     }
 
     return json;

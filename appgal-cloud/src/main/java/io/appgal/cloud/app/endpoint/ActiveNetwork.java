@@ -147,7 +147,6 @@ public class ActiveNetwork {
             tx.setTransactionState(TransactionState.INPROGRESS);
 
             SchedulePickUpNotification pickUpNotification = tx.getPickUpNotification();
-            pickUpNotification.setDropOffOrgId(dropOffOrgId);
             pickUpNotification.setFoodRunner(foodRunner);
             pickUpNotification.setNotificationSent(true);
 

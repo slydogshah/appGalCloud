@@ -50,8 +50,6 @@ class LocationUpdater
       }
     }
 
-    //TODO: SEND_REAL_LOCATION
-    print("********START_LOCATION_POLL_IOS**********");
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
       Map<String,double> map = new Map();
@@ -84,8 +82,6 @@ class LocationUpdater
       }
     }
 
-    //TODO: SEND_REAL_LOCATION
-    print("********START_LOCATION_POLL_ANDROID**********");
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
       Map<String,double> map = new Map();

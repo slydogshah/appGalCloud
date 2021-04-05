@@ -1,14 +1,12 @@
-import 'dart:io';
-import 'dart:convert';
-
+import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/profile.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/model/location.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
-
-import 'schedulePickup.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
@@ -56,7 +54,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                         TextField(
                           decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'DropOff: '+tx.schedulePickupNotification.sourceOrg.orgName,
+                          labelText: 'DropOff: '+tx.schedulePickupNotification.dropOffOrg.orgName,
                           ),
                         ),
                         TextField(
@@ -77,7 +75,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
                             primary: Color(0xFF383EDB)
                           ),
                           onPressed: () {
-                            handleAccept(context, tx);
+                            Profile profile = ActiveSession.getInstance().getProfile();
+                            handleAccept(context,profile.email,tx.schedulePickupNotification.dropOffOrg.orgId, tx);
                           },
                         ),
                       ],
@@ -106,10 +105,18 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     return scaffold;
   }
 
-  void handleAccept(BuildContext context, FoodRecoveryTransaction tx)
+  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx)
   {
-    //TODO
-    EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation();
-    embeddedNavigation.start();
+    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+    Future<int> future = client.accept(email, dropOffOrgId, tx);
+    future.then((statusCode) {
+      if(statusCode == 200) {
+        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation();
+        embeddedNavigation.start();
+      }
+      else {
+          //TODO
+      }
+    });
   }
 }

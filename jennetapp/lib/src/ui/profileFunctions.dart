@@ -145,7 +145,6 @@ class ProfileFunctions
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
       Navigator.of(context, rootNavigator: true).pop();
-      print("LOGIN_RESPONSE:"+jsonEncode(json));
       Profile foodRunner = Profile.fromJson(json);
 
       ActiveSession activeSession = ActiveSession.getInstance();

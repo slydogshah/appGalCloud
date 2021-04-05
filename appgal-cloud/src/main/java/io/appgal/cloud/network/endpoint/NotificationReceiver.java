@@ -119,7 +119,8 @@ public class NotificationReceiver {
 
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
                     getScheduledPickUpNotification(pickupNotificationId).toString());
-            notification.setDropOffOrgId(dropOffOrgId);
+            SourceOrg dropOffOrg = this.mongoDBJsonStore.getSourceOrg(dropOffOrgId);
+            notification.setDropOffOrg(dropOffOrg);
             JsonUtil.print(this.getClass(), notification.toJson());
 
             this.networkOrchestrator.schedulePickUp(notification);

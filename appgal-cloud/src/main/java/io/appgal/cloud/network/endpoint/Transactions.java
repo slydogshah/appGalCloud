@@ -79,7 +79,6 @@ public class Transactions {
         {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
-            JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions();
             JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
