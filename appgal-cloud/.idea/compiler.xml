@@ -9,8 +9,8 @@
         <module name="appgal-cloud" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="appgal-cloud" target="1.8" />
+    <bytecodeTargetLevel target="11">
+      <module name="appgal-cloud" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

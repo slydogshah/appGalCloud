@@ -1,9 +1,20 @@
 package io.appgal.cloud.util;
 
+import com.google.gson.JsonObject;
+import io.appgal.cloud.model.Address;
+import io.appgal.cloud.model.Location;
+import io.appgal.cloud.restclient.GoogleApiClient;
 import org.locationtech.spatial4j.distance.DistanceUtils;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+@ApplicationScoped
 public class MapUtils {
-    public static double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
+    @Inject
+    private GoogleApiClient googleApiClient;
+
+    public double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
     {
         double distance = DistanceUtils.distLawOfCosinesRAD(
                 DistanceUtils.toRadians(startLatitude),
@@ -12,5 +23,20 @@ public class MapUtils {
                 DistanceUtils.toRadians(endLongitude));
         distance = DistanceUtils.radians2Dist(distance, DistanceUtils.EARTH_MEAN_RADIUS_MI);
         return distance;
+    }
+
+    public Location calculateCoordinates(Address address)
+    {
+        Location location = new Location();
+
+        JsonObject coordinates = this.googleApiClient.convertAddressToCoordinates(address);
+
+        double latitude = coordinates.get("location").getAsJsonObject().get("lat").getAsDouble();
+        double longitude = coordinates.get("location").getAsJsonObject().get("lng").getAsDouble();
+
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
+
+        return location;
     }
 }
