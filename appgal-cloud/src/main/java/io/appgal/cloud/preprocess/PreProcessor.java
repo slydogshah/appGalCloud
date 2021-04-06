@@ -2,6 +2,7 @@ package io.appgal.cloud.preprocess;
 
 import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.Address;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 
@@ -42,6 +43,10 @@ public class PreProcessor implements ContainerRequestFilter {
                 dropOffOrg.setOrgName("church");
                 dropOffOrg.setProducer(false);
                 dropOffOrg.setOrgContactEmail("church@gmail.com");
+                Address address = new Address();
+                address.setStreet("801 West Fifth Street");
+                address.setZip("78703");
+                dropOffOrg.setAddress(address);
                 this.profileRegistrationService.registerSourceOrg(dropOffOrg);
 
                 logger.info("CREATING_ADMIN_PROFILE");

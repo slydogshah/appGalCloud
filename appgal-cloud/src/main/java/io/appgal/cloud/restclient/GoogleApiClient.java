@@ -31,9 +31,6 @@ public class GoogleApiClient {
     {
         try {
             JsonObject result;
-            //TODO
-            logger.info("Street: "+address.getStreet());
-            logger.info("Zip: "+address.getZip());
 
             String addressParam = address.getStreet()+","+address.getZip();
             addressParam = URLEncoder.encode(addressParam, StandardCharsets.UTF_8);
