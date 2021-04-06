@@ -6,6 +6,7 @@ import io.appgal.cloud.model.Address;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,10 @@ public class GoogleApiClient {
     public JsonObject convertAddressToCoordinates(Address address)
     {
         try {
-            JsonObject result = new JsonObject();
+            JsonObject result;
+            //TODO
+            logger.info("Street: "+address.getStreet());
+            logger.info("Zip: "+address.getZip());
 
             String addressParam = address.getStreet()+","+address.getZip();
             addressParam = URLEncoder.encode(addressParam, StandardCharsets.UTF_8);

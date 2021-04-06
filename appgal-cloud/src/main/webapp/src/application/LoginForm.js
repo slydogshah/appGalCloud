@@ -38,6 +38,7 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'', producer:'',isModalOpen:false,
+    street:'801 West Fifth Street',zip:'78703',
     activeElementType: "dropdown"};
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
@@ -203,6 +204,8 @@ class LoginForm extends React.Component {
                                         "orgType":this.state.orgType,
                                         "profileType":this.state.profileType,
                                         "orgContactEmail":this.state.email,
+                                        "street":this.state.street,
+                                        "zip":this.state.zip,
                                         "producer":this.state.producer};
             console.log("PAYLOAD: "+JSON.stringify(payload));
 
