@@ -101,13 +101,14 @@ class CloudDataPoller
   //--------------------------------------------------------
   static void pollData(Profile profile)
   {
-    print("********PUSH**********");
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    Future<List<FoodRecoveryTransaction>> futureP = activeNetworkRestClient.getFoodRecoveryTransaction(profile.email);
+    Future<List<FoodRecoveryTransaction>> futureP = activeNetworkRestClient.getFoodRecoveryPush(profile.email);
     futureP.then((txs){
-      for(FoodRecoveryTransaction tx in txs)
-      print(jsonEncode(tx.toJson()));
+      print("********PUSH**********");
+      for(FoodRecoveryTransaction tx in txs) {
+        print(jsonEncode(tx.toJson()));
+      }
+      print("********PUSH**********");
     });
-    print("********PUSH**********");
   }
 }

@@ -86,6 +86,12 @@ public class Transactions {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED)
                 {
                     if(!cour.getPickUpNotification().isNotificationSent()) {
+                        cour.getPickUpNotification().setNotificationSent(true);
+                        SchedulePickUpNotification courPickUp = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
+                                getScheduledPickUpNotification(cour.getPickUpNotification().getId()).toString());
+                        courPickUp.setNotificationSent(true);
+                        this.mongoDBJsonStore.storeFoodRecoveryTransaction(cour);
+                        this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
                         pending.add(cour.toJson());
                     }
                 }
