@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 
-//import 'package:background_fetch/background_fetch.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:background_fetch/background_fetch.dart';
 
 class CloudDataPoller
 {
@@ -28,76 +27,75 @@ class CloudDataPoller
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
   {
-    /*SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Read fetch_events from SharedPreferences
-    List<String> events = [];
-    String json = prefs.getString(standardTaskId);
-    if (json != null) {
-      events = jsonDecode(json).cast<String>();
-
-    }
-
-    // Add new event.
-    events.insert(0, profile.toString());
-    // Persist fetch events in SharedPreferences
-    prefs.setString(standardTaskId, jsonEncode(events));
-
     // Configure BackgroundFetch.
-    BackgroundFetch.configure(BackgroundFetchConfig(
-        minimumFetchInterval: 1,
-        forceAlarmManager: false,
-        stopOnTerminate: false,
-        startOnBoot: true,
-        enableHeadless: true,
-        requiresBatteryNotLow: false,
-        requiresCharging: false,
-        requiresStorageNotLow: false,
-        requiresDeviceIdle: false,
-        requiredNetworkType: NetworkType.NONE
-    ), standardTask).then((int status) {
-      print('[StandardFetch] configure success: $status');
-      BackgroundFetch.start().then((int status) {
-        print('[StandardFetch] start success: $status');
-      }).catchError((e) {
-        print('[StandardFetch] start FAILURE: $e');
-      });
-    }).catchError((e) {
-      print('[StandardFetch] configure ERROR: $e');
-    });
-
-    BackgroundFetch.finish(standardTaskId);*/
+    int status = await BackgroundFetch.configure(BackgroundFetchConfig(
+      minimumFetchInterval: 15,
+      forceAlarmManager: false,
+      stopOnTerminate: true,
+      startOnBoot: false,
+      requiresBatteryNotLow: false,
+      requiresCharging: false,
+      requiresStorageNotLow: false,
+      requiresDeviceIdle: false,
+      requiredNetworkType: NetworkType.NONE,
+    ), standardTask,fetchTimeout);
+    print('[BackgroundFetchIOS] configure success: $status');
   }
   //--------android----------------------------------------
   static void startAndroidPolling(Profile profile) async
   {
-    /*SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Configure BackgroundFetch.
+    int status = await BackgroundFetch.configure(BackgroundFetchConfig(
+      minimumFetchInterval: 15,
+      forceAlarmManager: false,
+      stopOnTerminate: true,
+      startOnBoot: false,
+      requiresBatteryNotLow: false,
+      requiresCharging: false,
+      requiresStorageNotLow: false,
+      requiresDeviceIdle: false,
+      requiredNetworkType: NetworkType.NONE,
+    ), standardTask,fetchTimeout);
+    print('[BackgroundFetchAndroid] configure success: $status');
+  }
 
-    // Read fetch_events from SharedPreferences
-    List<String> events = [];
-    String json = prefs.getString(scheduledTaskId);
-    if (json != null) {
-      events = jsonDecode(json).cast<String>();
+  static void standardTask(String taskId) async
+  {
+    Profile profile = ActiveSession.getInstance().getProfile();
+    pollData(profile);
 
-    }
-
-    // Add new event.
-    events.insert(0, profile.toString());
-    // Persist fetch events in SharedPreferences
-    prefs.setString(scheduledTaskId, jsonEncode(events));
-
-    // Register to receive BackgroundFetch events after app is terminated.
-    // Requires {stopOnTerminate: false, enableHeadless: true}
-    BackgroundFetch.registerHeadlessTask(scheduledTask);
+    BackgroundFetch.finish(taskId);
 
     BackgroundFetch.scheduleTask(TaskConfig(
-          taskId: scheduledTaskId,
-          delay: 1000,
-          periodic: true,
-          forceAlarmManager: true,
-          stopOnTerminate: false,
-          enableHeadless: true
-    ));*/
+        taskId: "flutter_background_fetch",
+        delay: 1,
+        periodic: false,
+        forceAlarmManager: true,
+        stopOnTerminate: true,
+        enableHeadless: false,
+        requiresNetworkConnectivity: true,
+        requiresCharging: true
+    ));
+  }
+
+  static void fetchTimeout(String taskId) {
+    print("[BackgroundFetch] TIMEOUT: $taskId");
+
+    Profile profile = ActiveSession.getInstance().getProfile();
+    pollData(profile);
+
+    BackgroundFetch.finish(taskId);
+
+    BackgroundFetch.scheduleTask(TaskConfig(
+        taskId: "flutter_background_fetch",
+        delay: 1,
+        periodic: false,
+        forceAlarmManager: true,
+        stopOnTerminate: true,
+        enableHeadless: false,
+        requiresNetworkConnectivity: true,
+        requiresCharging: true
+    ));
   }
   //--------------------------------------------------------
   static void pollData(Profile profile)
@@ -109,54 +107,5 @@ class CloudDataPoller
       print(response);
       print("********PUSH**********");
     });
-  }
-
-  /// This "Headless Task" is run when app is terminated.
-  static void scheduledTask(String taskId) async {
-    /*SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Read fetch_events from SharedPreferences
-    List<String> events = [];
-    String eventJson = prefs.getString(taskId);
-    if (eventJson != null) {
-      events = jsonDecode(eventJson).cast<String>();
-
-    }
-    String profileJson = events[0];
-    Profile profile = Profile.fromJson(
-    json.decode(profileJson));
-
-    pollData(profile);
-
-    BackgroundFetch.finish(taskId);
-
-    BackgroundFetch.scheduleTask(TaskConfig(
-          taskId: taskId,
-          delay: 1000,
-          periodic: true,
-          forceAlarmManager: true,
-          stopOnTerminate: false,
-          enableHeadless: true
-    ));*/
-  }
-
-  static void standardTask(String taskId) async
-  {
-    /*SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Read fetch_events from SharedPreferences
-    List<String> events = [];
-    String eventJson = prefs.getString(taskId);
-    if (eventJson != null) {
-      events = jsonDecode(eventJson).cast<String>();
-
-    }
-    String profileJson = events[0];
-    Profile profile = Profile.fromJson(
-    json.decode(profileJson));
-
-    pollData(profile);
-
-    BackgroundFetch.finish(taskId);*/
   }
 }
