@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.FoodRecoveryTransaction;
+import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.TransactionState;
 import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
@@ -24,6 +25,82 @@ public class Transactions {
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
+
+    @Path("/recovery/foodRunner")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodRecoveryTransactionsByRunner(@QueryParam("email") String email)
+    {
+        try
+        {
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions();
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED)
+                {
+                    cour.getPickUpNotification().setNotificationSent(true);
+                    SchedulePickUpNotification courPickUp = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
+                            getScheduledPickUpNotification(cour.getPickUpNotification().getId()).toString());
+                    courPickUp.setNotificationSent(true);
+                    this.mongoDBJsonStore.storeFoodRecoveryTransaction(cour);
+                    this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
+                    pending.add(cour.toJson());
+                }
+            }
+            result.add("pending", pending);
+
+            return Response.ok(result.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+
+    @Path("/push/recovery")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPushTransactions(@QueryParam("email") String email)
+    {
+        try
+        {
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            JsonArray inProgress = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
+
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+
+
+            for(FoodRecoveryTransaction cour: transactions) {
+                if(cour.getPickUpNotification().isNotificationSent())
+                {
+                    continue;
+                }
+                if (cour.getTransactionState() == TransactionState.SUBMITTED)
+                {
+                    pending.add(cour.toJson());
+                }
+            }
+            result.add("pending", pending);
+
+            return Response.ok(result.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
 
 
     @Path("/recovery")
@@ -46,6 +123,7 @@ public class Transactions {
                     pending.add(cour.toJson());
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
                         cour.getTransactionState() == TransactionState.ONTHEWAY) {
+
                     inProgress.add(cour.toJson());
                 }
             }
@@ -59,37 +137,6 @@ public class Transactions {
                 historyExists = true;
             }
             result.addProperty("historyExists",historyExists);
-            return Response.ok(result.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
-
-    @Path("/recovery/foodRunner")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getFoodRecoveryTransactionsByRunner(@QueryParam("email") String email)
-    {
-        try
-        {
-            JsonObject result = new JsonObject();
-            JsonArray pending = new JsonArray();
-            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions();
-            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
-
-            for(FoodRecoveryTransaction cour: transactions) {
-                if (cour.getTransactionState() == TransactionState.SUBMITTED)
-                {
-                    pending.add(cour.toJson());
-                }
-            }
-            result.add("pending", pending);
-
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)

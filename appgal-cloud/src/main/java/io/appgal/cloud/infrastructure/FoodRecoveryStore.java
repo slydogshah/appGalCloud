@@ -28,6 +28,24 @@ public class FoodRecoveryStore {
         //JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
         //logger.info("*******************************************************************************************************************");
 
+        FoodRecoveryTransaction exists = null;
+        String queryJson = "{\"id\":\""+foodRecoveryTransaction.getId()+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            exists = FoodRecoveryTransaction.parse(documentJson);
+        }
+        if(exists != null)
+        {
+            bson = Document.parse(exists.toString());
+            collection.deleteOne(bson);
+        }
+
+
         Document doc = Document.parse(foodRecoveryTransaction.toString());
         collection.insertOne(doc);
     }

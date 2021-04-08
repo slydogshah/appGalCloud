@@ -51,14 +51,15 @@ public class JenFlow {
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
 
         //Notify a FoodRunner
-        /*JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
+        JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
                 foodRunner.getProfile().getPassword());
         JsonUtil.print(this.getClass(),loginRunner);
 
         //FoodRunner accepts
         List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
-        FoodRecoveryTransaction accepted = myTransactions.get(0);
-        this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);*/
+
+        //FoodRecoveryTransaction accepted = myTransactions.get(0);
+        //this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         //FoodRunner notifies DropOffOrg
     }

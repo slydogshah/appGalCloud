@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 
@@ -100,12 +101,13 @@ class CloudDataPoller
   //--------------------------------------------------------
   static void pollData(Profile profile)
   {
+    print("********PUSH**********");
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    Future<String> futureP = activeNetworkRestClient.getSchedulePickUpNotification(profile.email);
-    futureP.then((response){
-      print("********PUSH**********");
-      print(response);
-      print("********PUSH**********");
+    Future<List<FoodRecoveryTransaction>> futureP = activeNetworkRestClient.getFoodRecoveryTransaction(profile.email);
+    futureP.then((txs){
+      for(FoodRecoveryTransaction tx in txs)
+      print(jsonEncode(tx.toJson()));
     });
+    print("********PUSH**********");
   }
 }
