@@ -132,6 +132,35 @@ public class NetworkOrchestrator {
         this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);
     }
 
+    public List<FoodRecoveryTransaction> findMyTransactions(String email)
+    {
+        List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
+
+        FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
+
+        //TODO
+        List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
+        for(FoodRecoveryTransaction tx:all)
+        {
+            Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
+            Location foodRunnerLocation = foodRunner.getLocation();
+            Double distance = this.mapUtils.calculateDistance(foodRunnerLocation.getLatitude(),
+                    foodRunnerLocation.getLongitude(),
+                    source.getLatitude(),source.getLongitude());
+
+            //logger.info("**************DISTANCE*****************");
+            //logger.info("DISTANCE: "+distance);
+            //logger.info("**************DISTANCE*****************");
+
+            if(distance <= 5.0d)
+            {
+                myTransactions.add(tx);
+            }
+        }
+
+        return myTransactions;
+    }
+    //-------------------------
     public NotificationEngine getNotificationEngine()
     {
         return this.notificationEngine;

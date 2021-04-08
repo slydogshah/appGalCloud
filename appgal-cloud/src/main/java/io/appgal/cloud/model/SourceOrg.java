@@ -235,6 +235,17 @@ public class SourceOrg implements Serializable {
         }
         sourceOrg.address = address;
 
+        Location location = new Location();
+        if(jsonObject.has("latitude"))
+        {
+           location.setLatitude(jsonObject.get("latitude").getAsDouble());
+        }
+        if(jsonObject.has("longitude"))
+        {
+            location.setLongitude(jsonObject.get("longitude").getAsDouble());
+        }
+        sourceOrg.setLocation(location);
+
         sourceOrg.isProducer = jsonObject.get("producer").getAsBoolean();
 
         return sourceOrg;

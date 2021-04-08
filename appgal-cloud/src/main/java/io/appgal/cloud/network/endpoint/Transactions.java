@@ -8,6 +8,7 @@ import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.FoodRecoveryTransaction;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.TransactionState;
+import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,9 @@ public class Transactions {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    @Inject
+    private NetworkOrchestrator networkOrchestrator;
+
     @Path("/recovery/foodRunner")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -35,8 +39,8 @@ public class Transactions {
         {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
-            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions();
-            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
+            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED)
@@ -73,20 +77,17 @@ public class Transactions {
         {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
-            JsonArray inProgress = new JsonArray();
-            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
+            List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
 
-            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
 
             for(FoodRecoveryTransaction cour: transactions) {
-                if(cour.getPickUpNotification().isNotificationSent())
-                {
-                    continue;
-                }
                 if (cour.getTransactionState() == TransactionState.SUBMITTED)
                 {
-                    pending.add(cour.toJson());
+                    if(!cour.getPickUpNotification().isNotificationSent()) {
+                        pending.add(cour.toJson());
+                    }
                 }
             }
             result.add("pending", pending);
