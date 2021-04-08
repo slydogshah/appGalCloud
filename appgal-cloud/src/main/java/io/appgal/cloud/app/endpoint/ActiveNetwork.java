@@ -148,7 +148,6 @@ public class ActiveNetwork {
 
             SchedulePickUpNotification pickUpNotification = tx.getPickUpNotification();
             pickUpNotification.setFoodRunner(foodRunner);
-            pickUpNotification.setNotificationSent(true);
 
             ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
             dropOffNotification.setNotificationSent(true);

@@ -50,13 +50,12 @@ public class JenFlow {
         String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),"");
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
 
-        //Notify a FoodRunner
+        //Notify a FoodRunner...does not pull my transactions
         JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
                 foodRunner.getProfile().getPassword());
-        JsonUtil.print(this.getClass(),loginRunner);
 
-        //FoodRunner accepts
-        List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        //FoodRunner accepts....this will update to notificationSent=true
+        //List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
 
         //FoodRecoveryTransaction accepted = myTransactions.get(0);
         //this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
@@ -84,7 +83,7 @@ public class JenFlow {
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
+        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
         assertTrue(responseJson.getAsJsonObject().get("success").getAsJsonObject().get("producer").getAsBoolean());
 
@@ -111,7 +110,7 @@ public class JenFlow {
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
+        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
         assertFalse(responseJson.getAsJsonObject().get("success").getAsJsonObject().get("producer").getAsBoolean());
 
@@ -132,7 +131,7 @@ public class JenFlow {
         Response response = given().body(json.toString()).post("/registration/profile");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
+        //JsonUtil.print(this.getClass(), responseJson);
         //assertEquals(200, response.getStatusCode());
 
         if(response.statusCode()==409)
@@ -140,7 +139,7 @@ public class JenFlow {
             response = given().get("/registration/profile/?email="+email);
             jsonString = response.getBody().print();
             responseJson = JsonParser.parseString(jsonString);
-            JsonUtil.print(this.getClass(), responseJson);
+            //JsonUtil.print(this.getClass(), responseJson);
         }
 
         Profile profile = Profile.parse(jsonString);
@@ -159,7 +158,7 @@ public class JenFlow {
         Response response = given().body(json.toString()).post("/notification/addPickupDetails/");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
+        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
 
         return responseJson.getAsJsonObject().get("pickupNotificationId").getAsString();
@@ -175,7 +174,7 @@ public class JenFlow {
         Response response = given().body(json.toString()).post("/notification/schedulePickup/");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
+        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
     }
 
@@ -189,7 +188,7 @@ public class JenFlow {
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
+        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
         return responseJson.getAsJsonObject();
     }
@@ -199,7 +198,7 @@ public class JenFlow {
         Response response = given().get("/tx/recovery/foodRunner/?email="+email);
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
+        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
 
         JsonArray pending = responseJson.getAsJsonObject().get("pending").getAsJsonArray();
@@ -223,7 +222,7 @@ public class JenFlow {
         Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
+        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
     }
 }

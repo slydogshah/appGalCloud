@@ -60,7 +60,7 @@ public class DropOffPipeline {
     public void add(ScheduleDropOffNotification notification)
     {
         this.dropOffQueue.add(notification);
-        logger.info("DROPOFF_QUEUE_SIZE: "+this.dropOffQueue.size());
+        //logger.info("DROPOFF_QUEUE_SIZE: "+this.dropOffQueue.size());
     }
 
     public ScheduleDropOffNotification next()
@@ -107,7 +107,7 @@ public class DropOffPipeline {
         }
 
         notification = this.next();
-        notification.setNotificationSent(true);
+        //notification.setNotificationSent(true);
 
         //Send
         this.mongoDBJsonStore.updateScheduledDropOffNotification(notification);

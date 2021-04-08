@@ -97,7 +97,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
         }
         if(jsonObject.has("notificationSent"))
         {
-            schedulePickUpNotification.notificationSent = jsonObject.get("notificationSent").getAsBoolean();
+            schedulePickUpNotification.setNotificationSent(jsonObject.get("notificationSent").getAsBoolean());
         }
         if(jsonObject.has("pickupNotes"))
         {
@@ -149,7 +149,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
             jsonObject.add("foodDetails", JsonParser.parseString(this.foodDetails.toString()));
         }
 
-        jsonObject.addProperty("notificationSent", this.notificationSent);
+        jsonObject.addProperty("notificationSent", this.isNotificationSent());
         jsonObject.addProperty("isDropOffDynamic", this.isDropOffDynamic);
 
         if(this.id != null)

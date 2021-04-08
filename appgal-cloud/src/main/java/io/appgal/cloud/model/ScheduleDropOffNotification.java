@@ -70,7 +70,7 @@ public class ScheduleDropOffNotification extends ScheduleNotification
         }
         if(jsonObject.has("notificationSent"))
         {
-            schedulePickUpNotification.notificationSent = jsonObject.get("notificationSent").getAsBoolean();
+            schedulePickUpNotification.setNotificationSent(jsonObject.get("notificationSent").getAsBoolean());
         }
         if(jsonObject.has("dropOffNotes"))
         {
@@ -103,7 +103,7 @@ public class ScheduleDropOffNotification extends ScheduleNotification
         {
             jsonObject.addProperty("start", this.start.toEpochSecond());
         }
-        jsonObject.addProperty("notificationSent", this.notificationSent);
+        jsonObject.addProperty("notificationSent", this.isNotificationSent());
         jsonObject.add("dropOffNotes",JsonParser.parseString(this.dropOffNotes.toString()));
 
         return jsonObject;
