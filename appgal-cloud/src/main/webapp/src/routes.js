@@ -12,14 +12,14 @@ const DropOffHome = React.lazy(() => import('./application/DropOffHome'));
 const DropOffHistory = React.lazy(() => import('./application/DropOffHistory'));
 
 const routes = [
-  { path: '/', exact: true, name: 'Login', component: Login},
-  { path: '/home', exact: true, name: 'Home', component: Home },
-  { path: '/profile', exact: true, name: 'Profile', component: Profile },
-  { path: '/pickupHistory', exact: true, name: 'Pickup History', component: PickupHistory },
-  { path: '/addPickupDetails', exact: true, name: 'Add Pickup Details', component: AddPickupDetails },
-  { path: '/dropOffOptions', exact: true, name: 'DropOff Options', component: DropOffOptions },
-  { path: '/dropOffHome', exact: true, name: 'DropOff Home', component: DropOffHome },
-  { path: '/dropOffHistory', exact: true, name: 'DropOff History', component: DropOffHistory },
+  { path: '/dashboard', exact: true, name: 'Login', component: Login},
+  { path: '/dashboard/home', exact: true, name: 'Home', component: Home },
+  { path: '/dashboard/profile', exact: true, name: 'Profile', component: Profile },
+  { path: '/dashboard/pickupHistory', exact: true, name: 'Pickup History', component: PickupHistory },
+  { path: '/dashboard/addPickupDetails', exact: true, name: 'Add Pickup Details', component: AddPickupDetails },
+  { path: '/dashboard/dropOffOptions', exact: true, name: 'DropOff Options', component: DropOffOptions },
+  { path: '/dashboard/dropOffHome', exact: true, name: 'DropOff Home', component: DropOffHome },
+  { path: '/dashboard/dropOffHistory', exact: true, name: 'DropOff History', component: DropOffHistory },
 ];
 
 export default routes;
