@@ -2,7 +2,7 @@
   "name": "Dashboard",
   "version": "1.0.0",
   "description": "",
-  "homepage": "/dashboard",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@coreui/chartjs": "^2.0.0",

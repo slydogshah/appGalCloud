@@ -96,13 +96,13 @@ class LoginForm extends React.Component {
           if(response.data.sourceOrg.producer)
              {
                  this.props.history.push({
-                   pathname: "/dashboard/home"
+                   pathname: "/home"
                  });
             }
             else
             {
                   this.props.history.push({
-                    pathname: "/dashboard/dropOffHome"
+                    pathname: "/dropOffHome"
                   });
             }
 
@@ -226,13 +226,13 @@ class LoginForm extends React.Component {
                        if(response.data.sourceOrg.producer)
                        {
                            this.props.history.push({
-                             pathname: "/dashboard/home"
+                             pathname: "/home"
                            });
                       }
                       else
                       {
                             this.props.history.push({
-                              pathname: "/dashboard/dropOffHome"
+                              pathname: "/dropOffHome"
                             });
                       }
                });

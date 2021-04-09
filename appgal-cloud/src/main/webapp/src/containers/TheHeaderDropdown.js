@@ -39,12 +39,12 @@ class TheHeaderDropdown extends React.Component {
           <CDropdownMenu className="pt-0" placement="bottom-end">
             <CDropdownItem>
               <CIcon name="cil-user" className="mfe-2" />
-              <CLink to="/dashboard/profile" className="btn btn-primary">Profile</CLink>
+              <CLink to="/profile" className="btn btn-primary">Profile</CLink>
             </CDropdownItem>
             <CDropdownItem divider />
             <CDropdownItem>
               <CIcon name="cil-lock-locked" className="mfe-2" />
-              <CLink to="/dashboard" className="btn btn-primary">Logout</CLink>
+              <CLink to="/" className="btn btn-primary">Logout</CLink>
             </CDropdownItem>
           </CDropdownMenu>
         </CDropdown>

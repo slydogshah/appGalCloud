@@ -174,7 +174,7 @@ class Profile extends React.Component {
                       axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
                       then((response) => {
                           this.props.history.push({
-                              pathname: "/dashboard/home",
+                              pathname: "/home",
                               state: response.data
                           });
                       });

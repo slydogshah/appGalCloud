@@ -125,7 +125,7 @@ class AddPickupDetails extends React.Component
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/";
         axios.post(apiUrl,payload).then((response) => {
               this.props.history.push({
-                pathname: "/dashboard/dropOffOptions",
+                pathname: "/dropOffOptions",
                 state: { data: response.data }
               });
         }).catch(err => {

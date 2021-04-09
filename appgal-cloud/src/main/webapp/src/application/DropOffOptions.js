@@ -145,7 +145,7 @@ class DropOffOptions extends React.Component
     handlePickupProcess(event)
     {
         this.props.history.push({
-            pathname: "/dashboard/home"
+            pathname: "/home"
         });
     }
 

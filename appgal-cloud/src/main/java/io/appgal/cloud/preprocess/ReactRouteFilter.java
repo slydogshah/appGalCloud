@@ -26,7 +26,7 @@ public class ReactRouteFilter extends HttpFilter {
         chain.doFilter(request, response);
 
 
-        if (response.getStatus() == 404) {
+        /*if (response.getStatus() == 404) {
             System.out.println("*****0******");
             String path = request.getRequestURI().substring(
                     request.getContextPath().length()).replaceAll("[/]+$", "");
@@ -55,6 +55,6 @@ public class ReactRouteFilter extends HttpFilter {
                 request.getRequestDispatcher(path).forward(request, response);
                 //response.getOutputStream().close();
             }
-        }
+        }*/
     }
 }
