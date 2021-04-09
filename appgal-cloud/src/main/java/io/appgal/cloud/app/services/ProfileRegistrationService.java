@@ -82,8 +82,6 @@ public class ProfileRegistrationService {
     public JsonObject login(String userAgent, String email, String password, Location location)
             throws AuthenticationException
     {
-        //logger.info("*****LOGIN_USER_AGENT******");
-        //logger.info("USER_AGENT: "+userAgent);
         JsonObject authFailure = new JsonObject();
 
         Profile profile = this.mongoDBJsonStore.getProfile(email);
@@ -102,11 +100,6 @@ public class ProfileRegistrationService {
             throw new AuthenticationException(authFailure);
         }
 
-        //logger.info(registeredEmail);
-        //logger.info(email);
-        //logger.info(registeredPassword);
-        //logger.info(password);
-
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
             JsonObject authResponse = new JsonObject();
@@ -118,7 +111,7 @@ public class ProfileRegistrationService {
             foodRunner.setLocation(location);
             this.networkOrchestrator.enterNetwork(foodRunner);
 
-            //logger.info("AUTHENTICATION_SUCCESS");
+            logger.info("AUTHENTICATION_SUCCESS: "+email);
             return authResponse;
         }
 
