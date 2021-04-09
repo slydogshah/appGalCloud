@@ -190,10 +190,6 @@ public class Profile implements Serializable {
         }
         jsonObject.addProperty("profileType", this.profileType.name());
 
-        if(this.location != null) {
-            jsonObject.add("location", this.location.toJson());
-        }
-
         if(this.chainId != null) {
             jsonObject.addProperty("chainId", this.chainId);
         }
@@ -230,9 +226,6 @@ public class Profile implements Serializable {
         }
         if(jsonObject.has("sourceOrgId")) {
             profile.sourceOrgId = jsonObject.get("sourceOrgId").getAsString();
-        }
-        if(jsonObject.has("location")) {
-            profile.location = Location.parse(jsonObject.get("location").getAsJsonObject().toString());
         }
         String profileTypeName = jsonObject.get("profileType").getAsString();
         profile.profileType = ProfileType.valueOf(profileTypeName);
