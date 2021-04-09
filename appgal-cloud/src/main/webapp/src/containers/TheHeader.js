@@ -26,7 +26,7 @@ import { useLocation } from 'react-router-dom'
 
 const TheHeader = () => {
   const location = useLocation();
-  if(location.pathname == "/")
+  if(location.pathname == "/dashboard")
   {
     return(
         <CHeader withSubheader>
@@ -46,7 +46,7 @@ const TheHeader = () => {
 
               <CHeaderNav className="d-md-down-none mr-auto">
                 <CHeaderNavItem className="px-3">
-                  <CHeaderNavLink to="/home">Home</CHeaderNavLink>
+                  <CHeaderNavLink to="/dashboard/home">Home</CHeaderNavLink>
                 </CHeaderNavItem>
               </CHeaderNav>
 

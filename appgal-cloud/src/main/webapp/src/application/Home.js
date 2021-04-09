@@ -269,14 +269,14 @@ class Home extends React.Component {
   handlePickupProcess(event)
   {
       this.props.history.push({
-                pathname: "/addPickupDetails"
+                pathname: "/dashboard/addPickupDetails"
       });
   }
 
   handlePickupHistory(event)
   {
     this.props.history.push({
-                    pathname: "/pickupHistory"
+                    pathname: "/dashboard/pickupHistory"
           });
   }
 

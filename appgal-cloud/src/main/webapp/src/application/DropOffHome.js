@@ -121,7 +121,7 @@ class DropOffHome extends React.Component {
               axios.get(apiUrl).then((response) => {
                 //console.log("MY_DATA: "+JSON.stringify(response.data));
                 this.props.history.push({
-                  pathname: "/dropOffHistory",
+                  pathname: "/dashboard/dropOffHistory",
                   state: response.data
                 });
               });
