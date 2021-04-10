@@ -45,9 +45,9 @@ import WidgetsDropdown from './WidgetsDropdown'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
+import { AppContext,store} from "./AppContext"
 
 const DropOffOptionsView = ({dropOffOrgs,widget}) => {
-    console.log("ARRAY: "+JSON.stringify(dropOffOrgs));
     const array = []
     for (const [index, value] of dropOffOrgs.entries()) {
         array.push(
@@ -67,7 +67,7 @@ const DropOffOptionsView = ({dropOffOrgs,widget}) => {
                                      </div>
                                      <div className="progress-group-prepend">
                                         <span className="progress-group-text">
-                                            <CButton color="success" onClick={widget.handlePickup}>Schedule</CButton>
+                                            <CButton color="success" value={value.orgId} onClick={widget.handlePickup}>Schedule</CButton>
                                         </span>
                                      </div>
                                    </CCallout>
@@ -100,55 +100,46 @@ class DropOffOptions extends React.Component
 
     handlePickup(event)
     {
-         var schedulePickupData;
-         //TODO: remove_me
-         for (const [index, value] of this.props.location.state.data.dropOffOrgs.entries()) {
-             schedulePickupData = value;
-         }
-         console.log(JSON.stringify(schedulePickupData));
+         const dropOffOrgId = event.target.value;
+         const payload = {
+            pickupNotificationId:this.props.location.state.data.pickupNotificationId,
+            dropOffOrgId: dropOffOrgId,
+            sourceOrg:store.getState().sourceOrg
+         };
+
+         //console.log(JSON.stringify(payload));
+
          const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
-         //const schedulePickupData = {};
-         //schedulePickupData.id = "a3f499d6-106d-40da-a608-b36029b5ac42";
-         axios.post(apiUrl,schedulePickupData).then((response) => {
-               console.log(JSON.stringify(response.data));
-               this.element = (
-                             <CModal
-                               size="sm"
-                               show={true}
-                               color="success"
-                               fade="true"
-                             >
-                               <CModalHeader>
-                                 <CModalTitle>Schedule A Pickup-Debug</CModalTitle>
-                               </CModalHeader>
-                               <CModalBody>
-                                    <CCard>
-                                        <CCardBody>
-                                          <CRow>
-                                            <CCol>
-                                              <CFormGroup>
-                                                <CLabel htmlFor="ccmonth">Preferred Pickup Time</CLabel>
-                                                <CSelect custom name="ccmonth" id="ccmonth">
-                                                  <option value="0">12:00 AM</option>
-                                                  <option value="12">12:00 PM</option>
-                                                  <option value="23">11:59 PM</option>
-                                                </CSelect>
-                                              </CFormGroup>
-                                            </CCol>
-                                          </CRow>
-                                        </CCardBody>
-                                      </CCard>
-                               </CModalBody>
-                               <CModalFooter>
-                                   <CButton color="success" onClick={this.handlePickupProcess}>Schedule</CButton>
-                               </CModalFooter>
-                             </CModal>
-                        );
-                        ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
-                        ReactDOM.render(this.element,document.getElementById('schedulePickup'));
-         }).catch(err => {
-          console.log(JSON.stringify(err));
-         });
+                  axios.post(apiUrl,payload).then((response) => {
+                        console.log(JSON.stringify(response.data));
+                        this.element = (
+                                      <CModal
+                                        size="sm"
+                                        show={true}
+                                        color="success"
+                                        fade="true"
+                                      >
+                                        <CModalHeader>
+                                          <CModalTitle>Pickup Confirmation</CModalTitle>
+                                        </CModalHeader>
+                                        <CModalBody>
+                                             <CCallout color="info">
+                                              <div className="progress-group-prepend">
+                                                 <small className="text-muted">Your Pickup is scheduled</small>
+                                              </div>
+                                            </CCallout>
+                                        </CModalBody>
+                                        <CModalFooter>
+                                            <CButton color="success" onClick={this.handlePickupProcess}>OK</CButton>
+                                        </CModalFooter>
+                                      </CModal>
+                                 );
+                                 ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
+                                 ReactDOM.render(this.element,document.getElementById('schedulePickup'));
+          }).catch(err => {
+           //TODO
+           console.log(JSON.stringify(err));
+          });
     }
 
     handlePickupProcess(event)
@@ -163,6 +154,10 @@ class DropOffOptions extends React.Component
         const dropOffOrgs = this.props.location.state.data.dropOffOrgs;
         return(
             <>
+                <br/>
+                      <br/>
+                      <br/>
+                      <br/>
                 <div id="schedulePickup"></div>
                 <CRow>
                     <CCol>

@@ -22,6 +22,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
 
     private List<Note> pickupNotes;
     private boolean isDropOffDynamic;
+    private SourceOrg dropOffOrg;
 
     public SchedulePickUpNotification(String id)
     {
@@ -57,6 +58,14 @@ public class SchedulePickUpNotification extends ScheduleNotification
         isDropOffDynamic = dropOffDynamic;
     }
 
+    public SourceOrg getDropOffOrg() {
+        return dropOffOrg;
+    }
+
+    public void setDropOffOrg(SourceOrg dropOffOrg) {
+        this.dropOffOrg = dropOffOrg;
+    }
+
     public static SchedulePickUpNotification parse(String json)
     {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
@@ -88,7 +97,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
         }
         if(jsonObject.has("notificationSent"))
         {
-            schedulePickUpNotification.notificationSent = jsonObject.get("notificationSent").getAsBoolean();
+            schedulePickUpNotification.setNotificationSent(jsonObject.get("notificationSent").getAsBoolean());
         }
         if(jsonObject.has("pickupNotes"))
         {
@@ -108,6 +117,13 @@ public class SchedulePickUpNotification extends ScheduleNotification
         {
             schedulePickUpNotification.isDropOffDynamic = jsonObject.get("isDropOffDynamic").getAsBoolean();
         }
+
+        if(jsonObject.has("dropOffOrg"))
+        {
+            JsonObject sourceOrgJson = jsonObject.get("dropOffOrg").getAsJsonObject();
+            schedulePickUpNotification.dropOffOrg = SourceOrg.parse(sourceOrgJson.toString());
+        }
+
         return schedulePickUpNotification;
     }
 
@@ -115,10 +131,6 @@ public class SchedulePickUpNotification extends ScheduleNotification
     {
         JsonObject jsonObject = new JsonObject();
 
-        if(this.id != null)
-        {
-            jsonObject.addProperty("id", this.id);
-        }
         if(this.sourceOrg != null) {
             jsonObject.add("sourceOrg", this.sourceOrg.toJson());
         }
@@ -137,8 +149,17 @@ public class SchedulePickUpNotification extends ScheduleNotification
             jsonObject.add("foodDetails", JsonParser.parseString(this.foodDetails.toString()));
         }
 
-        jsonObject.addProperty("notificationSent", this.notificationSent);
+        jsonObject.addProperty("notificationSent", this.isNotificationSent());
         jsonObject.addProperty("isDropOffDynamic", this.isDropOffDynamic);
+
+        if(this.id != null)
+        {
+            jsonObject.addProperty("id", this.id);
+        }
+        if(this.dropOffOrg != null)
+        {
+            jsonObject.add("dropOffOrg", this.dropOffOrg.toJson());
+        }
 
         return jsonObject;
     }

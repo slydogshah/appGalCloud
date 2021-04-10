@@ -141,58 +141,63 @@ public class RegistrationTests extends BaseTest {
 
     @Test
     public void testLoginSuccess() {
-        JsonObject registrationJson = new JsonObject();
+        JsonObject json = new JsonObject();
         String id = UUID.randomUUID().toString();
         String email = id+"@blah.com";
-        registrationJson.addProperty("email", email);
-        registrationJson.addProperty("mobile", 8675309l);
-        registrationJson.addProperty("photo", "photu");
-        registrationJson.addProperty("password", "c");
-        registrationJson.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
-        Response response = given().body(registrationJson.toString()).post("/registration/profile");
-        logger.info("*********");
-        logger.info(response.asString());
-        logger.info("*********");
+        json.addProperty("id", id);
+        json.addProperty("email", email);
+        json.addProperty("password", "password");
+        json.addProperty("mobile", "123");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        Response response = given().body(json.toString()).post("/registration/profile");
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
 
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
-        loginJson.addProperty("password", "c");
+        loginJson.addProperty("password", "password");
         response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
 
-        String jsonString = response.getBody().prettyPrint();
+        jsonString = response.getBody().prettyPrint();
         logger.info("****");
         logger.info(response.getStatusLine());
         JsonUtil.print(this.getClass(),JsonParser.parseString(jsonString));
         logger.info("****");
 
         //assert the body
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        jsonObject = jsonObject.getAsJsonObject("profile");
-        Profile profile = Profile.parse(jsonObject.get("profile").toString());
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject().get("profile").getAsJsonObject();
+        Profile profile = Profile.parse(jsonObject.toString());
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), email);
-        assertEquals(profile.getMobile(), 8675309l);
-        assertEquals(profile.getPassword(), "c");
+        assertEquals(profile.getMobile(), 123);
+        assertEquals(profile.getPassword(), "password");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
 
     }
 
     @Test
     public void testLoginSuccessOrg() {
-        SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setLocation(new Location(9.0d, 10.0d));
-        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
 
         JsonObject registrationJson = new JsonObject();
         String id = UUID.randomUUID().toString();
-        String email = id+"@blah.com";
+        String email = id+"@microsoft.com";
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
-        registrationJson.addProperty("photo", "photu");
         registrationJson.addProperty("password", "c");
-        registrationJson.addProperty("sourceOrgId", sourceOrg.getOrgId());
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+
 
         logger.info("******NEW_ORG******");
         logger.info(registrationJson.toString());
@@ -246,9 +251,8 @@ public class RegistrationTests extends BaseTest {
         logger.info("****");
 
         //assert the body
-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        jsonObject = jsonObject.getAsJsonObject("profile");
-        Profile profile = Profile.parse(jsonObject.get("profile").toString());
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject().get("profile").getAsJsonObject();
+        Profile profile = Profile.parse(jsonObject.toString());
         assertNotNull(profile.getId());
         assertEquals(profile.getEmail(), email);
         assertEquals(profile.getMobile(), 8675309l);

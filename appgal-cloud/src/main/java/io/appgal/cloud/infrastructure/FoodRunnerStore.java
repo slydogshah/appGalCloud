@@ -8,6 +8,7 @@ import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,27 @@ public class FoodRunnerStore {
         }
 
         return foodRunners;
+    }
+
+    public FoodRunner getFoodRunner(MongoDatabase database, String email)
+    {
+        FoodRunner foodRunner = null;
+
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+
+        String queryJson = "{\"profile.email\":\""+email+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            foodRunner = FoodRunner.parse(documentJson);
+            return foodRunner;
+        }
+
+        return null;
     }
 
     public void deleteFoodRunner(MongoDatabase database, FoodRunner foodRunner)

@@ -11,6 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
 public class FoodRecoveryOrchestrator {
@@ -22,6 +23,7 @@ public class FoodRecoveryOrchestrator {
     public void notifyForPickUp(SchedulePickUpNotification schedulePickUpNotification)
     {
         FoodRecoveryTransaction recoveryTx = new FoodRecoveryTransaction();
+        recoveryTx.setId(UUID.randomUUID().toString());
         recoveryTx.setPickUpNotification(schedulePickUpNotification);
 
         //start the transaction
@@ -42,6 +44,11 @@ public class FoodRecoveryOrchestrator {
         List<SourceOrg> dropOffOptions = new ArrayList<>();
         for (SourceOrg dropOffOption : dropOffOrgs)
         {
+            if(dropOffOption.isProducer())
+            {
+                continue;
+            }
+
             JsonUtil.print(this.getClass(),dropOffOption.toJson());
 
             if(dropOffOption.getOrgId().equals(producer.getOrgId()))

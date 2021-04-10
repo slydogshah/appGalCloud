@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface ValidProfileSourceOrg {
 
-    String message() default "{}";
+    String message() default "organization_required";
 
     Class<?>[] groups() default { };
 

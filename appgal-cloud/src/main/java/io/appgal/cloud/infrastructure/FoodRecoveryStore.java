@@ -1,11 +1,13 @@
 package io.appgal.cloud.infrastructure;
 
+import com.google.gson.JsonParser;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import io.appgal.cloud.model.FoodRecoveryTransaction;
 import io.appgal.cloud.model.TransactionState;
+import io.appgal.cloud.util.JsonUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -22,18 +24,79 @@ public class FoodRecoveryStore {
     public void storeFoodRecoveryTransaction(MongoDatabase database,FoodRecoveryTransaction foodRecoveryTransaction)
     {
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+        //logger.info("*******************************STORE************************************************************************************");
+        //JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
+        //logger.info("*******************************************************************************************************************");
+
+        FoodRecoveryTransaction exists = null;
+        String queryJson = "{\"id\":\""+foodRecoveryTransaction.getId()+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            exists = FoodRecoveryTransaction.parse(documentJson);
+        }
+        if(exists != null)
+        {
+            bson = Document.parse(exists.toString());
+            collection.deleteOne(bson);
+        }
+
 
         Document doc = Document.parse(foodRecoveryTransaction.toString());
         collection.insertOne(doc);
     }
 
-    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(MongoDatabase database,String email)
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(MongoDatabase database,String orgId)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        String queryJson = "{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"}";
+        //String queryJson = "{}";
+        //logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(MongoDatabase database)
     {
         List<FoodRecoveryTransaction> list = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
         String queryJson = "{}";
-        logger.info(queryJson);
+        //logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryDropOffTransactions(MongoDatabase database,String orgId)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
+        String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.INPROGRESS+"\"}]}";
+        //logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -53,7 +116,7 @@ public class FoodRecoveryStore {
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
         String queryJson = "{$and:[{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+ TransactionState.CLOSED+"\"}]}";
-        logger.info(queryJson);
+        //JsonUtil.print(this.getClass(), JsonParser.parseString(queryJson));
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -73,7 +136,7 @@ public class FoodRecoveryStore {
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
         String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.CLOSED+"\"}]}";
-        logger.info(queryJson);
+        //logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();

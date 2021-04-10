@@ -9,6 +9,7 @@ import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.util.JsonUtil;
 import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,8 @@ public class Registration {
     public Response register(@RequestBody String profileJson)
     {
         try {
+            JsonUtil.print(this.getClass(),JsonParser.parseString(profileJson));
+
             JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
             Profile profile = Profile.parse(jsonObject.toString());
 
@@ -105,11 +108,16 @@ public class Registration {
     @Path("org")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerOrg(@RequestBody String profileJson)
+    public Response registerOrg(@RequestBody String json)
     {
         try {
-            JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
+            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+            jsonObject.remove("httpsAgent");
+
             Profile profile = Profile.parse(jsonObject.toString());
+            SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
+            sourceOrg.addProfile(profile);
+            profile.setSourceOrgId(sourceOrg.getOrgId());
 
             Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
             if(!violations.isEmpty())
@@ -118,15 +126,18 @@ public class Registration {
                 JsonArray violationsArray = new JsonArray();
                 for(ConstraintViolation violation:violations)
                 {
+                    logger.info("VIOLATION: "+violation.getMessage());
                     violationsArray.add(violation.getMessage());
                 }
                 responseJson.add("violations", violationsArray);
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
-            this.profileRegistrationService.register(profile);
+            this.profileRegistrationService.registerSourceOrg(sourceOrg);
 
-            return Response.ok().build();
+            JsonObject responseJson = new JsonObject();
+            responseJson.add("success", sourceOrg.toJson());
+            return Response.ok(responseJson.toString()).build();
         }
         catch(ResourceExistsException rxe)
         {
@@ -152,8 +163,6 @@ public class Registration {
         String password = jsonObject.get("password").getAsString();
 
         try {
-            JsonObject responseJson = new JsonObject();
-
             Profile profile = this.profileRegistrationService.getProfile(email);
             if(profile == null)
             {
@@ -161,31 +170,16 @@ public class Registration {
                 profileNotFound.addProperty("message", "profile_not_found");
                 return Response.status(401).entity(profileNotFound.toString()).build();
             }
-            JsonElement profileJson;
+
+            JsonObject responseJson;
             if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
-                profileJson = this.profileRegistrationService.login(userAgent, email, password);
-                responseJson.add("profile", profileJson);
+                Location location = Location.parse(credentialsJson);
+                responseJson = this.profileRegistrationService.login(userAgent, email, password, location);
             }
             else
             {
-                this.profileRegistrationService.orgLogin(userAgent, email, password);
+                responseJson = this.profileRegistrationService.orgLogin(userAgent, email, password);
             }
-            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
-            JsonArray pendingTransactions = new JsonArray();
-            JsonArray activeTransactions = new JsonArray();
-            for(FoodRecoveryTransaction tx: txs)
-            {
-                if(tx.getTransactionState() == TransactionState.SUBMITTED)
-                {
-                    pendingTransactions.add(tx.toJson());
-                }
-                else if(tx.getTransactionState() == TransactionState.INPROGRESS || tx.getTransactionState() == TransactionState.ONTHEWAY)
-                {
-                    activeTransactions.add(tx.toJson());
-                }
-            }
-            responseJson.add("pending", pendingTransactions);
-            responseJson.add("inProgress", activeTransactions);
 
             return Response.ok(responseJson.toString()).build();
         }

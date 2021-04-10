@@ -1,3 +1,5 @@
+import 'package:app/src/rest/cloudBusinessException.dart';
+
 import '../model/profile.dart';
 
 import 'package:app/src/model/sourceOrg.dart';
@@ -48,13 +50,28 @@ class ProfileRestClient
 
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/login/";
     try {
-       response = await http.post(Uri.parse(remoteUrl), body: credentials.toString());
+      //TODO
+      Map<String,dynamic> payload = credentials.toJson();
+      payload['latitude'] = 30.269021;
+      payload['longitude'] = -97.75210369999999;
+
+
+       response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).
+       timeout(Duration(seconds: 30),onTimeout: () {
+         print("NETWORK_TIMEOUT");
+         //json = new Map();
+         //json["exception"] = "NETWORK_TIME_OUT";
+         //json["statusCode"] = 500;
+         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
+       });
     }
     catch (e) {
       print(e);
       json = UrlFunctions.handleError(e, response);
       return json;
     }
+
+    json  = jsonDecode(response.body);
 
     json = UrlFunctions.handleError(null, response);
     if(json != null)
@@ -63,27 +80,15 @@ class ProfileRestClient
     }
 
     json  = jsonDecode(response.body);
-    var json2 = json['profile'];
-    Iterable sourceOrgIterable = json2['sourceOrgs'];
+
+    /*Iterable sourceOrgIterable = json['sourceOrgs'];
     List<SourceOrg> sourceOrgs = new List();
     for(Map<String, dynamic> sourceOrgJson in sourceOrgIterable)
     {
         SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
         sourceOrgs.add(sourceOrg);
-    }
+    }*/
 
-    return json;
+    return json["profile"];
   }
 }
-
-
-
-//.timeout(
-//Duration(seconds: 1),
-//onTimeout: () {
-//print("NETWORK_TIMEOUT");
-//json = new Map();
-//json["exception"] = "NETWORK_TIME_OUT";
-//json["statusCode"] = 500;
-//},
-//);

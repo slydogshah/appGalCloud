@@ -6,7 +6,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.FoodRecoveryTransaction;
+import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.TransactionState;
+import io.appgal.cloud.network.services.NetworkOrchestrator;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,36 +27,163 @@ public class Transactions {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    @Inject
+    private NetworkOrchestrator networkOrchestrator;
+
+    @Path("/recovery/foodRunner")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodRecoveryTransactionsByRunner(@QueryParam("email") String email)
+    {
+        try
+        {
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
+            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED)
+                {
+                    cour.getPickUpNotification().setNotificationSent(true);
+                    SchedulePickUpNotification courPickUp = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
+                            getScheduledPickUpNotification(cour.getPickUpNotification().getId()).toString());
+                    courPickUp.setNotificationSent(true);
+                    this.mongoDBJsonStore.storeFoodRecoveryTransaction(cour);
+                    this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
+                    pending.add(cour.toJson());
+                }
+            }
+            result.add("pending", pending);
+
+            return Response.ok(result.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+
+    @Path("/push/recovery")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPushTransactions(@QueryParam("email") String email)
+    {
+        try
+        {
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
+
+            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+
+
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED)
+                {
+                    if(!cour.getPickUpNotification().isNotificationSent()) {
+                        cour.getPickUpNotification().setNotificationSent(true);
+                        SchedulePickUpNotification courPickUp = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
+                                getScheduledPickUpNotification(cour.getPickUpNotification().getId()).toString());
+                        courPickUp.setNotificationSent(true);
+                        this.mongoDBJsonStore.storeFoodRecoveryTransaction(cour);
+                        this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
+                        pending.add(cour.toJson());
+                    }
+                }
+            }
+            result.add("pending", pending);
+
+            return Response.ok(result.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
 
     @Path("/recovery")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFoodRecoveryTransactions(@QueryParam("email") String email)
+    public Response getFoodRecoveryTransactions(@QueryParam("orgId") String orgId)
     {
-        try {
-            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactions(email);
-
+        try
+        {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
-            JsonArray inprogress = new JsonArray();
-            JsonArray transactions = JsonParser.parseString(txs.toString()).getAsJsonArray();
-            Iterator<JsonElement> itr = transactions.iterator();
-            while (itr.hasNext()) {
-                JsonObject transaction = itr.next().getAsJsonObject();
-                FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(transaction.toString());
+            JsonArray inProgress = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(orgId);
 
-                if (tx.getTransactionState() == TransactionState.SUBMITTED) {
-                    pending.add(tx.toJson());
-                } else if (tx.getTransactionState() == TransactionState.INPROGRESS || tx.getTransactionState() == TransactionState.ONTHEWAY) {
-                    inprogress.add(tx.toJson());
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+
+
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED) {
+                    pending.add(cour.toJson());
+                } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
+                        cour.getTransactionState() == TransactionState.ONTHEWAY) {
+
+                    inProgress.add(cour.toJson());
                 }
-
-                pending.add(transaction);
             }
             result.add("pending", pending);
-            result.add("inProgress", inprogress);
+            result.add("inProgress", inProgress);
 
+            List<FoodRecoveryTransaction> history = this.mongoDBJsonStore.getFoodRecoveryTransactionHistory(orgId);
+            boolean historyExists = false;
+            if(!history.isEmpty())
+            {
+                historyExists = true;
+            }
+            result.addProperty("historyExists",historyExists);
+            return Response.ok(result.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
 
+    @Path("/dropoff")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodRecoveryDropOffTransactions(@QueryParam("orgId") String orgId)
+    {
+        try
+        {
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            JsonArray inProgress = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryDropOffTransactions(orgId);
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED) {
+                    pending.add(cour.toJson());
+                } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
+                        cour.getTransactionState() == TransactionState.ONTHEWAY) {
+                    inProgress.add(cour.toJson());
+                }
+            }
+            result.add("pending", pending);
+            result.add("inProgress", inProgress);
+
+            List<FoodRecoveryTransaction> history = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(orgId);
+            boolean historyExists = false;
+            if(!history.isEmpty())
+            {
+                historyExists = true;
+            }
+            result.addProperty("historyExists",historyExists);
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)

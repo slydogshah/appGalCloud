@@ -8,6 +8,7 @@ import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.util.MapUtils;
 import io.bugsbunny.data.history.service.DataReplayService;
 import io.bugsbunny.preprocess.SecurityTokenContainer;
 import org.slf4j.Logger;
@@ -47,6 +48,9 @@ public class NetworkOrchestrator {
 
     @Inject
     private NotificationEngine notificationEngine;
+
+    @Inject
+    private MapUtils mapUtils;
 
     @PostConstruct
     public void start()
@@ -128,8 +132,46 @@ public class NetworkOrchestrator {
         this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);
     }
 
+    public List<FoodRecoveryTransaction> findMyTransactions(String email)
+    {
+        List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
+
+        FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
+
+        //TODO
+        List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
+        for(FoodRecoveryTransaction tx:all)
+        {
+            Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
+            Location foodRunnerLocation = foodRunner.getLocation();
+            Double distance = this.mapUtils.calculateDistance(foodRunnerLocation.getLatitude(),
+                    foodRunnerLocation.getLongitude(),
+                    source.getLatitude(),source.getLongitude());
+
+            //logger.info("**************DISTANCE*****************");
+            //logger.info("DISTANCE: "+distance);
+            //logger.info("**************DISTANCE*****************");
+
+            if(distance <= 5.0d)
+            {
+                myTransactions.add(tx);
+            }
+        }
+
+        return myTransactions;
+    }
+    //-------------------------
     public NotificationEngine getNotificationEngine()
     {
         return this.notificationEngine;
+    }
+
+    public JsonObject acceptRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
+    {
+        this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+
+        JsonObject json = new JsonObject();
+        json.addProperty("recoveryTransactionId", foodRecoveryTransaction.getId());
+        return json;
     }
 }

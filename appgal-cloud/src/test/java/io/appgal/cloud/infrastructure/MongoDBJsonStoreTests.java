@@ -333,7 +333,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         }
     }
 
-    @Test
+    //@Test
     public void testFoodRecoveryTransactionLifeCycle()
     {
         FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
@@ -341,8 +341,8 @@ public class MongoDBJsonStoreTests extends BaseTest {
 
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
 
-        List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryTransactions(tx.getFoodRunner().
-                getProfile().getEmail());
+        List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryTransactions(tx.getPickUpNotification()
+        .getSourceOrg().getOrgContactEmail());
         JsonUtil.print(this.getClass(),JsonParser.parseString(list.toString()));
         assertFalse(list.isEmpty());
     }
@@ -372,6 +372,21 @@ public class MongoDBJsonStoreTests extends BaseTest {
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
 
         List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(tx.getDropOffNotification().getSourceOrg().getOrgId());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(list.toString()));
+        assertFalse(list.isEmpty());
+    }
+
+    @Test
+    public void testFoodRecoveryDropOffTransactions()
+    {
+        FoodRecoveryTransaction tx = MockData.mockFoodRecoveryTransaction();
+        tx.setTransactionState(TransactionState.INPROGRESS);
+        //JsonUtil.print(this.getClass(),tx.toJson());
+
+        this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
+
+        List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryDropOffTransactions(
+                tx.getDropOffNotification().getSourceOrg().getOrgId());
         JsonUtil.print(this.getClass(),JsonParser.parseString(list.toString()));
         assertFalse(list.isEmpty());
     }

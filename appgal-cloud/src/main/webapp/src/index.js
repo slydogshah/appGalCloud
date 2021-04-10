@@ -11,12 +11,12 @@ import * as serviceWorker from './serviceWorker'
 import { icons } from './assets/icons'
 
 import { Provider } from 'react-redux'
-import store from './store'
+import { AppContext, store} from "./application/AppContext"
 
 React.icons = icons
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider context={AppContext} store={store}>
     <App />
   </Provider>,
   document.getElementById('root')

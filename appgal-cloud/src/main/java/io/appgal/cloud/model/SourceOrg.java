@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SourceOrg implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(SourceOrg.class);
@@ -20,18 +17,18 @@ public class SourceOrg implements Serializable {
     private String orgName;
     private String orgContactEmail;
     private DeliveryPreference deliveryPreference;
-    private List<Profile> profiles;
-    private Location location;
+    private Set<Profile> profiles;
     private boolean isProducer;
     private Address address;
+    private Location location;
 
     public SourceOrg()
     {
-        this.profiles = new ArrayList<>();
+        this.profiles = new HashSet<>();
     }
 
     public SourceOrg(String orgId, String orgName, String orgContactEmail, DeliveryPreference deliveryPreference,
-                     List<Profile> profiles, Location location, boolean isProducer) {
+                     Set<Profile> profiles, Location location, boolean isProducer) {
         this();
         this.orgId = orgId;
         this.orgName = orgName;
@@ -103,12 +100,18 @@ public class SourceOrg implements Serializable {
         this.deliveryPreference = deliveryPreference;
     }
 
-    public List<Profile> getProfiles() {
+    public Set<Profile> getProfiles() {
         return profiles;
     }
 
-    public void setProfiles(List<Profile> profiles) {
+    public void setProfiles(Set<Profile> profiles) {
         this.profiles = profiles;
+    }
+
+    public void addProfile(Profile profile)
+    {
+        profile.setSourceOrgId(this.orgId);
+        this.profiles.add(profile);
     }
 
     public boolean isProducer() {
@@ -117,6 +120,14 @@ public class SourceOrg implements Serializable {
 
     public void setProducer(boolean producer) {
         isProducer = producer;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     @Override
@@ -158,10 +169,19 @@ public class SourceOrg implements Serializable {
             jsonObject.add("profiles", jsonArray);
         }
 
+        if(this.address!= null && this.address.getStreet() != null)
+        {
+            jsonObject.addProperty("street",this.address.getStreet());
+        }
+        if(this.address!= null && this.address.getZip() != null)
+        {
+            jsonObject.addProperty("zip",this.address.getZip());
+        }
+
         if(this.location != null)
         {
-            JsonObject json = this.location.toJson();
-            jsonObject.add("location", json);
+            jsonObject.addProperty("latitude",this.location.getLatitude());
+            jsonObject.addProperty("longitude",this.location.getLongitude());
         }
 
         jsonObject.addProperty("producer", this.isProducer);
@@ -203,11 +223,28 @@ public class SourceOrg implements Serializable {
             JsonArray jsonArray = jsonObject.getAsJsonArray("deliveryPreference");
             sourceOrg.deliveryPreference = DeliveryPreference.parse(jsonArray.toString());
         }
-        if(jsonObject.has("location"))
+
+        Address address = new Address();
+        if(jsonObject.has("street"))
         {
-            JsonObject locationJson = jsonObject.getAsJsonObject("location");
-            sourceOrg.location = Location.parse(locationJson.toString());
+            address.setStreet(jsonObject.get("street").getAsString());
         }
+        if(jsonObject.has("zip"))
+        {
+            address.setZip(jsonObject.get("zip").getAsString());
+        }
+        sourceOrg.address = address;
+
+        Location location = new Location();
+        if(jsonObject.has("latitude"))
+        {
+           location.setLatitude(jsonObject.get("latitude").getAsDouble());
+        }
+        if(jsonObject.has("longitude"))
+        {
+            location.setLongitude(jsonObject.get("longitude").getAsDouble());
+        }
+        sourceOrg.setLocation(location);
 
         sourceOrg.isProducer = jsonObject.get("producer").getAsBoolean();
 

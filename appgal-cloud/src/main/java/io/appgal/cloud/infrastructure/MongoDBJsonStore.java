@@ -138,6 +138,11 @@ public class MongoDBJsonStore {
        return this.foodRunnerStore.updateFoodRunner(this.mongoDatabase, foodRunner);
     }
 
+    public FoodRunner getFoodRunner(String email)
+    {
+        return this.foodRunnerStore.getFoodRunner(this.mongoDatabase,email);
+    }
+
     public void storeResults(List<FoodRunner> results)
     {
         this.foodRunnerStore.storeResults(this.mongoDatabase, results);
@@ -243,9 +248,19 @@ public class MongoDBJsonStore {
         this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase,foodRecoveryTransaction);
     }
 
-    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String email)
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String orgId)
     {
-        return this.foodRecoveryStore.getFoodRecoveryTransactions(this.mongoDatabase, email);
+        return this.foodRecoveryStore.getFoodRecoveryTransactions(this.mongoDatabase, orgId);
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryTransactions()
+    {
+        return this.foodRecoveryStore.getFoodRecoveryTransactions(this.mongoDatabase);
+    }
+
+    public List<FoodRecoveryTransaction> getFoodRecoveryDropOffTransactions(String orgId)
+    {
+        return this.foodRecoveryStore.getFoodRecoveryDropOffTransactions(this.mongoDatabase,orgId);
     }
 
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactionHistory(String orgId)
