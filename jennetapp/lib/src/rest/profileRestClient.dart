@@ -40,6 +40,7 @@ class ProfileRestClient
     }
 
     json  = jsonDecode(response.body);
+    json['statusCode'] = 200;
     return json;
   }
 
@@ -89,6 +90,8 @@ class ProfileRestClient
         sourceOrgs.add(sourceOrg);
     }*/
 
-    return json["profile"];
+    Map<String,dynamic> result = json['profile'];
+    result['statusCode'] = 200;
+    return result;
   }
 }
