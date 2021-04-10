@@ -1,0 +1,204 @@
+:root{
+	--gradient: linear-gradient(to right,#ef146e 0,#fea958 51%,#ef146e 100%);
+	--gradient-sec: linear-gradient(to right,#111c58 0,#5c2782 51%,#111c58 100%);
+}
+
+.gradient{
+	background-image:var(--gradient);
+}
+button.scroltop,
+.bootstrap-select .dropdown-menu ul li.selected a,												   								
+.site-filters.style-1 .filters li.active a,
+.video-bx.style-3 .popup-youtube,
+.owl-btn-white .owl-prev:hover, 
+.owl-btn-white .owl-next:hover,
+.overlay-primary:before{
+	background: -moz-linear-gradient(left, #ef146e 0%, #fea958 100%);
+	background: -webkit-linear-gradient(left, #ef146e 0%,#fea958 100%);
+	background: linear-gradient(to right, #ef146e 0%,#fea958 100%);
+}
+.dlab-accordion .card-header .dlab-title a.collapsed{
+	background:#fff;
+}
+@media only screen and (max-width: 991px){
+	.header-nav .nav > li > a i {
+		background-color:#ef146e;
+	}
+}
+.shadow-primary,
+.video-bx.style-3 .popup-youtube,
+.site-filters.style-1 .filters li.active a,
+.site-filters.style-3 .filters li.active a{
+	box-shadow: 0 2px 15px rgba(239,20,110, 0.3)
+}
+
+.site-filters.style-1,
+.blockquote.style-3,
+nav .pagination .page-item .page-link,
+.widget_archive ul li a span,
+.bgl-primary,
+.site-filters.style-3 .filters li a,
+.icon-bx-wraper.style-5 .icon-bx,
+.icon-bx-wraper.style-3.left > [class*="icon-bx-"]:after,
+.dlab-social-icon.primary-light li a {
+    background-color: rgba(245, 95, 141, 0.1);
+}
+.dlab-team.style-3 .overlay-content{
+	background-color: rgba(245, 95, 141, 0.7);
+}
+.pricingtable-wrapper.style-3.active .btn, 
+.pricingtable-wrapper.style-3:hover .btn{
+	border-color: transparent;	
+}
+.owl-btn-1 .owl-nav .owl-prev:hover, 
+.owl-btn-1 .owl-nav .owl-next:hover,
+.btn-outline-primary:active,
+.btn-outline-primary:focus,
+.btn-outline-primary:hover,
+.pricingtable-wrapper.style-3:hover .btn,
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:hover{
+	background:#dd396b;
+	border-color:#dd396b;
+}
+.btn-primary.gradient:active,
+.btn-primary.gradient:focus,
+.btn-primary.gradient:hover{
+	background-image:var(--gradient);
+	background-position: right center;
+	background-size: 200%;	
+}
+::selection,
+.btn-primary,
+.owl-btn-primary .owl-prev, 
+.owl-btn-primary .owl-next,
+.overlay-primary-light:before, 
+.overlay-primary-middle:before, 
+.overlay-primary-dark:before, 
+.widget_tag_cloud .tagcloud a:hover:before,
+.dlab-img-overlay1.primary:before, 
+.dlab-img-overlay1.primary:after,
+.widget_tag_cloud .tagcloud a:before,
+.owl-dots-primary-full .owl-dots .owl-dot span, 
+.owl-dots-primary-big .owl-dots .owl-dot span,
+.owl-dots-white-full .owl-dots .owl-dot:active span, 
+.owl-dots-white-full .owl-dots .owl-dot.active span, 
+.owl-dots-black-full .owl-dots .owl-dot:active span, 
+.owl-dots-black-full .owl-dots .owl-dot.active span, 
+.owl-dots-primary-full .owl-dots .owl-dot:active span, 
+.owl-dots-primary-full .owl-dots .owl-dot.active span,
+.toggle-switch .custom-control-label:before,
+.icon-bx-wraper.style-3 .wraper-effect:after,
+.dlab-blog .dlab-meta > ul > li.post-share ul,
+.dlab-blog .dlab-meta > ul > li.post-share ul:after,
+.dlab-separator.style-1:after,
+.widget .widget-title:before,
+.comment-respond.style-1 .comment-reply-title:before,
+.comments-area.style-1 .comments-title:before,
+.extra-blog.style-1 .blog-title:before,
+.dlab-separator.style-1:before,
+.video-bx.style-2 .popup-youtube,
+.header-nav .nav > li .sub-menu li a:after,
+.btn-link i,
+.dlab-separator.style-1{
+	background-color:#ef146e;
+}
+.bg-primary{
+	background-color:#ef146e !important;
+}
+a,
+a:hover,
+.btn-link,
+.btn-link:hover,
+.btn-link i
+.text-primary,
+.btn-outline-primary,
+.pricingtable-wrapper.style-1.active .btn i,
+.owl-btn-white .owl-prev, .owl-btn-white .owl-next,
+.blockquote.style-3:before,
+.widget_tag_cloud .tagcloud a:before,
+.icon-bx-wraper.style-5 .icon-bx .icon-cell,
+.dlab-overlay-box.style-3 .dlab-info:before,
+.dlab-accordion .card-header .dlab-title a:before,
+ul.primary li:before,
+.site-filters.style-2 .filters li.active a,
+.pricingtable-wrapper.style-1 .pricingtable-bx,
+.widget_archive ul li a:hover,
+.blockquote.style-1:before,
+.widget_tag_cloud .tagcloud a,
+.dlab-blog .dlab-meta > ul > li i,
+.dlab-social-icon.primary-light li a,
+footer .widget_services.style-1 ul li a:before,
+footer .footer-bottom .copyright-text a,
+.dlab-team.style-3:hover .dlab-name a,
+.pricingtable-wrapper.style-2 [class*="icon-bx-"] .icon-cell i,
+.blockquote.style-2:before,
+.header-nav .nav > li .sub-menu li:hover > a,
+.dlab-social-icon li a{
+	color:#ef146e;
+	
+}
+.text-primary{
+	color:#ef146e !important;
+	
+}
+.btn-primary,
+.site-filters.style-2 .filters li.active a,
+.testimonial-1 .testimonial-pic,
+.widget_tag_cloud .tagcloud a,
+.btn-outline-primary,
+.progress-bx .progress .progress-bar:after,
+.testimonial-3 .testimonial-pic,
+.custom-control-input:checked ~ .custom-control-label::before,
+.toggle-switch .custom-control-label:before,
+.form-control:focus, 
+.form-control:active, 
+.form-control.active{
+	border-color:#ef146e;
+	
+}
+
+/* Globle Css */
+.recent-posts-entry .widget-post-bx .widget-post .dlab-meta li,
+.widget_archive ul li a,
+body{
+	color:#5c6390;
+}
+.widget .widget-title,
+.site-filters.style-1 .filters li a,
+.widget_archive ul li a span,
+nav .pagination .page-item .page-link,
+.pricingtable-wrapper.style-3 .pricingtable-bx small,
+.dlab-accordion .card-header .dlab-title a.collapsed,
+.testimonial-name,
+.site-filters.style-2 .filters li a,
+.toggle-switch .custom-control-input:checked ~ .custom-control-label:after,
+.dlab-blog .post-tags a,
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+.comments-area .comment-list > .comment .comment-body .comment-author .fn,
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
+	color:#1f2471;
+}
+
+.owl-btn-primary .owl-prev:hover, 
+.owl-btn-primary .owl-next:hover,
+.video-bx.style-1 .popup-youtube:hover{
+	color:#fff;
+}
+.bg-gray{
+	background:#f8f5fe;
+}
+.search-bx.style-1{
+	background-color:#1f2471;
+}
+/* Footer */
+.site-footer.style-1,
+.site-footer.style-2{
+	background:#38216e !important;
+}
+.site-footer.style-2 .footer-bottom,
+footer .footer-bottom{
+    background-color: #645194;
+}
+
