@@ -146,7 +146,6 @@ class ProfileFunctions
     future.then((json) {
       Navigator.of(context, rootNavigator: true).pop();
       Profile foodRunner = Profile.fromJson(json);
-
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
 
@@ -165,6 +164,6 @@ class ProfileFunctions
   void showCards(BuildContext context, Profile profile) 
   {
     CloudDataPoller.startPolling(profile);
-    LocationUpdater.startPolling(profile);
+    //LocationUpdater.startPolling(profile);
   }  
 }

@@ -30,7 +30,7 @@ class ActiveNetworkRestClient
   {
     List<FoodRecoveryTransaction> txs = new List();
     var response;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'tx/recovery/foodRunner/?email='+email;
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/foodRunner/?email="+email;
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }

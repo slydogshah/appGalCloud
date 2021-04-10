@@ -50,7 +50,13 @@ class ProfileRestClient
 
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/login/";
     try {
-       response = await http.post(Uri.parse(remoteUrl), body: credentials.toString()).
+      //TODO
+      Map<String,dynamic> payload = credentials.toJson();
+      payload['latitude'] = 30.269021;
+      payload['longitude'] = -97.75210369999999;
+
+
+       response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).
        timeout(Duration(seconds: 30),onTimeout: () {
          print("NETWORK_TIMEOUT");
          //json = new Map();

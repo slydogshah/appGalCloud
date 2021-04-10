@@ -69,7 +69,7 @@ class CloudDataPoller
 
     BackgroundFetch.scheduleTask(TaskConfig(
         taskId: "flutter_background_fetch",
-        delay: 1,
+        delay: 10,
         periodic: false,
         forceAlarmManager: true,
         stopOnTerminate: true,
@@ -89,7 +89,7 @@ class CloudDataPoller
 
     BackgroundFetch.scheduleTask(TaskConfig(
         taskId: "flutter_background_fetch",
-        delay: 1,
+        delay: 10,
         periodic: false,
         forceAlarmManager: true,
         stopOnTerminate: true,
