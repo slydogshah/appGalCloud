@@ -42,4 +42,11 @@ release.properties
 /kafka_2.12-2.5.1/*
 .eslintcache
 
-/src/main/resources/META-INF/resources/*
+
+/src/main/resources/META-INF/resources/avatars/*
+/src/main/resources/META-INF/resources/static/*
+/src/main/resources/META-INF/resources/asset-manifest.json
+/src/main/resources/META-INF/resources/favicon.ico
+/src/main/resources/META-INF/resources/index.html
+/src/main/resources/META-INF/resources/manifest.json
+/src/main/resources/META-INF/resources/user.png
