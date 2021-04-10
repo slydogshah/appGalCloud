@@ -24,8 +24,8 @@ RUN microdnf install curl ca-certificates ${JAVA_PACKAGE} \
 ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 
 # We make four distinct layers so if there are application changes the library layers can be re-used
-COPY --chown=1001 lib/ /deployments/lib/
-COPY --chown=1001 target/quarkus-app/quarkus-run.jar /deployments/
+COPY --chown=1001 target/lib /deployments/lib/
+COPY --chown=1001 target/site-v1-runner.jar /deployments/
 
 EXPOSE 8080
 USER 1001
