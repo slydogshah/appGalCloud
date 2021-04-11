@@ -148,9 +148,9 @@ public class MongoDBJsonStore {
         this.foodRunnerStore.deleteFoodRunner(this.mongoDatabase, foodRunner);
     }
 
-    public FoodRunner updateFoodRunner(FoodRunner foodRunner)
+    public void updateFoodRunner(FoodRunner foodRunner)
     {
-       return this.foodRunnerStore.updateFoodRunner(this.mongoDatabase, foodRunner);
+       this.foodRunnerStore.updateFoodRunner(this.mongoDatabase, foodRunner);
     }
 
     public FoodRunner getFoodRunner(String email)

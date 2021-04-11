@@ -141,13 +141,25 @@ public class NetworkOrchestrator {
             List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
             //myTransactions.addAll(all);
             for (FoodRecoveryTransaction tx : all) {
-                Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
-                Location foodRunnerLocation = foodRunner.getLocation();
+                JsonUtil.print(this.getClass(), tx.toJson());
 
-                if(source == null || foodRunnerLocation == null)
+
+                Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
+                if(source == null)
                 {
+                    logger.info("SOURCE_LOCATION_NOT_FOUND");
                     continue;
                 }
+                JsonUtil.print(this.getClass(), source.toJson());
+
+
+                Location foodRunnerLocation = foodRunner.getLocation();
+                if(foodRunnerLocation == null)
+                {
+                    logger.info("FOODRUNNER_LOCATION_NOT_FOUND");
+                    continue;
+                }
+                JsonUtil.print(this.getClass(), foodRunnerLocation.toJson());
 
 
                 Double distance = this.mapUtils.calculateDistance(foodRunnerLocation.getLatitude(),

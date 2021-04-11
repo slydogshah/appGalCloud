@@ -4,6 +4,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import io.appgal.cloud.model.FoodRecoveryTransaction;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
@@ -82,9 +83,32 @@ public class FoodRunnerStore {
         collection.insertMany(documents);
     }
 
-    public FoodRunner updateFoodRunner(MongoDatabase database, FoodRunner foodRunner)
+    public void updateFoodRunner(MongoDatabase database, FoodRunner foodRunner)
     {
-        //TODO: IMPLEMENT_ME
-        return null;
+        MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
+        //logger.info("*******************************STORE************************************************************************************");
+        //JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
+        //logger.info("*******************************************************************************************************************");
+
+        FoodRunner exists = null;
+        String queryJson = "{\"profile.email\":\""+foodRunner.getProfile().getEmail()+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            exists = FoodRunner.parse(documentJson);
+        }
+        if(exists != null)
+        {
+            bson = Document.parse(exists.toString());
+            collection.deleteOne(bson);
+        }
+
+
+        Document doc = Document.parse(foodRunner.toString());
+        collection.insertOne(doc);
     }
 }
