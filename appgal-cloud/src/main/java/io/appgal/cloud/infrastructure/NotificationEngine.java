@@ -1,8 +1,5 @@
 package io.appgal.cloud.infrastructure;
 
-import io.bugsbunny.preprocess.SecurityToken;
-import io.bugsbunny.preprocess.SecurityTokenContainer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +13,6 @@ public class NotificationEngine extends TimerTask {
     private static Logger logger = LoggerFactory.getLogger(NotificationEngine.class);
 
     private Timer timer;
-    private SecurityToken securityToken;
-
-    @Inject
-    private SecurityTokenContainer securityTokenContainer;
 
     @Inject
     private RequestPipeline requestPipeline;

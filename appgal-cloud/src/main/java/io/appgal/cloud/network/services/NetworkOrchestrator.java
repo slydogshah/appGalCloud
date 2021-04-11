@@ -3,14 +3,15 @@ package io.appgal.cloud.network.services;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import io.appgal.cloud.infrastructure.DropOffPipeline;
 import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
-import io.bugsbunny.data.history.service.DataReplayService;
-import io.bugsbunny.preprocess.SecurityTokenContainer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +29,6 @@ public class NetworkOrchestrator {
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
-
-    @Inject
-    private DataReplayService dataReplayService;
-
-    @Inject
-    private SecurityTokenContainer securityTokenContainer;
 
     @Inject
     private RequestPipeline requestPipeline;
@@ -135,30 +130,46 @@ public class NetworkOrchestrator {
     public List<FoodRecoveryTransaction> findMyTransactions(String email)
     {
         List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
+        try {
+            logger.info("*******************************************************************************************************");
+            logger.info("FOODRUNNER_EMAIL: "+email);
+            logger.info("*******************************************************************************************************");
+            FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
+            JsonUtil.print(this.getClass(), foodRunner.toJson());
 
-        FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
+            //TODO
+            List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
+            //myTransactions.addAll(all);
+            for (FoodRecoveryTransaction tx : all) {
+                Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
+                Location foodRunnerLocation = foodRunner.getLocation();
 
-        //TODO
-        List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
-        for(FoodRecoveryTransaction tx:all)
-        {
-            Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
-            Location foodRunnerLocation = foodRunner.getLocation();
-            Double distance = this.mapUtils.calculateDistance(foodRunnerLocation.getLatitude(),
-                    foodRunnerLocation.getLongitude(),
-                    source.getLatitude(),source.getLongitude());
+                if(source == null || foodRunnerLocation == null)
+                {
+                    continue;
+                }
 
-            //logger.info("**************DISTANCE*****************");
-            //logger.info("DISTANCE: "+distance);
-            //logger.info("**************DISTANCE*****************");
 
-            if(distance <= 5.0d)
-            {
-                myTransactions.add(tx);
+                Double distance = this.mapUtils.calculateDistance(foodRunnerLocation.getLatitude(),
+                        foodRunnerLocation.getLongitude(),
+                        source.getLatitude(), source.getLongitude());
+
+                logger.info("**************DISTANCE*****************");
+                logger.info("DISTANCE: "+distance);
+                logger.info("**************DISTANCE*****************");
+
+                if (distance <= 5.0d) {
+                    myTransactions.add(tx);
+                }
             }
-        }
 
-        return myTransactions;
+            return myTransactions;
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(),e);
+            return myTransactions;
+        }
     }
     //-------------------------
     public NotificationEngine getNotificationEngine()
