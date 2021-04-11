@@ -56,7 +56,7 @@ class ActiveNetworkRestClient
     List<FoodRecoveryTransaction> txs = new List();
     var response;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/push/recovery/?email="+email;
-    print("PUSHURL: "+remoteUrl);
+    //print("PUSHURL: "+remoteUrl);
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }
@@ -65,10 +65,10 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    //Map<String,dynamic> object = json.decode(response.body);
-    print(response.body);
-    Map<String,dynamic> object = new Map();
-    object['pending'] = [];
+    Map<String,dynamic> object = json.decode(response.body);
+    //print(response.body);
+    //Map<String,dynamic> object = new Map();
+    //object['pending'] = [];
     Iterable l = object['pending'];
     for(Map<String, dynamic> tx in l)
     {
