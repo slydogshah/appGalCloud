@@ -14,7 +14,7 @@ class ActiveNetworkRestClient
   {
     var response;
 
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'notification/pickup/notifications/?email='+email;
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"notification/pickup/notifications/?email="+email;
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }
@@ -31,6 +31,8 @@ class ActiveNetworkRestClient
     List<FoodRecoveryTransaction> txs = new List();
     var response;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/foodRunner/?email="+email;
+
+
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }
@@ -53,7 +55,8 @@ class ActiveNetworkRestClient
   {
     List<FoodRecoveryTransaction> txs = new List();
     var response;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'tx/push/recovery/?email='+email;
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/push/recovery/?email="+email;
+    print("PUSHURL: "+remoteUrl);
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }
@@ -62,7 +65,10 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    Map<String,dynamic> object = json.decode(response.body);
+    //Map<String,dynamic> object = json.decode(response.body);
+    print(response.body);
+    Map<String,dynamic> object = new Map();
+    object['pending'] = [];
     Iterable l = object['pending'];
     for(Map<String, dynamic> tx in l)
     {
@@ -75,7 +81,7 @@ class ActiveNetworkRestClient
   Future<String> sendLocationUpdate(LocationData locationData) async
   {
     var response;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'location/update/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"location/update/";
     Map<String,dynamic> jsonMap = new Map();
     jsonMap['latitude'] = locationData.latitude;
     jsonMap['longitude'] = locationData.longitude;
@@ -93,7 +99,7 @@ class ActiveNetworkRestClient
   {
     var response;
     
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'offline/notification/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"offline/notification/";
     Map<String, dynamic> json = new Map();
     json['foodRunnerId'] = foodRunnerId;
     String jsonBody = jsonEncode(json);
@@ -113,7 +119,7 @@ class ActiveNetworkRestClient
     payload["email"] = email;
     payload["dropOffOrgId"] = dropOffOrgId;
     payload["accepted"] = tx;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'/activeNetwork/accept/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/accept/";
     var response;
     try {
       response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).

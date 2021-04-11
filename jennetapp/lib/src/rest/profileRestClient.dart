@@ -16,7 +16,7 @@ class ProfileRestClient
     var response;
     Map<String, dynamic> json;
 
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'registration/profile/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/profile/";
     try {
       response = await http.post(Uri.parse(remoteUrl), body: profile.toString());
     }
