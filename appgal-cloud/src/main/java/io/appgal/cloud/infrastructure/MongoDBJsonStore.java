@@ -24,20 +24,20 @@ import java.util.*;
 public class MongoDBJsonStore {
     private static Logger logger = LoggerFactory.getLogger(MongoDBJsonStore.class);
 
-    private String database = "jennetwork";
-    private String password = "jen";
-
     private MongoClient mongoClient;
     private MongoDatabase mongoDatabase;
-
-    @ConfigProperty(name = "mongodbHost")
-    private String mongodbHost;
 
     @ConfigProperty(name = "mongoDBConnectionString")
     private String mongodbConnectionString;
 
+    @ConfigProperty(name = "mongodbHost")
+    private String mongodbHost;
+
     @ConfigProperty(name = "mongodbPort")
     private String mongodbPort;
+
+    private String database = "jennetwork";
+    private String password = "jen";
 
     @Inject
     private OrgStore orgStore;
@@ -66,7 +66,22 @@ public class MongoDBJsonStore {
     @PostConstruct
     public void start()
     {
-        String connectionString = MessageFormat.format(this.mongodbConnectionString,this.password,this.mongodbHost,this.database);
+        //System.out.println("string "+this.mongodbConnectionString);
+        //System.out.println("host: "+this.mongodbHost);
+        //System.out.println("port "+this.mongodbPort);
+        //System.out.println("db "+this.database);
+        //System.out.println("pass "+this.password);
+
+        String connectionString;
+        if(this.mongodbHost.equals("localhost"))
+        {
+            connectionString = this.mongodbConnectionString;
+        }
+        else
+        {
+            connectionString = MessageFormat.format(this.mongodbConnectionString,this.password,this.mongodbHost,this.database);
+        }
+
         logger.info("************");
         logger.info(connectionString);
         logger.info("************");
@@ -133,9 +148,9 @@ public class MongoDBJsonStore {
         this.foodRunnerStore.deleteFoodRunner(this.mongoDatabase, foodRunner);
     }
 
-    public FoodRunner updateFoodRunner(FoodRunner foodRunner)
+    public void updateFoodRunner(FoodRunner foodRunner)
     {
-       return this.foodRunnerStore.updateFoodRunner(this.mongoDatabase, foodRunner);
+       this.foodRunnerStore.updateFoodRunner(this.mongoDatabase, foodRunner);
     }
 
     public FoodRunner getFoodRunner(String email)

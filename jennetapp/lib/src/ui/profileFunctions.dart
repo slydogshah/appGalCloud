@@ -5,6 +5,7 @@ import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
@@ -121,6 +122,14 @@ class ProfileFunctions
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
       Navigator.of(context, rootNavigator: true).pop();
+
+      if(json['statusCode'] != 200)
+      {
+        print("FUCKOFF");
+        return;
+      }
+
+
       Profile foodRunner = Profile.fromJson(json);
 
       ActiveSession activeSession = ActiveSession.getInstance();
@@ -142,9 +151,23 @@ class ProfileFunctions
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
+
+    FoodRunnerLocation location = ActiveSession.getInstance().getLocation();
+
+    print("LOGIN: $location");
+
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
       Navigator.of(context, rootNavigator: true).pop();
+
+      if(json['statusCode'] != 200)
+      {
+        print("FUCKOFF");
+        return;
+      }
+
+
+
       Profile foodRunner = Profile.fromJson(json);
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
@@ -163,7 +186,8 @@ class ProfileFunctions
 
   void showCards(BuildContext context, Profile profile) 
   {
+    print(profile);
     CloudDataPoller.startPolling(profile);
-    //LocationUpdater.startPolling(profile);
+    LocationUpdater.startPolling(profile);
   }  
 }

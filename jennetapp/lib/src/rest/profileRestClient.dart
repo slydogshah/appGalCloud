@@ -1,3 +1,5 @@
+import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/rest/cloudBusinessException.dart';
 
 import '../model/profile.dart';
@@ -16,7 +18,7 @@ class ProfileRestClient
     var response;
     Map<String, dynamic> json;
 
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+'registration/profile/';
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/profile/";
     try {
       response = await http.post(Uri.parse(remoteUrl), body: profile.toString());
     }
@@ -51,10 +53,10 @@ class ProfileRestClient
 
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/login/";
     try {
-      //TODO
+      FoodRunnerLocation foodRunnerLocation = ActiveSession.getInstance().getLocation();
       Map<String,dynamic> payload = credentials.toJson();
-      payload['latitude'] = 30.269021;
-      payload['longitude'] = -97.75210369999999;
+      payload['latitude'] = foodRunnerLocation.getLatitude();
+      payload['longitude'] = foodRunnerLocation.getLongitude();
 
 
        response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).

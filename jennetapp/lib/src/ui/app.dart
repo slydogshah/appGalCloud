@@ -1,3 +1,6 @@
+import 'package:app/src/background/locationUpdater.dart';
+import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +10,10 @@ import 'package:flutter/rendering.dart';
 import 'profileFunctions.dart';
 
 class JenNetworkApp extends StatelessWidget {
+  JenNetworkApp()
+  {
+    LocationUpdater.getLocation();
+  }
 
   @override
   Widget build(BuildContext context) {

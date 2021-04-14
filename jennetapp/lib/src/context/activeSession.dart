@@ -1,4 +1,4 @@
-import 'package:app/src/model/location.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 
 import '../model/profile.dart';
@@ -8,7 +8,7 @@ class ActiveSession
   static final ActiveSession singleton = new ActiveSession();
 
   Profile profile;
-  Location location;
+  FoodRunnerLocation location;
 
   ActiveSession();
 
@@ -22,12 +22,12 @@ class ActiveSession
     this.profile = profile;
   }
 
-  Location getLocation()
+  FoodRunnerLocation getLocation()
   {
     return this.location;
   }
 
-  void setLocation(Location location)
+  void setLocation(FoodRunnerLocation location)
   {
     this.location = location;
   }

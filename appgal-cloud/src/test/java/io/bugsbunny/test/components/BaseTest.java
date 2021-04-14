@@ -9,19 +9,11 @@ import javax.inject.Inject;
 public abstract class BaseTest
 {
     @Inject
-    private SecurityTokenMockComponent securityTokenMockComponent;
-
-    @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
     @BeforeEach
     public void setUp() throws Exception
     {
-        if(this.securityTokenMockComponent == null)
-        {
-            this.securityTokenMockComponent = new SecurityTokenMockComponent();
-        }
-        this.securityTokenMockComponent.start();
     }
 
     @AfterEach

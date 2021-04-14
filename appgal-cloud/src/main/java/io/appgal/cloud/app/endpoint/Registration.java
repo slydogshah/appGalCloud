@@ -156,6 +156,9 @@ public class Registration {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@RequestBody String credentialsJson)
     {
+        JsonUtil.print(this.getClass(), JsonParser.parseString(credentialsJson).getAsJsonObject());
+
+
         JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
 
         String userAgent = request.getHeader("User-Agent");
@@ -164,6 +167,10 @@ public class Registration {
 
         try {
             Profile profile = this.profileRegistrationService.getProfile(email);
+
+            logger.info("LOGIN_EMAIL: "+email);
+            logger.info("LOGIN_PROFILE: "+profile);
+
             if(profile == null)
             {
                 JsonObject profileNotFound = new JsonObject();

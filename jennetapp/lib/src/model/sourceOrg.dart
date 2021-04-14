@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'location.dart';
+import 'foodRunnerLocation.dart';
 
 class SourceOrg
 {
@@ -9,10 +9,10 @@ class SourceOrg
     String orgContactEmail;
     bool isProducer=false;
 
-    Location location = new Location(0.0, 0.0);
+    FoodRunnerLocation location = new FoodRunnerLocation(0.0, 0.0);
 
     //private DeliveryPreference deliveryPreference;
-    SourceOrg(String orgId, String orgName, String orgContactEmail, Location location, bool isProducer)
+    SourceOrg(String orgId, String orgName, String orgContactEmail, FoodRunnerLocation location, bool isProducer)
     {
       this.orgId = orgId;
       this.orgName = orgName;
@@ -32,7 +32,7 @@ class SourceOrg
       this.isProducer = json['producer'];
       if(json['location'] != null)
       {
-        this.location = Location.fromJson(json['location']);
+        this.location = FoodRunnerLocation.fromJson(json['location']);
       }
     }
 
@@ -41,7 +41,7 @@ class SourceOrg
       Map<String, dynamic> json = new Map();
       if(this.location == null)
       {
-        this.location = new Location(0.0, 0.0);
+        this.location = new FoodRunnerLocation(0.0, 0.0);
       }
       json['orgId'] = this.orgId;
       json['orgName'] = this.orgName;

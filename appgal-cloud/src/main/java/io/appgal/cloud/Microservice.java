@@ -2,24 +2,18 @@ package io.appgal.cloud;
 
 import com.google.gson.JsonObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.UUID;
 
-import io.appgal.cloud.app.services.ProfileRegistrationService;
-import io.appgal.cloud.app.services.ResourceExistsException;
-import io.appgal.cloud.model.Profile;
-import io.appgal.cloud.model.ProfileType;
-import io.bugsbunny.data.history.service.DataReplayService;
-
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+
 
 @Path("/microservice")
 public class Microservice {
