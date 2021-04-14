@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:app/src/ui/uiFunctions.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
-import 'package:app/src/model/location.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 
@@ -32,7 +32,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
     List<Card> cards = new List();
     for(FoodRecoveryTransaction tx in this.recoveryTxs)
     {
-      Location location = new Location(0.0, 0.0);
+      //FoodRunnerLocation location = new FoodRunnerLocation(0.0, 0.0);
       Card card = Card(shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),

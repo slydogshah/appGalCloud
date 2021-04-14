@@ -56,8 +56,14 @@ class ActiveNetworkRestClient
   {
     List<FoodRecoveryTransaction> txs = new List();
     var response;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/push/recovery/?email="+email;
-    //print("PUSHURL: "+remoteUrl);
+
+    String host = UrlFunctions.getInstance().resolveHost();
+
+    print("EMAIL: $email");
+    print("HOST: $host");
+
+    String remoteUrl = host+"tx/push/recovery/?email="+email;
+    print("PUSHURL: "+remoteUrl);
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }

@@ -84,7 +84,12 @@ public class ProfileRegistrationService {
     {
         JsonObject authFailure = new JsonObject();
 
+        logger.info("LOGIN_EMAIL: "+email);
+
         Profile profile = this.mongoDBJsonStore.getProfile(email);
+
+        logger.info("LOGIN_PROFILE: "+profile);
+
         if(profile == null)
         {
             authFailure.addProperty("message", "profile_not_found");

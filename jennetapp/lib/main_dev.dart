@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:app/main.dart' as App;
+import 'package:app/src/background/locationUpdater.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 
 import 'package:app/src/ui/app.dart';
 import 'package:flutter/cupertino.dart';

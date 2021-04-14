@@ -1,17 +1,37 @@
 import 'dart:convert';
 
-class Location
+class FoodRunnerLocation
 {
   double latitude;
   double longitude;
 
-  Location(double latitude, double longitude)
+  FoodRunnerLocation(double latitude, double longitude)
+  {
+      this.latitude = latitude;
+      this.longitude = longitude;
+  }
+
+  double getLatitude()
+  {
+    return this.latitude;
+  }
+
+  double getLongitude()
+  {
+    return this.longitude;
+  }
+
+  setLatitude(double latitude)
   {
     this.latitude = latitude;
+  }
+
+  setLongitude(double longitude)
+  {
     this.longitude = longitude;
   }
 
-  Location.fromJson(Map<String, dynamic> json)
+  FoodRunnerLocation.fromJson(Map<String, dynamic> json)
   {
     if(json['latitude'] != null)
     {

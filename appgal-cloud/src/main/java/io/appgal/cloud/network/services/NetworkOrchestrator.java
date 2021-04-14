@@ -179,7 +179,6 @@ public class NetworkOrchestrator {
         }
         catch(Exception e)
         {
-            logger.error(e.getMessage(),e);
             return myTransactions;
         }
     }

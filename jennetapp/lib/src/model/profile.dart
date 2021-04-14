@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:app/src/model/location.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 
 class Profile {
   String id;
@@ -9,17 +9,17 @@ class Profile {
   String photo;
   String password;
   String profileType;
-  Location location;
+  FoodRunnerLocation location;
 
 
   Profile(this.id, this.email, this.mobile, this.photo, this.password);
 
-  Location getLocation()
+  FoodRunnerLocation getLocation()
   {
     return this.location;
   }
 
-  setLocation(Location location)
+  setLocation(FoodRunnerLocation location)
   {
     this.location = location;
   }
@@ -46,7 +46,7 @@ class Profile {
     photo = json['photo'];
     if(json['location'] != null)
     {
-      this.location = Location.fromJson(json['location']);
+      this.location = FoodRunnerLocation.fromJson(json['location']);
     }
     password = json['password'];
     profileType = json['profileType'];
