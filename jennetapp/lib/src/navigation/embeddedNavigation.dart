@@ -1,3 +1,6 @@
+import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
+import 'package:app/src/model/sourceOrg.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -8,31 +11,9 @@ class EmbeddedNavigation
 {
   String _platformVersion = 'Unknown';
   String _instruction = "";
-
-
-
-  final _origin = WayPoint(
-      name: "Way Point 1",
-      latitude: 38.9111117447887,
-      longitude: -77.04012393951416);
-  final _stop1 = WayPoint(
-      name: "Way Point 2",
-      latitude: 38.91113678979344,
-      longitude: -77.03847169876099);
-  final _stop2 = WayPoint(
-      name: "Way Point 3",
-      latitude: 38.91040213277608,
-      longitude: -77.03848242759705);
-  final _stop3 = WayPoint(
-      name: "Way Point 4",
-      latitude: 38.909650771013034,
-      longitude: -77.03850388526917);
-  final _stop4 = WayPoint(
-      name: "Way Point 5",
-      latitude: 38.90894949285854,
-      longitude: -77.03651905059814);
-  final _farAway = WayPoint(
-      name: "Far Far Away", latitude: 36.1175275, longitude: -115.1839524);
+  FoodRunnerLocation foodRunnerLocation;
+  WayPoint _origin;
+  WayPoint _stop;
 
   MapBoxNavigation _directions;
   MapBoxOptions _options;
@@ -43,6 +24,29 @@ class EmbeddedNavigation
   MapBoxNavigationViewController _controller;
   bool _routeBuilt = false;
   bool _isNavigating = false;
+
+  EmbeddedNavigation(SourceOrg sourceOrg)
+  {
+      foodRunnerLocation = ActiveSession.getInstance().getLocation();
+
+      print(foodRunnerLocation.getLatitude());
+      print(foodRunnerLocation.getLongitude());
+      print(sourceOrg.location.getLatitude());
+      print(sourceOrg.location.getLongitude());
+
+
+
+      _origin = WayPoint(
+          name: "Start",
+          latitude: foodRunnerLocation.getLatitude(),
+          longitude:foodRunnerLocation.getLongitude());
+
+      _stop = WayPoint(
+          name: "Stop",
+          latitude: sourceOrg.location.getLatitude(),
+          longitude: sourceOrg.location.getLongitude());
+  }
+
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> start() async {
@@ -75,7 +79,9 @@ class EmbeddedNavigation
 
     var wayPoints = List<WayPoint>();
                             wayPoints.add(_origin);
-                            wayPoints.add(_stop1);
+                            wayPoints.add(_stop);
+
+                            print(wayPoints.isEmpty);
 
                             await _directions.startNavigation(
                                 wayPoints: wayPoints,

@@ -1,3 +1,4 @@
+import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:flutter/material.dart';
@@ -107,11 +108,13 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> {
 
   void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx)
   {
+    print(tx);
     ActiveNetworkRestClient client = new ActiveNetworkRestClient();
     Future<int> future = client.accept(email, dropOffOrgId, tx);
     future.then((statusCode) {
       if(statusCode == 200) {
-        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation();
+        LocationUpdater.getLocation();
+        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(tx.getPickupNotification().getDropOffOrg());
         embeddedNavigation.start();
       }
       else {

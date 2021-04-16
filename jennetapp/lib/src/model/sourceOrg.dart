@@ -30,10 +30,16 @@ class SourceOrg
       this.orgName = json['orgName'];
       this.orgContactEmail = json['orgContactEmail'];
       this.isProducer = json['producer'];
-      if(json['location'] != null)
+      FoodRunnerLocation foodRunnerLocation = new FoodRunnerLocation(0.0, 0.0);
+      if(json['latitude'] != null)
       {
-        this.location = FoodRunnerLocation.fromJson(json['location']);
+        foodRunnerLocation.latitude = json['latitude'];
       }
+      if(json['longitude'] != null)
+      {
+        foodRunnerLocation.longitude = json['longitude'];
+      }
+      this.location = foodRunnerLocation;
     }
 
     Map<String, dynamic> toJson()
@@ -48,6 +54,8 @@ class SourceOrg
       json['orgContactEmail'] = this.orgContactEmail;
       json['location'] = this.location;
       json['producer'] = this.isProducer;
+      json['latitude'] = this.location.latitude;
+      json['longitude'] = this.location.longitude;
       return json;
     }
 
