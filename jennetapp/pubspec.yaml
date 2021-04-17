@@ -38,6 +38,10 @@ dependencies:
   location: ^4.0.0
   flutter_mapbox_navigation: ^0.0.19
   background_fetch: '^0.7.2'
+  device_info: ^2.0.0
+  path_provider: ^2.0.0
+  rxdart: ^0.26.0-nullsafety.1
+  flutter_local_notifications: ^5.0.0+1
 
 dev_dependencies:
   flutter_test:
