@@ -47,6 +47,11 @@ class CloudDataPoller
         startAndroidPolling(profile);
       }
   }
+
+  static void showNotification(FoodRecoveryTransaction tx)
+  {
+    notificationProcessor.showNotification("");
+  }
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
   {
@@ -125,14 +130,13 @@ class CloudDataPoller
   {
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
     Future<List<FoodRecoveryTransaction>> futureP = activeNetworkRestClient.getFoodRecoveryPush(profile.email);
-    futureP.then((txs){
+    /*futureP.then((txs){
       print("********PUSH**********");
       for(FoodRecoveryTransaction tx in txs) {
         print(jsonEncode(tx.toJson()));
       }
       print("********PUSH**********");
-    });
-    notificationProcessor.showNotification("HELLO_WORLD");
+    });*/
   }
 }
 

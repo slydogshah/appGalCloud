@@ -1,3 +1,4 @@
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:http/http.dart' as http;
@@ -80,6 +81,8 @@ class ActiveNetworkRestClient
       FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
       txs.add(local);
     }
+
+    CloudDataPoller.showNotification(null);
     return txs;
   }
 
