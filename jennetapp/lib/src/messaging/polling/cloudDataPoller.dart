@@ -36,7 +36,7 @@ class CloudDataPoller
   static void startPolling(Profile profile) async
   {
       notificationProcessor.configureProcessor();
-      workManagerProcessor.configureProcessor();
+      //workManagerProcessor.configureProcessor();
 
       if(Platform.isIOS)
       {
@@ -132,7 +132,7 @@ class CloudDataPoller
       }
       print("********PUSH**********");
     });
-    notificationProcessor.showNotification();
+    notificationProcessor.showNotification("HELLO_WORLD");
   }
 }
 
@@ -217,7 +217,7 @@ class NotificationProcessor
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
-  Future<void> showNotification() async {
+  Future<void> showNotification(String payload) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
@@ -227,8 +227,8 @@ class NotificationProcessor
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item x');
+        0, "PickUp Request", "Play on 6th", platformChannelSpecifics,
+        payload: '');
   }
 }
 
