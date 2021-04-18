@@ -20,8 +20,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:workmanager/workmanager.dart' as Workmanager;
 
 class CloudDataPoller
 {
@@ -29,10 +31,12 @@ class CloudDataPoller
   static String standardTaskId = "com.transistorsoft.fetch";
 
   static NotificationProcessor notificationProcessor = new NotificationProcessor();
+  static WorkManagerProcessor workManagerProcessor = new WorkManagerProcessor();
 
   static void startPolling(Profile profile) async
   {
       notificationProcessor.configureProcessor();
+      workManagerProcessor.configureProcessor();
 
       if(Platform.isIOS)
       {
@@ -225,5 +229,52 @@ class NotificationProcessor
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
+  }
+}
+
+class WorkManagerProcessor
+{
+  static const simpleTaskKey = "simpleTask";
+  static const simpleDelayedTask = "simpleDelayedTask";
+  static const simplePeriodicTask = "simplePeriodicTask";
+  static const simplePeriodic1HourTask = "simplePeriodic1HourTask";
+
+  void configureProcessor()
+  {
+    Workmanager.Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: true,
+    );
+  }
+
+  void callbackDispatcher() {
+    Workmanager.Workmanager().executeTask((task, inputData) async {
+      switch (task) {
+        case simpleTaskKey:
+          print("$simpleTaskKey was executed. inputData = $inputData");
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setBool("test", true);
+          print("Bool from prefs: ${prefs.getBool("test")}");
+          break;
+        case simpleDelayedTask:
+          print("$simpleDelayedTask was executed");
+          break;
+        case simplePeriodicTask:
+          print("$simplePeriodicTask was executed");
+          break;
+        case simplePeriodic1HourTask:
+          print("$simplePeriodic1HourTask was executed");
+          break;
+        case Workmanager.Workmanager.iOSBackgroundTask:
+          print("The iOS background fetch was triggered");
+          Directory tempDir = await getTemporaryDirectory();
+          String tempPath = tempDir?.path;
+          print(
+              "You can access other plugins in the background, for example Directory.getTemporaryDirectory(): $tempPath");
+          break;
+      }
+
+      return Future.value(true);
+    });
   }
 }
