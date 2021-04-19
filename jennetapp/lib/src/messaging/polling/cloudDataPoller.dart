@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:app/src/context/activeSession.dart';
@@ -9,15 +8,10 @@ import 'package:app/src/rest/activeNetworkRestClient.dart';
 
 import 'package:background_fetch/background_fetch.dart';
 
-import 'dart:typed_data';
-import 'dart:ui';
-
-import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,9 +42,11 @@ class CloudDataPoller
       }
   }
 
-  static void showNotification(FoodRecoveryTransaction tx)
+  static void showNotification(List<FoodRecoveryTransaction> txs)
   {
-    notificationProcessor.showNotification("");
+    for(FoodRecoveryTransaction tx in txs) {
+      notificationProcessor.showNotification(tx.getPickupNotification().getSourceOrg().orgName);
+    }
   }
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
@@ -129,14 +125,7 @@ class CloudDataPoller
   static void pollData(Profile profile)
   {
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    Future<List<FoodRecoveryTransaction>> futureP = activeNetworkRestClient.getFoodRecoveryPush(profile.email);
-    /*futureP.then((txs){
-      print("********PUSH**********");
-      for(FoodRecoveryTransaction tx in txs) {
-        print(jsonEncode(tx.toJson()));
-      }
-      print("********PUSH**********");
-    });*/
+    activeNetworkRestClient.getFoodRecoveryPush(profile.email);
   }
 }
 
@@ -221,7 +210,7 @@ class NotificationProcessor
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
-  Future<void> showNotification(String payload) async {
+  Future<void> showNotification(String body) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
@@ -231,7 +220,7 @@ class NotificationProcessor
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, "PickUp Request", "Play on 6th", platformChannelSpecifics,
+        0, "PickUp Request", body, platformChannelSpecifics,
         payload: '');
   }
 }
