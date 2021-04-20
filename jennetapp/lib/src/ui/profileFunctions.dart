@@ -170,25 +170,25 @@ class ProfileFunctions
       Navigator.push(context, MaterialPageRoute(
           builder: (context) => DesignCourseHomeScreen()));
 
-      /*Profile foodRunner = Profile.fromJson(json);
+      Profile foodRunner = Profile.fromJson(json);
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
 
-      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      /*ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<List<FoodRecoveryTransaction>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
-      });
+      });*/
 
-      showCards(context, foodRunner);*/
+      showCards(context, foodRunner);
     });
   }
 
   void showCards(BuildContext context, Profile profile) 
   {
-    print(profile);
+    print("PROFILE: $profile");
     CloudDataPoller.startPolling(profile);
     LocationUpdater.startPolling(profile);
   }  
