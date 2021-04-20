@@ -1,7 +1,9 @@
-import 'package:best_flutter_ui_templates/design_course/design_course_app_theme.dart';
-import 'package:best_flutter_ui_templates/design_course/models/category.dart';
-import 'package:best_flutter_ui_templates/main.dart';
+import 'package:app/design_course/design_course_app_theme.dart';
+import 'package:app/design_course/models/category.dart';
+//import 'package:app/main.dart';
 import 'package:flutter/material.dart';
+
+import 'home_design_course.dart';
 
 class PopularCourseListView extends StatefulWidget {
   const PopularCourseListView({Key key, this.callBack}) : super(key: key);

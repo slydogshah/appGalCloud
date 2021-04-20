@@ -1,9 +1,9 @@
-import 'package:best_flutter_ui_templates/design_course/category_list_view.dart';
-import 'package:best_flutter_ui_templates/design_course/course_info_screen.dart';
-import 'package:best_flutter_ui_templates/design_course/popular_course_list_view.dart';
-import 'package:best_flutter_ui_templates/main.dart';
+import 'package:app/design_course/category_list_view.dart';
+import 'package:app/design_course/course_info_screen.dart';
+import 'package:app/design_course/popular_course_list_view.dart';
+//import 'package:app/main.dart';
 import 'package:flutter/material.dart';
-import 'design_course_app_theme.dart';
+import 'package:app/design_course/design_course_app_theme.dart';
 
 class DesignCourseHomeScreen extends StatefulWidget {
   @override
@@ -307,4 +307,16 @@ enum CategoryType {
   ui,
   coding,
   basic,
+}
+
+class HexColor extends Color {
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
+
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll('#', '');
+    if (hexColor.length == 6) {
+      hexColor = 'FF' + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
 }

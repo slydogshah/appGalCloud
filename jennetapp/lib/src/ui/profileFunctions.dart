@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app/design_course/home_design_course.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
@@ -166,9 +167,10 @@ class ProfileFunctions
         return;
       }
 
+      Navigator.push(context, MaterialPageRoute(
+          builder: (context) => DesignCourseHomeScreen()));
 
-
-      Profile foodRunner = Profile.fromJson(json);
+      /*Profile foodRunner = Profile.fromJson(json);
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
 
@@ -180,7 +182,7 @@ class ProfileFunctions
             builder: (context) => FoodRunnerMainScene(txs)));
       });
 
-      showCards(context, foodRunner);
+      showCards(context, foodRunner);*/
     });
   }
 
