@@ -167,20 +167,22 @@ class ProfileFunctions
         return;
       }
 
-      Navigator.push(context, MaterialPageRoute(
-          builder: (context) => DesignCourseHomeScreen()));
+
 
       Profile foodRunner = Profile.fromJson(json);
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
 
-      /*ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<List<FoodRecoveryTransaction>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
+        //Navigator.push(context, MaterialPageRoute(
+        //    builder: (context) => FoodRunnerMainScene(txs)));
+
         Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
-      });*/
+            builder: (context) => DesignCourseHomeScreen()));
+      });
 
       showCards(context, foodRunner);
     });
