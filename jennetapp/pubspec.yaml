@@ -43,6 +43,7 @@ dependencies:
   rxdart: ^0.26.0-nullsafety.1
   flutter_local_notifications: ^5.0.0+1
   workmanager: ^0.4.0
+  font_awesome_flutter: ^8.8.1
 
 dev_dependencies:
   flutter_test:

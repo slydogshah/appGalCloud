@@ -21,7 +21,7 @@ import 'package:app/src/rest/urlFunctions.dart';
 
 class ProfileFunctions
 {
-  void showAlertDialog(BuildContext context, final LoginState loginState, final TextFormField emailField, final TextFormField passwordField)
+  void showAlertDialog(BuildContext context, final LoginState loginState, final TextField emailField, final TextField passwordField)
   {
     final String email = emailField.controller.text;
     final String password = passwordField.controller.text;
