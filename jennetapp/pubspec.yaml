@@ -38,6 +38,14 @@ dependencies:
   location: ^4.0.0
   flutter_mapbox_navigation: ^0.0.19
   background_fetch: '^0.7.2'
+  device_info: ^2.0.0
+  path_provider: ^2.0.0
+  rxdart: ^0.26.0-nullsafety.1
+  flutter_local_notifications: ^5.0.0+1
+  workmanager: ^0.4.0
+  font_awesome_flutter: ^8.8.1
+  smooth_star_rating: ^1.1.1
+  intl: ^0.16.0
 
 dev_dependencies:
   flutter_test:
@@ -250,6 +258,10 @@ flutter:
     - packages/shrine_images/36-0.jpg
     - packages/shrine_images/37-0.jpg
     - assets/config/
+    - assets/images/
+    - assets/design_course/
+    - assets/fitness_app/
+    - assets/hotel/
 
   generate: true
   uses-material-design: true
@@ -257,4 +269,20 @@ flutter:
     - family: GalleryIcons
       fonts:
         - asset: packages/flutter_gallery_assets/fonts/GalleryIcons.ttf
+
+    - family: WorkSans
+      fonts:
+        - asset: assets/fonts/WorkSans-Regular.ttf
+        - asset: assets/fonts/WorkSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/WorkSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/WorkSans-Bold.ttf
+          weight: 700
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Bold.ttf
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 400
 

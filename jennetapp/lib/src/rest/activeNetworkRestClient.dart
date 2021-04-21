@@ -1,3 +1,4 @@
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:http/http.dart' as http;
@@ -54,16 +55,13 @@ class ActiveNetworkRestClient
 
   Future<List<FoodRecoveryTransaction>> getFoodRecoveryPush(String email) async
   {
-    List<FoodRecoveryTransaction> txs = new List();
+    List<FoodRecoveryTransaction> txs = [];
     var response;
 
     String host = UrlFunctions.getInstance().resolveHost();
 
-    print("EMAIL: $email");
-    print("HOST: $host");
-
     String remoteUrl = host+"tx/push/recovery/?email="+email;
-    print("PUSHURL: "+remoteUrl);
+    //print("PUSHURL: "+remoteUrl);
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }
@@ -72,7 +70,7 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    print(response.body);
+    //print(response.body);
     Map<String,dynamic> object = json.decode(response.body);
     Iterable l = object['pending'];
     for(Map<String, dynamic> tx in l)
@@ -80,6 +78,8 @@ class ActiveNetworkRestClient
       FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
       txs.add(local);
     }
+
+    CloudDataPoller.showNotification(txs);
     return txs;
   }
 

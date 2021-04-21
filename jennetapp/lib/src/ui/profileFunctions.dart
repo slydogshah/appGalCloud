@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:app/design_course/home_design_course.dart';
+import 'package:app/hotel_booking/hotel_home_screen.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
@@ -20,7 +22,7 @@ import 'package:app/src/rest/urlFunctions.dart';
 
 class ProfileFunctions
 {
-  void showAlertDialog(BuildContext context, final LoginState loginState, final TextFormField emailField, final TextFormField passwordField)
+  void showAlertDialog(BuildContext context, final LoginState loginState, final TextField emailField, final TextField passwordField)
   {
     final String email = emailField.controller.text;
     final String password = passwordField.controller.text;
@@ -178,6 +180,12 @@ class ProfileFunctions
       future.then((txs) {
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
+
+        //Navigator.push(context, MaterialPageRoute(
+        //    builder: (context) => DesignCourseHomeScreen()));
+
+        //Navigator.push(context, MaterialPageRoute(
+        //    builder: (context) => HotelHomeScreen()));
       });
 
       showCards(context, foodRunner);
@@ -186,7 +194,7 @@ class ProfileFunctions
 
   void showCards(BuildContext context, Profile profile) 
   {
-    print(profile);
+    print("PROFILE: $profile");
     CloudDataPoller.startPolling(profile);
     LocationUpdater.startPolling(profile);
   }  

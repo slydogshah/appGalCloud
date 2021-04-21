@@ -1,3 +1,4 @@
+import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
 import 'profileFunctions.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class JenNetworkApp extends StatelessWidget {
   JenNetworkApp()
@@ -72,62 +74,34 @@ class LoginState extends State<Login> {
     const sizedBoxSpace = SizedBox(height: 24);
     ProfileFunctions profileFunctions = new ProfileFunctions();
 
-    TextFormField email = TextFormField(
-                  controller: TextEditingController(),
-                  textCapitalization: TextCapitalization.words,
-                  cursorColor: cursorColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.person),
-                    //hintText: "Your email address",
-                    labelText:
-                        "Email",
-                  ),
-                  autovalidateMode:AutovalidateMode.always,
-                  validator: (value){
-                    if(this.authenticationFailed)
-                    {
-                      if(this.authFailure['message'].startsWith("profile_not_found")) {
-                        return "The email is not registered.";
-                      }
-                      else
-                      {
-                        return null;
-                      }
-                    }
-                    else {
-                      return null;
-                    }
-                  },
-                );
-
-    TextFormField password = TextFormField(
-            controller: TextEditingController(),
-            obscureText: true,
-            decoration: InputDecoration(
-                    filled: true,
-                    icon: Icon(Icons.visibility_off),
-                    //hintText: "Your email address",
-                    labelText:
-                        "Password",
-            ),
-            autovalidateMode:AutovalidateMode.always,
-            validator: (value){
-              if(this.authenticationFailed)
-              {
-                if(this.authFailure['message'].startsWith("password_mismatch")) {
-                  return "Password does not match.";
-                }
-                else
-                {
-                  return null;
-                }
-              }
-              else {
-                return null;
-              }
-            },
+    TextField emailTextField = TextField(
+      controller: TextEditingController(),
+      onChanged: (String txt) {},
+      style: const TextStyle(
+        fontSize: 18,
+      ),
+      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Login...',
+      ),
     );
+    Widget email = this.getLoginUIBar(context,emailTextField);
+
+    TextField passwordTextField = TextField(
+      controller: TextEditingController(),
+      onChanged: (String txt) {},
+      obscureText: true,
+      style: const TextStyle(
+        fontSize: 18,
+      ),
+      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Password...',
+      ),
+    );
+    Widget password = this.getPasswordUIBar(context,profileFunctions,emailTextField,passwordTextField);
 
     Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
@@ -153,7 +127,7 @@ class LoginState extends State<Login> {
                   //),
                 //),
                 //sizedBoxSpace,
-                Center(
+                /*Center(
                   child:
                     RaisedButton(
                       child: Text("Login"),
@@ -162,7 +136,7 @@ class LoginState extends State<Login> {
                         profileFunctions.showAlertDialog(context, this, email, password);
                       }
                     )
-                )
+                )*/
               ],
             )
           )
@@ -193,5 +167,139 @@ class LoginState extends State<Login> {
         )
     );
     return scaffold;
+  }
+
+  Widget getLoginUIBar(BuildContext context, TextField emailTextField) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: HotelAppTheme.buildLightTheme().backgroundColor,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(38.0),
+                  ),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        offset: const Offset(0, 2),
+                        blurRadius: 8.0),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 16, right: 16, top: 4, bottom: 4),
+                  child: emailTextField,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: HotelAppTheme.buildLightTheme().primaryColor,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(38.0),
+              ),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.4),
+                    offset: const Offset(0, 2),
+                    blurRadius: 8.0),
+              ],
+            ),
+            /*child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(32.0),
+                ),
+                onTap: () {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Icon(FontAwesomeIcons.search,
+                      size: 20,
+                      color: HotelAppTheme.buildLightTheme().backgroundColor),
+                ),
+              ),
+            ),*/
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getPasswordUIBar(BuildContext context,ProfileFunctions profileFunctions,
+      TextField emailTextField,
+      TextField passwordTextField) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: HotelAppTheme.buildLightTheme().backgroundColor,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(38.0),
+                  ),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        offset: const Offset(0, 2),
+                        blurRadius: 8.0),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 16, right: 16, top: 4, bottom: 4),
+                  child: passwordTextField,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: HotelAppTheme.buildLightTheme().primaryColor,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(38.0),
+              ),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.4),
+                    offset: const Offset(0, 2),
+                    blurRadius: 8.0),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(32.0),
+                ),
+                onTap: () {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  profileFunctions.showAlertDialog(context, this, emailTextField,
+                      passwordTextField);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Icon(FontAwesomeIcons.surprise,
+                      size: 20,
+                      color: HotelAppTheme.buildLightTheme().backgroundColor),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

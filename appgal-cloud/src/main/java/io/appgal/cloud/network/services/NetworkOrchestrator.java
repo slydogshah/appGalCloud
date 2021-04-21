@@ -170,9 +170,11 @@ public class NetworkOrchestrator {
                 logger.info("DISTANCE: "+distance);
                 logger.info("**************DISTANCE*****************");
 
-                if (distance <= 5.0d) {
+                //TODO
+                /*if (distance <= 5.0d) {
                     myTransactions.add(tx);
-                }
+                }*/
+                myTransactions.add(tx);
             }
 
             return myTransactions;
