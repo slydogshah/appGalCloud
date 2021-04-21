@@ -1,3 +1,4 @@
+import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
-import 'hotel_app_theme.dart';
 import 'profileFunctions.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

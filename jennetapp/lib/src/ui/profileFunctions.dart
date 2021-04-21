@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app/design_course/home_design_course.dart';
+import 'package:app/hotel_booking/hotel_home_screen.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
@@ -180,8 +181,11 @@ class ProfileFunctions
         //Navigator.push(context, MaterialPageRoute(
         //    builder: (context) => FoodRunnerMainScene(txs)));
 
+        //Navigator.push(context, MaterialPageRoute(
+        //    builder: (context) => DesignCourseHomeScreen()));
+
         Navigator.push(context, MaterialPageRoute(
-            builder: (context) => DesignCourseHomeScreen()));
+            builder: (context) => HotelHomeScreen()));
       });
 
       showCards(context, foodRunner);
