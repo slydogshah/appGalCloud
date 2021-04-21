@@ -178,14 +178,14 @@ class ProfileFunctions
       Future<List<FoodRecoveryTransaction>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-        //Navigator.push(context, MaterialPageRoute(
-        //    builder: (context) => FoodRunnerMainScene(txs)));
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
 
         //Navigator.push(context, MaterialPageRoute(
         //    builder: (context) => DesignCourseHomeScreen()));
 
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => HotelHomeScreen()));
+        //Navigator.push(context, MaterialPageRoute(
+        //    builder: (context) => HotelHomeScreen()));
       });
 
       showCards(context, foodRunner);
