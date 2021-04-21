@@ -150,7 +150,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         headerSliverBuilder:
                             (BuildContext context, bool innerBoxIsScrolled) {
                           return <Widget>[
-                            SliverList(
+                            /*SliverList(
                               delegate: SliverChildBuilderDelegate(
                                       (BuildContext context, int index) {
                                     return Column(
@@ -160,14 +160,14 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                                       ],
                                     );
                                   }, childCount: 1),
-                            ),
-                            SliverPersistentHeader(
+                            ),*/
+                            /*SliverPersistentHeader(
                               pinned: true,
                               floating: true,
                               delegate: ContestTabHeader(
                                 getFilterBarUI(),
                               ),
-                            ),
+                            ),*/
                           ];
                         },
                         body: Container(
