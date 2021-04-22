@@ -129,6 +129,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       bottomNavigationBar: UiFunctions.bottomNavigationBar(context)
     );
     return scaffold;*/
+    Color primaryColor = Color(0xFF383EDB);
+    Color backgroundColor = Color(0xFF383EDB);
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
@@ -173,10 +175,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                           ];
                         },
                         body: Container(
-                          color:
-                          HotelAppTheme
-                              .buildLightTheme()
-                              .backgroundColor,
+                          color: primaryColor,
+                          //color: Colors.pink,
                           child: ListView.builder(
                             itemCount: hotelList.length,
                             padding: const EdgeInsets.only(top: 8),
@@ -806,7 +806,7 @@ class HotelListView extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    'Est Pickup: 10 minutes',
+                                                    'Pickup: 10 minutes',
                                                     overflow:
                                                     TextOverflow.ellipsis,
                                                     style: TextStyle(
@@ -857,7 +857,7 @@ class HotelListView extends StatelessWidget {
                                                   ),
                                                   Expanded(
                                                     child: Text(
-                                                      'Est DropOff: 15 minutes',
+                                                      'DropOff: 15 minutes',
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
@@ -914,7 +914,8 @@ class HotelListView extends StatelessWidget {
                                         ElevatedButton(
                                           child: Text('Accept'),
                                           style: ElevatedButton.styleFrom(
-                                              primary: Color(0xFF383EDB)
+                                              //primary: Color(0xFF383EDB)
+                                              primary: Colors.pink
                                           ),
                                           onPressed: () {
                                             Profile profile = ActiveSession.getInstance().getProfile();
