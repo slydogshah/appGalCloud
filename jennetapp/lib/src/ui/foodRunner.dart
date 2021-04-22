@@ -14,6 +14,7 @@ import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
@@ -39,8 +40,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 5));
 
-  _FoodRunnerMainState(List<FoodRecoveryTransaction> recoveryTxs)
-  {
+  _FoodRunnerMainState(List<FoodRecoveryTransaction> recoveryTxs) {
     this.recoveryTxs = recoveryTxs;
   }
 
@@ -51,65 +51,67 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     super.initState();
   }
 
-  List<Card> getCards()
-  {
+  /*List<Card> getCards() {
     List<Card> cards = new List();
-    for(FoodRecoveryTransaction tx in this.recoveryTxs)
-    {
+    for (FoodRecoveryTransaction tx in this.recoveryTxs) {
       //FoodRunnerLocation location = new FoodRunnerLocation(0.0, 0.0);
       Card card = Card(shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    color: Colors.pink,
-                    elevation: 10,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                          leading: Icon(Icons.album, size: 70),
-                          title: Text('Pickup Request', style: TextStyle(color: Colors.white)),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Pickup: '+tx.schedulePickupNotification.sourceOrg.orgName,
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'DropOff: '+tx.schedulePickupNotification.dropOffOrg.orgName,
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Est Pickup Trip: 10 minutes',
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Est DropOff Trip: 15 minutes',
-                          ),
-                        ),
-                        ElevatedButton(
-                          child: Text('Accept'),
-                          style: ElevatedButton.styleFrom(
-                            primary: Color(0xFF383EDB)
-                          ),
-                          onPressed: () {
-                            Profile profile = ActiveSession.getInstance().getProfile();
-                            handleAccept(context,profile.email,tx.schedulePickupNotification.dropOffOrg.orgId, tx);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-        cards.add(card);
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+        color: Colors.pink,
+        elevation: 10,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.album, size: 70),
+              title: Text(
+                  'Pickup Request', style: TextStyle(color: Colors.white)),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Pickup: ' +
+                    tx.schedulePickupNotification.sourceOrg.orgName,
+              ),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'DropOff: ' +
+                    tx.schedulePickupNotification.dropOffOrg.orgName,
+              ),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Est Pickup Trip: 10 minutes',
+              ),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Est DropOff Trip: 15 minutes',
+              ),
+            ),
+            ElevatedButton(
+              child: Text('Accept'),
+              style: ElevatedButton.styleFrom(
+                  primary: Color(0xFF383EDB)
+              ),
+              onPressed: () {
+                Profile profile = ActiveSession.getInstance().getProfile();
+                handleAccept(context, profile.email,
+                    tx.schedulePickupNotification.dropOffOrg.orgId, tx);
+              },
+            ),
+          ],
+        ),
+      );
+      cards.add(card);
     }
     return cards;
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +174,9 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         },
                         body: Container(
                           color:
-                          HotelAppTheme.buildLightTheme().backgroundColor,
+                          HotelAppTheme
+                              .buildLightTheme()
+                              .backgroundColor,
                           child: ListView.builder(
                             itemCount: hotelList.length,
                             padding: const EdgeInsets.only(top: 8),
@@ -206,23 +210,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
         ),
       ),
     );
-  }
-
-  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx)
-  {
-    print(tx);
-    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-    Future<int> future = client.accept(email, dropOffOrgId, tx);
-    future.then((statusCode) {
-      if(statusCode == 200) {
-        LocationUpdater.getLocation();
-        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(tx.getPickupNotification().getDropOffOrg());
-        embeddedNavigation.start();
-      }
-      else {
-          //TODO
-      }
-    });
   }
 
     Widget getListUI() {
@@ -292,6 +279,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
           HotelListView(
             callback: () {},
             recoveryTransactions: this.recoveryTxs,
+            hotelList: HotelListData.hotelList,
             animation: animation,
             animationController: animationController,
           ),
@@ -713,6 +701,7 @@ class HotelListView extends StatelessWidget {
   const HotelListView(
       {Key key,
         this.recoveryTransactions,
+        this.hotelList,
         this.animationController,
         this.animation,
         this.callback})
@@ -722,6 +711,7 @@ class HotelListView extends StatelessWidget {
   final List<FoodRecoveryTransaction> recoveryTransactions;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+  final List<HotelListData> hotelList;
 
   @override
   Widget build(BuildContext context) {
@@ -758,13 +748,13 @@ class HotelListView extends StatelessWidget {
                       children: <Widget>[
                         Column(
                           children: <Widget>[
-                            /*AspectRatio(
+                            AspectRatio(
                               aspectRatio: 2,
                               child: Image.asset(
-                                hotelData.imagePath,
+                                HotelListData.hotelList[0].imagePath,
                                 fit: BoxFit.cover,
                               ),
-                            ),*/
+                            ),
                             Container(
                               color: HotelAppTheme.buildLightTheme()
                                   .backgroundColor,
@@ -798,7 +788,7 @@ class HotelListView extends StatelessWidget {
                                               MainAxisAlignment.start,
                                               children: <Widget>[
                                                 /*Text(
-                                                  hotelData.subTxt,
+                                                  HotelListData.hotelList[0].subTxt,
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey
@@ -814,9 +804,9 @@ class HotelListView extends StatelessWidget {
                                                       .buildLightTheme()
                                                       .primaryColor,
                                                 ),
-                                                /*Expanded(
+                                                Expanded(
                                                   child: Text(
-                                                    '${hotelData.dist.toStringAsFixed(1)} km to city',
+                                                    'Est Pickup: 10 minutes',
                                                     overflow:
                                                     TextOverflow.ellipsis,
                                                     style: TextStyle(
@@ -824,18 +814,22 @@ class HotelListView extends StatelessWidget {
                                                         color: Colors.grey
                                                             .withOpacity(0.8)),
                                                   ),
-                                                ),*/
+                                                ),
                                               ],
                                             ),
                                             Padding(
                                               padding:
                                               const EdgeInsets.only(top: 4),
                                               child: Row(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.start,
                                                 children: <Widget>[
                                                   /*SmoothStarRating(
                                                     allowHalfRating: true,
                                                     starCount: 5,
-                                                    rating: hotelData.rating,
+                                                    rating: HotelListData.hotelList[0].rating,
                                                     size: 20,
                                                     color: HotelAppTheme
                                                         .buildLightTheme()
@@ -843,14 +837,35 @@ class HotelListView extends StatelessWidget {
                                                     borderColor: HotelAppTheme
                                                         .buildLightTheme()
                                                         .primaryColor,
-                                                  ),*/
-                                                  /*Text(
-                                                    ' ${hotelData.reviews} Reviews',
+                                                  ),
+                                                  Text(
+                                                    ' ${HotelListData.hotelList[0].reviews} Reviews',
                                                     style: TextStyle(
                                                         fontSize: 14,
                                                         color: Colors.grey
                                                             .withOpacity(0.8)),
                                                   ),*/
+                                                  const SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  Icon(
+                                                    FontAwesomeIcons.mapMarkerAlt,
+                                                    size: 12,
+                                                    color: HotelAppTheme
+                                                        .buildLightTheme()
+                                                        .primaryColor,
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Est DropOff: 15 minutes',
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.grey
+                                                              .withOpacity(0.8)),
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -868,20 +883,45 @@ class HotelListView extends StatelessWidget {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        /*Text(
-                                          '\$${hotelData.perNight}',
+                                        Text(
+                                          //'\$${HotelListData.hotelList[0].perNight}',
+                                          this.recoveryTransactions[0].getPickupNotification().dropOffOrg.orgName,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: 22,
                                           ),
-                                        ),*/
-                                        Text(
+                                        ),
+                                        /*Text(
                                           '/per night',
                                           style: TextStyle(
                                               fontSize: 14,
                                               color:
                                               Colors.grey.withOpacity(0.8)),
+                                        ),*/
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 16, top: 8),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.end,
+                                      children: <Widget>[
+                                        ElevatedButton(
+                                          child: Text('Accept'),
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Color(0xFF383EDB)
+                                          ),
+                                          onPressed: () {
+                                            Profile profile = ActiveSession.getInstance().getProfile();
+                                            handleAccept(context,profile.email,
+                                                this.recoveryTransactions[0].schedulePickupNotification.dropOffOrg.orgId,
+                                                this.recoveryTransactions[0]);
+                                          },
                                         ),
                                       ],
                                     ),
@@ -922,6 +962,23 @@ class HotelListView extends StatelessWidget {
         );
       },
     );
+  }
+
+  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
+    print(tx);
+    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+    Future<int> future = client.accept(email, dropOffOrgId, tx);
+    future.then((statusCode) {
+      if (statusCode == 200) {
+        LocationUpdater.getLocation();
+        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(
+            tx.getPickupNotification().getDropOffOrg());
+        embeddedNavigation.start();
+      }
+      else {
+        //TODO
+      }
+    });
   }
 }
 
