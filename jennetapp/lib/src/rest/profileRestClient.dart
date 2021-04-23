@@ -10,6 +10,7 @@ import 'package:app/src/model/authCredentials.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:io' show Platform;
 
 class ProfileRestClient
 {
@@ -57,10 +58,15 @@ class ProfileRestClient
 
       //TODO: IOS location issue. most likely simulator related
       Map<String,dynamic> payload = credentials.toJson();
-      //payload['latitude'] = foodRunnerLocation.getLatitude();
-      payload['latitude'] = 30.2698104;
-      //payload['longitude'] = foodRunnerLocation.getLongitude();
-      payload['longitude'] = -97.75115579999999;
+      if (Platform.isIOS) {
+        payload['latitude'] = 30.2698104;
+        payload['longitude'] = -97.75115579999999;
+      }
+      else
+      {
+        payload['latitude'] = foodRunnerLocation.getLatitude();
+        payload['longitude'] = foodRunnerLocation.getLongitude();
+      }
 
 
        response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).

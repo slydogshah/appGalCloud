@@ -92,6 +92,8 @@ class LocationUpdater
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
       Map<String,double> map = new Map();
+
+      //TODO
       map['latitude'] = 0.0;
       map['longitude'] = 0.0;
       LocationData location = LocationData.fromMap(map);
@@ -124,6 +126,8 @@ class LocationUpdater
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
       Map<String,double> map = new Map();
+
+      //TODO
       map['latitude'] = 0.0;
       map['longitude'] = 0.0;
       LocationData location = LocationData.fromMap(map);

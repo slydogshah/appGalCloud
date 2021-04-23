@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
 
+import 'dart:io' show Platform;
+
 class EmbeddedNavigation
 {
   String _platformVersion = 'Unknown';
@@ -29,17 +31,25 @@ class EmbeddedNavigation
   {
       foodRunnerLocation = ActiveSession.getInstance().getLocation();
 
-      print(foodRunnerLocation.getLatitude());
-      print(foodRunnerLocation.getLongitude());
-      print(sourceOrg.location.getLatitude());
-      print(sourceOrg.location.getLongitude());
+      //print(foodRunnerLocation.getLatitude());
+      //print(foodRunnerLocation.getLongitude());
+      //print(sourceOrg.location.getLatitude());
+      //print(sourceOrg.location.getLongitude());
 
 
-
-      _origin = WayPoint(
-          name: "Start",
-          latitude: foodRunnerLocation.getLatitude(),
-          longitude:foodRunnerLocation.getLongitude());
+      if(Platform.isIOS) {
+        _origin = WayPoint(
+            name: "Start",
+            latitude: 30.2698104,
+            longitude: -97.75115579999999);
+      }
+      else
+      {
+        _origin = WayPoint(
+            name: "Start",
+            latitude: foodRunnerLocation.getLatitude(),
+            longitude: foodRunnerLocation.getLongitude());
+      }
 
       _stop = WayPoint(
           name: "Stop",
