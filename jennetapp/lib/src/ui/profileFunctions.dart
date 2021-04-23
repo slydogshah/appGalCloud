@@ -46,20 +46,18 @@ class ProfileFunctions
     login(context, dialog, loginState, credentials);
   }
 
-  void showAlertDialogRegistration(BuildContext context, final RegistrationState state, final TextFormField emailField,
-  final TextFormField passwordField,
-  final TextFormField phoneField,
-  final String profileType)
+  void showAlertDialogRegistration(BuildContext context,final RegistrationState registrationState, final RegisterView state,
+      final TextField emailField,
+      final TextField passwordField,
+      final String profileType)
   {
     final String email = emailField.controller.text;
     final String password = passwordField.controller.text;
-    final String mobile = phoneField.controller.text;
-    if(email.isEmpty || password.isEmpty || mobile.isEmpty)
+    if(email.isEmpty || password.isEmpty)
     {
       emailField.controller.value = new TextEditingValue(text:email);
       passwordField.controller.value = new TextEditingValue(text:password);
-      phoneField.controller.value = new TextEditingValue(text:mobile);
-      state.notifyEmailIsInvalid(email,password,mobile,email.isEmpty,password.isEmpty,mobile.isEmpty);
+      registrationState.notifyEmailIsInvalid(email,password,email.isEmpty,password.isEmpty);
       return;
     }
 
@@ -76,7 +74,7 @@ class ProfileFunctions
       },
     );
 
-    Profile profile = new Profile("", email, mobile, "", password);
+    Profile profile = new Profile("", email, "123", "", password);
     profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Map<String,dynamic>> future = profileRestClient.register(profile);
@@ -105,8 +103,7 @@ class ProfileFunctions
 
         emailField.controller.value = new TextEditingValue(text:email);
         passwordField.controller.value = new TextEditingValue(text:password);
-        phoneField.controller.value = new TextEditingValue(text:mobile);
-        state.notifyEmailIsInvalid(email,password,mobile,emailIsInvalid,passwordIsRequired,phoneIsInvalid);
+        registrationState.notifyEmailIsInvalid(email,password,emailIsInvalid,passwordIsRequired);
       }
       else {
         AuthCredentials credentials = new AuthCredentials();
@@ -127,7 +124,6 @@ class ProfileFunctions
 
       if(json['statusCode'] != 200)
       {
-        print("FUCKOFF");
         return;
       }
 
@@ -141,7 +137,7 @@ class ProfileFunctions
       Future<List<FoodRecoveryTransaction>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-        Navigator.push(context, MaterialPageRoute(
+        Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
       });
 

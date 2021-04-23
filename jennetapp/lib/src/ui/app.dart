@@ -65,6 +65,12 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     super.initState();
   }
 
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
   void notifyLoginFailed(Map<String,dynamic> authFailure)
   {
     setState(() {
