@@ -54,9 +54,13 @@ class ProfileRestClient
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/login/";
     try {
       FoodRunnerLocation foodRunnerLocation = ActiveSession.getInstance().getLocation();
+
+      //TODO: IOS location issue. most likely simulator related
       Map<String,dynamic> payload = credentials.toJson();
-      payload['latitude'] = foodRunnerLocation.getLatitude();
-      payload['longitude'] = foodRunnerLocation.getLongitude();
+      //payload['latitude'] = foodRunnerLocation.getLatitude();
+      payload['latitude'] = 30.2698104;
+      //payload['longitude'] = foodRunnerLocation.getLongitude();
+      payload['longitude'] = -97.75115579999999;
 
 
        response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).
