@@ -124,6 +124,7 @@ class ProfileFunctions
 
       if(json['statusCode'] != 200)
       {
+        //TODO: show message
         return;
       }
 
@@ -152,7 +153,7 @@ class ProfileFunctions
 
     FoodRunnerLocation location = ActiveSession.getInstance().getLocation();
 
-    print("LOGIN: $location");
+    //print("LOGIN: $location");
 
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
@@ -160,7 +161,7 @@ class ProfileFunctions
 
       if(json['statusCode'] != 200)
       {
-        print("FUCKOFF");
+        //TODO: show message
         return;
       }
 
@@ -190,7 +191,7 @@ class ProfileFunctions
 
   void showCards(BuildContext context, Profile profile) 
   {
-    print("PROFILE: $profile");
+    //print("PROFILE: $profile");
     CloudDataPoller.startPolling(profile);
     LocationUpdater.startPolling(profile);
   }  
