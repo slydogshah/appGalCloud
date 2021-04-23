@@ -163,12 +163,12 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     Radius.circular(32.0),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
+                  //  Navigator.pop(context);
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.arrow_back),
-                  ),
+                  /*child: Padding(
+                  //  padding: const EdgeInsets.all(8.0),
+                  //  child: Icon(Icons.arrow_back),
+                  ),*/
                 ),
               ),
             ),

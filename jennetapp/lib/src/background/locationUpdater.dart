@@ -64,7 +64,7 @@ class LocationUpdater
     FoodRunnerLocation active = ActiveSession.getInstance().getLocation();
     print("FOOD_LOCATION_RETURNED: $active");*/
 
-    print("JUST_LEFT");
+    //print("JUST_LEFT");
   }
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
