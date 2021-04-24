@@ -618,7 +618,7 @@ class LoginView extends StatelessWidget {
                                                       onTap: () {
                                                         AlertDialog dialog = AlertDialog(
                                                           title: Text('Create an account?'),
-                                                          content: Text(''),
+                                                          content: Text('Thank you for giving your time to Hunger. We hope the Community helps you in your time of need, like you are helping now.\n\n-#Jen Network'),
                                                           actions: [
                                                             FlatButton(
                                                               textColor: Color(0xFF6200EE),
