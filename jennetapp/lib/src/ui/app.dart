@@ -1,3 +1,4 @@
+import 'package:app/hotel_booking/filters_screen.dart';
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/ui/registration.dart';
@@ -516,8 +517,47 @@ class LoginView extends StatelessWidget {
               ),
               onPressed: () {
                 FocusScope.of(context).requestFocus(FocusNode());
-                profileFunctions.showAlertDialogRegister(context, this, emailTextField,
-                    passwordTextField,"FOOD_RUNNER");
+                //profileFunctions.showAlertDialogRegister(context, this, emailTextField,
+                //    passwordTextField,"FOOD_RUNNER");
+                /*FiltersScreen filterScreen = new FiltersScreen();
+                filterScreen.setLoginState(this);
+                filterScreen.setEmailField(emailTextField);
+                filterScreen.setPasswordField(passwordTextField);
+                Navigator.push<dynamic>(
+                  context,
+                  MaterialPageRoute<dynamic>(
+                      builder: (BuildContext context) => filterScreen,
+                      fullscreenDialog: true),
+                );*/
+
+                AlertDialog dialog = AlertDialog(
+                  title: Text('Reset settings?'),
+                  content: Text('This will reset your device to its default factory settings.'),
+                  actions: [
+                    FlatButton(
+                      textColor: Color(0xFF6200EE),
+                      onPressed: () {},
+                      child: Text('CANCEL'),
+                    ),
+                    FlatButton(
+                      textColor: Color(0xFF6200EE),
+                      onPressed: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        profileFunctions.showAlertDialogRegister(context, this, emailTextField,
+                        passwordTextField,"FOOD_RUNNER");
+                      },
+                      child: Text('ACCEPT'),
+                    ),
+                  ],
+                );
+
+                // show the dialog
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return dialog;
+                  },
+                );
               },
             ),
           ),

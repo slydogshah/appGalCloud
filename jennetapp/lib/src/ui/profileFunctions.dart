@@ -54,12 +54,12 @@ class ProfileFunctions
     );
 
     // show the dialog
-    showDialog(
+    /*showDialog(
       context: context,
       builder: (BuildContext context) {
         return dialog;
       },
-    );
+    );*/
 
     Profile profile = new Profile("", email, "123", "", password);
     profile.setProfileType(profileType);
@@ -135,7 +135,7 @@ class ProfileFunctions
               builder: (context) => DesignCourseHomeScreen()));
         }*/
 
-        Navigator.of(context, rootNavigator: true).pop();
+        //Navigator.of(context, rootNavigator: true).pop();
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
       });
