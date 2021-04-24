@@ -1,7 +1,5 @@
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
-import 'package:app/src/context/activeSession.dart';
-import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 
 import 'profileFunctions.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class JenNetworkApp extends StatelessWidget {
   AnimationController animationController;
@@ -41,12 +38,6 @@ class Login extends StatefulWidget
 {
   @override
   LoginState createState() => LoginState();
-
-  @override
-  Widget build(BuildContext context) {
-    MaterialApp materialApp = new MaterialApp(home: new Login());
-    return materialApp;
-  }
 }
 
 class LoginState extends State<Login> with TickerProviderStateMixin{
@@ -57,6 +48,8 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
 
   AnimationController animationController;
   final ScrollController _scrollController = ScrollController();
+  String title;
+  Text titleWidget;
 
   @override
   void initState() {
@@ -85,110 +78,33 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     });
   }
 
+  void switchToRegister()
+  {
+    print("TITLE_NOW_REGISTER");
+    /*WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        this.title = "Register";
+      });
+    });*/
+    setState(() {
+      this.title = "Register";
+    });
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    /*final cursorColor = Theme.of(context).cursorColor;
-    const sizedBoxSpace = SizedBox(height: 24);
-    ProfileFunctions profileFunctions = new ProfileFunctions();
-
-    TextField emailTextField = TextField(
-      controller: TextEditingController(),
-      onChanged: (String txt) {},
-      style: const TextStyle(
-        fontSize: 18,
-      ),
-      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: 'Login...',
-      ),
+    this.title = "Login";
+    this.titleWidget = Text(
+        this.title,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,)
     );
-    Widget email = this.getLoginUIBar(context,emailTextField);
-
-    TextField passwordTextField = TextField(
-      controller: TextEditingController(),
-      onChanged: (String txt) {},
-      obscureText: true,
-      style: const TextStyle(
-        fontSize: 18,
-      ),
-      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: 'Password...',
-      ),
-    );
-    Widget password = this.getPasswordUIBar(context,profileFunctions,emailTextField,passwordTextField);
-
-    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
-            dragStartBehavior: DragStartBehavior.down,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                sizedBoxSpace,
-                email,
-                sizedBoxSpace,
-                password,
-                sizedBoxSpace,
-                //ButtonTheme.bar(
-                  //child: ButtonBar(
-                  //  children: <Widget>[
-                  //    FlatButton(
-                  //      child: const Text('Register', style: TextStyle(color: Colors.black)),
-                  //      onPressed: () {
-                  //        Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
-                  //      },
-                  //    ),
-                  //  ],
-                  //),
-                //),
-                //sizedBoxSpace,
-                /*Center(
-                  child:
-                    RaisedButton(
-                      child: Text("Login"),
-                      onPressed: () 
-                      {
-                        profileFunctions.showAlertDialog(context, this, email, password);
-                      }
-                    )
-                )*/
-              ],
-            )
-          )
-    );
-
-    Form form = new Form(child: scrollbar);
-
-    AppBar appBar = new AppBar(automaticallyImplyLeading: false, title: new Text("Login"),);
-    Scaffold scaffold = new Scaffold(appBar: appBar, body: form,
-      bottomNavigationBar: Container(
-        height: 60,
-        color: Colors.black12,
-        child: InkWell(
-        onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration())),
-        child: Padding(
-        padding: EdgeInsets.only(top: 8.0),
-        child: Column(
-        children: <Widget>[
-        Icon(
-        Icons.person_add,
-        color: Theme.of(context).accentColor,
-        ),
-        Text('Register'),
-        ],
-        ),
-        ),
-        ),
-        )
-    );
-    return scaffold;*/
 
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
-    return Theme(
+    Theme theme = Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
         child: Scaffold(
@@ -204,31 +120,13 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                 },
                 child: Column(
                   children: <Widget>[
-                    getAppBarUI(context),
+                    getAppBarUI(context, titleWidget),
                     Expanded(
                       child: NestedScrollView(
                         controller: _scrollController,
                         headerSliverBuilder:
                             (BuildContext context, bool innerBoxIsScrolled) {
                           return <Widget>[
-                            /*SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                      (BuildContext context, int index) {
-                                    return Column(
-                                      children: <Widget>[
-                                        getSearchBarUI(),
-                                        getTimeDateUI(),
-                                      ],
-                                    );
-                                  }, childCount: 1),
-                            ),*/
-                            /*SliverPersistentHeader(
-                              pinned: true,
-                              floating: true,
-                              delegate: ContestTabHeader(
-                                getFilterBarUI(),
-                              ),
-                            ),*/
                           ];
                         },
                         body: Container(
@@ -266,9 +164,21 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
         ),
       ),
     );
+
+    /*MaterialApp materialApp = new MaterialApp(
+        home: new Login(),
+        theme: ThemeData(
+            primaryColor: primaryColor,
+            backgroundColor: backgroundColor,
+            accentColor: backgroundColor,
+            accentColorBrightness: Brightness.dark
+        ),
+    );
+    return materialApp;*/
+    return theme;
   }
 
-  Widget getAppBarUI(BuildContext context) {
+  Widget getAppBarUI(BuildContext context, Text titleWidget) {
     return Container(
       decoration: BoxDecoration(
         color: HotelAppTheme.buildLightTheme().backgroundColor,
@@ -297,22 +207,12 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                   onTap: () {
                     //Navigator.pop(context);
                   },
-                  /*child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.arrow_back),
-                  ),*/
                 ),
               ),
             ),
             Expanded(
               child: Center(
-                child: Text(
-                  'Login',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 22,
-                  ),
-                ),
+                child: titleWidget,
               ),
             ),
             Container(
@@ -328,7 +228,9 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                       borderRadius: const BorderRadius.all(
                         Radius.circular(32.0),
                       ),
-                      onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration())),
+                      onTap: () {
+                        Navigator.push(context,MaterialPageRoute(builder: (context) => new Registration()));
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Icon(
@@ -338,19 +240,6 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                       ),
                     ),
                   ),
-                  /*Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
-                      ),
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(FontAwesomeIcons.mapMarkerAlt),
-                      ),
-                    ),
-                  ),*/
                 ],
               ),
             )
@@ -458,62 +347,11 @@ class LoginView extends StatelessWidget {
                                           children: <Widget>[
                                             email,
                                             password,
-                                            /*Padding(
-                                              padding:
-                                              const EdgeInsets.only(top: 4),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                                children: <Widget>[
-                                                  ElevatedButton(
-                                                    child: Text('Login'),
-                                                    style: ElevatedButton.styleFrom(
-                                                      //primary: Color(0xFF383EDB)
-                                                        primary: Colors.pink
-                                                    ),
-                                                    onPressed: () {
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),*/
                                           ],
                                         ),
                                       ),
                                     ),
                                   ),
-                                  /*Padding(
-                                    padding: const EdgeInsets.only(
-                                        right: 16, top: 8),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.end,
-                                      children: <Widget>[
-                                        ElevatedButton(
-                                          child: Text('Login'),
-                                          style: ElevatedButton.styleFrom(
-                                            //primary: Color(0xFF383EDB)
-                                              primary: Colors.pink
-                                          ),
-                                          onPressed: () {
-                                          },
-                                        ),
-                                        ElevatedButton(
-                                          child: Text('Register'),
-                                          style: ElevatedButton.styleFrom(
-                                            //primary: Color(0xFF383EDB)
-                                              primary: Colors.pink
-                                          ),
-                                          onPressed: () {
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),*/
                                 ],
                               ),
                             ),
@@ -531,11 +369,6 @@ class LoginView extends StatelessWidget {
                               onTap: () {},
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                /*child: Icon(
-                                  Icons.favorite_border,
-                                  color: HotelAppTheme.buildLightTheme()
-                                      .primaryColor,
-                                ),*/
                               ),
                             ),
                           ),
@@ -597,23 +430,6 @@ class LoginView extends StatelessWidget {
                     blurRadius: 8.0),
               ],
             ),
-            /*child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(32.0),
-                ),
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Icon(FontAwesomeIcons.search,
-                      size: 20,
-                      color: HotelAppTheme.buildLightTheme().backgroundColor),
-                ),
-              ),
-            ),*/
           ),
         ],
       ),
@@ -665,16 +481,43 @@ class LoginView extends StatelessWidget {
               ],
             ),
             child:
+              ElevatedButton(
+                child: Text('Login'),
+                style: ElevatedButton.styleFrom(
+                  //primary: Color(0xFF383EDB)
+                    primary: Colors.pink
+                ),
+                onPressed: () {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  profileFunctions.showAlertDialog(context, this, emailTextField,
+                      passwordTextField);
+                },
+              ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              //color: HotelAppTheme.buildLightTheme().primaryColor,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(38.0),
+              ),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.4),
+                    offset: const Offset(0, 2),
+                    blurRadius: 8.0),
+              ],
+            ),
+            child:
             ElevatedButton(
-              child: Text('Login'),
+              child: Text('Register'),
               style: ElevatedButton.styleFrom(
                 //primary: Color(0xFF383EDB)
                   primary: Colors.pink
               ),
               onPressed: () {
                 FocusScope.of(context).requestFocus(FocusNode());
-                profileFunctions.showAlertDialog(context, this, emailTextField,
-                    passwordTextField);
+                profileFunctions.showAlertDialogRegister(context, this, emailTextField,
+                    passwordTextField,"FOOD_RUNNER");
               },
             ),
           ),

@@ -336,10 +336,10 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: Padding(
+                  /*child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(Icons.arrow_back),
-                  ),
+                  ),*/
                 ),
               ),
             ),
