@@ -1,3 +1,4 @@
+import 'package:app/design_course/home_design_course.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
@@ -161,8 +162,8 @@ class ProfileFunctions
       {
         //TODO: show message
         AlertDialog dialog = AlertDialog(
-          title: Text('Reset settings?'),
-          content: Text('This will reset your device to its default factory settings.'),
+          title: Text('Create an account?'),
+          content: Text(''),
           actions: [
             FlatButton(
               textColor: Color(0xFF6200EE),
@@ -246,7 +247,7 @@ class ProfileFunctions
     }
 
     // set up the SimpleDialog
-    /*SimpleDialog dialog = SimpleDialog(
+    SimpleDialog dialog = SimpleDialog(
       children: [CupertinoActivityIndicator()]
     );
 
@@ -256,7 +257,7 @@ class ProfileFunctions
       builder: (BuildContext context) {
         return dialog;
       },
-    );*/
+    );
 
     Profile profile = new Profile("", email, "123", "", password);
     profile.setProfileType(profileType);
@@ -324,7 +325,7 @@ class ProfileFunctions
       future.then((txs) {
         //Navigator.pushReplacement(context, MaterialPageRoute(
         //    builder: (context) => FoodRunnerMainScene(txs)));
-        /*if(txs!=null && !txs.isEmpty) {
+        if(txs!=null && !txs.isEmpty) {
           Navigator.pushReplacement(context, MaterialPageRoute(
               builder: (context) => FoodRunnerMainScene(txs)));
         }
@@ -332,7 +333,7 @@ class ProfileFunctions
         {
           Navigator.push(context, MaterialPageRoute(
               builder: (context) => DesignCourseHomeScreen()));
-        }*/
+        }
 
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));

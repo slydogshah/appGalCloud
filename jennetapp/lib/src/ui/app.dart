@@ -95,12 +95,43 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    this.title = "Login";
+    this.title = "#Jen Network";
     this.titleWidget = Text(
         this.title,
         style: TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 22,)
+    );
+
+    TextField emailTextField = TextField(
+      controller: TextEditingController(),
+      onChanged: (String txt) {},
+      style: const TextStyle(
+        fontSize: 18,
+      ),
+      cursorColor: HotelAppTheme
+          .buildLightTheme()
+          .primaryColor,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Login...',
+      ),
+    );
+
+    TextField passwordTextField = TextField(
+      controller: TextEditingController(),
+      onChanged: (String txt) {},
+      obscureText: true,
+      style: const TextStyle(
+        fontSize: 18,
+      ),
+      cursorColor: HotelAppTheme
+          .buildLightTheme()
+          .primaryColor,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Password...',
+      ),
     );
 
     Color primaryColor = Color(0xFF383EDB);
@@ -134,11 +165,11 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                           color: primaryColor,
                           //color: Colors.pink,
                           child: ListView.builder(
-                            itemCount: 1,
+                            itemCount: 3,
                             padding: const EdgeInsets.only(top: 8),
                             scrollDirection: Axis.vertical,
                             itemBuilder: (BuildContext context, int index) {
-                              final int count = 1;
+                              final int count = 3;
                               final Animation<double> animation =
                               Tween<double>(begin: 0.0, end: 1.0).animate(
                                   CurvedAnimation(
@@ -150,6 +181,9 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                               return LoginView(
                                 callback: () {},
                                 animation: animation,
+                                index: index,
+                                emailTextField: emailTextField,
+                                passwordTextField: passwordTextField,
                                 animationController: animationController,
                               );
                             },
@@ -256,134 +290,413 @@ class LoginView extends StatelessWidget {
       {Key key,
         this.animationController,
         this.animation,
+        this.index,
+        this.emailTextField,
+        this.passwordTextField,
         this.callback})
       : super(key: key);
 
   final VoidCallback callback;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+  final int index;
+  final TextField emailTextField;
+  final TextField passwordTextField;
 
   @override
   Widget build(BuildContext context) {
-    TextField emailTextField = TextField(
-      controller: TextEditingController(),
-      onChanged: (String txt) {},
-      style: const TextStyle(
-        fontSize: 18,
-      ),
-      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: 'Login...',
-      ),
-    );
-    Widget email = this.getLoginUIBar(context,emailTextField);
+    Widget email = this.getLoginUIBar(context, emailTextField);
 
-    TextField passwordTextField = TextField(
-      controller: TextEditingController(),
-      onChanged: (String txt) {},
-      obscureText: true,
-      style: const TextStyle(
-        fontSize: 18,
-      ),
-      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: 'Password...',
-      ),
-    );
     ProfileFunctions profileFunctions = new ProfileFunctions();
-    Widget password = this.getPasswordUIBar(context,profileFunctions,emailTextField,passwordTextField);
+    Widget password = this.getPasswordUIBar(
+        context, profileFunctions, emailTextField, passwordTextField);
 
-    return AnimatedBuilder(
-      animation: animationController,
-      builder: (BuildContext context, Widget child) {
-        return FadeTransition(
-          opacity: animation,
-          child: Transform(
-            transform: Matrix4.translationValues(
-                0.0, 50 * (1.0 - animation.value), 0.0),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 24, right: 24, top: 8, bottom: 16),
-              child: InkWell(
-                splashColor: Colors.transparent,
-                onTap: () {
-                  callback();
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.6),
-                        offset: const Offset(4, 4),
-                        blurRadius: 16,
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                    child: Stack(
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Container(
-                              color: HotelAppTheme.buildLightTheme()
-                                  .backgroundColor,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16, top: 8, bottom: 8),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            email,
-                                            password,
-                                          ],
+    if(index == 0)
+    {
+      return AnimatedBuilder(
+        animation: animationController,
+        builder: (BuildContext context, Widget child) {
+          return FadeTransition(
+            opacity: animation,
+            child: Transform(
+              transform: Matrix4.translationValues(
+                  0.0, 50 * (1.0 - animation.value), 0.0),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 24, right: 24, top: 8, bottom: 16),
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    callback();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(
+                          Radius.circular(16.0)),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.6),
+                          offset: const Offset(4, 4),
+                          blurRadius: 16,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(
+                          Radius.circular(16.0)),
+                      child: Stack(
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                color: HotelAppTheme
+                                    .buildLightTheme()
+                                    .backgroundColor,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16, top: 8, bottom: 8),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              email,
+                                              password,
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(32.0),
-                              ),
-                              onTap: () {},
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                              ),
-                            ),
+                            ],
                           ),
-                        )
-                      ],
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(32.0),
+                                ),
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    }
+    else if(index == 1)
+    {
+      return AnimatedBuilder(
+        animation: animationController,
+        builder: (BuildContext context, Widget child) {
+          return FadeTransition(
+            opacity: animation,
+            child: Transform(
+              transform: Matrix4.translationValues(
+                  0.0, 50 * (1.0 - animation.value), 0.0),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 24, right: 24, top: 8, bottom: 16),
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    callback();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(
+                          Radius.circular(16.0)),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.6),
+                          offset: const Offset(4, 4),
+                          blurRadius: 16,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(
+                          Radius.circular(16.0)),
+                      child: Stack(
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                color: HotelAppTheme
+                                    .buildLightTheme()
+                                    .backgroundColor,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16, top: 8, bottom: 8),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 16, right: 16, bottom: 16, top: 8),
+                                                child: Container(
+                                                  height: 48,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.pink,
+                                                    borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+                                                    boxShadow: <BoxShadow>[
+                                                      BoxShadow(
+                                                        color: Colors.grey.withOpacity(0.6),
+                                                        blurRadius: 8,
+                                                        offset: const Offset(4, 4),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Material(
+                                                    color: Colors.transparent,
+                                                    child: InkWell(
+                                                      borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+                                                      highlightColor: Colors.transparent,
+                                                      onTap: () {
+                                                        FocusScope.of(context).requestFocus(FocusNode());
+                                                        profileFunctions.showAlertDialog(context, this, emailTextField,
+                                                            passwordTextField);
+                                                      },
+                                                      child: Center(
+                                                        child: Text(
+                                                          'Login',
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: 18,
+                                                              color: Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(32.0),
+                                ),
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+    else
+    {
+      return AnimatedBuilder(
+        animation: animationController,
+        builder: (BuildContext context, Widget child) {
+          return FadeTransition(
+            opacity: animation,
+            child: Transform(
+              transform: Matrix4.translationValues(
+                  0.0, 50 * (1.0 - animation.value), 0.0),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 24, right: 24, top: 8, bottom: 16),
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    callback();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(
+                          Radius.circular(16.0)),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.6),
+                          offset: const Offset(4, 4),
+                          blurRadius: 16,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(
+                          Radius.circular(16.0)),
+                      child: Stack(
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                color: HotelAppTheme
+                                    .buildLightTheme()
+                                    .backgroundColor,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16, top: 8, bottom: 8),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 16, right: 16, bottom: 16, top: 8),
+                                                child: Container(
+                                                  height: 48,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.pink,
+                                                    borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+                                                    boxShadow: <BoxShadow>[
+                                                      BoxShadow(
+                                                        color: Colors.grey.withOpacity(0.6),
+                                                        blurRadius: 8,
+                                                        offset: const Offset(4, 4),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Material(
+                                                    color: Colors.transparent,
+                                                    child: InkWell(
+                                                      borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+                                                      highlightColor: Colors.transparent,
+                                                      onTap: () {
+                                                        AlertDialog dialog = AlertDialog(
+                                                          title: Text('Create an account?'),
+                                                          content: Text(''),
+                                                          actions: [
+                                                            FlatButton(
+                                                              textColor: Color(0xFF6200EE),
+                                                              onPressed: () {
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: Text('CANCEL'),
+                                                            ),
+                                                            FlatButton(
+                                                              textColor: Color(0xFF6200EE),
+                                                              onPressed: () {
+                                                                FocusScope.of(context).requestFocus(FocusNode());
+                                                                profileFunctions.showAlertDialogRegister(context, this, emailTextField,
+                                                                    passwordTextField,"FOOD_RUNNER");
+                                                              },
+                                                              child: Text('ACCEPT'),
+                                                            ),
+                                                          ],
+                                                        );
+
+                                                        // show the dialog
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext context) {
+                                                            return dialog;
+                                                          },
+                                                        );
+                                                      },
+                                                      child: Center(
+                                                        child: Text(
+                                                          'Join',
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: 18,
+                                                              color: Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(32.0),
+                                ),
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
   }
 
   void handleAccept(BuildContext context) {
@@ -468,7 +781,7 @@ class LoginView extends StatelessWidget {
               ),
             ),
           ),
-          Container(
+          /*Container(
             decoration: BoxDecoration(
               //color: HotelAppTheme.buildLightTheme().primaryColor,
               borderRadius: const BorderRadius.all(
@@ -494,7 +807,7 @@ class LoginView extends StatelessWidget {
                       passwordTextField);
                 },
               ),
-          ),
+          ),*/
           /*Container(
             decoration: BoxDecoration(
               //color: HotelAppTheme.buildLightTheme().primaryColor,

@@ -1,20 +1,14 @@
-import 'package:app/hotel_booking/calendar_popup_view.dart';
-import 'package:app/hotel_booking/filters_screen.dart';
 import 'package:app/hotel_booking/hotel_app_theme.dart';
-import 'package:app/hotel_booking/hotel_home_screen.dart';
 import 'package:app/hotel_booking/model/hotel_list_data.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:flutter/material.dart';
 
-import 'package:app/src/ui/uiFunctions.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
-import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
@@ -78,24 +72,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         headerSliverBuilder:
                             (BuildContext context, bool innerBoxIsScrolled) {
                           return <Widget>[
-                            /*SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                      (BuildContext context, int index) {
-                                    return Column(
-                                      children: <Widget>[
-                                        getSearchBarUI(),
-                                        getTimeDateUI(),
-                                      ],
-                                    );
-                                  }, childCount: 1),
-                            ),*/
-                            /*SliverPersistentHeader(
-                              pinned: true,
-                              floating: true,
-                              delegate: ContestTabHeader(
-                                getFilterBarUI(),
-                              ),
-                            ),*/
                           ];
                         },
                         body: Container(
@@ -249,171 +225,6 @@ class RequestView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*if(this.recoveryTransactions == null || this.recoveryTransactions.isEmpty)
-    {
-      return AnimatedBuilder(
-        animation: animationController,
-        builder: (BuildContext context, Widget child) {
-          return FadeTransition(
-            opacity: animation,
-            child: Transform(
-              transform: Matrix4.translationValues(
-                  0.0, 50 * (1.0 - animation.value), 0.0),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 24, right: 24, top: 8, bottom: 16),
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  onTap: () {
-                    callback();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.6),
-                          offset: const Offset(4, 4),
-                          blurRadius: 16,
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                      child: Stack(
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              AspectRatio(
-                                aspectRatio: 2,
-                                child: Image.asset(
-                                  HotelListData.hotelList[0].imagePath,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Container(
-                                color: HotelAppTheme.buildLightTheme()
-                                    .backgroundColor,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 16, top: 8, bottom: 8),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Row(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                                children: <Widget>[
-                                                  const SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  Icon(
-                                                    FontAwesomeIcons.mapMarkerAlt,
-                                                    size: 12,
-                                                    color: HotelAppTheme
-                                                        .buildLightTheme()
-                                                        .primaryColor,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      'Pickup: 10 minutes',
-                                                      overflow:
-                                                      TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.grey
-                                                              .withOpacity(0.8)),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.only(top: 4),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    const SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                    Icon(
-                                                      FontAwesomeIcons.mapMarkerAlt,
-                                                      size: 12,
-                                                      color: HotelAppTheme
-                                                          .buildLightTheme()
-                                                          .primaryColor,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        'DropOff: 15 minutes',
-                                                        overflow:
-                                                        TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.grey
-                                                                .withOpacity(0.8)),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(32.0),
-                                ),
-                                onTap: () {},
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.favorite_border,
-                                    color: HotelAppTheme.buildLightTheme()
-                                        .primaryColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    }*/
-
     final List<Widget> requests = <Widget>[];
     if(this.recoveryTransactions == null || this.recoveryTransactions.isEmpty)
     {
