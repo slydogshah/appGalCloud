@@ -495,7 +495,7 @@ class LoginView extends StatelessWidget {
                 },
               ),
           ),
-          Container(
+          /*Container(
             decoration: BoxDecoration(
               //color: HotelAppTheme.buildLightTheme().primaryColor,
               borderRadius: const BorderRadius.all(
@@ -519,7 +519,7 @@ class LoginView extends StatelessWidget {
                 FocusScope.of(context).requestFocus(FocusNode());
                 //profileFunctions.showAlertDialogRegister(context, this, emailTextField,
                 //    passwordTextField,"FOOD_RUNNER");
-                /*FiltersScreen filterScreen = new FiltersScreen();
+                FiltersScreen filterScreen = new FiltersScreen();
                 filterScreen.setLoginState(this);
                 filterScreen.setEmailField(emailTextField);
                 filterScreen.setPasswordField(passwordTextField);
@@ -528,7 +528,7 @@ class LoginView extends StatelessWidget {
                   MaterialPageRoute<dynamic>(
                       builder: (BuildContext context) => filterScreen,
                       fullscreenDialog: true),
-                );*/
+                );
 
                 AlertDialog dialog = AlertDialog(
                   title: Text('Reset settings?'),
@@ -560,7 +560,7 @@ class LoginView extends StatelessWidget {
                 );
               },
             ),
-          ),
+          ),*/
         ],
       ),
     );

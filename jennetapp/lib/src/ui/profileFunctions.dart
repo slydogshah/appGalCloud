@@ -37,7 +37,7 @@ class ProfileFunctions
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
-    login(context, dialog, loginState, credentials);
+    login(context, dialog, loginState, credentials, emailField, passwordField);
   }
 
   void showAlertDialogRegister(BuildContext context, final LoginView loginState,
@@ -144,7 +144,8 @@ class ProfileFunctions
     });
   }
 
-  void login (BuildContext context, SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials) {
+  void login (BuildContext context, SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials,
+      final TextField emailField, final TextField passwordField) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
@@ -159,6 +160,34 @@ class ProfileFunctions
       if(json['statusCode'] != 200)
       {
         //TODO: show message
+        AlertDialog dialog = AlertDialog(
+          title: Text('Reset settings?'),
+          content: Text('This will reset your device to its default factory settings.'),
+          actions: [
+            FlatButton(
+              textColor: Color(0xFF6200EE),
+              onPressed: () {},
+              child: Text('CANCEL'),
+            ),
+            FlatButton(
+              textColor: Color(0xFF6200EE),
+              onPressed: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+                showAlertDialogRegister(context, loginState, emailField,
+                    passwordField,"FOOD_RUNNER");
+              },
+              child: Text('ACCEPT'),
+            ),
+          ],
+        );
+
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return dialog;
+          },
+        );
         return;
       }
 
