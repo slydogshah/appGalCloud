@@ -5,6 +5,7 @@ import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/ui/foodRunner.dart';
 
 import 'package:background_fetch/background_fetch.dart';
 
@@ -27,9 +28,12 @@ class CloudDataPoller
   static NotificationProcessor notificationProcessor = new NotificationProcessor();
   static WorkManagerProcessor workManagerProcessor = new WorkManagerProcessor();
 
-  static void startPolling(Profile profile) async
+  static BuildContext context;
+
+  static void startPolling(BuildContext buildContext,Profile profile) async
   {
-      notificationProcessor.configureProcessor();
+      context = buildContext;
+      notificationProcessor.configureProcessor(context);
       //workManagerProcessor.configureProcessor();
 
       if(Platform.isIOS)
@@ -45,7 +49,7 @@ class CloudDataPoller
   static void showNotification(List<FoodRecoveryTransaction> txs)
   {
     for(FoodRecoveryTransaction tx in txs) {
-      notificationProcessor.showNotification(tx.getPickupNotification().getSourceOrg().orgName);
+      notificationProcessor.showNotification(context,tx.getPickupNotification().getSourceOrg().orgName);
     }
   }
   //--------ios--------------------------------------------
@@ -150,6 +154,7 @@ class NotificationProcessor
   String selectedNotificationPayload;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
+  BuildContext context;
 
   /// Streams are created so that app can respond to notification-related events
   /// since the plugin is initialised in the `main` function
@@ -162,7 +167,9 @@ class NotificationProcessor
   static const MethodChannel platform =
   MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
-  Future<void> configureProcessor() async {
+  Future<void> configureProcessor(BuildContext context) async {
+    this.context = context;
+
     await this.configureLocalTimeZone();
 
     final NotificationAppLaunchDetails notificationAppLaunchDetails =
@@ -195,11 +202,23 @@ class NotificationProcessor
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: (String payload) async {
-          if (payload != null) {
+          /*if (payload != null) {
             debugPrint('notification payload: $payload');
           }
           selectedNotificationPayload = payload;
-          selectNotificationSubject.add(payload);
+          selectNotificationSubject.add(payload);*/
+
+          print("*******************NOTIFICATION_SELECTED***********************");
+          ActiveSession activeSession = ActiveSession.getInstance();
+          Profile foodRunner = activeSession.getProfile();
+
+          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+          Future<List<FoodRecoveryTransaction>> future = client
+              .getFoodRecoveryTransaction(foodRunner.email);
+          future.then((txs) {
+            Navigator.pushReplacement(context, MaterialPageRoute(
+                builder: (context) => FoodRunnerMainScene(txs)));
+          });
         });
   }
 
@@ -210,7 +229,7 @@ class NotificationProcessor
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
-  Future<void> showNotification(String body) async {
+  Future<void> showNotification(BuildContext context,String body) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
