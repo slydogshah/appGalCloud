@@ -66,10 +66,10 @@ class ProfileFunctions
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Map<String,dynamic>> future = profileRestClient.register(profile);
     future.then((json){
-      //Navigator.of(context, rootNavigator: true).pop();
-
       if(json['violations'] != null)
       {
+        Navigator.of(context, rootNavigator: true).pop();
+
         List<dynamic> errors = json['violations'];
         bool emailIsInvalid = false;
         bool passwordIsRequired = false;
@@ -107,8 +107,6 @@ class ProfileFunctions
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
-      Navigator.of(context, rootNavigator: true).pop();
-
       if(json['statusCode'] != 200)
       {
         //TODO: show message
@@ -137,6 +135,7 @@ class ProfileFunctions
               builder: (context) => DesignCourseHomeScreen()));
         }*/
 
+        Navigator.of(context, rootNavigator: true).pop();
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
       });
@@ -156,7 +155,6 @@ class ProfileFunctions
 
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
-      Navigator.of(context, rootNavigator: true).pop();
 
       if(json['statusCode'] != 200)
       {
@@ -185,6 +183,7 @@ class ProfileFunctions
                 builder: (context) => DesignCourseHomeScreen()));
         }*/
 
+        Navigator.of(context, rootNavigator: true).pop();
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
 
