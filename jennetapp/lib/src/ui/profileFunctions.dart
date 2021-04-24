@@ -138,8 +138,17 @@ class ProfileFunctions
       Future<List<FoodRecoveryTransaction>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-        Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
+        //Navigator.pushReplacement(context, MaterialPageRoute(
+        //    builder: (context) => FoodRunnerMainScene(txs)));
+        if(txs!=null && !txs.isEmpty) {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => DesignCourseHomeScreen()));
+        }
       });
 
       showCards(context, foodRunner);
@@ -175,14 +184,16 @@ class ProfileFunctions
       Future<List<FoodRecoveryTransaction>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
 
-        //Navigator.push(context, MaterialPageRoute(
-        //    builder: (context) => DesignCourseHomeScreen()));
-
-        //Navigator.push(context, MaterialPageRoute(
-        //    builder: (context) => HotelHomeScreen()));
+        if(txs!=null && !txs.isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => DesignCourseHomeScreen()));
+        }
       });
 
       showCards(context, foodRunner);

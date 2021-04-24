@@ -216,8 +216,14 @@ class NotificationProcessor
           Future<List<FoodRecoveryTransaction>> future = client
               .getFoodRecoveryTransaction(foodRunner.email);
           future.then((txs) {
+            Navigator.of(context, rootNavigator: true).pop();
             Navigator.pushReplacement(context, MaterialPageRoute(
                 builder: (context) => FoodRunnerMainScene(txs)));
+
+
+            //Navigator.of(context, rootNavigator: true).pop();
+            //Navigator.push(context, MaterialPageRoute(
+            //    builder: (context) => FoodRunnerMainScene(txs)));
           });
         });
   }
