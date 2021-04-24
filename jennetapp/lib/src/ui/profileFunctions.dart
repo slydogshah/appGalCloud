@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:app/design_course/home_design_course.dart';
-import 'package:app/hotel_booking/hotel_home_screen.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
@@ -17,8 +13,6 @@ import 'package:app/src/ui/registration.dart';
 import 'package:app/src/ui/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'package:app/src/rest/urlFunctions.dart';
 
 class ProfileFunctions
 {
@@ -106,6 +100,107 @@ class ProfileFunctions
       }
     });
   }
+
+  void registration (BuildContext context,SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials) {
+    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
+    foodRunnerLoginData.setAuthCredentials(authCredentials);
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+    future.then((json) {
+      Navigator.of(context, rootNavigator: true).pop();
+
+      if(json['statusCode'] != 200)
+      {
+        //TODO: show message
+        return;
+      }
+
+
+      Profile foodRunner = Profile.fromJson(json);
+
+      ActiveSession activeSession = ActiveSession.getInstance();
+      activeSession.setProfile(foodRunner);
+
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<List<FoodRecoveryTransaction>> future = client
+          .getFoodRecoveryTransaction(foodRunner.email);
+      future.then((txs) {
+        //Navigator.pushReplacement(context, MaterialPageRoute(
+        //    builder: (context) => FoodRunnerMainScene(txs)));
+        /*if(txs!=null && !txs.isEmpty) {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => DesignCourseHomeScreen()));
+        }*/
+
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
+      });
+
+      showCards(context, foodRunner);
+    });
+  }
+
+  void login (BuildContext context, SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials) {
+    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
+    foodRunnerLoginData.setAuthCredentials(authCredentials);
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+
+    FoodRunnerLocation location = ActiveSession.getInstance().getLocation();
+
+    //print("LOGIN: $location");
+
+    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+    future.then((json) {
+      Navigator.of(context, rootNavigator: true).pop();
+
+      if(json['statusCode'] != 200)
+      {
+        //TODO: show message
+        return;
+      }
+
+
+
+      Profile foodRunner = Profile.fromJson(json);
+      ActiveSession activeSession = ActiveSession.getInstance();
+      activeSession.setProfile(foodRunner);
+
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<List<FoodRecoveryTransaction>> future = client
+          .getFoodRecoveryTransaction(foodRunner.email);
+      future.then((txs) {
+
+        /*if(txs!=null && !txs.isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => DesignCourseHomeScreen()));
+        }*/
+
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
+
+      });
+
+      showCards(context, foodRunner);
+    });
+  }
+
+  void showCards(BuildContext context, Profile profile) 
+  {
+    //print("PROFILE: $profile");
+    CloudDataPoller.startPolling(context,profile);
+    LocationUpdater.startPolling(profile);
+  }
+
 
   void showAlertDialogRegistration(BuildContext context,final RegistrationState registrationState, final RegisterView state,
       final TextField emailField,
@@ -218,104 +313,4 @@ class ProfileFunctions
       showCards(context, foodRunner);
     });
   }
-
-  void registration (BuildContext context,SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials) {
-    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
-    foodRunnerLoginData.setAuthCredentials(authCredentials);
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
-    future.then((json) {
-      Navigator.of(context, rootNavigator: true).pop();
-
-      if(json['statusCode'] != 200)
-      {
-        //TODO: show message
-        return;
-      }
-
-
-      Profile foodRunner = Profile.fromJson(json);
-
-      ActiveSession activeSession = ActiveSession.getInstance();
-      activeSession.setProfile(foodRunner);
-
-      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client
-          .getFoodRecoveryTransaction(foodRunner.email);
-      future.then((txs) {
-        //Navigator.pushReplacement(context, MaterialPageRoute(
-        //    builder: (context) => FoodRunnerMainScene(txs)));
-        /*if(txs!=null && !txs.isEmpty) {
-          Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
-        }
-        else
-        {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => DesignCourseHomeScreen()));
-        }*/
-
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
-      });
-
-      showCards(context, foodRunner);
-    });
-  }
-
-  void login (BuildContext context, SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials) {
-    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
-    foodRunnerLoginData.setAuthCredentials(authCredentials);
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-
-    FoodRunnerLocation location = ActiveSession.getInstance().getLocation();
-
-    //print("LOGIN: $location");
-
-    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
-    future.then((json) {
-      Navigator.of(context, rootNavigator: true).pop();
-
-      if(json['statusCode'] != 200)
-      {
-        //TODO: show message
-        return;
-      }
-
-
-
-      Profile foodRunner = Profile.fromJson(json);
-      ActiveSession activeSession = ActiveSession.getInstance();
-      activeSession.setProfile(foodRunner);
-
-      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client
-          .getFoodRecoveryTransaction(foodRunner.email);
-      future.then((txs) {
-
-        /*if(txs!=null && !txs.isEmpty) {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
-        }
-        else
-        {
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => DesignCourseHomeScreen()));
-        }*/
-
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
-
-      });
-
-      showCards(context, foodRunner);
-    });
-  }
-
-  void showCards(BuildContext context, Profile profile) 
-  {
-    //print("PROFILE: $profile");
-    CloudDataPoller.startPolling(context,profile);
-    LocationUpdater.startPolling(profile);
-  }  
 }
