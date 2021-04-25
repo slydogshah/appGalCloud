@@ -3,6 +3,7 @@ import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app/src/navigation/embeddedNavigation.dart';
@@ -87,30 +88,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         body: Container(
                           color: primaryColor,
                           //color: Colors.pink,
-                          child: ListView.builder(
-                            itemCount: recoveryTxs.length,
-                            padding: const EdgeInsets.only(top: 8),
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext context, int index) {
-                              final int count =
-                              recoveryTxs.length > 10 ? 10 : recoveryTxs.length;
-                              //final int count = 1;
-                              final Animation<double> animation =
-                              Tween<double>(begin: 0.0, end: 1.0).animate(
-                                  CurvedAnimation(
-                                      parent: animationController,
-                                      curve: Interval(
-                                          (1 / count) * index, 1.0,
-                                          curve: Curves.fastOutSlowIn)));
-                              animationController.forward();
-                              return PickUpListView(
-                                callback: () {},
-                                animation: animation,
-                                animationController: animationController,
-                              );
-                              //return new PickUpListView(() {},animationController, animation);
-                            },
-                          ),
+                          child: getPickUpList(),
                         ),
                       ),
                     )
@@ -122,6 +100,33 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
         ),
       ),
     );
+  }
+
+  Widget getPickUpList()
+  {
+    Widget widget = ListView.builder(
+      itemCount: recoveryTxs.length,
+      padding: const EdgeInsets.only(top: 8),
+      scrollDirection: Axis.vertical,
+      itemBuilder: (BuildContext context, int index) {
+        final int count =
+        recoveryTxs.length > 4 ? 4 : recoveryTxs.length;
+        final Animation<double> animation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+                parent: animationController,
+                curve: Interval(
+                    (1 / count) * index, 1.0,
+                    curve: Curves.fastOutSlowIn)));
+        animationController.forward();
+        return PickUpListView(
+          callback: () {},
+          animation: animation,
+          animationController: animationController,
+        );
+      },
+    ).build(context);
+    return widget;
   }
 
   Widget getAppBarUI(BuildContext context) {
@@ -444,4 +449,31 @@ class PickUpListView extends StatelessWidget {
     );
   }
 }
+
+/*
+ListView.builder(
+                            itemCount: recoveryTxs.length,
+                            padding: const EdgeInsets.only(top: 8),
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              final int count =
+                              recoveryTxs.length > 10 ? 10 : recoveryTxs.length;
+                              //final int count = 1;
+                              final Animation<double> animation =
+                              Tween<double>(begin: 0.0, end: 1.0).animate(
+                                  CurvedAnimation(
+                                      parent: animationController,
+                                      curve: Interval(
+                                          (1 / count) * index, 1.0,
+                                          curve: Curves.fastOutSlowIn)));
+                              animationController.forward();
+                              return PickUpListView(
+                                callback: () {},
+                                animation: animation,
+                                animationController: animationController,
+                              );
+                              //return new PickUpListView(() {},animationController, animation);
+                            },
+                          ),
+ */
 
