@@ -1,6 +1,8 @@
 package io.appgal.cloud.network.endpoint;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.network.services.LocationService;
@@ -20,13 +22,20 @@ public class LocationAPI {
     @Inject
     private LocationService locationService;
 
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
     @Path("update")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response receiveUpdate(@RequestBody String jsonBody)
     {
         try {
-            FoodRunner foodRunner = FoodRunner.parse(jsonBody);
+            logger.info(jsonBody);
+
+            JsonObject inputJson = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String email = inputJson.get("email").getAsString();
+            FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
             this.locationService.receiveUpdate(foodRunner);
 
             JsonObject responseJson = new JsonObject();

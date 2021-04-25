@@ -93,9 +93,8 @@ class LocationUpdater
     locationData.then((data){
       Map<String,double> map = new Map();
 
-      //TODO
-      map['latitude'] = 0.0;
-      map['longitude'] = 0.0;
+      map['latitude'] = data.latitude;
+      map['longitude'] = data.longitude;
       LocationData location = LocationData.fromMap(map);
       activeNetworkClient.sendLocationUpdate(location);
     });
@@ -127,9 +126,8 @@ class LocationUpdater
     locationData.then((data){
       Map<String,double> map = new Map();
 
-      //TODO
-      map['latitude'] = 0.0;
-      map['longitude'] = 0.0;
+      map['latitude'] = data.latitude;
+      map['longitude'] = data.longitude;
       LocationData location = LocationData.fromMap(map);
       activeNetworkClient.sendLocationUpdate(location);
     });
