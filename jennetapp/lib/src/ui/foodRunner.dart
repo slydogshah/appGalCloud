@@ -45,24 +45,18 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   }
 
   @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  /*@override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }*/
+
+  @override
   Widget build(BuildContext context) {
-    if(this.recoveryTxs == null || this.recoveryTxs.isEmpty)
-    {
-        return MaterialApp(
-          title: 'Welcome to Flutter',
-          home: Scaffold(
-            appBar: AppBar(
-              title: Text('Welcome to Flutter'),
-            ),
-            body: Center(
-              child: Text('Hello World'),
-            ),
-          ),
-        );
-    }
-
-
-
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
     return Theme(

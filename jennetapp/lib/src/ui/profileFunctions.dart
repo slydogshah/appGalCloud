@@ -9,6 +9,7 @@ import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
+import 'package:app/src/ui/emptyHome.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:app/src/ui/app.dart';
@@ -137,6 +138,15 @@ class ProfileFunctions
         }*/
 
         //Navigator.of(context, rootNavigator: true).pop();
+        /*if(txs != null && !txs.isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => EmptyHome()));
+        }*/
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
       });
@@ -161,34 +171,6 @@ class ProfileFunctions
       if(json['statusCode'] != 200)
       {
         //TODO: show message
-        AlertDialog dialog = AlertDialog(
-          title: Text('Create an account?'),
-          content: Text(''),
-          actions: [
-            FlatButton(
-              textColor: Color(0xFF6200EE),
-              onPressed: () {},
-              child: Text('CANCEL'),
-            ),
-            FlatButton(
-              textColor: Color(0xFF6200EE),
-              onPressed: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-                showAlertDialogRegister(context, loginState, emailField,
-                    passwordField,"FOOD_RUNNER");
-              },
-              child: Text('ACCEPT'),
-            ),
-          ],
-        );
-
-        // show the dialog
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return dialog;
-          },
-        );
         return;
       }
 
@@ -214,6 +196,17 @@ class ProfileFunctions
         }*/
 
         Navigator.of(context, rootNavigator: true).pop();
+
+        /*if(txs != null && !txs.isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => EmptyHome()));
+        }*/
+
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
 
