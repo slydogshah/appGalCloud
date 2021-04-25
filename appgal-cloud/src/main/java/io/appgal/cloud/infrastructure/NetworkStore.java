@@ -36,6 +36,8 @@ public class NetworkStore {
 
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
+        this.clearActiveNetwork(database);
+
         List<Document> activeFoodRunnerDocs = new ArrayList<>();
         final Iterator<FoodRunner> iterator = activeFoodRunners.values().iterator();
         while(iterator.hasNext())

@@ -132,10 +132,18 @@ public class NetworkOrchestratorTests extends BaseTest {
         this.networkOrchestrator.enterNetwork(bugsBunny);
         this.networkOrchestrator.enterNetwork(captain);
 
+        //check for uniqueness
+        bugsBunny.getLocation().setLatitude(0.0d);
+        this.networkOrchestrator.enterNetwork(bugsBunny);
+
         activeView = this.networkOrchestrator.getActiveView();
         logger.info("***ACTIVE_VIEW****");
         logger.info(gson.toJson(activeView));
         logger.info("******************");
+
+        ActiveNetwork activeNetwork = this.mongoDBStore.getActiveNetwork();
+        JsonArray json = JsonParser.parseString(activeNetwork.toString()).getAsJsonArray();
+        JsonUtil.print(this.getClass(),json);
     }
 
     @Test
