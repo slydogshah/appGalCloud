@@ -44,8 +44,11 @@ class Login extends StatefulWidget
 class LoginState extends State<Login> with TickerProviderStateMixin{
   String email;
   String password;
-  bool authenticationFailed = false;
   Map<String,dynamic> authFailure;
+
+  String emailRejectedMessage;
+  String passwordRejectedMessage;
+  String authRejectedMessage;
 
   AnimationController animationController;
   final ScrollController _scrollController = ScrollController();
@@ -65,7 +68,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     super.dispose();
   }
 
-  void notifyLoginFailed(Map<String,dynamic> authFailure)
+  void notifyAuthFailed(String authRejectedMessage)
   {
     setState(() {
       // This call to setState tells the Flutter framework that
@@ -74,12 +77,13 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
       // updated values. If you change _counter without calling
       // setState(), then the build method won't be called again,
       // and so nothing would appear to happen.
-      this.authenticationFailed = true;
-      this.authFailure = authFailure;
+      this.emailRejectedMessage = null;
+      this.passwordRejectedMessage = null;
+      this.authRejectedMessage = authRejectedMessage;
     });
   }
 
-  /*void notifyEmailIsInvalid(String emailValue,String passwordValue,bool emailValid,bool passwordRequired) {
+  void notifyValidationFailure(String emailRejectedMessage,String passwordRejectedMessage) {
     setState(() {
       // This call to setState tells the Flutter framework that
       // something has changed in this State, which causes it to rerun
@@ -87,26 +91,9 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
       // updated values. If you change _counter without calling
       // setState(), then the build method won't be called again,
       // and so nothing would appear to happen.
-      this.emailIsInvalid = emailValid;
-      this.passwordIsRequired = passwordRequired;
-      this.email = emailValue;
-      this.password = passwordValue;
-      //print("EmailValid: $emailIsInvalid");
-      //print("PasswordValid: $passwordIsRequired");
-      //print("PhoneValid: $phoneIsInvalid");
-    });
-  }*/
-
-  void switchToRegister()
-  {
-    print("TITLE_NOW_REGISTER");
-    /*WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        this.title = "Register";
-      });
-    });*/
-    setState(() {
-      this.title = "Register";
+      this.emailRejectedMessage = emailRejectedMessage;
+      this.passwordRejectedMessage = passwordRejectedMessage;
+      this.authRejectedMessage = authRejectedMessage;
     });
   }
 
@@ -122,11 +109,11 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     );
 
     TextFormField emailTextField = TextFormField(
+      controller: new TextEditingController(),
       autovalidateMode:AutovalidateMode.always,
       validator: (value) {
-          return "Email is required";
-          },
-      controller: TextEditingController(),
+        return this.emailRejectedMessage;
+      },
       onChanged: (String txt) {},
       style: const TextStyle(
         fontSize: 18,
@@ -141,11 +128,19 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     );
 
     TextFormField passwordTextField = TextFormField(
+      controller: TextEditingController(),
       autovalidateMode:AutovalidateMode.always,
       validator: (value) {
-        return "Password is required";
+        if(this.passwordRejectedMessage != null)
+        {
+          return this.passwordRejectedMessage;
+        }
+        else if(this.authRejectedMessage != null)
+        {
+          return this.authRejectedMessage;
+        }
+        return null;
       },
-      controller: TextEditingController(),
       onChanged: (String txt) {},
       obscureText: true,
       style: const TextStyle(
@@ -208,6 +203,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                                 callback: () {},
                                 animation: animation,
                                 index: index,
+                                loginState: this,
                                 emailTextField: emailTextField,
                                 passwordTextField: passwordTextField,
                                 animationController: animationController,
@@ -317,6 +313,7 @@ class LoginView extends StatelessWidget {
         this.animationController,
         this.animation,
         this.index,
+        this.loginState,
         this.emailTextField,
         this.passwordTextField,
         this.callback})
@@ -326,6 +323,7 @@ class LoginView extends StatelessWidget {
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final int index;
+  final LoginState loginState;
   final TextFormField emailTextField;
   final TextFormField passwordTextField;
 
@@ -511,7 +509,7 @@ class LoginView extends StatelessWidget {
                                                       highlightColor: Colors.transparent,
                                                       onTap: () {
                                                         FocusScope.of(context).requestFocus(FocusNode());
-                                                        profileFunctions.showAlertDialog(context, this, emailTextField,
+                                                        profileFunctions.showAlertDialog(context, this,this.loginState, emailTextField,
                                                             passwordTextField);
                                                       },
                                                       child: Center(
@@ -657,7 +655,8 @@ class LoginView extends StatelessWidget {
                                                               textColor: Color(0xFF6200EE),
                                                               onPressed: () {
                                                                 FocusScope.of(context).requestFocus(FocusNode());
-                                                                profileFunctions.showAlertDialogRegister(context, this, emailTextField,
+                                                                profileFunctions.showAlertDialogRegister(context, this,
+                                                                    this.loginState, emailTextField,
                                                                     passwordTextField,"FOOD_RUNNER");
                                                               },
                                                               child: Text('ACCEPT'),

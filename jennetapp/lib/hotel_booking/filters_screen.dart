@@ -107,7 +107,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                       Navigator.pop(context);
 
                       ProfileFunctions profileFunctions = new ProfileFunctions();
-                      profileFunctions.showAlertDialogRegister(context, this.loginState, this.emailField,
+                      profileFunctions.showAlertDialogRegister(context, this.loginState,null, this.emailField,
                       this.passwordField,"FOOD_RUNNER");
                     },
                     child: Center(

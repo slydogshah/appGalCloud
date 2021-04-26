@@ -86,6 +86,9 @@ public class Registration {
                     violationsArray.add(violation.getMessage());
                 }
                 responseJson.add("violations", violationsArray);
+
+                JsonUtil.print(this.getClass(),responseJson);
+
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
@@ -156,16 +159,21 @@ public class Registration {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@RequestBody String credentialsJson)
     {
-        JsonUtil.print(this.getClass(), JsonParser.parseString(credentialsJson).getAsJsonObject());
-
-
-        JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
-
-        String userAgent = request.getHeader("User-Agent");
-        String email = jsonObject.get("email").getAsString();
-        String password = jsonObject.get("password").getAsString();
-
         try {
+            logger.info(credentialsJson);
+            JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
+
+            if(jsonObject.get("email").isJsonNull() || jsonObject.get("password").isJsonNull())
+            {
+                JsonObject authFailure = new JsonObject();
+                throw new AuthenticationException(authFailure);
+            }
+
+            String userAgent = request.getHeader("User-Agent");
+
+            String email = jsonObject.get("email").getAsString();
+            String password = jsonObject.get("password").getAsString();
+
             Profile profile = this.profileRegistrationService.getProfile(email);
 
             logger.info("LOGIN_EMAIL: "+email);

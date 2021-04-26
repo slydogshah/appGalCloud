@@ -68,9 +68,6 @@ class ProfileRestClient
         payload['longitude'] = foodRunnerLocation.getLongitude();
       }
 
-      print("*******PAYLOAD*******"+payload.toString());
-
-
        response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).
        timeout(Duration(seconds: 30),onTimeout: () {
          print("NETWORK_TIMEOUT");

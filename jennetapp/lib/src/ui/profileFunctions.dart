@@ -19,10 +19,21 @@ import 'package:flutter/cupertino.dart';
 class ProfileFunctions
 {
   void showAlertDialog(BuildContext context, final LoginView loginState,
-      final TextFormField emailField, final TextFormField passwordField)
+      final LoginState loginScene,
+      final TextFormField emailField,
+      final TextFormField passwordField)
   {
-    final String email = emailField.controller.text;
-    final String password = passwordField.controller.text;
+    String email = emailField.controller.text;
+    String password = passwordField.controller.text;
+
+    if(email == null || email.isEmpty)
+    {
+        email = null;
+    }
+    if(password == null || password.isEmpty)
+    {
+       password = null;
+    }
 
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
@@ -40,10 +51,11 @@ class ProfileFunctions
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
-    login(context, dialog, loginState, credentials, emailField, passwordField);
+    login(context, dialog, loginState, loginScene, credentials, emailField, passwordField);
   }
 
   void showAlertDialogRegister(BuildContext context, final LoginView loginState,
+      final LoginState loginScene,
       final TextFormField emailField,
       final TextFormField passwordField,
       final String profileType)
@@ -56,14 +68,8 @@ class ProfileFunctions
         children: [CupertinoActivityIndicator()]
     );
 
-    // show the dialog
-    /*showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );*/
-
+    String emailRejectedMessage;
+    String passwordRejectedMessage;
     Profile profile = new Profile("", email, "123", "", password);
     profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
@@ -75,25 +81,21 @@ class ProfileFunctions
 
         List<dynamic> errors = json['violations'];
         bool emailIsInvalid = false;
-        bool passwordIsRequired = false;
-        bool phoneIsInvalid = false;
         errors.forEach((element) {
-          if (element.startsWith("email")) {
-            emailIsInvalid = true;
+          if (element == "email_required") {
+            emailRejectedMessage = "Email is required";
           }
-          else if(element.startsWith("password"))
+          else if(element == "email_invalid"  && emailRejectedMessage == null)
           {
-            passwordIsRequired = true;
+            emailRejectedMessage = email+" is invalid";
           }
-          else if(element.startsWith("phone"))
+          else if(element == "password_required")
           {
-            phoneIsInvalid = true;
+            passwordRejectedMessage = "Password is required";
           }
         });
 
-        emailField.controller.value = new TextEditingValue(text:email);
-        passwordField.controller.value = new TextEditingValue(text:password);
-        //registrationState.notifyEmailIsInvalid(email,password,emailIsInvalid,passwordIsRequired);
+        loginScene.notifyValidationFailure(emailRejectedMessage, passwordRejectedMessage);
       }
       else {
         AuthCredentials credentials = new AuthCredentials();
@@ -156,13 +158,11 @@ class ProfileFunctions
     });
   }
 
-  void login (BuildContext context, SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials,
+  void login (BuildContext context, SimpleDialog dialog, LoginView loginState, LoginState loginScene, AuthCredentials authCredentials,
       final TextFormField emailField, final TextFormField passwordField) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
-
-    FoodRunnerLocation location = ActiveSession.getInstance().getLocation();
 
     //print("LOGIN: $location");
 
@@ -171,6 +171,13 @@ class ProfileFunctions
 
       if(json['statusCode'] != 200)
       {
+        Navigator.of(context, rootNavigator: true).pop();
+        if(json['statusCode'] == 401)
+        {
+          loginScene.notifyAuthFailed("Login Failed: Email or Password error");
+          return;
+        }
+
         //TODO: show message
         return;
       }
