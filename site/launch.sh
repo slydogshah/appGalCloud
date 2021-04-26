@@ -1,0 +1,1 @@
+mvn clean package && java -jar target/site-v1-runner.jar
