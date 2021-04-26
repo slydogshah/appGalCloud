@@ -30,9 +30,9 @@ class TheHeaderDropdown extends React.Component {
           <CDropdownToggle className="c-header-nav-link" caret={false}>
             <div className="c-avatar">
               <CImg
-                src={'avatars/6.jpg'}
+                src={'images/dropdown-arrow.svg'}
                 className="c-avatar-img"
-                alt="admin@bootstrapmaster.com"
+                alt="options"
               />
             </div>
           </CDropdownToggle>
