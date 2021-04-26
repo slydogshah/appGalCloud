@@ -132,7 +132,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   Widget getAppBarUI(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: HotelAppTheme.buildLightTheme().backgroundColor,
+        color: Colors.blueGrey,
         boxShadow: <BoxShadow>[
           BoxShadow(
               color: Colors.grey.withOpacity(0.2),
@@ -274,7 +274,7 @@ class PickUpListView extends StatelessWidget {
                             AspectRatio(
                               aspectRatio: 2,
                               child: Image.asset(
-                                'assets/hotel/hotel_1.png',
+                                'assets/hotel/food.jpg',
                                 fit: BoxFit.cover,
                               ),
                             ),

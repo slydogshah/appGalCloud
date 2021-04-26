@@ -261,7 +261,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
   Widget getAppBarUI(BuildContext context, Text titleWidget) {
     return Container(
       decoration: BoxDecoration(
-        color: HotelAppTheme.buildLightTheme().backgroundColor,
+        color: Colors.blueGrey,
         boxShadow: <BoxShadow>[
           BoxShadow(
               color: Colors.grey.withOpacity(0.2),
