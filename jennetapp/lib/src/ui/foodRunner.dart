@@ -120,9 +120,9 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     curve: Curves.fastOutSlowIn)));
         animationController.forward();
         return PickUpListView(
-          callback: () {},
           animation: animation,
           animationController: animationController,
+          tx: this.recoveryTxs[index],
         );
       },
     ).build(context);
@@ -183,7 +183,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Material(
+                  /*Material(
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: const BorderRadius.all(
@@ -195,8 +195,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         child: Icon(Icons.favorite_border),
                       ),
                     ),
-                  ),
-                  Material(
+                  ),*/
+                  /*Material(
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: const BorderRadius.all(
@@ -208,7 +208,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         child: Icon(FontAwesomeIcons.mapMarkerAlt),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             )
@@ -225,28 +225,17 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
 }
 
 class PickUpListView extends StatelessWidget {
-  /*PickUpListView(VoidCallback callback,AnimationController animationController,
-      Animation<dynamic> animation)
-  {
-    this.callback = callback;
-    this.animationController = animationController;
-    this.animation = animation;
-  }
-
-  VoidCallback callback;
-  AnimationController animationController;
-  Animation<dynamic> animation;*/
-
   const PickUpListView(
       {Key key,
         this.animationController,
         this.animation,
-        this.callback})
+        this.tx,
+      })
       : super(key: key);
 
-  final VoidCallback callback;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+  final FoodRecoveryTransaction tx;
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +253,6 @@ class PickUpListView extends StatelessWidget {
               child: InkWell(
                 splashColor: Colors.transparent,
                 onTap: () {
-                  callback();
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -290,6 +278,31 @@ class PickUpListView extends StatelessWidget {
                                 fit: BoxFit.cover,
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 16, top: 8),
+                              child: Column(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  ElevatedButton(
+                                    child: Text('Accept'),
+                                    style: ElevatedButton.styleFrom(
+                                      //primary: Color(0xFF383EDB)
+                                        primary: Colors.pink
+                                    ),
+                                    onPressed: () {
+                                      Profile profile = ActiveSession.getInstance().getProfile();
+                                      handleAccept(context,profile.email,
+                                          tx.schedulePickupNotification.dropOffOrg.orgId,
+                                          tx);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                             Container(
                               color: HotelAppTheme.buildLightTheme()
                                   .backgroundColor,
@@ -309,7 +322,7 @@ class PickUpListView extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              "church.com",
+                                              tx.getPickupNotification().getSourceOrg().orgName,
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
@@ -323,7 +336,7 @@ class PickUpListView extends StatelessWidget {
                                               MainAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  "blah.com",
+                                                  "Pickup: 10 minutes",
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey
@@ -339,17 +352,6 @@ class PickUpListView extends StatelessWidget {
                                                       .buildLightTheme()
                                                       .primaryColor,
                                                 ),
-                                                /*Expanded(
-                                                  child: Text(
-                                                    '${hotelData.dist.toStringAsFixed(1)} km to city',
-                                                    overflow:
-                                                    TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey
-                                                            .withOpacity(0.8)),
-                                                  ),
-                                                ),*/
                                               ],
                                             ),
                                             Padding(
@@ -357,25 +359,6 @@ class PickUpListView extends StatelessWidget {
                                               const EdgeInsets.only(top: 4),
                                               child: Row(
                                                 children: <Widget>[
-                                                  /*SmoothStarRating(
-                                                    allowHalfRating: true,
-                                                    starCount: 5,
-                                                    rating: hotelData.rating,
-                                                    size: 20,
-                                                    color: HotelAppTheme
-                                                        .buildLightTheme()
-                                                        .primaryColor,
-                                                    borderColor: HotelAppTheme
-                                                        .buildLightTheme()
-                                                        .primaryColor,
-                                                  ),
-                                                  Text(
-                                                    ' ${hotelData.reviews} Reviews',
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey
-                                                            .withOpacity(0.8)),
-                                                  ),*/
                                                 ],
                                               ),
                                             ),
@@ -394,7 +377,7 @@ class PickUpListView extends StatelessWidget {
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
                                         Text(
-                                          'foo',
+                                          tx.getPickupNotification().getDropOffOrg().orgName,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -402,7 +385,7 @@ class PickUpListView extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          '/per night',
+                                          'DropOff: 15 minutes',
                                           style: TextStyle(
                                               fontSize: 14,
                                               color:
@@ -447,6 +430,23 @@ class PickUpListView extends StatelessWidget {
         );
       },
     );
+  }
+
+  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
+    print(tx);
+    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+    Future<int> future = client.accept(email, dropOffOrgId, tx);
+    future.then((statusCode) {
+      if (statusCode == 200) {
+        LocationUpdater.getLocation();
+        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(
+            tx.getPickupNotification().getDropOffOrg());
+        embeddedNavigation.start();
+      }
+      else {
+        //TODO
+      }
+    });
   }
 }
 

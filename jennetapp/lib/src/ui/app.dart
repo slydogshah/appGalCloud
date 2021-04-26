@@ -302,7 +302,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Material(
+                  /*Material(
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: const BorderRadius.all(
@@ -319,7 +319,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             )
