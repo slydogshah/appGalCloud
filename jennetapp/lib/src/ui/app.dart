@@ -79,6 +79,24 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     });
   }
 
+  /*void notifyEmailIsInvalid(String emailValue,String passwordValue,bool emailValid,bool passwordRequired) {
+    setState(() {
+      // This call to setState tells the Flutter framework that
+      // something has changed in this State, which causes it to rerun
+      // the build method below so that the display can reflect the
+      // updated values. If you change _counter without calling
+      // setState(), then the build method won't be called again,
+      // and so nothing would appear to happen.
+      this.emailIsInvalid = emailValid;
+      this.passwordIsRequired = passwordRequired;
+      this.email = emailValue;
+      this.password = passwordValue;
+      //print("EmailValid: $emailIsInvalid");
+      //print("PasswordValid: $passwordIsRequired");
+      //print("PhoneValid: $phoneIsInvalid");
+    });
+  }*/
+
   void switchToRegister()
   {
     print("TITLE_NOW_REGISTER");
@@ -103,7 +121,11 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
           fontSize: 22,)
     );
 
-    TextField emailTextField = TextField(
+    TextFormField emailTextField = TextFormField(
+      autovalidateMode:AutovalidateMode.always,
+      validator: (value) {
+          return "Email is required";
+          },
       controller: TextEditingController(),
       onChanged: (String txt) {},
       style: const TextStyle(
@@ -114,11 +136,15 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
           .primaryColor,
       decoration: InputDecoration(
         border: InputBorder.none,
-        hintText: 'Login...',
+        hintText: 'Email...',
       ),
     );
 
-    TextField passwordTextField = TextField(
+    TextFormField passwordTextField = TextFormField(
+      autovalidateMode:AutovalidateMode.always,
+      validator: (value) {
+        return "Password is required";
+      },
       controller: TextEditingController(),
       onChanged: (String txt) {},
       obscureText: true,
@@ -300,8 +326,8 @@ class LoginView extends StatelessWidget {
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final int index;
-  final TextField emailTextField;
-  final TextField passwordTextField;
+  final TextFormField emailTextField;
+  final TextFormField passwordTextField;
 
   @override
   Widget build(BuildContext context) {
@@ -702,7 +728,7 @@ class LoginView extends StatelessWidget {
   void handleAccept(BuildContext context) {
   }
 
-  Widget getLoginUIBar(BuildContext context, TextField emailTextField) {
+  Widget getLoginUIBar(BuildContext context, TextFormField emailTextField) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       child: Row(
@@ -751,8 +777,8 @@ class LoginView extends StatelessWidget {
   }
 
   Widget getPasswordUIBar(BuildContext context,ProfileFunctions profileFunctions,
-      TextField emailTextField,
-      TextField passwordTextField) {
+      TextFormField emailTextField,
+      TextFormField passwordTextField) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       child: Row(

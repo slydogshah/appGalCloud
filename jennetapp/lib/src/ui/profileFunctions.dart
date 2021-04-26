@@ -18,7 +18,8 @@ import 'package:flutter/cupertino.dart';
 
 class ProfileFunctions
 {
-  void showAlertDialog(BuildContext context, final LoginView loginState, final TextField emailField, final TextField passwordField)
+  void showAlertDialog(BuildContext context, final LoginView loginState,
+      final TextFormField emailField, final TextFormField passwordField)
   {
     final String email = emailField.controller.text;
     final String password = passwordField.controller.text;
@@ -43,8 +44,8 @@ class ProfileFunctions
   }
 
   void showAlertDialogRegister(BuildContext context, final LoginView loginState,
-      final TextField emailField,
-      final TextField passwordField,
+      final TextFormField emailField,
+      final TextFormField passwordField,
       final String profileType)
   {
     final String email = emailField.controller.text;
@@ -156,7 +157,7 @@ class ProfileFunctions
   }
 
   void login (BuildContext context, SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials,
-      final TextField emailField, final TextField passwordField) {
+      final TextFormField emailField, final TextFormField passwordField) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();

@@ -9,18 +9,18 @@ import 'model/popular_filter_list.dart';
 
 class FiltersScreen extends StatefulWidget {
   LoginView loginState;
-  TextField emailField;
-  TextField passwordField;
+  TextFormField emailField;
+  TextFormField passwordField;
 
   setLoginState(LoginView loginState)
   {
     this.loginState = loginState;
   }
-  setEmailField(TextField emailField)
+  setEmailField(TextFormField emailField)
   {
     this.emailField = emailField;
   }
-  setPasswordField(TextField passwordField)
+  setPasswordField(TextFormField passwordField)
   {
     this.passwordField = passwordField;
   }
@@ -43,8 +43,8 @@ class _FiltersScreenState extends State<FiltersScreen> {
       PopularFilterListData.accomodationList;
 
   LoginView loginState;
-  TextField emailField;
-  TextField passwordField;
+  TextFormField emailField;
+  TextFormField passwordField;
 
   RangeValues _values = const RangeValues(100, 600);
   double distValue = 50.0;
