@@ -27,6 +27,7 @@ import {
   CAlert,
   CProgress,
   CSelect,
+  CImg,
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -321,68 +322,11 @@ class LoginForm extends React.Component {
   render() {
     return (
       <>
-        <div class="page-content bg-white">
-        <div class="banner-three bg-primary">
-        <div class="container">
-                    <div class="banner-inner">
-                      <div class="row align-items-center">
-                        <div class="col-md-6">
-                          <div class="banner-content text-white">
-                            <h6
-                              data-wow-delay="0.5s"
-                              data-wow-duration="3s"
-                              class="wow fadeInUp sub-title text-primary"
-                            >
-                              Jen Summary
-                            </h6>
-                            <h1
-                              data-wow-delay="1s"
-                              data-wow-duration="3s"
-                              class="wow fadeInUp m-b20"
-                            >
-                              #Jen Network
-                            </h1>
-                            <p
-                                                  data-wow-delay="1.5s"
-                                                  data-wow-duration="3s"
-                                                  class="wow fadeInUp m-b30"
-                                                >
-                                                  The #Jen: Network, short for Food Recovery Optimization
-                                                  Network, is an Uber-like Network for FoodRunners, who can
-                                                  volunteer to pick up food from restaurants, tech
-                                                  cafeterias, parties, etc that they are going to discard
-                                                  because it is extra. They can then deliver it to
-                                                  participating organizations such as churches, food
-                                                  pantries, etc so the people who are hungry can get a
-                                                  deserving hearty meal.
-                                                </p>
-                                                <a
-                                                                      data-wow-delay="2s"
-                                                                      data-wow-duration="3s"
-                                                                      href="http://appgal-cloud-do2cwgwhja-uc.a.run.app"
-                                                                      class="wow fadeInUp btn btn-corner gradient btn-primary"
-                                                                      >Login</a
-                                                                    >
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div
-                            class="dz-media wow fadeIn"
-                            data-wow-delay="1s"
-                            data-wow-duration="3s"
-                          >
-                            <img
-                              src="images/main-slider/slider3/pic1.png"
-                              class="move-1"
-                              alt=""
-                            />
-                          </div>
-                        </div>
-                      </div>
-                </div>
-           </div>
-           </div>
-        </div>
+           <div class="logo-header">
+                           <a href="index.html"
+                             ><img src="images/jen-logo.PNG" alt=""
+                           /></a>
+                         </div>
 
            <div>
             <CContainer>
@@ -501,6 +445,63 @@ class LoginForm extends React.Component {
                 </CRow>
             </CContainer>
         </div>
+
+
+        <div class="page-content bg-white">
+                <div class="banner-three bg-primary">
+                <div class="container">
+                            <div class="banner-inner">
+                              <div class="row align-items-center">
+                                <div class="col-md-6">
+                                  <div class="banner-content text-white">
+                                    <h6
+                                      data-wow-delay="0.5s"
+                                      data-wow-duration="3s"
+                                      class="wow fadeInUp sub-title text-primary"
+                                    >
+                                      Jen Summary
+                                    </h6>
+                                    <h1
+                                      data-wow-delay="1s"
+                                      data-wow-duration="3s"
+                                      class="wow fadeInUp m-b20"
+                                    >
+                                      #Jen Network
+                                    </h1>
+                                    <p
+                                                          data-wow-delay="1.5s"
+                                                          data-wow-duration="3s"
+                                                          class="wow fadeInUp m-b30"
+                                                        >
+                                                          The #Jen: Network, short for Food Recovery Optimization
+                                                          Network, is an Uber-like Network for FoodRunners, who can
+                                                          volunteer to pick up food from restaurants, tech
+                                                          cafeterias, parties, etc that they are going to discard
+                                                          because it is extra. They can then deliver it to
+                                                          participating organizations such as churches, food
+                                                          pantries, etc so the people who are hungry can get a
+                                                          deserving hearty meal.
+                                                        </p>
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div
+                                    class="dz-media wow fadeIn"
+                                    data-wow-delay="1s"
+                                    data-wow-duration="3s"
+                                  >
+                                    <img
+                                      src="images/main-slider/slider3/pic1.png"
+                                      class="move-1"
+                                      alt=""
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
+                   </div>
+                   </div>
+                </div>
       </>
     );
   }

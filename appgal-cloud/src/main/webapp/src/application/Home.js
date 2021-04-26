@@ -282,9 +282,11 @@ class Home extends React.Component {
 
   render() {
      return (
+          <>
           <div>
             <WaitOnData state={this.state} handlePickup={this.handlePickup} handlePickupHistory={this.handlePickupHistory}/>
           </div>
+          </>
       );
   }
 }

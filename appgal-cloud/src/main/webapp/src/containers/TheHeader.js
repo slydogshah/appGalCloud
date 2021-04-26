@@ -9,6 +9,7 @@ import {
   CHeaderNavLink,
   CSubheader,
   CBreadcrumbRouter,
+  CImg,
   CLink,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -26,14 +27,15 @@ import { useLocation } from 'react-router-dom'
 
 const TheHeader = () => {
   const location = useLocation();
-  if(location.pathname == "")
+
+  console.log("LOCATION: "+location.pathname);
+
+
+  if(location.pathname == "/")
   {
     return(
-        <CHeader withSubheader>
-          <CHeaderBrand className="mx-auto d-lg-none" to="/">
-            <CIcon name="logo" height="48" alt="Logo" />
-          </CHeaderBrand>
-        </CHeader>
+        <>
+        </>
     );
   }
   else
