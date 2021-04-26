@@ -1,0 +1,6 @@
+#GCP Deployment
+mvn clean package
+gcloud builds submit --tag gcr.io/appgallabs-271922/jenqa:v1
+
+#GCP Deployment
+gcloud run deploy --image gcr.io/appgallabs-271922/jenqa:v1 --platform managed
