@@ -137,9 +137,7 @@ public class NetworkOrchestrator {
             FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
             JsonUtil.print(this.getClass(), foodRunner.toJson());
 
-            //TODO
             List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
-            //myTransactions.addAll(all);
             for (FoodRecoveryTransaction tx : all) {
                 JsonUtil.print(this.getClass(), tx.toJson());
 
@@ -170,11 +168,9 @@ public class NetworkOrchestrator {
                 logger.info("DISTANCE: "+distance);
                 logger.info("**************DISTANCE*****************");
 
-                //TODO
-                /*if (distance <= 5.0d) {
+                if (distance <= 5.0d) {
                     myTransactions.add(tx);
-                }*/
-                myTransactions.add(tx);
+                }
             }
 
             return myTransactions;

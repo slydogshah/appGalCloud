@@ -1,3 +1,5 @@
+import 'package:app/src/ui/app.dart';
+import 'package:app/src/ui/profileFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'range_slider_view.dart';
@@ -6,8 +8,32 @@ import 'hotel_app_theme.dart';
 import 'model/popular_filter_list.dart';
 
 class FiltersScreen extends StatefulWidget {
+  LoginView loginState;
+  TextFormField emailField;
+  TextFormField passwordField;
+
+  setLoginState(LoginView loginState)
+  {
+    this.loginState = loginState;
+  }
+  setEmailField(TextFormField emailField)
+  {
+    this.emailField = emailField;
+  }
+  setPasswordField(TextFormField passwordField)
+  {
+    this.passwordField = passwordField;
+  }
+
+
   @override
-  _FiltersScreenState createState() => _FiltersScreenState();
+  _FiltersScreenState createState(){
+    _FiltersScreenState state = new _FiltersScreenState();
+    state.loginState = this.loginState;
+    state.emailField = emailField;
+    state.passwordField = passwordField;
+    return state;
+  }
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
@@ -15,6 +41,10 @@ class _FiltersScreenState extends State<FiltersScreen> {
       PopularFilterListData.popularFList;
   List<PopularFilterListData> accomodationListData =
       PopularFilterListData.accomodationList;
+
+  LoginView loginState;
+  TextFormField emailField;
+  TextFormField passwordField;
 
   RangeValues _values = const RangeValues(100, 600);
   double distValue = 50.0;
@@ -75,6 +105,10 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     highlightColor: Colors.transparent,
                     onTap: () {
                       Navigator.pop(context);
+
+                      ProfileFunctions profileFunctions = new ProfileFunctions();
+                      profileFunctions.showAlertDialogRegister(context, this.loginState,null, this.emailField,
+                      this.passwordField,"FOOD_RUNNER");
                     },
                     child: Center(
                       child: Text(

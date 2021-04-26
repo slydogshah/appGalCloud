@@ -64,7 +64,7 @@ class LocationUpdater
     FoodRunnerLocation active = ActiveSession.getInstance().getLocation();
     print("FOOD_LOCATION_RETURNED: $active");*/
 
-    print("JUST_LEFT");
+    //print("JUST_LEFT");
   }
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
@@ -92,8 +92,9 @@ class LocationUpdater
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
       Map<String,double> map = new Map();
-      map['latitude'] = 0.0;
-      map['longitude'] = 0.0;
+
+      map['latitude'] = data.latitude;
+      map['longitude'] = data.longitude;
       LocationData location = LocationData.fromMap(map);
       activeNetworkClient.sendLocationUpdate(location);
     });
@@ -124,8 +125,9 @@ class LocationUpdater
     Future<LocationData> locationData = location.getLocation();
     locationData.then((data){
       Map<String,double> map = new Map();
-      map['latitude'] = 0.0;
-      map['longitude'] = 0.0;
+
+      map['latitude'] = data.latitude;
+      map['longitude'] = data.longitude;
       LocationData location = LocationData.fromMap(map);
       activeNetworkClient.sendLocationUpdate(location);
     });

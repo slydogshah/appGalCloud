@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:app/design_course/home_design_course.dart';
-import 'package:app/hotel_booking/hotel_home_screen.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
@@ -12,20 +9,31 @@ import 'package:app/src/model/foodRunnerLoginData.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/profileRestClient.dart';
+import 'package:app/src/ui/emptyHome.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:app/src/ui/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:app/src/rest/urlFunctions.dart';
-
 class ProfileFunctions
 {
-  void showAlertDialog(BuildContext context, final LoginState loginState, final TextField emailField, final TextField passwordField)
+  void showAlertDialog(BuildContext context, final LoginView loginState,
+      final LoginState loginScene,
+      final TextFormField emailField,
+      final TextFormField passwordField)
   {
-    final String email = emailField.controller.text;
-    final String password = passwordField.controller.text;
+    String email = emailField.controller.text;
+    String password = passwordField.controller.text;
+
+    if(email == null || email.isEmpty)
+    {
+        email = null;
+    }
+    if(password == null || password.isEmpty)
+    {
+       password = null;
+    }
 
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
@@ -43,23 +51,199 @@ class ProfileFunctions
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
-    login(context, dialog, loginState, credentials);
+    login(context, dialog, loginState, loginScene, credentials, emailField, passwordField);
   }
 
-  void showAlertDialogRegistration(BuildContext context, final RegistrationState state, final TextFormField emailField,
-  final TextFormField passwordField,
-  final TextFormField phoneField,
-  final String profileType)
+  void showAlertDialogRegister(BuildContext context, final LoginView loginState,
+      final LoginState loginScene,
+      final TextFormField emailField,
+      final TextFormField passwordField,
+      final String profileType)
   {
     final String email = emailField.controller.text;
     final String password = passwordField.controller.text;
-    final String mobile = phoneField.controller.text;
-    if(email.isEmpty || password.isEmpty || mobile.isEmpty)
+
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+        children: [CupertinoActivityIndicator()]
+    );
+
+    String emailRejectedMessage;
+    String passwordRejectedMessage;
+    Profile profile = new Profile("", email, "123", "", password);
+    profile.setProfileType(profileType);
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Map<String,dynamic>> future = profileRestClient.register(profile);
+    future.then((json){
+      if(json['violations'] != null)
+      {
+        Navigator.of(context, rootNavigator: true).pop();
+
+        List<dynamic> errors = json['violations'];
+        bool emailIsInvalid = false;
+        errors.forEach((element) {
+          if (element == "email_required") {
+            emailRejectedMessage = "Email is required";
+          }
+          else if(element == "email_invalid"  && emailRejectedMessage == null)
+          {
+            emailRejectedMessage = email+" is invalid";
+          }
+          else if(element == "password_required")
+          {
+            passwordRejectedMessage = "Password is required";
+          }
+        });
+
+        loginScene.notifyValidationFailure(emailRejectedMessage, passwordRejectedMessage);
+      }
+      else {
+        AuthCredentials credentials = new AuthCredentials();
+        credentials.email = profile.email;
+        credentials.password = profile.password;
+        registration(context, dialog, loginState, loginScene, credentials);
+      }
+    });
+  }
+
+  void registration (BuildContext context,SimpleDialog dialog, LoginView loginState, LoginState loginScene, AuthCredentials authCredentials) {
+    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
+    foodRunnerLoginData.setAuthCredentials(authCredentials);
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+    future.then((json) {
+      if(json['statusCode'] != 200)
+      {
+        Navigator.of(context, rootNavigator: true).pop();
+        loginScene.notifySystemError("System Error: Please try again");
+        return;
+      }
+
+
+      Profile foodRunner = Profile.fromJson(json);
+
+      ActiveSession activeSession = ActiveSession.getInstance();
+      activeSession.setProfile(foodRunner);
+
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<List<FoodRecoveryTransaction>> future = client
+          .getFoodRecoveryTransaction(foodRunner.email);
+      future.then((txs) {
+        //Navigator.pushReplacement(context, MaterialPageRoute(
+        //    builder: (context) => FoodRunnerMainScene(txs)));
+        /*if(txs!=null && !txs.isEmpty) {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => DesignCourseHomeScreen()));
+        }*/
+
+        //Navigator.of(context, rootNavigator: true).pop();
+        /*if(txs != null && !txs.isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => EmptyHome()));
+        }*/
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
+      });
+
+      showCards(context, foodRunner);
+    });
+  }
+
+  void login (BuildContext context, SimpleDialog dialog, LoginView loginState, LoginState loginScene, AuthCredentials authCredentials,
+      final TextFormField emailField, final TextFormField passwordField) {
+    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
+    foodRunnerLoginData.setAuthCredentials(authCredentials);
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+
+    //print("LOGIN: $location");
+
+    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+    future.then((json) {
+
+      if(json['statusCode'] != 200)
+      {
+        Navigator.of(context, rootNavigator: true).pop();
+        if(json['statusCode'] == 401)
+        {
+          loginScene.notifyAuthFailed("Login Failed: Email or Password error");
+          return;
+        }
+        loginScene.notifySystemError("System Error: Please try again");
+        return;
+      }
+
+
+
+      Profile foodRunner = Profile.fromJson(json);
+      ActiveSession activeSession = ActiveSession.getInstance();
+      activeSession.setProfile(foodRunner);
+
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<List<FoodRecoveryTransaction>> future = client
+          .getFoodRecoveryTransaction(foodRunner.email);
+      future.then((txs) {
+
+        /*if(txs!=null && !txs.isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => DesignCourseHomeScreen()));
+        }*/
+
+        Navigator.of(context, rootNavigator: true).pop();
+
+        /*if(txs != null && !txs.isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => EmptyHome()));
+        }*/
+
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
+
+      });
+
+      showCards(context, foodRunner);
+    });
+  }
+
+  void showCards(BuildContext context, Profile profile) 
+  {
+    //print("PROFILE: $profile");
+    CloudDataPoller.startPolling(context,profile);
+    LocationUpdater.startPolling(profile);
+  }
+
+
+  void showAlertDialogRegistration(BuildContext context,final RegistrationState registrationState, final RegisterView state,
+      final TextField emailField,
+      final TextField passwordField,
+      final String profileType)
+  {
+    final String email = emailField.controller.text;
+    final String password = passwordField.controller.text;
+    if(email.isEmpty || password.isEmpty)
     {
       emailField.controller.value = new TextEditingValue(text:email);
       passwordField.controller.value = new TextEditingValue(text:password);
-      phoneField.controller.value = new TextEditingValue(text:mobile);
-      state.notifyEmailIsInvalid(email,password,mobile,email.isEmpty,password.isEmpty,mobile.isEmpty);
+      registrationState.notifyEmailIsInvalid(email,password,email.isEmpty,password.isEmpty);
       return;
     }
 
@@ -76,12 +260,12 @@ class ProfileFunctions
       },
     );
 
-    Profile profile = new Profile("", email, mobile, "", password);
+    Profile profile = new Profile("", email, "123", "", password);
     profile.setProfileType(profileType);
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Map<String,dynamic>> future = profileRestClient.register(profile);
     future.then((json){
-      Navigator.of(context, rootNavigator: true).pop();
+      //Navigator.of(context, rootNavigator: true).pop();
 
       if(json['violations'] != null)
       {
@@ -105,19 +289,18 @@ class ProfileFunctions
 
         emailField.controller.value = new TextEditingValue(text:email);
         passwordField.controller.value = new TextEditingValue(text:password);
-        phoneField.controller.value = new TextEditingValue(text:mobile);
-        state.notifyEmailIsInvalid(email,password,mobile,emailIsInvalid,passwordIsRequired,phoneIsInvalid);
+        registrationState.notifyEmailIsInvalid(email,password,emailIsInvalid,passwordIsRequired);
       }
       else {
         AuthCredentials credentials = new AuthCredentials();
         credentials.email = profile.email;
         credentials.password = profile.password;
-        loginAfterRegistration(context, dialog, credentials);
+        loginAfterRegistration(context, credentials);
       }
     });
   }
 
-  void loginAfterRegistration (BuildContext context, SimpleDialog dialog, AuthCredentials authCredentials) {
+  void loginAfterRegistration (BuildContext context, AuthCredentials authCredentials) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
@@ -127,7 +310,7 @@ class ProfileFunctions
 
       if(json['statusCode'] != 200)
       {
-        print("FUCKOFF");
+        //TODO: show message
         return;
       }
 
@@ -141,6 +324,18 @@ class ProfileFunctions
       Future<List<FoodRecoveryTransaction>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
+        //Navigator.pushReplacement(context, MaterialPageRoute(
+        //    builder: (context) => FoodRunnerMainScene(txs)));
+        if(txs!=null && !txs.isEmpty) {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }
+        else
+        {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => DesignCourseHomeScreen()));
+        }
+
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
       });
@@ -148,54 +343,4 @@ class ProfileFunctions
       showCards(context, foodRunner);
     });
   }
-
-  void login (BuildContext context, SimpleDialog dialog, LoginState loginState, AuthCredentials authCredentials) {
-    FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
-    foodRunnerLoginData.setAuthCredentials(authCredentials);
-    ProfileRestClient profileRestClient = new ProfileRestClient();
-
-    FoodRunnerLocation location = ActiveSession.getInstance().getLocation();
-
-    print("LOGIN: $location");
-
-    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
-    future.then((json) {
-      Navigator.of(context, rootNavigator: true).pop();
-
-      if(json['statusCode'] != 200)
-      {
-        print("FUCKOFF");
-        return;
-      }
-
-
-
-      Profile foodRunner = Profile.fromJson(json);
-      ActiveSession activeSession = ActiveSession.getInstance();
-      activeSession.setProfile(foodRunner);
-
-      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client
-          .getFoodRecoveryTransaction(foodRunner.email);
-      future.then((txs) {
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
-
-        //Navigator.push(context, MaterialPageRoute(
-        //    builder: (context) => DesignCourseHomeScreen()));
-
-        //Navigator.push(context, MaterialPageRoute(
-        //    builder: (context) => HotelHomeScreen()));
-      });
-
-      showCards(context, foodRunner);
-    });
-  }
-
-  void showCards(BuildContext context, Profile profile) 
-  {
-    print("PROFILE: $profile");
-    CloudDataPoller.startPolling(profile);
-    LocationUpdater.startPolling(profile);
-  }  
 }

@@ -1,19 +1,16 @@
-import 'package:app/hotel_booking/calendar_popup_view.dart';
-import 'package:app/hotel_booking/filters_screen.dart';
 import 'package:app/hotel_booking/hotel_app_theme.dart';
-import 'package:app/hotel_booking/hotel_home_screen.dart';
-import 'package:app/hotel_booking/model/hotel_list_data.dart';
+
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:app/src/ui/uiFunctions.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
-import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
@@ -30,8 +27,6 @@ class FoodRunnerMainScene extends StatefulWidget {
 class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProviderStateMixin {
 
   AnimationController animationController;
-  List<HotelListData> hotelList = HotelListData.hotelList;
-
   List<FoodRecoveryTransaction> recoveryTxs;
 
   final ScrollController _scrollController = ScrollController();
@@ -39,8 +34,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 5));
 
-  _FoodRunnerMainState(List<FoodRecoveryTransaction> recoveryTxs)
-  {
+  _FoodRunnerMainState(List<FoodRecoveryTransaction> recoveryTxs) {
     this.recoveryTxs = recoveryTxs;
   }
 
@@ -51,82 +45,21 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     super.initState();
   }
 
-  List<Card> getCards()
-  {
-    List<Card> cards = new List();
-    for(FoodRecoveryTransaction tx in this.recoveryTxs)
-    {
-      //FoodRunnerLocation location = new FoodRunnerLocation(0.0, 0.0);
-      Card card = Card(shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    color: Colors.pink,
-                    elevation: 10,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                          leading: Icon(Icons.album, size: 70),
-                          title: Text('Pickup Request', style: TextStyle(color: Colors.white)),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Pickup: '+tx.schedulePickupNotification.sourceOrg.orgName,
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'DropOff: '+tx.schedulePickupNotification.dropOffOrg.orgName,
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Est Pickup Trip: 10 minutes',
-                          ),
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Est DropOff Trip: 15 minutes',
-                          ),
-                        ),
-                        ElevatedButton(
-                          child: Text('Accept'),
-                          style: ElevatedButton.styleFrom(
-                            primary: Color(0xFF383EDB)
-                          ),
-                          onPressed: () {
-                            Profile profile = ActiveSession.getInstance().getProfile();
-                            handleAccept(context,profile.email,tx.schedulePickupNotification.dropOffOrg.orgId, tx);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-        cards.add(card);
-    }
-    return cards;
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
   }
+
+  /*@override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }*/
 
   @override
   Widget build(BuildContext context) {
-    /*Scaffold scaffold = Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("Pickup Requests"),
-      ),
-      body: Scrollbar(
-        child: ListView(
-          padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-          children: this.getCards(),
-        ),
-      ),
-      bottomNavigationBar: UiFunctions.bottomNavigationBar(context)
-    );
-    return scaffold;*/
+    Color primaryColor = Color(0xFF383EDB);
+    Color backgroundColor = Color(0xFF383EDB);
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
@@ -143,58 +76,19 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                 },
                 child: Column(
                   children: <Widget>[
-                    getAppBarUI(),
+                    getAppBarUI(context),
                     Expanded(
                       child: NestedScrollView(
                         controller: _scrollController,
                         headerSliverBuilder:
                             (BuildContext context, bool innerBoxIsScrolled) {
                           return <Widget>[
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                      (BuildContext context, int index) {
-                                    return Column(
-                                      children: <Widget>[
-                                        getSearchBarUI(),
-                                        getTimeDateUI(),
-                                      ],
-                                    );
-                                  }, childCount: 1),
-                            ),
-                            SliverPersistentHeader(
-                              pinned: true,
-                              floating: true,
-                              delegate: ContestTabHeader(
-                                getFilterBarUI(),
-                              ),
-                            ),
                           ];
                         },
                         body: Container(
-                          color:
-                          HotelAppTheme.buildLightTheme().backgroundColor,
-                          child: ListView.builder(
-                            itemCount: hotelList.length,
-                            padding: const EdgeInsets.only(top: 8),
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext context, int index) {
-                              final int count = this.recoveryTxs.length;
-                              final Animation<double> animation =
-                              Tween<double>(begin: 0.0, end: 1.0).animate(
-                                  CurvedAnimation(
-                                      parent: animationController,
-                                      curve: Interval(
-                                          (1 / count) * index, 1.0,
-                                          curve: Curves.fastOutSlowIn)));
-                              animationController.forward();
-                              return HotelListView(
-                                callback: () {},
-                                recoveryTransactions: this.recoveryTxs,
-                                animation: animation,
-                                animationController: animationController,
-                              );
-                            },
-                          ),
+                          color: primaryColor,
+                          //color: Colors.pink,
+                          child: getPickUpList(),
                         ),
                       ),
                     )
@@ -208,228 +102,37 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     );
   }
 
-  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx)
+  Widget getPickUpList()
   {
-    print(tx);
-    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-    Future<int> future = client.accept(email, dropOffOrgId, tx);
-    future.then((statusCode) {
-      if(statusCode == 200) {
-        LocationUpdater.getLocation();
-        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(tx.getPickupNotification().getDropOffOrg());
-        embeddedNavigation.start();
-      }
-      else {
-          //TODO
-      }
-    });
-  }
-
-    Widget getListUI() {
-      return Container(
-        decoration: BoxDecoration(
-          color: HotelAppTheme.buildLightTheme().backgroundColor,
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                offset: const Offset(0, -2),
-                blurRadius: 8.0),
-          ],
-        ),
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height - 156 - 50,
-              child: FutureBuilder<bool>(
-                future: getData(),
-                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                  if (!snapshot.hasData) {
-                    return const SizedBox();
-                  } else {
-                    return ListView.builder(
-                      itemCount: hotelList.length,
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (BuildContext context, int index) {
-                        final int count =
-                        hotelList.length > 10 ? 10 : hotelList.length;
-                        final Animation<double> animation =
-                        Tween<double>(begin: 0.0, end: 1.0).animate(
-                            CurvedAnimation(
-                                parent: animationController,
-                                curve: Interval((1 / count) * index, 1.0,
-                                    curve: Curves.fastOutSlowIn)));
-                        animationController.forward();
-
-                        return HotelListView(
-                          callback: () {},
-                          recoveryTransactions: this.recoveryTxs,
-                          animation: animation,
-                          animationController: animationController,
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-            )
-          ],
-        ),
-      );
-    }
-
-    Widget getHotelViewList() {
-      final List<Widget> hotelListViews = <Widget>[];
-      for (int i = 0; i < hotelList.length; i++) {
-        final int count = hotelList.length;
+    Widget widget = ListView.builder(
+      itemCount: recoveryTxs.length,
+      padding: const EdgeInsets.only(top: 8),
+      scrollDirection: Axis.vertical,
+      itemBuilder: (BuildContext context, int index) {
+        final int count =
+        recoveryTxs.length > 4 ? 4 : recoveryTxs.length;
         final Animation<double> animation =
         Tween<double>(begin: 0.0, end: 1.0).animate(
-          CurvedAnimation(
-            parent: animationController,
-            curve: Interval((1 / count) * i, 1.0, curve: Curves.fastOutSlowIn),
-          ),
+            CurvedAnimation(
+                parent: animationController,
+                curve: Interval(
+                    (1 / count) * index, 1.0,
+                    curve: Curves.fastOutSlowIn)));
+        animationController.forward();
+        return PickUpListView(
+          animation: animation,
+          animationController: animationController,
+          tx: this.recoveryTxs[index],
         );
-        hotelListViews.add(
-          HotelListView(
-            callback: () {},
-            recoveryTransactions: this.recoveryTxs,
-            animation: animation,
-            animationController: animationController,
-          ),
-        );
-      }
-      animationController.forward();
-      return Column(
-        children: hotelListViews,
-      );
-    }
-
-  Future<bool> getData() async {
-    await Future<dynamic>.delayed(const Duration(milliseconds: 200));
-    return true;
+      },
+    ).build(context);
+    return widget;
   }
 
-  Widget getTimeDateUI() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 18, bottom: 16),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Row(
-              children: <Widget>[
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    focusColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    splashColor: Colors.grey.withOpacity(0.2),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4.0),
-                    ),
-                    onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      // setState(() {
-                      //   isDatePopupOpen = true;
-                      // });
-                      showDemoDialog(context: context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 8, right: 8, top: 4, bottom: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Choose date',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w100,
-                                fontSize: 16,
-                                color: Colors.grey.withOpacity(0.8)),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            'fuckoff',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w100,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Container(
-              width: 1,
-              height: 42,
-              color: Colors.grey.withOpacity(0.8),
-            ),
-          ),
-          Expanded(
-            child: Row(
-              children: <Widget>[
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    focusColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    splashColor: Colors.grey.withOpacity(0.2),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4.0),
-                    ),
-                    onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 8, right: 8, top: 4, bottom: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Number of Rooms',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w100,
-                                fontSize: 16,
-                                color: Colors.grey.withOpacity(0.8)),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            '1 Room - 2 Adults',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w100,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget getAppBarUI() {
+  Widget getAppBarUI(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: HotelAppTheme.buildLightTheme().backgroundColor,
+        color: Colors.blueGrey,
         boxShadow: <BoxShadow>[
           BoxShadow(
               color: Colors.grey.withOpacity(0.2),
@@ -453,19 +156,19 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     Radius.circular(32.0),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
+                  //  Navigator.pop(context);
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.arrow_back),
-                  ),
+                  /*child: Padding(
+                  //  padding: const EdgeInsets.all(8.0),
+                  //  child: Icon(Icons.arrow_back),
+                  ),*/
                 ),
               ),
             ),
             Expanded(
               child: Center(
                 child: Text(
-                  'Explore',
+                  'Requests',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 22,
@@ -480,7 +183,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Material(
+                  /*Material(
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: const BorderRadius.all(
@@ -492,8 +195,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         child: Icon(Icons.favorite_border),
                       ),
                     ),
-                  ),
-                  Material(
+                  ),*/
+                  /*Material(
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: const BorderRadius.all(
@@ -505,7 +208,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         child: Icon(FontAwesomeIcons.mapMarkerAlt),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             )
@@ -515,213 +218,24 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     );
   }
 
-  Widget getFilterBarUI() {
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 24,
-            decoration: BoxDecoration(
-              color: HotelAppTheme.buildLightTheme().backgroundColor,
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    offset: const Offset(0, -2),
-                    blurRadius: 8.0),
-              ],
-            ),
-          ),
-        ),
-        Container(
-          color: HotelAppTheme.buildLightTheme().backgroundColor,
-          child: Padding(
-            padding:
-            const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 4),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '530 hotels found',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w100,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    focusColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    splashColor: Colors.grey.withOpacity(0.2),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4.0),
-                    ),
-                    onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      Navigator.push<dynamic>(
-                        context,
-                        MaterialPageRoute<dynamic>(
-                            builder: (BuildContext context) => FiltersScreen(),
-                            fullscreenDialog: true),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Filter',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w100,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.sort,
-                                color: HotelAppTheme.buildLightTheme()
-                                    .primaryColor),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: Divider(
-            height: 1,
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget getSearchBarUI() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: HotelAppTheme.buildLightTheme().backgroundColor,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(38.0),
-                  ),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        offset: const Offset(0, 2),
-                        blurRadius: 8.0),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 4, bottom: 4),
-                  child: TextField(
-                    onChanged: (String txt) {},
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                    cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'London...',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: HotelAppTheme.buildLightTheme().primaryColor,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(38.0),
-              ),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.4),
-                    offset: const Offset(0, 2),
-                    blurRadius: 8.0),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(32.0),
-                ),
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Icon(FontAwesomeIcons.search,
-                      size: 20,
-                      color: HotelAppTheme.buildLightTheme().backgroundColor),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void showDemoDialog({BuildContext context}) {
-    showDialog<dynamic>(
-      context: context,
-      builder: (BuildContext context) => CalendarPopupView(
-        barrierDismissible: true,
-        minimumDate: DateTime.now(),
-        //  maximumDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 10),
-        initialEndDate: endDate,
-        initialStartDate: startDate,
-        onApplyClick: (DateTime startData, DateTime endData) {
-          setState(() {
-            if (startData != null && endData != null) {
-              startDate = startData;
-              endDate = endData;
-            }
-          });
-        },
-        onCancelClick: () {},
-      ),
-    );
+  Future<bool> getData() async {
+    await Future<dynamic>.delayed(const Duration(milliseconds: 200));
+    return true;
   }
 }
 
-class HotelListView extends StatelessWidget {
-  const HotelListView(
+class PickUpListView extends StatelessWidget {
+  const PickUpListView(
       {Key key,
-        this.recoveryTransactions,
         this.animationController,
         this.animation,
-        this.callback})
+        this.tx,
+      })
       : super(key: key);
 
-  final VoidCallback callback;
-  final List<FoodRecoveryTransaction> recoveryTransactions;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+  final FoodRecoveryTransaction tx;
 
   @override
   Widget build(BuildContext context) {
@@ -739,7 +253,6 @@ class HotelListView extends StatelessWidget {
               child: InkWell(
                 splashColor: Colors.transparent,
                 onTap: () {
-                  callback();
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -758,13 +271,38 @@ class HotelListView extends StatelessWidget {
                       children: <Widget>[
                         Column(
                           children: <Widget>[
-                            /*AspectRatio(
+                            AspectRatio(
                               aspectRatio: 2,
                               child: Image.asset(
-                                hotelData.imagePath,
+                                'assets/hotel/food.jpg',
                                 fit: BoxFit.cover,
                               ),
-                            ),*/
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 16, top: 8),
+                              child: Column(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  ElevatedButton(
+                                    child: Text('Accept'),
+                                    style: ElevatedButton.styleFrom(
+                                      //primary: Color(0xFF383EDB)
+                                        primary: Colors.pink
+                                    ),
+                                    onPressed: () {
+                                      Profile profile = ActiveSession.getInstance().getProfile();
+                                      handleAccept(context,profile.email,
+                                          tx.schedulePickupNotification.dropOffOrg.orgId,
+                                          tx);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                             Container(
                               color: HotelAppTheme.buildLightTheme()
                                   .backgroundColor,
@@ -784,7 +322,7 @@ class HotelListView extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              this.recoveryTransactions[0].getPickupNotification().getSourceOrg().orgName,
+                                              tx.getPickupNotification().getSourceOrg().orgName,
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
@@ -797,13 +335,13 @@ class HotelListView extends StatelessWidget {
                                               mainAxisAlignment:
                                               MainAxisAlignment.start,
                                               children: <Widget>[
-                                                /*Text(
-                                                  hotelData.subTxt,
+                                                Text(
+                                                  "Pickup: 10 minutes",
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey
                                                           .withOpacity(0.8)),
-                                                ),*/
+                                                ),
                                                 const SizedBox(
                                                   width: 4,
                                                 ),
@@ -814,17 +352,6 @@ class HotelListView extends StatelessWidget {
                                                       .buildLightTheme()
                                                       .primaryColor,
                                                 ),
-                                                /*Expanded(
-                                                  child: Text(
-                                                    '${hotelData.dist.toStringAsFixed(1)} km to city',
-                                                    overflow:
-                                                    TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey
-                                                            .withOpacity(0.8)),
-                                                  ),
-                                                ),*/
                                               ],
                                             ),
                                             Padding(
@@ -832,25 +359,6 @@ class HotelListView extends StatelessWidget {
                                               const EdgeInsets.only(top: 4),
                                               child: Row(
                                                 children: <Widget>[
-                                                  /*SmoothStarRating(
-                                                    allowHalfRating: true,
-                                                    starCount: 5,
-                                                    rating: hotelData.rating,
-                                                    size: 20,
-                                                    color: HotelAppTheme
-                                                        .buildLightTheme()
-                                                        .primaryColor,
-                                                    borderColor: HotelAppTheme
-                                                        .buildLightTheme()
-                                                        .primaryColor,
-                                                  ),*/
-                                                  /*Text(
-                                                    ' ${hotelData.reviews} Reviews',
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey
-                                                            .withOpacity(0.8)),
-                                                  ),*/
                                                 ],
                                               ),
                                             ),
@@ -868,16 +376,16 @@ class HotelListView extends StatelessWidget {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        /*Text(
-                                          '\$${hotelData.perNight}',
+                                        Text(
+                                          tx.getPickupNotification().getDropOffOrg().orgName,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: 22,
                                           ),
-                                        ),*/
+                                        ),
                                         Text(
-                                          '/per night',
+                                          'DropOff: 15 minutes',
                                           style: TextStyle(
                                               fontSize: 14,
                                               color:
@@ -923,5 +431,49 @@ class HotelListView extends StatelessWidget {
       },
     );
   }
+
+  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
+    print(tx);
+    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+    Future<int> future = client.accept(email, dropOffOrgId, tx);
+    future.then((statusCode) {
+      if (statusCode == 200) {
+        LocationUpdater.getLocation();
+        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(
+            tx.getPickupNotification().getDropOffOrg());
+        embeddedNavigation.start();
+      }
+      else {
+        //TODO
+      }
+    });
+  }
 }
+
+/*
+ListView.builder(
+                            itemCount: recoveryTxs.length,
+                            padding: const EdgeInsets.only(top: 8),
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              final int count =
+                              recoveryTxs.length > 10 ? 10 : recoveryTxs.length;
+                              //final int count = 1;
+                              final Animation<double> animation =
+                              Tween<double>(begin: 0.0, end: 1.0).animate(
+                                  CurvedAnimation(
+                                      parent: animationController,
+                                      curve: Interval(
+                                          (1 / count) * index, 1.0,
+                                          curve: Curves.fastOutSlowIn)));
+                              animationController.forward();
+                              return PickUpListView(
+                                callback: () {},
+                                animation: animation,
+                                animationController: animationController,
+                              );
+                              //return new PickUpListView(() {},animationController, animation);
+                            },
+                          ),
+ */
 

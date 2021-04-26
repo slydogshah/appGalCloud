@@ -1,5 +1,7 @@
+import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -86,11 +88,18 @@ class ActiveNetworkRestClient
   Future<String> sendLocationUpdate(LocationData locationData) async
   {
     var response;
+    Profile profile = ActiveSession.getInstance().getProfile();
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"location/update/";
     Map<String,dynamic> jsonMap = new Map();
+    jsonMap['email'] = profile.email;
     jsonMap['latitude'] = locationData.latitude;
     jsonMap['longitude'] = locationData.longitude;
     String jsonBody = jsonEncode(jsonMap);
+
+    print("**********SENDING_LOCATION_UPDATE**********");
+    print(jsonBody);
+    print("*******************************************");
+
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     }
