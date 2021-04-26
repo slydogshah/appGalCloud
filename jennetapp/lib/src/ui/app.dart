@@ -49,6 +49,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
   String emailRejectedMessage;
   String passwordRejectedMessage;
   String authRejectedMessage;
+  String systemErrorMessage;
 
   AnimationController animationController;
   final ScrollController _scrollController = ScrollController();
@@ -77,9 +78,26 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
       // updated values. If you change _counter without calling
       // setState(), then the build method won't be called again,
       // and so nothing would appear to happen.
+      this.systemErrorMessage = null;
       this.emailRejectedMessage = null;
       this.passwordRejectedMessage = null;
       this.authRejectedMessage = authRejectedMessage;
+    });
+  }
+
+  void notifySystemError(String systemErrorMessage)
+  {
+    setState(() {
+      // This call to setState tells the Flutter framework that
+      // something has changed in this State, which causes it to rerun
+      // the build method below so that the display can reflect the
+      // updated values. If you change _counter without calling
+      // setState(), then the build method won't be called again,
+      // and so nothing would appear to happen.
+      this.systemErrorMessage = systemErrorMessage;
+      this.emailRejectedMessage = null;
+      this.passwordRejectedMessage = null;
+      this.authRejectedMessage = null;
     });
   }
 
@@ -91,6 +109,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
       // updated values. If you change _counter without calling
       // setState(), then the build method won't be called again,
       // and so nothing would appear to happen.
+      this.systemErrorMessage = null;
       this.emailRejectedMessage = emailRejectedMessage;
       this.passwordRejectedMessage = passwordRejectedMessage;
       this.authRejectedMessage = authRejectedMessage;
@@ -138,6 +157,10 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
         else if(this.authRejectedMessage != null)
         {
           return this.authRejectedMessage;
+        }
+        else if(this.systemErrorMessage != null)
+        {
+          return this.systemErrorMessage;
         }
         return null;
       },

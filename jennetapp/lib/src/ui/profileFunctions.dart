@@ -101,12 +101,12 @@ class ProfileFunctions
         AuthCredentials credentials = new AuthCredentials();
         credentials.email = profile.email;
         credentials.password = profile.password;
-        registration(context, dialog, loginState, credentials);
+        registration(context, dialog, loginState, loginScene, credentials);
       }
     });
   }
 
-  void registration (BuildContext context,SimpleDialog dialog, LoginView loginState, AuthCredentials authCredentials) {
+  void registration (BuildContext context,SimpleDialog dialog, LoginView loginState, LoginState loginScene, AuthCredentials authCredentials) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
@@ -114,7 +114,8 @@ class ProfileFunctions
     future.then((json) {
       if(json['statusCode'] != 200)
       {
-        //TODO: show message
+        Navigator.of(context, rootNavigator: true).pop();
+        loginScene.notifySystemError("System Error: Please try again");
         return;
       }
 
@@ -177,8 +178,7 @@ class ProfileFunctions
           loginScene.notifyAuthFailed("Login Failed: Email or Password error");
           return;
         }
-
-        //TODO: show message
+        loginScene.notifySystemError("System Error: Please try again");
         return;
       }
 
