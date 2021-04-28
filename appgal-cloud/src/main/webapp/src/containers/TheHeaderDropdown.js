@@ -38,6 +38,10 @@ class TheHeaderDropdown extends React.Component {
           </CDropdownToggle>
           <CDropdownMenu className="pt-0" placement="bottom-end">
             <CDropdownItem>
+              <CIcon name="cil-lock-locked" className="mfe-2" />
+              <CLink to="/home" className="btn btn-primary">Home</CLink>
+            </CDropdownItem>
+            <CDropdownItem>
               <CIcon name="cil-user" className="mfe-2" />
               <CLink to="/profile" className="btn btn-primary">Profile</CLink>
             </CDropdownItem>

@@ -28,13 +28,20 @@ import { useLocation } from 'react-router-dom'
 const TheHeader = () => {
   const location = useLocation();
 
-  console.log("LOCATION: "+location.pathname);
+  //console.log("LOCATION: "+location.pathname);
 
 
   if(location.pathname == "/")
   {
     return(
         <>
+            <CHeader withSubheader>
+                          <div class="logo-header">
+                              <a href="index.html"
+                                ><img src="images/jen-logo.PNG" alt=""
+                              /></a>
+                          </div>
+                       </CHeader>
         </>
     );
   }
@@ -42,20 +49,21 @@ const TheHeader = () => {
   {
       return (
             <CHeader withSubheader>
-              <CHeaderBrand className="mx-auto d-lg-none" to="/">
-                <CIcon name="logo" height="48" alt="Logo" />
-              </CHeaderBrand>
+              <div class="logo-header">
+                  <a href="index.html"
+                    ><img src="images/jen-logo.PNG" alt=""
+                  /></a>
+              </div>
 
               <CHeaderNav className="d-md-down-none mr-auto">
-                <CHeaderNavItem className="px-3">
-                  <CHeaderNavLink to="/home">Home</CHeaderNavLink>
-                </CHeaderNavItem>
+                  <CHeaderNavItem className="px-3">
+                  </CHeaderNavItem>
               </CHeaderNav>
 
               <CHeaderNav className="px-3">
                 <TheHeaderDropdown />
               </CHeaderNav>
-            </CHeader>
+           </CHeader>
       );
   }
 }
