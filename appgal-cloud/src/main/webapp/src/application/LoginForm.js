@@ -153,10 +153,8 @@ class LoginForm extends React.Component {
       {
         ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
         ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('mobileRequired'));
         ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
         ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('phoneInvalid'));
         ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
         const required = (
                          <CAlert
@@ -176,11 +174,6 @@ class LoginForm extends React.Component {
             ReactDOM.render(required,document.getElementById('passwordRequired'));
             validationSuccess = false;
         }
-        if(this.state.mobile == null || this.state.mobile == "")
-        {
-          ReactDOM.render(required,document.getElementById('mobileRequired'));
-          validationSuccess = false;
-        }
         if(this.state.sourceOrgId == null || this.state.sourceOrgId == "")
         {
           ReactDOM.render(required,document.getElementById('organizationRequired'));
@@ -197,7 +190,7 @@ class LoginForm extends React.Component {
 
             const payload = {httpsAgent: agent,
                                         "email":this.state.email,
-                                        "mobile":this.state.mobile,
+                                        "mobile":"123",
                                         "password":this.state.password,
                                         "orgId":this.state.sourceOrgId,
                                         "orgName":this.state.sourceOrgId,
@@ -284,17 +277,6 @@ class LoginForm extends React.Component {
                                                 </CAlert>
                                              );
                           ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
-                          }
-                          if(violations.includes("phone_invalid"))
-                          {
-                              const phoneInvalid = (
-                                                                             <CAlert
-                                                                             color="warning"
-                                                                             >
-                                                                                Phone is not valid
-                                                                            </CAlert>
-                                                                         );
-                              ReactDOM.render(phoneInvalid,document.getElementById('phoneInvalid'));
                           }
                       }
                       else
@@ -391,16 +373,6 @@ class LoginForm extends React.Component {
                                 name="password" onChange={this.handleChange}/>
                                 <div id="passwordRequired"/>
                                 <div id="password_mismatch"/>
-                              </CInputGroup>
-                              <CInputGroup className="mb-5">
-                                  <CInputGroupPrepend>
-                                      <CInputGroupText>
-                                        <CIcon name="cil-lock-locked" />
-                                      </CInputGroupText>
-                                  </CInputGroupPrepend>
-                                  <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={this.handleChange}/>
-                                  <div id="mobileRequired"/>
-                                  <div id="phoneInvalid"/>
                               </CInputGroup>
                               <CInputGroup className="mb-5">
                                 <CInputGroupPrepend>

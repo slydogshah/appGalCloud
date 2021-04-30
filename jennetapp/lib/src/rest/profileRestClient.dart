@@ -59,16 +59,16 @@ class ProfileRestClient
       //TODO: IOS location issue. most likely simulator related
       Map<String,dynamic> payload = credentials.toJson();
       if (Platform.isIOS) {
-        payload['latitude'] = 30.2698104;
-        payload['longitude'] = -97.75115579999999;
+        payload["latitude"] = 30.2698104;
+        payload["longitude"] = -97.75115579999999;
       }
       else
       {
-        payload['latitude'] = foodRunnerLocation.getLatitude();
-        payload['longitude'] = foodRunnerLocation.getLongitude();
+        payload["latitude"] = foodRunnerLocation.getLatitude();
+        payload["longitude"] = foodRunnerLocation.getLongitude();
       }
 
-       response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).
+       response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
        timeout(Duration(seconds: 30),onTimeout: () {
          print("NETWORK_TIMEOUT");
          //json = new Map();

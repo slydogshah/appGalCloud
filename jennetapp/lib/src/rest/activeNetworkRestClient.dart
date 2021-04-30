@@ -136,7 +136,7 @@ class ActiveNetworkRestClient
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/accept/";
     var response;
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).
+      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });
