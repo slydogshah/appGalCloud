@@ -92,8 +92,8 @@ public class JenFullFlow {
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("password", "password");
-        registrationJson.addProperty("orgId", "blah.com");
-        registrationJson.addProperty("orgName", "blah.com");
+        registrationJson.addProperty("orgId", "pickup.appgallabs.io");
+        registrationJson.addProperty("orgName", "pickup");
         registrationJson.addProperty("orgType", true);
         registrationJson.addProperty("orgContactEmail", email);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
@@ -119,8 +119,8 @@ public class JenFullFlow {
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("password", "password");
-        registrationJson.addProperty("orgId", "church.com");
-        registrationJson.addProperty("orgName", "church.com");
+        registrationJson.addProperty("orgId", "dropoff.appgallabs.io");
+        registrationJson.addProperty("orgName", "dropoff");
         registrationJson.addProperty("orgType", false);
         registrationJson.addProperty("orgContactEmail", email);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());

@@ -135,7 +135,7 @@ public class FoodRecoveryStore {
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
         //Query: {$and:[{"sourceOrg.orgId":"microsoft"},{"notificationSent":true}]}
-        String queryJson = "{$and:[{\"dropOffNotification.sourceOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.CLOSED+"\"}]}";
+        String queryJson = "{$and:[{\"pickupNotification.dropOffOrg.orgId\":\""+orgId+"\"},{\"transactionState\":\""+TransactionState.CLOSED+"\"}]}";
         //logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
