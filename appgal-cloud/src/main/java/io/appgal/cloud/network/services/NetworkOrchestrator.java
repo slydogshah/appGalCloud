@@ -121,10 +121,10 @@ public class NetworkOrchestrator {
 
     public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
     {
-        this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
+        /*this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
         this.dropOffPipeline.add(scheduleDropOffNotification);
 
-        this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);
+        this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);*/
     }
 
     public List<FoodRecoveryTransaction> findMyTransactions(String email)
@@ -188,10 +188,10 @@ public class NetworkOrchestrator {
 
     public JsonObject acceptRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+        FoodRecoveryTransaction stored = this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
 
         JsonObject json = new JsonObject();
-        json.addProperty("recoveryTransactionId", foodRecoveryTransaction.getId());
+        json.addProperty("recoveryTransactionId", stored.getId());
         return json;
     }
 }

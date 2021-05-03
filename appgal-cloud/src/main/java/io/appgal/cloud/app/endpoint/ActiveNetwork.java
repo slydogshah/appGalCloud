@@ -180,8 +180,9 @@ public class ActiveNetwork {
     public Response scheduleDropOff(@RequestBody String jsonBody)
     {
         try {
-            ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
-            this.networkOrchestrator.scheduleDropOff(notification);
+            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
+
+            this.foodRecoveryOrchestrator.notifyDropOff(tx);
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);

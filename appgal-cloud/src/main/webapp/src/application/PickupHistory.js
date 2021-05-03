@@ -71,12 +71,12 @@ const ClosedTransactionView = ({closed}) => {
              <div className="progress-group mb-4">
                     <div className="progress-group-prepend">
                       <span className="progress-group-text">
-                        {value.dropOffNotification.sourceOrg.orgName}
+                        {value.pickupNotification.dropOffOrg.orgName}
                       </span>
                     </div>
                     <div className="progress-group-prepend">
                       <span className="progress-group-text">
-                        {value.foodRunner.profile.email}
+
                       </span>
                     </div>
                     <div className="progress-group-bars">

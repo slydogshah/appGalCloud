@@ -258,9 +258,14 @@ public class MongoDBJsonStore {
     }
 
     //FoodRecovery
-    public void storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
+    public FoodRecoveryTransaction storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase,foodRecoveryTransaction);
+        return this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase,foodRecoveryTransaction);
+    }
+
+    public FoodRecoveryTransaction getFoodRecoveryTransaction(String id)
+    {
+        return this.foodRecoveryStore.getFoodRecoveryTransaction(this.mongoDatabase,id);
     }
 
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String orgId)

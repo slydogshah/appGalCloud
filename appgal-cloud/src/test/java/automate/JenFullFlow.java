@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
@@ -75,7 +76,7 @@ public class JenFullFlow {
         List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
 
         FoodRecoveryTransaction accepted = myTransactions.get(0);
-        this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         //FoodRunner notifies DropOffOrg
         this.scheduleDropOff(accepted);
@@ -234,7 +235,7 @@ public class JenFullFlow {
         return myTransactions;
     }
 
-    private void acceptTransaction(String email,String dropOffOrgId,FoodRecoveryTransaction accepted)
+    private FoodRecoveryTransaction acceptTransaction(String email,String dropOffOrgId,FoodRecoveryTransaction accepted)
     {
         JsonObject json = new JsonObject();
         json.addProperty("email",email);
@@ -242,9 +243,14 @@ public class JenFullFlow {
         json.add("accepted",accepted.toJson());
         Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
         String jsonString = response.getBody().print();
-        JsonElement responseJson = JsonParser.parseString(jsonString);
+        JsonObject responseJson = JsonParser.parseString(jsonString).getAsJsonObject();
         //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
+        String id = responseJson.get("recoveryTransactionId").getAsString();
+
+        response = given().body(json.toString()).when().get("/tx/recovery/transaction?id="+id).andReturn();
+        jsonString = response.getBody().print();
+        return FoodRecoveryTransaction.parse(jsonString);
     }
 
     private void scheduleDropOff(FoodRecoveryTransaction accepted)

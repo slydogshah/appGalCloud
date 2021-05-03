@@ -21,7 +21,7 @@ import java.util.List;
 public class FoodRecoveryStore {
     private static Logger logger = LoggerFactory.getLogger(FoodRecoveryStore.class);
 
-    public void storeFoodRecoveryTransaction(MongoDatabase database,FoodRecoveryTransaction foodRecoveryTransaction)
+    public FoodRecoveryTransaction storeFoodRecoveryTransaction(MongoDatabase database,FoodRecoveryTransaction foodRecoveryTransaction)
     {
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
         //logger.info("*******************************STORE************************************************************************************");
@@ -48,6 +48,40 @@ public class FoodRecoveryStore {
 
         Document doc = Document.parse(foodRecoveryTransaction.toString());
         collection.insertOne(doc);
+
+
+        bson = Document.parse(queryJson);
+        iterable = collection.find(bson);
+        cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            return FoodRecoveryTransaction.parse(documentJson);
+        }
+
+        return null;
+    }
+
+    public FoodRecoveryTransaction getFoodRecoveryTransaction(MongoDatabase database,String id)
+    {
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+        //logger.info("*******************************STORE************************************************************************************");
+        //JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
+        //logger.info("*******************************************************************************************************************");
+
+        FoodRecoveryTransaction exists = null;
+        String queryJson = "{\"id\":\""+id+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            return FoodRecoveryTransaction.parse(documentJson);
+        }
+        return null;
     }
 
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(MongoDatabase database,String orgId)

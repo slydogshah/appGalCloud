@@ -230,4 +230,22 @@ public class Transactions {
             return Response.status(500).entity(error.toString()).build();
         }
     }
+
+    @Path("/recovery/transaction")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodRecoveryTransactioon(@QueryParam("id") String id)
+    {
+        try {
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(id);
+            return Response.ok(tx.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
 }

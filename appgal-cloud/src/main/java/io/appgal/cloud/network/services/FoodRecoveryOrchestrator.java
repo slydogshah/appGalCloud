@@ -30,9 +30,9 @@ public class FoodRecoveryOrchestrator {
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(recoveryTx);
     }
 
-    public void notifyDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
+    public void notifyDropOff(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-
+        this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
     }
 
     public void notifyDelivery(FoodRecoveryTransaction foodRecoveryTransaction)
