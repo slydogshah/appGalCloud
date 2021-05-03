@@ -1,112 +1,113 @@
-import React, { useEffect, useState, createRef, lazy } from 'react'
+import React from "react";
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
 import axios from 'axios'
-import {
-  CCardGroup,
-  CCardFooter,
-  CCol,
-  CLink,
-  CRow,
-  CWidgetProgress,
-  CWidgetIcon,
-  CWidgetProgressIcon,
-  CWidgetSimple,
-  CWidgetBrand,
-  CHeaderNavLink,
-  CProgress,
-  CNav,
-  CNavLink,
-  CWidgetDropdown,
-  CDropdown,
-  CDropdownMenu,
-  CDropdownToggle,
-  CDropdownItem,
-  CAlert,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CCard,
-  CCardHeader,
-  CCardBody,
-  CFormGroup,
-  CLabel,
-  CInput,
-  CSelect,
-  CModalFooter,
-  CButton,
-  CBadge,
-  CButtonGroup,
-  CCallout
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import WidgetsDropdown from './WidgetsDropdown'
-import Modals from '../views/notifications/modals/Modals'
-import ChartLineSimple from '../views/charts/ChartLineSimple'
-import ChartBarSimple from '../views/charts/ChartBarSimple'
+// @material-ui/core components
+import { makeStyles } from "@material-ui/core/styles";
+// core components
+import GridItem from "../components/Grid/GridItem.js";
+import GridContainer from "../components/Grid/GridContainer.js";
+import Table from "../components/Table/Table.js";
+import Card from "../components/Card/Card.js";
+import CardHeader from "../components/Card/CardHeader.js";
+import CardBody from "../components/Card/CardBody.js";
 import { AppContext,store} from "./AppContext"
 
-const fields = [
-          { key: 'dropOffNotification', label:'Organization', _style: { width: '40%'} },
-          { key: 'state', label:'Status', _style: { width: '20%'} }
-]
-
-const getBadge = (status)=>{
-         switch (status) {
-           case 'Active': return 'success'
-           case 'Inactive': return 'secondary'
-           case 'Pending': return 'warning'
-           case 'Banned': return 'danger'
-           default: return 'primary'
-         }
-     }
-
-const ClosedTransactionView = ({closed}) => {
-    console.log("******CLOSED_TX_VIEW****************");
-    console.log(JSON.stringify(closed));
-    const txs = []
-    for (const [index, value] of closed.entries()) {
-        txs.push(
-             <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                        {value.pickupNotification.dropOffOrg.orgName}
-                      </span>
-                    </div>
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="34" />
-                      <CProgress className="progress-xs" color="danger" value="78" />
-                    </div>
-              </div>
-         )
+const styles = {
+  cardCategoryWhite: {
+    "&,& a,& a:hover,& a:focus": {
+      color: "rgba(255,255,255,.62)",
+      margin: "0",
+      fontSize: "14px",
+      marginTop: "0",
+      marginBottom: "0"
+    },
+    "& a,& a:hover,& a:focus": {
+      color: "#FFFFFF"
     }
-    return(
-        <div>
-            {txs}
-        </div>
-    )
-}
+  },
+  cardTitleWhite: {
+    color: "#FFFFFF",
+    marginTop: "0px",
+    minHeight: "auto",
+    fontWeight: "300",
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: "3px",
+    textDecoration: "none",
+    "& small": {
+      color: "#777",
+      fontSize: "65%",
+      fontWeight: "400",
+      lineHeight: "1"
+    }
+  }
+};
+
+const useStyles = makeStyles(styles);
 
 const WaitOnData = ({state}) => {
     if (state.data === null) {
-          return <p>Loading...</p>;
+       return(
+         <>
+          <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+        </>
+       )
     }
-    return (
-          <>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          <ClosedTransactionView closed={state.data}/>
-          </>
-    )
+    else{
+        return (
+              <>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <ClosedTransactionView closed={state.data}/>
+              </>
+        )
+    }
 }
+
+const ClosedTransactionView = ({closed}) => {
+  //console.log("TABLE_LIST_INVOKED");
+  const classes = useStyles();
+  const txs = [];
+  //console.log("TXS: "+JSON.stringify(txs));
+  for (const [index, value] of closed.entries()) {
+    var email = value.pickupNotification.foodRunner.profile.email;
+    var orgName = value.pickupNotification.dropOffOrg.orgName;
+    var tx = [
+        email,orgName
+    ];
+    txs.push(tx);
+  }
+  //console.log("TXS: "+JSON.stringify(txs));
+  return (
+    <>
+    <br/><br/><br/>
+    <GridContainer>
+      <GridItem xs={12} sm={12} md={12}>
+        <Card>
+          <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}>Pickup History</h4>
+            <p className={classes.cardCategoryWhite}>
+            </p>
+          </CardHeader>
+          <CardBody>
+            <Table
+              tableHeaderColor="primary"
+              tableHead={["FoodRunner", "Drop Off Organization"]}
+              tableData={txs}
+            />
+          </CardBody>
+        </Card>
+      </GridItem>
+    </GridContainer>
+    </>
+  );
+}
+
 
 class PickupHistory extends React.Component
 {

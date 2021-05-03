@@ -1,4 +1,7 @@
 import React from "react";
+import ReactDOM from 'react-dom';
+import { withRouter } from "react-router";
+import axios from 'axios'
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // core components
@@ -8,6 +11,7 @@ import Table from "../components/Table/Table.js";
 import Card from "../components/Card/Card.js";
 import CardHeader from "../components/Card/CardHeader.js";
 import CardBody from "../components/Card/CardBody.js";
+import { AppContext,store} from "./AppContext"
 
 const styles = {
   cardCategoryWhite: {
@@ -41,8 +45,44 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function TableList() {
+const WaitOnData = ({state}) => {
+    if (state.data === null) {
+       return(
+         <>
+          <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+        </>
+       )
+    }
+    else{
+        return (
+              <>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <ClosedTransactionView closed={state.data}/>
+              </>
+        )
+    }
+}
+
+const ClosedTransactionView = ({closed}) => {
+  //console.log("TABLE_LIST_INVOKED");
   const classes = useStyles();
+  const txs = [];
+  //console.log("TXS: "+JSON.stringify(txs));
+  for (const [index, value] of closed.entries()) {
+    var email = value.pickupNotification.foodRunner.profile.email;
+    var orgName = value.pickupNotification.sourceOrg.orgName;
+    var tx = [
+        email,orgName
+    ];
+    txs.push(tx);
+  }
+  //console.log("TXS: "+JSON.stringify(txs));
   return (
     <>
     <br/><br/><br/>
@@ -50,23 +90,15 @@ export default function TableList() {
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Simple Table</h4>
+            <h4 className={classes.cardTitleWhite}>Drop Off History</h4>
             <p className={classes.cardCategoryWhite}>
-              Here is a subtitle for this table
             </p>
           </CardHeader>
           <CardBody>
             <Table
               tableHeaderColor="primary"
-              tableHead={["Name", "Country", "City", "Salary"]}
-              tableData={[
-                ["Dakota Rice", "Niger", "Oud-Turnhout", "$36,738"],
-                ["Minerva Hooper", "Curaçao", "Sinaai-Waas", "$23,789"],
-                ["Sage Rodriguez", "Netherlands", "Baileux", "$56,142"],
-                ["Philip Chaney", "Korea, South", "Overland Park", "$38,735"],
-                ["Doris Greene", "Malawi", "Feldkirchen in Kärnten", "$63,542"],
-                ["Mason Porter", "Chile", "Gloucester", "$78,615"]
-              ]}
+              tableHead={["FoodRunner", "Pickup Organization"]}
+              tableData={txs}
             />
           </CardBody>
         </Card>
@@ -75,3 +107,34 @@ export default function TableList() {
     </>
   );
 }
+
+
+class DropOffHistory extends React.Component
+{
+    constructor(props)
+    {
+        super(props);
+        this.state = {data: null};
+        this.renderMyData();
+    }
+
+    renderMyData()
+    {
+        const orgId = store.getState().sourceOrg.orgId;
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropOff/history/?orgId="+orgId;
+        axios.get(apiUrl).then((response) => {
+            this.setState({data: response.data});
+        });
+    }
+
+    render()
+    {
+        return(
+            <>
+                <WaitOnData state={this.state} />
+            </>
+        );
+    }
+}
+
+export default withRouter(DropOffHistory)
