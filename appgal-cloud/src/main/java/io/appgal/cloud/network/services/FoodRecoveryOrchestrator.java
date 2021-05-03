@@ -35,6 +35,12 @@ public class FoodRecoveryOrchestrator {
 
     }
 
+    public void notifyDelivery(FoodRecoveryTransaction foodRecoveryTransaction)
+    {
+        foodRecoveryTransaction.setTransactionState(TransactionState.CLOSED);
+        this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+    }
+
     //DropOff Location Recommendation Algorithm
     public List<SourceOrg> findDropOffOrganizations(String orgId) {
         SourceOrg producer = this.mongoDBJsonStore.getSourceOrg(orgId);

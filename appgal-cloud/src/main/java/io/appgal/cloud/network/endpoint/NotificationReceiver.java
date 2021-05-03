@@ -3,10 +3,7 @@ package io.appgal.cloud.network.endpoint;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.model.FoodDetails;
-import io.appgal.cloud.model.ScheduleDropOffNotification;
-import io.appgal.cloud.model.SchedulePickUpNotification;
-import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.model.*;
 import io.appgal.cloud.network.services.FoodRecoveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
@@ -165,6 +162,29 @@ public class NotificationReceiver {
         try {
             ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
             this.networkOrchestrator.scheduleDropOff(notification);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success", true);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/notifyDelivery")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response notifyDelivery(@RequestBody String jsonBody)
+    {
+        try {
+            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
+
+            this.foodRecoveryOrchestrator.notifyDelivery(tx);
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);

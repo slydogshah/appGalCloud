@@ -438,10 +438,16 @@ class PickUpListView extends StatelessWidget {
     Future<int> future = client.accept(email, dropOffOrgId, tx);
     future.then((statusCode) {
       if (statusCode == 200) {
-        LocationUpdater.getLocation();
-        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(
-            tx.getPickupNotification().getDropOffOrg());
-        embeddedNavigation.start();
+        Future<int> f = client.scheduleDropOff(tx);
+        f.then((statusCode) {
+          Future<int> f2 = client.notifyDelivery(tx);
+          f2.then((statusCode) {
+            LocationUpdater.getLocation();
+            EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(
+                tx.getPickupNotification().getDropOffOrg());
+            embeddedNavigation.start();
+          });
+        });
       }
       else {
         //TODO
@@ -451,6 +457,13 @@ class PickUpListView extends StatelessWidget {
 }
 
 /*
+
+
+
+
+
+
+
 ListView.builder(
                             itemCount: recoveryTxs.length,
                             padding: const EdgeInsets.only(top: 8),
