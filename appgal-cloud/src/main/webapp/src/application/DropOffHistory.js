@@ -1,143 +1,77 @@
-import React, { useEffect, useState, createRef, lazy } from 'react'
-import ReactDOM from 'react-dom';
-import { withRouter } from "react-router";
-import axios from 'axios'
-import {
-  CCardGroup,
-  CCardFooter,
-  CCol,
-  CLink,
-  CRow,
-  CWidgetProgress,
-  CWidgetIcon,
-  CWidgetProgressIcon,
-  CWidgetSimple,
-  CWidgetBrand,
-  CHeaderNavLink,
-  CProgress,
-  CNav,
-  CNavLink,
-  CWidgetDropdown,
-  CDropdown,
-  CDropdownMenu,
-  CDropdownToggle,
-  CDropdownItem,
-  CAlert,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CCard,
-  CCardHeader,
-  CCardBody,
-  CFormGroup,
-  CLabel,
-  CInput,
-  CSelect,
-  CModalFooter,
-  CButton,
-  CBadge,
-  CButtonGroup,
-  CCallout
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import WidgetsDropdown from './WidgetsDropdown'
-import Modals from '../views/notifications/modals/Modals'
-import ChartLineSimple from '../views/charts/ChartLineSimple'
-import ChartBarSimple from '../views/charts/ChartBarSimple'
+import React from "react";
+// @material-ui/core components
+import { makeStyles } from "@material-ui/core/styles";
+// core components
+import GridItem from "../components/Grid/GridItem.js";
+import GridContainer from "../components/Grid/GridContainer.js";
+import Table from "../components/Table/Table.js";
+import Card from "../components/Card/Card.js";
+import CardHeader from "../components/Card/CardHeader.js";
+import CardBody from "../components/Card/CardBody.js";
 
-const fields = [
-          { key: 'dropOffNotification', label:'Organization', _style: { width: '40%'} },
-          { key: 'state', label:'Status', _style: { width: '20%'} }
-]
-
-const getBadge = (status)=>{
-         switch (status) {
-           case 'Active': return 'success'
-           case 'Inactive': return 'secondary'
-           case 'Pending': return 'warning'
-           case 'Banned': return 'danger'
-           default: return 'primary'
-         }
-     }
-
-const ClosedTransactionView = ({closed}) => {
-    const txs = []
-    for (const [index, value] of closed.entries()) {
-        txs.push(
-             <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                        {value.pickupNotification.sourceOrg.orgName}
-                      </span>
-                    </div>
-                    <div className="progress-group-prepend">
-                      <span className="progress-group-text">
-                        {value.foodRunner.profile.email}
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress className="progress-xs" color="info" value="34" />
-                      <CProgress className="progress-xs" color="danger" value="78" />
-                    </div>
-              </div>
-         )
+const styles = {
+  cardCategoryWhite: {
+    "&,& a,& a:hover,& a:focus": {
+      color: "rgba(255,255,255,.62)",
+      margin: "0",
+      fontSize: "14px",
+      marginTop: "0",
+      marginBottom: "0"
+    },
+    "& a,& a:hover,& a:focus": {
+      color: "#FFFFFF"
     }
-    return(
-        <div>
-            {txs}
-        </div>
-    )
+  },
+  cardTitleWhite: {
+    color: "#FFFFFF",
+    marginTop: "0px",
+    minHeight: "auto",
+    fontWeight: "300",
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: "3px",
+    textDecoration: "none",
+    "& small": {
+      color: "#777",
+      fontSize: "65%",
+      fontWeight: "400",
+      lineHeight: "1"
+    }
+  }
+};
+
+const useStyles = makeStyles(styles);
+
+export default function TableList() {
+  const classes = useStyles();
+  return (
+    <>
+    <br/><br/><br/>
+    <GridContainer>
+      <GridItem xs={12} sm={12} md={12}>
+        <Card>
+          <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}>Simple Table</h4>
+            <p className={classes.cardCategoryWhite}>
+              Here is a subtitle for this table
+            </p>
+          </CardHeader>
+          <CardBody>
+            <Table
+              tableHeaderColor="primary"
+              tableHead={["Name", "Country", "City", "Salary"]}
+              tableData={[
+                ["Dakota Rice", "Niger", "Oud-Turnhout", "$36,738"],
+                ["Minerva Hooper", "Curaçao", "Sinaai-Waas", "$23,789"],
+                ["Sage Rodriguez", "Netherlands", "Baileux", "$56,142"],
+                ["Philip Chaney", "Korea, South", "Overland Park", "$38,735"],
+                ["Doris Greene", "Malawi", "Feldkirchen in Kärnten", "$63,542"],
+                ["Mason Porter", "Chile", "Gloucester", "$78,615"]
+              ]}
+            />
+          </CardBody>
+        </Card>
+      </GridItem>
+    </GridContainer>
+    </>
+  );
 }
-
-class DropOffHistory extends React.Component
-{
-    constructor(props)
-    {
-        super(props);
-        console.log("DropOffHistory: "+JSON.stringify(this.props.location.state));
-    }
-
-    render()
-    {
-        return(
-            <>
-            <br/><br/><br/><br/>
-                <CRow>
-                                <CCol>
-                                    <CRow>
-                                            <CCol>
-                                              <CCard>
-                                                <CCardHeader>
-                                                  DropOff History
-                                                </CCardHeader>
-                                                <CCardBody>
-                                                  <CRow>
-                                                    <CCol xs="12" md="6" xl="6">
-
-                                                      <CRow>
-                                                        <CCol sm="6">
-                                                          <CCallout color="info">
-                                                            <small className="text-muted">Closed</small>
-                                                            <br />
-                                                            <strong className="h4">{this.props.location.state.length}</strong>
-                                                          </CCallout>
-                                                        </CCol>
-                                                      </CRow>
-
-                                                      <hr className="mt-0" />
-                                                      <ClosedTransactionView closed={this.props.location.state}/>
-                                                    </CCol>
-                                                  </CRow>
-                                                </CCardBody>
-                                              </CCard>
-                                            </CCol>
-                                          </CRow>
-                                </CCol>
-                                </CRow>
-            </>
-        );
-    }
-}
-
-export default withRouter(DropOffHistory)
