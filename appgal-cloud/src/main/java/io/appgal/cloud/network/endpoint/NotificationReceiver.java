@@ -26,10 +26,10 @@ public class NotificationReceiver {
     private MongoDBJsonStore mongoDBJsonStore;
 
     @Inject
-    private NetworkOrchestrator networkOrchestrator;
+    private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
 
     @Inject
-    private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
+    private NetworkOrchestrator networkOrchestrator;
 
 
     @Path("/pickup/notifications")
@@ -144,51 +144,6 @@ public class NotificationReceiver {
         try {
             List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
             return Response.ok(scheduleDropOffNotificationList.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
-
-    @Path("/scheduleDropOff")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response scheduleDropOff(@RequestBody String jsonBody)
-    {
-        try {
-            ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
-            this.networkOrchestrator.scheduleDropOff(notification);
-
-            JsonObject responseJson = new JsonObject();
-            responseJson.addProperty("success", true);
-            return Response.ok(responseJson.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
-
-    @Path("/notifyDelivery")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response notifyDelivery(@RequestBody String jsonBody)
-    {
-        try {
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
-
-            this.foodRecoveryOrchestrator.notifyDelivery(tx);
-
-            JsonObject responseJson = new JsonObject();
-            responseJson.addProperty("success", true);
-            return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)
         {

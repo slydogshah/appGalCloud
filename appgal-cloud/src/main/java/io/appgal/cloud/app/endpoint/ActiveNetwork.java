@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.network.services.FoodRecoveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 
 import io.appgal.cloud.util.JsonUtil;
@@ -26,6 +27,9 @@ public class ActiveNetwork {
 
     @Inject
     private NetworkOrchestrator networkOrchestrator;
+
+    @Inject
+    private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
@@ -159,6 +163,51 @@ public class ActiveNetwork {
 
             JsonObject responseJson = this.networkOrchestrator.acceptRecoveryTransaction(tx);
 
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/scheduleDropOff")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response scheduleDropOff(@RequestBody String jsonBody)
+    {
+        try {
+            ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
+            this.networkOrchestrator.scheduleDropOff(notification);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success", true);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/notifyDelivery")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response notifyDelivery(@RequestBody String jsonBody)
+    {
+        try {
+            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
+
+            this.foodRecoveryOrchestrator.notifyDelivery(tx);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success", true);
             return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)
