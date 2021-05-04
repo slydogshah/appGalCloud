@@ -193,7 +193,7 @@ class ActiveNetworkRestClient
     FoodRunner foodRunner = new FoodRunner(ActiveSession.getInstance().getProfile());
 
     var json;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/notification/notifyDelivery/";
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/notifyDelivery/";
     var response;
     try {
       response = await http.post(Uri.parse(remoteUrl), body: tx.toString()).
