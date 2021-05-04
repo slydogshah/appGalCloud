@@ -76,13 +76,13 @@ public class JenFullFlow {
         JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
 
         FoodRecoveryTransaction accepted = myTransactions.get(0);
-        //accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         //FoodRunner notifies DropOffOrg
-        //this.scheduleDropOff(accepted);
+        this.scheduleDropOff(accepted);
 
         //FoodRunner notifies deliver
-        //this.notifyDelivery(accepted);
+        this.notifyDelivery(accepted);
     }
 
     private SourceOrg registerPickupOrg()

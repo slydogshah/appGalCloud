@@ -76,9 +76,9 @@ const WaitOnData = ({state, handleHistory}) => {
                                <CDropdownToggle color="transparent">
                                  <CIcon name="cil-settings"/>
                                </CDropdownToggle>
-                               <CDropdownMenu className="pt-0" placement="bottom-end">
-                                 <CDropdownItem onClick={handleHistory}>History</CDropdownItem>
-                               </CDropdownMenu>
+                               {state.data.historyExists && (
+                                   <CDropdownItem onClick={handleHistory}>History</CDropdownItem>
+                               )}
                              </CDropdown>
                            </CWidgetDropdown>
                 </CCardGroup>
