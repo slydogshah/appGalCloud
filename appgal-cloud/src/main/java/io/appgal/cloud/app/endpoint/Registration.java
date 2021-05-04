@@ -71,8 +71,6 @@ public class Registration {
     public Response register(@RequestBody String profileJson)
     {
         try {
-            JsonUtil.print(this.getClass(),JsonParser.parseString(profileJson));
-
             JsonObject jsonObject = JsonParser.parseString(profileJson).getAsJsonObject();
             Profile profile = Profile.parse(jsonObject.toString());
 
@@ -160,7 +158,6 @@ public class Registration {
     public Response login(@RequestBody String credentialsJson)
     {
         try {
-            logger.info(credentialsJson);
             JsonObject jsonObject = JsonParser.parseString(credentialsJson).getAsJsonObject();
 
             if(jsonObject.get("email").isJsonNull() || jsonObject.get("password").isJsonNull())
@@ -176,8 +173,6 @@ public class Registration {
 
             Profile profile = this.profileRegistrationService.getProfile(email);
 
-            logger.info("LOGIN_EMAIL: "+email);
-            logger.info("LOGIN_PROFILE: "+profile);
 
             if(profile == null)
             {

@@ -66,12 +66,6 @@ public class MongoDBJsonStore {
     @PostConstruct
     public void start()
     {
-        //System.out.println("string "+this.mongodbConnectionString);
-        //System.out.println("host: "+this.mongodbHost);
-        //System.out.println("port "+this.mongodbPort);
-        //System.out.println("db "+this.database);
-        //System.out.println("pass "+this.password);
-
         String connectionString;
         if(this.mongodbHost.equals("localhost"))
         {
@@ -81,10 +75,6 @@ public class MongoDBJsonStore {
         {
             connectionString = MessageFormat.format(this.mongodbConnectionString,this.password,this.mongodbHost,this.database);
         }
-
-        logger.info("************");
-        logger.info(connectionString);
-        logger.info("************");
         this.mongoClient = MongoClients.create(connectionString);
         this.mongoDatabase = mongoClient.getDatabase(this.database);
 

@@ -56,27 +56,25 @@ public class JenFullFlow {
     public void flow() throws Exception
     {
         //Register a Pickup Org
-        //SourceOrg pickup = this.registerPickupOrg();
+        SourceOrg pickup = this.registerPickupOrg();
 
         //Register a DropOff Org
-        //SourceOrg dropOff = this.registerDropOffOrg();
+        SourceOrg dropOff = this.registerDropOffOrg();
 
         //Register a FoodRunner
         FoodRunner foodRunner = this.registerFoodRunner();
-        this.login(foodRunner);
 
         //Send a PickUpRequest
-        //String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),"");
-        //this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
+        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),"");
+        this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
 
         //Notify a FoodRunner...does not pull my transactions
-        //JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
-         //       foodRunner.getProfile().getPassword());
+        JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(), foodRunner.getProfile().getPassword());
 
         //FoodRunner accepts....this will update to notificationSent=true
-        //List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
-        //JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
-        //JsonUtil.print(this.getClass(),JsonParser.parseString(this.mongoDBJsonStore.getFoodRecoveryTransactions().toString()));
+        List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(this.mongoDBJsonStore.getFoodRecoveryTransactions().toString()));
 
         //FoodRecoveryTransaction accepted = myTransactions.get(0);
         //accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
@@ -108,7 +106,6 @@ public class JenFullFlow {
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
         assertTrue(responseJson.getAsJsonObject().get("success").getAsJsonObject().get("producer").getAsBoolean());
 
@@ -135,7 +132,6 @@ public class JenFullFlow {
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
         assertFalse(responseJson.getAsJsonObject().get("success").getAsJsonObject().get("producer").getAsBoolean());
 
@@ -156,32 +152,17 @@ public class JenFullFlow {
         Response response = given().body(json.toString()).post("/registration/profile");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
-        //assertEquals(200, response.getStatusCode());
 
         if(response.statusCode()==409)
         {
             response = given().get("/registration/profile/?email="+email);
             jsonString = response.getBody().print();
-            responseJson = JsonParser.parseString(jsonString);
-            //JsonUtil.print(this.getClass(), responseJson);
         }
 
         Profile profile = Profile.parse(jsonString);
         FoodRunner foodRunner = new FoodRunner();
         foodRunner.setProfile(profile);
         return foodRunner;
-    }
-
-    private void login(FoodRunner foodRunner)
-    {
-        JsonObject json = new JsonObject();
-        json.addProperty("email",foodRunner.getProfile().getEmail());
-        json.addProperty("password",foodRunner.getProfile().getPassword());
-        Response response = given().body(json.toString()).post("/registration/login/");
-        String jsonString = response.getBody().print();
-        JsonElement responseJson = JsonParser.parseString(jsonString);
-        JsonUtil.print(this.getClass(), responseJson);
     }
 
     private String sendPickUpDetails(String orgId,String foodType,String foodPic)
@@ -194,7 +175,6 @@ public class JenFullFlow {
         Response response = given().body(json.toString()).post("/notification/addPickupDetails/");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
 
         return responseJson.getAsJsonObject().get("pickupNotificationId").getAsString();
@@ -210,7 +190,6 @@ public class JenFullFlow {
         Response response = given().body(json.toString()).post("/notification/schedulePickup/");
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
     }
 
@@ -224,7 +203,6 @@ public class JenFullFlow {
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
         return responseJson.getAsJsonObject();
     }
@@ -234,7 +212,6 @@ public class JenFullFlow {
         Response response = given().get("/tx/recovery/foodRunner/?email="+email);
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
 
         JsonArray pending = responseJson.getAsJsonObject().get("pending").getAsJsonArray();
@@ -258,7 +235,6 @@ public class JenFullFlow {
         Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
         String jsonString = response.getBody().print();
         JsonObject responseJson = JsonParser.parseString(jsonString).getAsJsonObject();
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
         String id = responseJson.get("recoveryTransactionId").getAsString();
 
@@ -272,7 +248,6 @@ public class JenFullFlow {
         Response response = given().body(accepted.toString()).when().post("/activeNetwork/scheduleDropOff").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
     }
 
@@ -281,7 +256,6 @@ public class JenFullFlow {
         Response response = given().body(accepted.toString()).when().post("/activeNetwork/notifyDelivery").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
-        //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
     }
 }
