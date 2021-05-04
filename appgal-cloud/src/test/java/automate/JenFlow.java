@@ -5,10 +5,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 
 import io.appgal.cloud.util.MapUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,24 @@ public class JenFlow {
     @Inject
     private MapUtils mapUtils;
 
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
+    @BeforeEach
+    public void setup() throws Exception
+    {
+        try {
+            if (this.mongoDBJsonStore == null) {
+                this.mongoDBJsonStore = new MongoDBJsonStore();
+            }
+            this.mongoDBJsonStore.start();
+            this.mongoDBJsonStore.getMongoClient().getDatabase("jennetwork").drop();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void flow() throws Exception
@@ -67,12 +87,12 @@ public class JenFlow {
     {
         JsonObject registrationJson = new JsonObject();
         String id = UUID.randomUUID().toString();
-        String email = id+"@blah.com";
+        String email = "pickup@pickup.io";
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("password", "password");
-        registrationJson.addProperty("orgId", "blah.com");
-        registrationJson.addProperty("orgName", "blah.com");
+        registrationJson.addProperty("orgId", "pickup.io");
+        registrationJson.addProperty("orgName", "Pickup Inc");
         registrationJson.addProperty("orgType", true);
         registrationJson.addProperty("orgContactEmail", email);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
@@ -94,12 +114,12 @@ public class JenFlow {
     {
         JsonObject registrationJson = new JsonObject();
         String id = UUID.randomUUID().toString();
-        String email = id+"@church.com";
+        String email = "dropoff@dropoff.io";
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("password", "password");
-        registrationJson.addProperty("orgId", "church.com");
-        registrationJson.addProperty("orgName", "church.com");
+        registrationJson.addProperty("orgId", "dropoff.io");
+        registrationJson.addProperty("orgName", "DropOff Inc");
         registrationJson.addProperty("orgType", false);
         registrationJson.addProperty("orgContactEmail", email);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());

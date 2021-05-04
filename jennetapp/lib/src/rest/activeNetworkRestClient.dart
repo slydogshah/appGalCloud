@@ -134,8 +134,10 @@ class ActiveNetworkRestClient
     Map<String,dynamic> payload = new Map();
     payload["email"] = email;
     payload["dropOffOrgId"] = dropOffOrgId;
+    tx.getPickupNotification().setFoodRunner(FoodRunner.getActiveFoodRunner());
     payload["accepted"] = tx;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/accept/";
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
+    print(jsonEncode(payload));
     var response;
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
@@ -165,7 +167,7 @@ class ActiveNetworkRestClient
         foodRunner, tx.getPickupNotification().getStart());
 
     var json;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/scheduleDropOff/";
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/scheduleDropOff/";
     var response;
     try {
       response = await http.post(Uri.parse(remoteUrl), body: scheduleDropOffNotification.toString()).
@@ -191,7 +193,7 @@ class ActiveNetworkRestClient
   Future<int> notifyDelivery(FoodRecoveryTransaction tx) async
   {
     var json;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/notifyDelivery/";
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/notifyDelivery/";
     var response;
     try {
       response = await http.post(Uri.parse(remoteUrl), body: tx.toString()).

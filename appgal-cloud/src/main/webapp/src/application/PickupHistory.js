@@ -70,10 +70,10 @@ const WaitOnData = ({state}) => {
 }
 
 const ClosedTransactionView = ({closed}) => {
-  //console.log("TABLE_LIST_INVOKED");
+  console.log("TABLE_LIST_INVOKED");
   const classes = useStyles();
   const txs = [];
-  //console.log("TXS: "+JSON.stringify(txs));
+  console.log("TXS: "+JSON.stringify(txs));
   for (const [index, value] of closed.entries()) {
     var email = value.pickupNotification.foodRunner.profile.email;
     var orgName = value.pickupNotification.dropOffOrg.orgName;
@@ -82,7 +82,7 @@ const ClosedTransactionView = ({closed}) => {
     ];
     txs.push(tx);
   }
-  //console.log("TXS: "+JSON.stringify(txs));
+  console.log("LATERTXS: "+JSON.stringify(txs));
   return (
     <>
     <br/><br/><br/>
@@ -122,6 +122,7 @@ class PickupHistory extends React.Component
     {
         const orgId = store.getState().sourceOrg.orgId;
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/history/?orgId="+orgId;
+        console.log(apiUrl);
         axios.get(apiUrl).then((response) => {
             this.setState({data: response.data});
         });

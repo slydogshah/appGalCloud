@@ -218,7 +218,7 @@ public class Profile implements Serializable {
                 profile.mobile = 11111111111l;
             }
         }
-        if(jsonObject.has("photo")) {
+        if(jsonObject.has("photo") && !jsonObject.get("photo").isJsonNull()) {
             profile.photo = jsonObject.get("photo").getAsString();
         }
         if(jsonObject.has("password")) {

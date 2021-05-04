@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/profile.dart';
 
 class FoodRunner
@@ -22,5 +23,11 @@ class FoodRunner
   {
     String json = jsonEncode(this.toJson());
     return json;
+  }
+
+  static getActiveFoodRunner()
+  {
+    Profile profile = ActiveSession.getInstance().getProfile();
+    return new FoodRunner(profile);
   }
 }
