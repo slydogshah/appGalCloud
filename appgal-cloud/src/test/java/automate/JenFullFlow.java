@@ -56,33 +56,36 @@ public class JenFullFlow {
     public void flow() throws Exception
     {
         //Register a Pickup Org
-        SourceOrg pickup = this.registerPickupOrg();
+        //SourceOrg pickup = this.registerPickupOrg();
 
         //Register a DropOff Org
-        SourceOrg dropOff = this.registerDropOffOrg();
+        //SourceOrg dropOff = this.registerDropOffOrg();
 
         //Register a FoodRunner
         FoodRunner foodRunner = this.registerFoodRunner();
+        this.login(foodRunner);
 
         //Send a PickUpRequest
-        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),"");
-        this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
+        //String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),"");
+        //this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
 
         //Notify a FoodRunner...does not pull my transactions
-        JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
-                foodRunner.getProfile().getPassword());
+        //JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
+         //       foodRunner.getProfile().getPassword());
 
         //FoodRunner accepts....this will update to notificationSent=true
-        List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        //List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        //JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
+        //JsonUtil.print(this.getClass(),JsonParser.parseString(this.mongoDBJsonStore.getFoodRecoveryTransactions().toString()));
 
-        FoodRecoveryTransaction accepted = myTransactions.get(0);
-        accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        //FoodRecoveryTransaction accepted = myTransactions.get(0);
+        //accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         //FoodRunner notifies DropOffOrg
-        this.scheduleDropOff(accepted);
+        //this.scheduleDropOff(accepted);
 
         //FoodRunner notifies deliver
-        this.notifyDelivery(accepted);
+        //this.notifyDelivery(accepted);
     }
 
     private SourceOrg registerPickupOrg()
@@ -168,6 +171,17 @@ public class JenFullFlow {
         FoodRunner foodRunner = new FoodRunner();
         foodRunner.setProfile(profile);
         return foodRunner;
+    }
+
+    private void login(FoodRunner foodRunner)
+    {
+        JsonObject json = new JsonObject();
+        json.addProperty("email",foodRunner.getProfile().getEmail());
+        json.addProperty("password",foodRunner.getProfile().getPassword());
+        Response response = given().body(json.toString()).post("/registration/login/");
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        JsonUtil.print(this.getClass(), responseJson);
     }
 
     private String sendPickUpDetails(String orgId,String foodType,String foodPic)

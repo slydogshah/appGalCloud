@@ -134,38 +134,42 @@ public class NetworkOrchestrator {
             logger.info("*******************************************************************************************************");
             logger.info("FOODRUNNER_EMAIL: "+email);
             logger.info("*******************************************************************************************************");
-            FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
-            JsonUtil.print(this.getClass(), foodRunner.toJson());
+            FoodRunner foodRunner = this.activeNetwork.findFoodRunner(email);
+            logger.info("ALGO_RUNNER: "+foodRunner);
 
             List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
+            logger.info("ALGO_SIZE:"+all.size());
             for (FoodRecoveryTransaction tx : all) {
-                JsonUtil.print(this.getClass(), tx.toJson());
+                //JsonUtil.print(this.getClass(), tx.toJson());
 
-
+                logger.info("ALGO:1");
                 Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
                 if(source == null)
                 {
                     logger.info("SOURCE_LOCATION_NOT_FOUND");
                     continue;
                 }
-                JsonUtil.print(this.getClass(), source.toJson());
+                //JsonUtil.print(this.getClass(), source.toJson());
 
-
+                logger.info("ALGO:2");
                 Location foodRunnerLocation = foodRunner.getLocation();
+                logger.info("ALGO_RUNNER: "+foodRunnerLocation);
                 if(foodRunnerLocation == null)
                 {
+                    logger.info("ALGO:FUCKME");
                     logger.info("FOODRUNNER_LOCATION_NOT_FOUND");
                     continue;
                 }
-                JsonUtil.print(this.getClass(), foodRunnerLocation.toJson());
+                //JsonUtil.print(this.getClass(), foodRunnerLocation.toJson());
 
 
+                logger.info("ALGO:3");
                 Double distance = this.mapUtils.calculateDistance(foodRunnerLocation.getLatitude(),
                         foodRunnerLocation.getLongitude(),
                         source.getLatitude(), source.getLongitude());
 
                 logger.info("**************DISTANCE*****************");
-                logger.info("DISTANCE: "+distance);
+                logger.info("ALGO_DISTANCE: "+distance);
                 logger.info("**************DISTANCE*****************");
 
                 if (distance <= 5.0d) {
