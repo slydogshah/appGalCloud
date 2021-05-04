@@ -74,9 +74,8 @@ public class JenFullFlow {
         //FoodRunner accepts....this will update to notificationSent=true
         List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
         JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
-        JsonUtil.print(this.getClass(),JsonParser.parseString(this.mongoDBJsonStore.getFoodRecoveryTransactions().toString()));
 
-        //FoodRecoveryTransaction accepted = myTransactions.get(0);
+        FoodRecoveryTransaction accepted = myTransactions.get(0);
         //accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         //FoodRunner notifies DropOffOrg
