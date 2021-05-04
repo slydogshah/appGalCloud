@@ -43,4 +43,4 @@ release.properties
 .eslintcache
 
 
-/src/main/resources/META-INF/resources/*
+/src/main/resources/META-INF/
