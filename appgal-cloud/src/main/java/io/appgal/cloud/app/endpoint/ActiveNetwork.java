@@ -134,7 +134,7 @@ public class ActiveNetwork {
     @Path("/accept")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response acceptRecoveryTransaction(@RequestBody String jsonBody)
+    public Response accept(@RequestBody String jsonBody)
     {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();

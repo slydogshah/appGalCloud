@@ -165,7 +165,7 @@ class ActiveNetworkRestClient
         foodRunner, tx.getPickupNotification().getStart());
 
     var json;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/notification/scheduleDropOff/";
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/scheduleDropOff/";
     var response;
     try {
       response = await http.post(Uri.parse(remoteUrl), body: scheduleDropOffNotification.toString()).
@@ -190,8 +190,6 @@ class ActiveNetworkRestClient
 
   Future<int> notifyDelivery(FoodRecoveryTransaction tx) async
   {
-    FoodRunner foodRunner = new FoodRunner(ActiveSession.getInstance().getProfile());
-
     var json;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/notifyDelivery/";
     var response;
