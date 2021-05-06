@@ -16,6 +16,8 @@ public class FoodRecoveryTransaction implements Serializable {
     private ScheduleDropOffNotification dropOffNotification;
     private FoodRunner foodRunner;
     private TransactionState transactionState = TransactionState.SUBMITTED;
+    private Integer estimatedPickupTime;
+    private Integer estimatedDropOffTime;
 
     public FoodRecoveryTransaction()
     {
@@ -74,6 +76,22 @@ public class FoodRecoveryTransaction implements Serializable {
         this.id = id;
     }
 
+    public Integer getEstimatedPickupTime() {
+        return estimatedPickupTime;
+    }
+
+    public void setEstimatedPickupTime(Integer estimatedPickupTime) {
+        this.estimatedPickupTime = estimatedPickupTime;
+    }
+
+    public Integer getEstimatedDropOffTime() {
+        return estimatedDropOffTime;
+    }
+
+    public void setEstimatedDropOffTime(Integer estimatedDropOffTime) {
+        this.estimatedDropOffTime = estimatedDropOffTime;
+    }
+
     public static FoodRecoveryTransaction parse(String json)
     {
         FoodRecoveryTransaction foodRecoveryTransaction = new FoodRecoveryTransaction();
@@ -109,6 +127,18 @@ public class FoodRecoveryTransaction implements Serializable {
             foodRecoveryTransaction.id = UUID.randomUUID().toString();
         }
 
+        if(jsonObject.has("estimatedPickupTime"))
+        {
+            Integer estimatedPickupTime = jsonObject.get("estimatedPickupTime").getAsInt();
+            foodRecoveryTransaction.estimatedPickupTime = estimatedPickupTime;
+        }
+
+        if(jsonObject.has("estimatedDropOffTime"))
+        {
+            Integer estimatedDropOffTime = jsonObject.get("estimatedDropOffTime").getAsInt();
+            foodRecoveryTransaction.estimatedDropOffTime = estimatedDropOffTime;
+        }
+
         return foodRecoveryTransaction;
     }
 
@@ -136,6 +166,15 @@ public class FoodRecoveryTransaction implements Serializable {
             jsonObject.addProperty("id", this.id);
         }
 
+        if(this.estimatedPickupTime != null)
+        {
+            jsonObject.addProperty("estimatedPickupTime", this.estimatedPickupTime);
+        }
+
+        if(this.estimatedDropOffTime != null)
+        {
+            jsonObject.addProperty("estimatedDropOffTime", this.estimatedDropOffTime);
+        }
         return jsonObject;
     }
 

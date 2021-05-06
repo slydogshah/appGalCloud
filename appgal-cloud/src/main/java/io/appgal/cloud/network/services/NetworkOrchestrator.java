@@ -158,6 +158,14 @@ public class NetworkOrchestrator {
                 logger.info("**************DISTANCE*****************");
 
                 if (distance <= 5.0d) {
+                    Location dropoff = tx.getPickUpNotification().getDropOffOrg().getLocation();
+
+                    int estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation,source);
+                    int estimatedDropOffTime = this.estimateTravelTime(source,dropoff);
+
+                    tx.setEstimatedPickupTime(estimatedPickupTime);
+                    tx.setEstimatedDropOffTime(estimatedDropOffTime);
+
                     myTransactions.add(tx);
                 }
             }
@@ -168,6 +176,11 @@ public class NetworkOrchestrator {
         {
             return myTransactions;
         }
+    }
+
+    private int estimateTravelTime(Location start, Location end)
+    {
+        return 10;
     }
     //-------------------------
     public NotificationEngine getNotificationEngine()
