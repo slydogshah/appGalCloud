@@ -6,6 +6,7 @@ import io.appgal.cloud.model.Address;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.model.Location;
 import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,46 @@ public class GoogleApiClient {
             JsonArray results = original.get("results").getAsJsonArray();
             result = results.get(0).getAsJsonObject().get("geometry").getAsJsonObject();
             return result;
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public JsonObject estimateTime(Location start, Location end)
+    {
+        try {
+            JsonObject result;
+
+            double startLatitude = 30.2698104d;
+            double startLongitude = -97.75115579999999d;
+
+            String origins = startLatitude + "," + startLongitude;
+
+            //Create the Experiment
+            //TODO
+            HttpClient httpClient = http.getHttpClient();
+            String url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins="+origins+"" +
+                    "&destinations="+origins+"&key=AIzaSyAgTAjlBc6KHvCARz6n6CCCt_Uob6-JB2I";
+
+            HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder();
+            HttpRequest httpRequest = httpRequestBuilder.uri(new URI(url))
+                    .GET()
+                    .build();
+
+
+            HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            String responseJson = httpResponse.body();
+            int status = httpResponse.statusCode();
+            if (status != 200) {
+                throw new RuntimeException("TIME_ESTIMATES_NOT_AVAILABLE");
+            }
+
+            JsonObject original = JsonParser.parseString(responseJson).getAsJsonObject();
+            return original;
         }
         catch(Exception e)
         {
