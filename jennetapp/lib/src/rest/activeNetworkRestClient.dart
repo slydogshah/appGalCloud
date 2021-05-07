@@ -28,6 +28,9 @@ class ActiveNetworkRestClient
       Map<String, dynamic> json = UrlFunctions.handleError(e, response);
       return jsonEncode(json);
     }
+
+    print(response.body);
+
     return response.body;
   }
 

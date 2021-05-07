@@ -10,10 +10,12 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 
 import io.appgal.cloud.util.MapUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +69,10 @@ public class JenFlow {
         FoodRunner foodRunner = this.registerFoodRunner();
 
         //Send a PickUpRequest
-        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),"");
+        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                        getResource("automate/foodpic.png"),
+                StandardCharsets.UTF_8);
+        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
 
         //Notify a FoodRunner...does not pull my transactions

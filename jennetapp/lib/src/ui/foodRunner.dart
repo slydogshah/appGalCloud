@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 
 import 'package:app/src/background/locationUpdater.dart';
@@ -242,6 +244,8 @@ class PickUpListView extends StatelessWidget {
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
+        List<int> list = tx.getPickupNotification().dropOffOrg.orgName.codeUnits;
+        Uint8List bytes = Uint8List.fromList(list);
         return FadeTransition(
           opacity: animation,
           child: Transform(
@@ -273,10 +277,11 @@ class PickUpListView extends StatelessWidget {
                           children: <Widget>[
                             AspectRatio(
                               aspectRatio: 2,
-                              child: Image.asset(
+                              child: /*Image.asset(
                                 'assets/hotel/food.jpg',
                                 fit: BoxFit.cover,
-                              ),
+                              ),*/
+                              Image.memory(bytes,fit: BoxFit.cover),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
