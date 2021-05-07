@@ -34,7 +34,9 @@ public class GoogleApiClientTests {
     @Test
     public void estimateTime() throws Exception {
 
-        JsonObject json = this.googleApiClient.estimateTime(null,null);
+        Location start = new Location(30.25860595703125d,-97.74873352050781d);
+        Location end = new Location(30.25860595703125d,-97.74873352050781d);
+        JsonObject json = this.googleApiClient.estimateTime(start,end);
         JsonUtil.print(this.getClass(),json);
 
     }

@@ -5,6 +5,8 @@ import 'package:app/src/model/schedulePickupNotification.dart';
 class FoodRecoveryTransaction
 {
   SchedulePickupNotification schedulePickupNotification;
+  String pickupEstimate;
+  String dropOffEstimate;
 
   FoodRecoveryTransaction(SchedulePickupNotification schedulePickupNotification)
   {
@@ -21,12 +23,31 @@ class FoodRecoveryTransaction
     this.schedulePickupNotification = schedulePickupNotification;
   }
 
+  String getPickupEstimate()
+  {
+    return this.pickupEstimate;
+  }
+  setPickupEstimate(String pickupEstimate)
+  {
+    this.pickupEstimate = pickupEstimate;
+  }
+  String getDropOffEstimate()
+  {
+    return this.dropOffEstimate;
+  }
+  setDropOffEstimate(String dropOffEstimate)
+  {
+    this.dropOffEstimate = dropOffEstimate;
+  }
+
   FoodRecoveryTransaction.fromJson(Map<String, dynamic> json)
   {
     if(json["pickupNotification"] != null)
     {
       this.schedulePickupNotification = SchedulePickupNotification.fromJson(json["pickupNotification"]);
     }
+    setPickupEstimate(json["estimatedPickupTime"]);
+    setDropOffEstimate(json["estimatedDropOffTime"]);
   }
 
   Map<String, dynamic> toJson()
@@ -36,6 +57,8 @@ class FoodRecoveryTransaction
     {
       map["pickupNotification"] = this.schedulePickupNotification;
     }
+    map["estimatedPickupTime"] = this.getPickupEstimate();
+    map["estimatedDropOffTime"] = this.getDropOffEstimate();
     return map;
   }
 

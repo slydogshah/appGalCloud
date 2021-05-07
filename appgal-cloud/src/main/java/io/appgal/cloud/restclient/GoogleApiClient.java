@@ -75,13 +75,14 @@ public class GoogleApiClient {
             double startLatitude = 30.2698104d;
             double startLongitude = -97.75115579999999d;
 
-            String origins = startLatitude + "," + startLongitude;
+            String origins = start.getLatitude() + "," + start.getLongitude();
+            String destinations = end.getLatitude() + "," + end.getLongitude();
 
             //Create the Experiment
             //TODO
             HttpClient httpClient = http.getHttpClient();
             String url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins="+origins+"" +
-                    "&destinations="+origins+"&key=AIzaSyAgTAjlBc6KHvCARz6n6CCCt_Uob6-JB2I";
+                    "&destinations="+destinations+"&key=AIzaSyAgTAjlBc6KHvCARz6n6CCCt_Uob6-JB2I";
 
             HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder();
             HttpRequest httpRequest = httpRequestBuilder.uri(new URI(url))
@@ -97,7 +98,16 @@ public class GoogleApiClient {
             }
 
             JsonObject original = JsonParser.parseString(responseJson).getAsJsonObject();
-            return original;
+
+            JsonArray rows = original.get("rows").getAsJsonArray();
+            JsonArray elements = rows.get(0).getAsJsonObject().get("elements").getAsJsonArray();
+            JsonObject data = elements.get(0).getAsJsonObject();
+            JsonObject duration = data.get("duration").getAsJsonObject();
+
+
+            result = new JsonObject();
+            result.addProperty("duration",duration.get("text").getAsString());
+            return result;
         }
         catch(Exception e)
         {

@@ -9,6 +9,7 @@ import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.restclient.GoogleApiClient;
 import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 
@@ -46,6 +47,9 @@ public class NetworkOrchestrator {
 
     @Inject
     private MapUtils mapUtils;
+
+    @Inject
+    private GoogleApiClient googleApiClient;
 
     @PostConstruct
     public void start()
@@ -160,8 +164,8 @@ public class NetworkOrchestrator {
                 if (distance <= 5.0d) {
                     Location dropoff = tx.getPickUpNotification().getDropOffOrg().getLocation();
 
-                    int estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation,source);
-                    int estimatedDropOffTime = this.estimateTravelTime(source,dropoff);
+                    String estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation,source);
+                    String estimatedDropOffTime = this.estimateTravelTime(source,dropoff);
 
                     tx.setEstimatedPickupTime(estimatedPickupTime);
                     tx.setEstimatedDropOffTime(estimatedDropOffTime);
@@ -178,9 +182,9 @@ public class NetworkOrchestrator {
         }
     }
 
-    private int estimateTravelTime(Location start, Location end)
+    private String estimateTravelTime(Location start, Location end)
     {
-        return 10;
+        return this.googleApiClient.estimateTime(start,end).get("duration").getAsString();
     }
     //-------------------------
     public NotificationEngine getNotificationEngine()

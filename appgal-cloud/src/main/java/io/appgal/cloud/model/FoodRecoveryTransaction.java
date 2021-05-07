@@ -16,8 +16,8 @@ public class FoodRecoveryTransaction implements Serializable {
     private ScheduleDropOffNotification dropOffNotification;
     private FoodRunner foodRunner;
     private TransactionState transactionState = TransactionState.SUBMITTED;
-    private Integer estimatedPickupTime;
-    private Integer estimatedDropOffTime;
+    private String estimatedPickupTime;
+    private String estimatedDropOffTime;
 
     public FoodRecoveryTransaction()
     {
@@ -76,19 +76,19 @@ public class FoodRecoveryTransaction implements Serializable {
         this.id = id;
     }
 
-    public Integer getEstimatedPickupTime() {
+    public String getEstimatedPickupTime() {
         return estimatedPickupTime;
     }
 
-    public void setEstimatedPickupTime(Integer estimatedPickupTime) {
+    public void setEstimatedPickupTime(String estimatedPickupTime) {
         this.estimatedPickupTime = estimatedPickupTime;
     }
 
-    public Integer getEstimatedDropOffTime() {
+    public String getEstimatedDropOffTime() {
         return estimatedDropOffTime;
     }
 
-    public void setEstimatedDropOffTime(Integer estimatedDropOffTime) {
+    public void setEstimatedDropOffTime(String estimatedDropOffTime) {
         this.estimatedDropOffTime = estimatedDropOffTime;
     }
 
@@ -129,13 +129,13 @@ public class FoodRecoveryTransaction implements Serializable {
 
         if(jsonObject.has("estimatedPickupTime"))
         {
-            Integer estimatedPickupTime = jsonObject.get("estimatedPickupTime").getAsInt();
+            String estimatedPickupTime = jsonObject.get("estimatedPickupTime").getAsString();
             foodRecoveryTransaction.estimatedPickupTime = estimatedPickupTime;
         }
 
         if(jsonObject.has("estimatedDropOffTime"))
         {
-            Integer estimatedDropOffTime = jsonObject.get("estimatedDropOffTime").getAsInt();
+            String estimatedDropOffTime = jsonObject.get("estimatedDropOffTime").getAsString();
             foodRecoveryTransaction.estimatedDropOffTime = estimatedDropOffTime;
         }
 
