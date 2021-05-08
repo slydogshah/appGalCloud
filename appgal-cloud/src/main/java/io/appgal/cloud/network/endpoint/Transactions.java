@@ -10,13 +10,29 @@ import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.TransactionState;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
+import io.smallrye.mutiny.Uni;
+import org.apache.commons.io.IOUtils;
+import org.bson.internal.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -247,5 +263,107 @@ public class Transactions {
             error.addProperty("exception", e.getMessage());
             return Response.status(500).entity(error.toString()).build();
         }
+    }
+
+    @Path("/recovery/transaction/foodPic")
+    @GET
+    //@Produces({ "image/png", "image/jpg" })
+    @Produces({ MediaType.APPLICATION_OCTET_STREAM })
+    public Response getFoodPic(@QueryParam("id") String id)
+    {
+        try {
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(id);
+
+            String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                            getResource("img.png"),
+                    StandardCharsets.UTF_8);
+
+            //String foodPic = new String(Base64.decode(tx.getPickUpNotification().getFoodDetails().getFoodPic()),
+            //        StandardCharsets.UTF_8);
+
+            //Response.ResponseBuilder response = Response.ok(foodPic);
+            //Uni<Response> re = Uni.createFrom().item(response.build());
+            //return re;
+
+            /*String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                            getResource("img.png"),
+                    StandardCharsets.UTF_8);
+            return Response.ok(foodPic.getBytes(StandardCharsets.UTF_8)).build();*/
+
+            /*ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bos.write(foodPic.getBytes(StandardCharsets.UTF_8));
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            return Response.ok(bis).build();*/
+            /*final ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(Paths.get(
+                    "/Users/babyboy/mamasboy/appgallabs/jen/mumma/appGalCloud/appgal-cloud/src/main/resources/img.png"
+            )));
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentLength(inputStream.contentLength())
+                    .body(inputStream);*/
+
+            StreamingOutput output = out -> {
+                OutputStream oos = new ByteArrayOutputStream();
+                byte[] bytes = foodPic.getBytes(StandardCharsets.UTF_8);
+                System.out.println("DATA: "+bytes.length);
+                oos.write(bytes);
+                oos.flush();
+            };
+
+            System.out.println(output.toString());
+
+            Response.ResponseBuilder response = Response.ok(output);
+            return response.build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            //return Response.status(500).entity(error.toString()).build();
+            return null;
+        }
+    }
+
+    /**
+     * <p>Sends content of the file to client.</p>
+     *
+     * @param filePath a relative path to a file.
+     * @return a response to client.
+     * @throws Exception if an unexpected error occurs.
+     */
+    @GET
+    @Path("/tx/img")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public javax.ws.rs.core.Response downloadFile() throws Exception {
+        // TODO : ISV : Needs to identify the device and do a security check if device is granted access to specified
+        //  file
+        FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction("810a5711-5f2a-4f24-8883-229473c97eb4");
+        //6ae6fc3a-d355-4cf9-be8d-5f3540efd759
+
+        /*File file = new File("/Users/babyboy/mamasboy/appgallabs/jen/mumma/appGalCloud/appgal-cloud/src/main/resources/img.png");
+        if (!file.exists()) {
+            return javax.ws.rs.core.Response.status(404).build();
+        } else {
+            return javax.ws.rs.core.Response.ok( (StreamingOutput) output -> {
+                try {
+                    InputStream input = new FileInputStream( file );
+                    IOUtils.copy(input, output);
+                    output.flush();
+                } catch ( Exception e ) { e.printStackTrace(); }
+            } ).build();
+
+        }*/
+
+        //byte[] image = Base64.decode(tx.getPickUpNotification().getFoodDetails().getFoodPic());
+        return Response.ok( (StreamingOutput) output -> {
+            try {
+
+                InputStream input = Thread.currentThread().getContextClassLoader().
+                        getResource("foodpic.jpeg").openStream();
+                IOUtils.copy(input, output);
+                output.flush();
+            } catch ( Exception e ) { e.printStackTrace(); }
+        } ).build();
     }
 }

@@ -70,7 +70,7 @@ public class JenFlow {
 
         //Send a PickUpRequest
         String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                        getResource("automate/foodpic.png"),
+                        getResource("automate/foodpic.jpeg"),
                 StandardCharsets.UTF_8);
         String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);

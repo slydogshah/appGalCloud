@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:app/hotel_booking/hotel_app_theme.dart';
@@ -13,6 +14,7 @@ import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
@@ -241,11 +243,22 @@ class PickUpListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String foodPic = tx.getPickupNotification().foodPic;
+    print(foodPic);
+    Uint8List temp = base64.decode(foodPic);
+    String decoded = Utf8Decoder().convert(temp);
+    List<int> list = decoded.codeUnits;
+    Uint8List bytes = Uint8List.fromList(list);
+    Widget foodWidget(){
+      return
+        ClipRRect(
+            borderRadius: BorderRadius.circular(30.0),
+            child: Image.memory(bytes)
+        );
+    }
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
-        List<int> list = tx.getPickupNotification().dropOffOrg.orgName.codeUnits;
-        Uint8List bytes = Uint8List.fromList(list);
         return FadeTransition(
           opacity: animation,
           child: Transform(
@@ -277,11 +290,9 @@ class PickUpListView extends StatelessWidget {
                           children: <Widget>[
                             AspectRatio(
                               aspectRatio: 2,
-                              child: /*Image.asset(
-                                'assets/hotel/food.jpg',
-                                fit: BoxFit.cover,
-                              ),*/
-                              Image.memory(bytes,fit: BoxFit.cover),
+                              child:
+                              //Image.network('https://appgal-cloud-do2cwgwhja-rj.a.run.app/tx/tx/img'),
+                              Image.network('http://localhost/tx/tx/img'),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(

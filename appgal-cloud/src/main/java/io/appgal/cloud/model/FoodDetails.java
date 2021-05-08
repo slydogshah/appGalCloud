@@ -2,10 +2,12 @@ package io.appgal.cloud.model;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.bson.internal.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 public class FoodDetails implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(FoodDetails.class);
@@ -56,7 +58,8 @@ public class FoodDetails implements Serializable {
         }
         if(jsonObject.has("foodPic"))
         {
-            foodDetails.foodPic = jsonObject.get("foodPic").getAsString();
+            String pic = Base64.encode(jsonObject.get("foodPic").getAsString().getBytes(StandardCharsets.UTF_8));
+            foodDetails.foodPic = pic;
         }
         if(jsonObject.has("quantityInPounds"))
         {
