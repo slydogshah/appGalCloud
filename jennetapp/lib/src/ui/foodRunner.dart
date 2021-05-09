@@ -243,19 +243,6 @@ class PickUpListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String foodPic = tx.getPickupNotification().foodPic;
-    print(foodPic);
-    Uint8List temp = base64.decode(foodPic);
-    String decoded = Utf8Decoder().convert(temp);
-    List<int> list = decoded.codeUnits;
-    Uint8List bytes = Uint8List.fromList(list);
-    Widget foodWidget(){
-      return
-        ClipRRect(
-            borderRadius: BorderRadius.circular(30.0),
-            child: Image.memory(bytes)
-        );
-    }
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {

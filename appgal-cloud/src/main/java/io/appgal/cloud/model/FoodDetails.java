@@ -58,8 +58,7 @@ public class FoodDetails implements Serializable {
         }
         if(jsonObject.has("foodPic"))
         {
-            String pic = Base64.encode(jsonObject.get("foodPic").getAsString().getBytes(StandardCharsets.UTF_8));
-            foodDetails.foodPic = pic;
+            foodDetails.foodPic = jsonObject.get("foodPic").getAsString();
         }
         if(jsonObject.has("quantityInPounds"))
         {

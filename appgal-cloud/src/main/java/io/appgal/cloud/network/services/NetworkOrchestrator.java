@@ -170,6 +170,8 @@ public class NetworkOrchestrator {
                     tx.setEstimatedPickupTime(estimatedPickupTime);
                     tx.setEstimatedDropOffTime(estimatedDropOffTime);
 
+                    tx.getPickUpNotification().getFoodDetails().setFoodPic(null);
+
                     myTransactions.add(tx);
                 }
             }

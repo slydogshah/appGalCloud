@@ -7,6 +7,7 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.network.services.FoodRecoveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
+import org.bson.internal.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,8 +83,17 @@ public class NotificationReceiver {
             JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
             String orgId = json.get("orgId").getAsString();
 
+            JsonUtil.print(this.getClass(),json);
+
+            String pic = null;
+            if(json.has("foodPic") && !json.get("foodPic").isJsonNull())
+            {
+                pic = json.get("foodPic").getAsString();
+            }
+
             SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
             FoodDetails foodDetails = FoodDetails.parse(payload);
+            foodDetails.setFoodPic(pic);
             SchedulePickUpNotification notification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             notification.setFoodDetails(foodDetails);
             notification.setSourceOrg(sourceOrg);
@@ -107,10 +118,10 @@ public class NotificationReceiver {
     @Path("/schedulePickup")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response schedulePickUp(@RequestBody String jsonBody)
+    public Response schedulePickUp(@RequestBody String payload)
     {
         try {
-            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
             String pickupNotificationId = json.get("pickupNotificationId").getAsString();
             String dropOffOrgId = json.get("dropOffOrgId").getAsString();
 

@@ -142,6 +142,7 @@ public class Transactions {
 
 
             for(FoodRecoveryTransaction cour: transactions) {
+                cour.getPickUpNotification().getFoodDetails().setFoodPic(null);
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
                     pending.add(cour.toJson());
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
@@ -183,6 +184,7 @@ public class Transactions {
             JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryDropOffTransactions(orgId);
             for(FoodRecoveryTransaction cour: transactions) {
+                cour.getPickUpNotification().getFoodDetails().setFoodPic(null);
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
                     pending.add(cour.toJson());
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
@@ -250,10 +252,11 @@ public class Transactions {
     @Path("/recovery/transaction")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFoodRecoveryTransactioon(@QueryParam("id") String id)
+    public Response getFoodRecoveryTransaction(@QueryParam("id") String id)
     {
         try {
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(id);
+            tx.getPickUpNotification().getFoodDetails().setFoodPic(null);
             return Response.ok(tx.toString()).build();
         }
         catch(Exception e)
@@ -336,31 +339,17 @@ public class Transactions {
     @Path("/tx/img")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response downloadFile() throws Exception {
-        // TODO : ISV : Needs to identify the device and do a security check if device is granted access to specified
-        //  file
-        FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction("810a5711-5f2a-4f24-8883-229473c97eb4");
-        //6ae6fc3a-d355-4cf9-be8d-5f3540efd759
+        FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction("071e0704-00e4-4f98-9d7b-ac530dc69a44");
 
-        /*File file = new File("/Users/babyboy/mamasboy/appgallabs/jen/mumma/appGalCloud/appgal-cloud/src/main/resources/img.png");
-        if (!file.exists()) {
-            return javax.ws.rs.core.Response.status(404).build();
-        } else {
-            return javax.ws.rs.core.Response.ok( (StreamingOutput) output -> {
-                try {
-                    InputStream input = new FileInputStream( file );
-                    IOUtils.copy(input, output);
-                    output.flush();
-                } catch ( Exception e ) { e.printStackTrace(); }
-            } ).build();
+        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                        getResource("foodpic.jpeg"),
+                StandardCharsets.UTF_8);
 
-        }*/
-
-        //byte[] image = Base64.decode(tx.getPickUpNotification().getFoodDetails().getFoodPic());
+        byte[] image = foodPic.getBytes(StandardCharsets.UTF_8);
         return Response.ok( (StreamingOutput) output -> {
             try {
 
-                InputStream input = Thread.currentThread().getContextClassLoader().
-                        getResource("foodpic.jpeg").openStream();
+                InputStream input = Thread.currentThread().getContextClassLoader().getResource("img.png").openStream();
                 IOUtils.copy(input, output);
                 output.flush();
             } catch ( Exception e ) { e.printStackTrace(); }

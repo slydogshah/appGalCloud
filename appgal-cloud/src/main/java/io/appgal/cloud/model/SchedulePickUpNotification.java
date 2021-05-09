@@ -146,7 +146,7 @@ public class SchedulePickUpNotification extends ScheduleNotification
         }
         if(this.foodDetails != null)
         {
-            jsonObject.add("foodDetails", JsonParser.parseString(this.foodDetails.toString()));
+            jsonObject.add("foodDetails", this.foodDetails.toJson());
         }
 
         jsonObject.addProperty("notificationSent", this.isNotificationSent());
