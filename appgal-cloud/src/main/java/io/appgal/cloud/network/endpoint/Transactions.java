@@ -13,6 +13,7 @@ import io.appgal.cloud.util.JsonUtil;
 import io.smallrye.mutiny.Uni;
 import org.apache.commons.io.IOUtils;
 import org.bson.internal.Base64;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -305,11 +306,10 @@ public class Transactions {
                     .contentLength(inputStream.contentLength())
                     .body(inputStream);*/
 
+            byte[] image = new byte[0];
             StreamingOutput output = out -> {
                 OutputStream oos = new ByteArrayOutputStream();
-                byte[] bytes = foodPic.getBytes(StandardCharsets.UTF_8);
-                System.out.println("DATA: "+bytes.length);
-                oos.write(bytes);
+                oos.write(image);
                 oos.flush();
             };
 
@@ -328,29 +328,19 @@ public class Transactions {
         }
     }
 
-    /**
-     * <p>Sends content of the file to client.</p>
-     *
-     * @param filePath a relative path to a file.
-     * @return a response to client.
-     * @throws Exception if an unexpected error occurs.
-     */
     @GET
     @Path("/tx/img")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response downloadFile() throws Exception {
         FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction("071e0704-00e4-4f98-9d7b-ac530dc69a44");
 
-        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                        getResource("foodpic.jpeg"),
-                StandardCharsets.UTF_8);
-
-        byte[] image = foodPic.getBytes(StandardCharsets.UTF_8);
+        ObjectId image = this.mongoDBJsonStore.storeImage(null);
+        byte[] data = this.mongoDBJsonStore.getImage(image);
         return Response.ok( (StreamingOutput) output -> {
             try {
-
-                InputStream input = Thread.currentThread().getContextClassLoader().getResource("img.png").openStream();
-                IOUtils.copy(input, output);
+                logger.info(data.length+"");
+                InputStream input = new ByteArrayInputStream(data);
+                IOUtils.copy(input,output);
                 output.flush();
             } catch ( Exception e ) { e.printStackTrace(); }
         } ).build();

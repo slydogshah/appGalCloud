@@ -7,7 +7,10 @@ import io.appgal.cloud.model.FoodRunner;
 import com.google.gson.JsonObject;
 
 import com.mongodb.client.*;
+import com.mongodb.client.gridfs.*;
 
+import org.apache.commons.io.IOUtils;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -281,5 +285,67 @@ public class MongoDBJsonStore {
     public List<FoodRecoveryTransaction> getFoodRecoveryDropOffHistory(String orgId)
     {
         return this.foodRecoveryStore.getFoodRecoveryDropOffHistory(this.mongoDatabase, orgId);
+    }
+
+    public ObjectId storeImage(String imageData)
+    {
+        GridFSUploadStream uploadStream = null;
+        GridFSDownloadStream downloadStream = null;
+        try {
+            GridFSBucket bucket = GridFSBuckets.create(
+                    this.mongoDatabase,
+                    "images");
+            uploadStream = bucket.openUploadStream(UUID.randomUUID().toString());
+
+            byte[] data = IOUtils.toByteArray(Thread.currentThread().getContextClassLoader().
+                    getResource("foodpic.jpeg"));
+            uploadStream.write(data) ;
+            uploadStream.close();
+
+            ObjectId fileid = uploadStream.getObjectId() ;
+
+            return fileid;
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+        finally
+        {
+            if(uploadStream != null)
+            {
+                uploadStream.close();
+            }
+        }
+    }
+
+    public byte[] getImage(ObjectId fileid)
+    {
+        GridFSDownloadStream downloadStream = null;
+        try
+        {
+            GridFSBucket bucket = GridFSBuckets.create(
+                    this.mongoDatabase,
+                    "images");
+            downloadStream = bucket.openDownloadStream(fileid);
+            int fileLength = (int) downloadStream.getGridFSFile().getLength();
+            byte[] bytesToWriteTo = new byte[fileLength];
+            downloadStream.read(bytesToWriteTo);
+
+            return bytesToWriteTo;
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+        finally
+        {
+            if(downloadStream != null)
+            {
+                downloadStream.close();
+            }
+        }
     }
 }
