@@ -57,6 +57,21 @@ public class JenFlow {
     }
 
     @Test
+    public void testImages() throws Exception
+    {
+        this.halfFlow();
+        SourceOrg pickup = this.mongoDBJsonStore.getSourceOrg("pickup.io");
+        SourceOrg dropOff = this.mongoDBJsonStore.getSourceOrg("dropoff.io");
+
+        //Send a PickUpRequest
+        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                        getResource("automate/foodpic.jpeg"),
+                StandardCharsets.UTF_8);
+        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
+        this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
+    }
+
+    @Test
     public void halfFlow() throws Exception
     {
         //Register a Pickup Org
@@ -70,7 +85,7 @@ public class JenFlow {
 
         //Send a PickUpRequest
         String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                        getResource("automate/foodpic.jpeg"),
+                        getResource("encodedImage"),
                 StandardCharsets.UTF_8);
         String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);

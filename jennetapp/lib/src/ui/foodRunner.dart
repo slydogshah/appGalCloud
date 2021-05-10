@@ -279,7 +279,7 @@ class PickUpListView extends StatelessWidget {
                               aspectRatio: 2,
                               child:
                               //Image.network('https://appgal-cloud-do2cwgwhja-rj.a.run.app/tx/tx/img'),
-                              Image.network('http://localhost/tx/tx/img'),
+                              Image.network("http://localhost/tx/recovery/transaction/foodPic/?id="+tx.getId()),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
