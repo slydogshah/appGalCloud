@@ -395,7 +395,7 @@ public class MongoDBJsonStoreTests extends BaseTest {
         assertFalse(list.isEmpty());
     }
 
-    @Test
+    /*@Test
     public void storeImage() throws Exception
     {
         ObjectId imageId = this.mongoDBJsonStore.storeImage(
@@ -408,5 +408,5 @@ public class MongoDBJsonStoreTests extends BaseTest {
         ObjectId newId = new ObjectId(imageId.toHexString());
         byte[] stored = this.mongoDBJsonStore.getImage(newId);
         logger.info(stored.length+"");
-    }
+    }*/
 }

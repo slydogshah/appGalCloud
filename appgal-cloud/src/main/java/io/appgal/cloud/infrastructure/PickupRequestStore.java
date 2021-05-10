@@ -8,6 +8,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.GridFSUploadStream;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.util.JsonUtil;
@@ -242,6 +243,35 @@ public class PickupRequestStore {
             return JsonParser.parseString(documentJson).getAsJsonObject();
         }
         return null;
+    }
+
+    public byte[] getImage(MongoDatabase mongoDatabase, ObjectId fileId)
+    {
+        GridFSDownloadStream downloadStream = null;
+        try
+        {
+            GridFSBucket bucket = GridFSBuckets.create(
+                    mongoDatabase,
+                    "images");
+            downloadStream = bucket.openDownloadStream(fileId);
+            int fileLength = (int) downloadStream.getGridFSFile().getLength();
+            byte[] bytesToWriteTo = new byte[fileLength];
+            downloadStream.read(bytesToWriteTo);
+
+            return bytesToWriteTo;
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+        finally
+        {
+            if(downloadStream != null)
+            {
+                downloadStream.close();
+            }
+        }
     }
 
     private ObjectId storeImage(MongoDatabase mongoDatabase, InputStream imageStream)

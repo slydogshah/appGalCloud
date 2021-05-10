@@ -6,6 +6,7 @@ import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -243,6 +244,7 @@ class PickUpListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/transaction/foodPic/?id="+tx.getId();
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -278,8 +280,7 @@ class PickUpListView extends StatelessWidget {
                             AspectRatio(
                               aspectRatio: 2,
                               child:
-                              //Image.network('https://appgal-cloud-do2cwgwhja-rj.a.run.app/tx/tx/img'),
-                              Image.network("http://localhost/tx/recovery/transaction/foodPic/?id="+tx.getId()),
+                              Image.network(remoteUrl),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(

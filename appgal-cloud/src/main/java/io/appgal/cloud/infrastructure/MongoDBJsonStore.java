@@ -293,65 +293,8 @@ public class MongoDBJsonStore {
         return this.foodRecoveryStore.getFoodRecoveryDropOffHistory(this.mongoDatabase, orgId);
     }
 
-    public ObjectId storeImage(InputStream imageStream)
-    {
-        GridFSUploadStream uploadStream = null;
-        try {
-            GridFSBucket bucket = GridFSBuckets.create(
-                    this.mongoDatabase,
-                    "images");
-            uploadStream = bucket.openUploadStream(UUID.randomUUID().toString());
-
-            byte[] data = IOUtils.toByteArray(imageStream);
-            uploadStream.write(data) ;
-
-
-            uploadStream.close();
-
-            ObjectId fileid = uploadStream.getObjectId() ;
-
-            return fileid;
-        }
-        catch (Exception e)
-        {
-            logger.error(e.getMessage(),e);
-            throw new RuntimeException(e);
-        }
-        finally
-        {
-            if(uploadStream != null)
-            {
-                uploadStream.close();
-            }
-        }
-    }
-
     public byte[] getImage(ObjectId fileId)
     {
-        GridFSDownloadStream downloadStream = null;
-        try
-        {
-            GridFSBucket bucket = GridFSBuckets.create(
-                    this.mongoDatabase,
-                    "images");
-            downloadStream = bucket.openDownloadStream(fileId);
-            int fileLength = (int) downloadStream.getGridFSFile().getLength();
-            byte[] bytesToWriteTo = new byte[fileLength];
-            downloadStream.read(bytesToWriteTo);
-
-            return bytesToWriteTo;
-        }
-        catch (Exception e)
-        {
-            logger.error(e.getMessage(),e);
-            throw new RuntimeException(e);
-        }
-        finally
-        {
-            if(downloadStream != null)
-            {
-                downloadStream.close();
-            }
-        }
+        return this.pickupRequestStore.getImage(this.mongoDatabase,fileId);
     }
 }
