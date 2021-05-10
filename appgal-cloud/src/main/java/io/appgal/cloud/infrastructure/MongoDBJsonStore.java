@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.*;
@@ -241,6 +242,11 @@ public class MongoDBJsonStore {
         this.pickupRequestStore.storeScheduledPickUpNotification(schedulePickUpNotification);
     }
 
+    public SchedulePickUpNotification storeScheduledPickUpNotification(String foodPic,SchedulePickUpNotification schedulePickUpNotification)
+    {
+        return this.pickupRequestStore.storeScheduledPickUpNotification(foodPic,schedulePickUpNotification);
+    }
+
     public void updateScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
         this.pickupRequestStore.updateScheduledPickUpNotification(schedulePickUpNotification);
@@ -254,7 +260,7 @@ public class MongoDBJsonStore {
     //FoodRecovery
     public FoodRecoveryTransaction storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        return this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase,foodRecoveryTransaction);
+        return this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase, foodRecoveryTransaction);
     }
 
     public FoodRecoveryTransaction getFoodRecoveryTransaction(String id)
@@ -287,19 +293,19 @@ public class MongoDBJsonStore {
         return this.foodRecoveryStore.getFoodRecoveryDropOffHistory(this.mongoDatabase, orgId);
     }
 
-    public ObjectId storeImage(String imageData)
+    public ObjectId storeImage(InputStream imageStream)
     {
         GridFSUploadStream uploadStream = null;
-        GridFSDownloadStream downloadStream = null;
         try {
             GridFSBucket bucket = GridFSBuckets.create(
                     this.mongoDatabase,
                     "images");
             uploadStream = bucket.openUploadStream(UUID.randomUUID().toString());
 
-            byte[] data = IOUtils.toByteArray(Thread.currentThread().getContextClassLoader().
-                    getResource("foodpic.jpeg"));
+            byte[] data = IOUtils.toByteArray(imageStream);
             uploadStream.write(data) ;
+
+
             uploadStream.close();
 
             ObjectId fileid = uploadStream.getObjectId() ;
@@ -320,7 +326,7 @@ public class MongoDBJsonStore {
         }
     }
 
-    public byte[] getImage(ObjectId fileid)
+    public byte[] getImage(ObjectId fileId)
     {
         GridFSDownloadStream downloadStream = null;
         try
@@ -328,7 +334,7 @@ public class MongoDBJsonStore {
             GridFSBucket bucket = GridFSBuckets.create(
                     this.mongoDatabase,
                     "images");
-            downloadStream = bucket.openDownloadStream(fileid);
+            downloadStream = bucket.openDownloadStream(fileId);
             int fileLength = (int) downloadStream.getGridFSFile().getLength();
             byte[] bytesToWriteTo = new byte[fileLength];
             downloadStream.read(bytesToWriteTo);

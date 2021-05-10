@@ -115,9 +115,14 @@ public class NetworkOrchestrator {
         return sourceOrgs;
     }
     //--------FoodRunner Matching Process-----------------------------------------------
+    public void startPickUpProcess(String pic,SchedulePickUpNotification notification)
+    {
+        this.mongoDBJsonStore.storeScheduledPickUpNotification(pic,notification);
+    }
+
     public void schedulePickUp(SchedulePickUpNotification notification)
     {
-        this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
+        this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
         this.requestPipeline.add(notification);
 
         this.foodRecoveryOrchestrator.notifyForPickUp(notification);
@@ -170,8 +175,6 @@ public class NetworkOrchestrator {
                     tx.setEstimatedPickupTime(estimatedPickupTime);
                     tx.setEstimatedDropOffTime(estimatedDropOffTime);
 
-                    tx.getPickUpNotification().getFoodDetails().setFoodPic(null);
-
                     myTransactions.add(tx);
                 }
             }
@@ -180,6 +183,7 @@ public class NetworkOrchestrator {
         }
         catch(Exception e)
         {
+            logger.error(e.getMessage(),e);
             return myTransactions;
         }
     }

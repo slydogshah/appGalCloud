@@ -101,7 +101,10 @@ public class JenFlow {
         FoodRunner foodRunner = this.registerFoodRunner();
 
         //Send a PickUpRequest
-        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),"");
+        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                        getResource("automate/foodpic.jpeg"),
+                StandardCharsets.UTF_8);
+        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
 
         //Notify a FoodRunner...does not pull my transactions

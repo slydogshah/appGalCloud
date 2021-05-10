@@ -143,7 +143,6 @@ public class Transactions {
 
 
             for(FoodRecoveryTransaction cour: transactions) {
-                cour.getPickUpNotification().getFoodDetails().setFoodPic(null);
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
                     pending.add(cour.toJson());
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
@@ -185,7 +184,6 @@ public class Transactions {
             JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryDropOffTransactions(orgId);
             for(FoodRecoveryTransaction cour: transactions) {
-                cour.getPickUpNotification().getFoodDetails().setFoodPic(null);
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
                     pending.add(cour.toJson());
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
@@ -257,7 +255,6 @@ public class Transactions {
     {
         try {
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(id);
-            tx.getPickUpNotification().getFoodDetails().setFoodPic(null);
             return Response.ok(tx.toString()).build();
         }
         catch(Exception e)
@@ -271,60 +268,28 @@ public class Transactions {
 
     @Path("/recovery/transaction/foodPic")
     @GET
-    //@Produces({ "image/png", "image/jpg" })
     @Produces({ MediaType.APPLICATION_OCTET_STREAM })
     public Response getFoodPic(@QueryParam("id") String id)
     {
         try {
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(id);
-
-            String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                            getResource("img.png"),
-                    StandardCharsets.UTF_8);
-
-            //String foodPic = new String(Base64.decode(tx.getPickUpNotification().getFoodDetails().getFoodPic()),
-            //        StandardCharsets.UTF_8);
-
-            //Response.ResponseBuilder response = Response.ok(foodPic);
-            //Uni<Response> re = Uni.createFrom().item(response.build());
-            //return re;
-
-            /*String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                            getResource("img.png"),
-                    StandardCharsets.UTF_8);
-            return Response.ok(foodPic.getBytes(StandardCharsets.UTF_8)).build();*/
-
-            /*ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bos.write(foodPic.getBytes(StandardCharsets.UTF_8));
-            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-            return Response.ok(bis).build();*/
-            /*final ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(Paths.get(
-                    "/Users/babyboy/mamasboy/appgallabs/jen/mumma/appGalCloud/appgal-cloud/src/main/resources/img.png"
-            )));
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .contentLength(inputStream.contentLength())
-                    .body(inputStream);*/
-
-            byte[] image = new byte[0];
-            StreamingOutput output = out -> {
-                OutputStream oos = new ByteArrayOutputStream();
-                oos.write(image);
-                oos.flush();
-            };
-
-            System.out.println(output.toString());
-
-            Response.ResponseBuilder response = Response.ok(output);
-            return response.build();
+            ObjectId imageId = new ObjectId(tx.getPickUpNotification().getFoodDetails().getFoodPic());
+            byte[] data = this.mongoDBJsonStore.getImage(imageId);
+            return Response.ok( (StreamingOutput) output -> {
+                try {
+                    logger.info(data.length+"");
+                    InputStream input = new ByteArrayInputStream(data);
+                    IOUtils.copy(input,output);
+                    output.flush();
+                } catch ( Exception e ) { e.printStackTrace(); }
+            } ).build();
         }
         catch(Exception e)
         {
             logger.error(e.getMessage(), e);
             JsonObject error = new JsonObject();
             error.addProperty("exception", e.getMessage());
-            //return Response.status(500).entity(error.toString()).build();
-            return null;
+            return Response.status(500).entity(error.toString()).build();
         }
     }
 
@@ -332,10 +297,10 @@ public class Transactions {
     @Path("/tx/img")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response downloadFile() throws Exception {
-        FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction("071e0704-00e4-4f98-9d7b-ac530dc69a44");
+        FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction("2a9029d9-41a5-4434-91eb-962afc5dd576");
 
-        ObjectId image = this.mongoDBJsonStore.storeImage(null);
-        byte[] data = this.mongoDBJsonStore.getImage(image);
+        ObjectId imageId = new ObjectId(tx.getPickUpNotification().getFoodDetails().getFoodPic());
+        byte[] data = this.mongoDBJsonStore.getImage(imageId);
         return Response.ok( (StreamingOutput) output -> {
             try {
                 logger.info(data.length+"");

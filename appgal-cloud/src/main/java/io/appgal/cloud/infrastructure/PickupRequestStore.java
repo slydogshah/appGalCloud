@@ -6,17 +6,27 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSUploadStream;
+import io.appgal.cloud.model.FoodRecoveryTransaction;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.util.JsonUtil;
+import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
 public class PickupRequestStore {
@@ -128,6 +138,34 @@ public class PickupRequestStore {
         collection.insertOne(doc);
     }
 
+    public SchedulePickUpNotification storeScheduledPickUpNotification(String foodPic, SchedulePickUpNotification schedulePickUpNotification)
+    {
+        MongoDatabase database = this.mongoDBJsonStore.getMongoDatabase();
+
+        MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
+
+        if(foodPic != null) {
+            ObjectId imageId = this.storeImage(database, new ByteArrayInputStream(foodPic.getBytes(StandardCharsets.UTF_8)));
+            schedulePickUpNotification.getFoodDetails().setFoodPic(imageId.toHexString());
+        }
+
+        Document doc = Document.parse(schedulePickUpNotification.toString());
+        collection.insertOne(doc);
+
+        String queryJson = "{\"id\":\""+schedulePickUpNotification.getId()+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            return SchedulePickUpNotification.parse(documentJson);
+        }
+
+        return null;
+    }
+
     public void updateScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
         MongoDatabase database = this.mongoDBJsonStore.getMongoDatabase();
@@ -163,5 +201,38 @@ public class PickupRequestStore {
             return JsonParser.parseString(documentJson).getAsJsonObject();
         }
         return null;
+    }
+
+    private ObjectId storeImage(MongoDatabase mongoDatabase, InputStream imageStream)
+    {
+        GridFSUploadStream uploadStream = null;
+        try {
+            GridFSBucket bucket = GridFSBuckets.create(
+                    mongoDatabase,
+                    "images");
+            uploadStream = bucket.openUploadStream(UUID.randomUUID().toString());
+
+            byte[] data = IOUtils.toByteArray(imageStream);
+            uploadStream.write(data) ;
+
+
+            uploadStream.close();
+
+            ObjectId fileid = uploadStream.getObjectId() ;
+
+            return fileid;
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+        finally
+        {
+            if(uploadStream != null)
+            {
+                uploadStream.close();
+            }
+        }
     }
 }

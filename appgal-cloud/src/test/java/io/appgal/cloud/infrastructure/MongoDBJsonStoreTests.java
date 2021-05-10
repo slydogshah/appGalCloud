@@ -398,8 +398,15 @@ public class MongoDBJsonStoreTests extends BaseTest {
     @Test
     public void storeImage() throws Exception
     {
-        ObjectId image = this.mongoDBJsonStore.storeImage(null);
-        byte[] data = this.mongoDBJsonStore.getImage(image);
+        ObjectId imageId = this.mongoDBJsonStore.storeImage(
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("img.png")
+        );
+        byte[] data = this.mongoDBJsonStore.getImage(imageId);
         logger.info(data.length+"");
+        logger.info("ObjectId: "+imageId.toHexString());
+
+        ObjectId newId = new ObjectId(imageId.toHexString());
+        byte[] stored = this.mongoDBJsonStore.getImage(newId);
+        logger.info(stored.length+"");
     }
 }

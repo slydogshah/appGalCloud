@@ -83,8 +83,6 @@ public class NotificationReceiver {
             JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
             String orgId = json.get("orgId").getAsString();
 
-            JsonUtil.print(this.getClass(),json);
-
             String pic = null;
             if(json.has("foodPic") && !json.get("foodPic").isJsonNull())
             {
@@ -93,11 +91,10 @@ public class NotificationReceiver {
 
             SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
             FoodDetails foodDetails = FoodDetails.parse(payload);
-            foodDetails.setFoodPic(pic);
             SchedulePickUpNotification notification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             notification.setFoodDetails(foodDetails);
             notification.setSourceOrg(sourceOrg);
-            this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
+            this.networkOrchestrator.startPickUpProcess(pic,notification);
 
             List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
 
