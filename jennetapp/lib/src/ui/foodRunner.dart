@@ -448,7 +448,7 @@ class PickUpListView extends StatelessWidget {
           f2.then((statusCode) {
             if (statusCode == 200) {
               LocationUpdater.getLocation();
-              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(
+              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
                   tx.getPickupNotification().getDropOffOrg());
               embeddedNavigation.start();
             }
