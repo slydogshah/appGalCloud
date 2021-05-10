@@ -65,7 +65,7 @@ public class JenFlow {
 
         //Send a PickUpRequest
         String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                        getResource("automate/foodpic.jpeg"),
+                        getResource("encodedImage"),
                 StandardCharsets.UTF_8);
         String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
@@ -117,7 +117,7 @@ public class JenFlow {
 
         //Send a PickUpRequest
         String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                        getResource("automate/foodpic.jpeg"),
+                        getResource("encodedImage"),
                 StandardCharsets.UTF_8);
         String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
         this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);

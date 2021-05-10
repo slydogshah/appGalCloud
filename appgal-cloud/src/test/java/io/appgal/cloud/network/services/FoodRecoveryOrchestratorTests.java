@@ -72,6 +72,7 @@ public class FoodRecoveryOrchestratorTests {
             JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
+            this.networkOrchestrator.startPickUpProcess(null, schedulePickUpNotification);
             this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
         }
     }

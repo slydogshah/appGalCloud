@@ -24,6 +24,8 @@ import javax.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @ApplicationScoped
@@ -68,12 +70,16 @@ public class PickupRequestStore {
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
+        OffsetDateTime tomorrow = OffsetDateTime.now(ZoneOffset.UTC).plusDays(1);
         while(cursor.hasNext())
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(documentJson);
-            notifications.add(notification);
+
+            if(notification.getStart().toEpochSecond() < tomorrow.toEpochSecond()) {
+                notifications.add(notification);
+            }
         }
 
         return notifications;
