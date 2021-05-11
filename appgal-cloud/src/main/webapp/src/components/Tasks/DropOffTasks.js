@@ -37,6 +37,7 @@ export default function DropOffTasks(props) {
   const tableCellClasses = classnames(classes.tableCell, {
     [classes.tableCellRTL]: rtlActive
   });
+  if(actions.length > 0){
   return (
               <Table className={classes.table}>
                 <TableBody>
@@ -69,7 +70,7 @@ export default function DropOffTasks(props) {
                       <TableCell className={classes.tableActions}>
                         <Tooltip
                           id="tooltip-top-start"
-                          title="Schedule a Pickup"
+                          title="Indicate Food was Delivered"
                           placement="top"
                           classes={{ tooltip: classes.tooltip }}
                         >
@@ -80,7 +81,42 @@ export default function DropOffTasks(props) {
                   ))}
                 </TableBody>
               </Table>
-            );
+            )
+     }
+     else{
+     return (
+        <Table className={classes.table}>
+                        <TableBody>
+                          {tasksIndexes.map(value => (
+                            <TableRow key={value} className={classes.tableRow}>
+                              <TableCell className={tableCellClasses}>{tasks[value]}</TableCell>
+                              <TableCell className={tableCellClasses}><div/></TableCell>
+                              <TableCell className={tableCellClasses}><div/></TableCell>
+                              <TableCell className={tableCellClasses}><div/></TableCell>
+                              <TableCell className={tableCellClasses}><div/></TableCell>
+                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    )
+     }
 }
 
 DropOffTasks.propTypes = {

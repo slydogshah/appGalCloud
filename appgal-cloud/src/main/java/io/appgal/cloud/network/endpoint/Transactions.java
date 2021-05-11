@@ -201,6 +201,7 @@ public class Transactions {
                 historyExists = true;
             }
             result.addProperty("historyExists",historyExists);
+            result.add("history",JsonParser.parseString(history.toString()).getAsJsonArray());
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)
