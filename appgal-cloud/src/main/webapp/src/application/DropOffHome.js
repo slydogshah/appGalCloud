@@ -39,16 +39,33 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import WidgetsDropdown from './WidgetsDropdown'
-import DropOffDash from './DropOffDash'
 import Modals from '../views/notifications/modals/Modals'
 import ChartLineSimple from '../views/charts/ChartLineSimple'
 import ChartBarSimple from '../views/charts/ChartBarSimple'
 import { AppContext,store} from "./AppContext"
-
+import GridItem from "../components/Grid/GridItem.js";
+import GridContainer from "../components/Grid/GridContainer.js";
+import CustomTabs from "../components/CustomTabs/CustomTabs.js";
+import DropOffTasks from "../components/Tasks/DropOffTasks.js";
+import BugReport from "@material-ui/icons/BugReport";
 
 const WaitOnData = ({state, handleHistory}) => {
     if (state.data === null) {
       return <p>Loading...</p>;
+    }
+
+    const inProgress = state.data.pending;
+    var array = [];
+    var tasksIndexes = [];
+    for (const [index, value] of inProgress.entries()) {
+        const org = value.pickupNotification.sourceOrg.orgName;
+        array.push(org);
+        tasksIndexes.push(index);
+    }
+    var actionsArray = [];
+    for (var i=0;i<1;i++) {
+            const actionRow = ["action"];
+            actionsArray.push(actionRow);
     }
     return (
       <>
@@ -58,7 +75,7 @@ const WaitOnData = ({state, handleHistory}) => {
                 <CCardGroup className="mb-4">
                        <CWidgetDropdown
                                  color="gradient-primary"
-                                 header={state.data.inProgress.length}
+                                 header={state.data.pending.length}
                                  text="Deliveries In-Progress"
                                  footerSlot={
                                    <ChartLineSimple
@@ -72,21 +89,34 @@ const WaitOnData = ({state, handleHistory}) => {
                                    />
                                  }
                                >
-                             <CDropdown>
-                               <CDropdownToggle color="transparent">
-                                 <CIcon name="cil-settings"/>
-                               </CDropdownToggle>
-                               {state.data.historyExists && (
-                                   <CDropdownItem onClick={handleHistory}>History</CDropdownItem>
-                               )}
-                             </CDropdown>
                            </CWidgetDropdown>
                 </CCardGroup>
                 </CCol>
                 </CRow>
                 <CRow>
                     <CCol>
-                        <DropOffDash inProgress={state.data.inProgress}/>
+                        <GridContainer>
+                                                     <GridItem xs={12} sm={12} md={6}>
+                                                       <CustomTabs
+                                                         title="Delivery Status"
+                                                         headerColor="primary"
+                                                         tabs={[
+                                                           {
+                                                             tabName: "In-Progress",
+                                                             tabIcon: BugReport,
+                                                             tabContent: (
+                                                               <DropOffTasks
+                                                                 checkedIndexes={[0]}
+                                                                 tasksIndexes={tasksIndexes}
+                                                                 tasks={array}
+                                                                 actions={inProgress}
+                                                               />
+                                                             )
+                                                           },
+                                                         ]}
+                                                       />
+                                                     </GridItem>
+                                                 </GridContainer>
                     </CCol>
                 </CRow>
                 </>
@@ -100,7 +130,6 @@ class DropOffHome extends React.Component {
       super(props);
       this.state = {data: null};
       this.handleHistory = this.handleHistory.bind(this);
-      this.renderMyData();
   }
 
   renderMyData(){
@@ -128,8 +157,9 @@ class DropOffHome extends React.Component {
   }
 
   render() {
+      this.renderMyData();
       return (
-          <div>
+          <div id="inProgress">
                 <WaitOnData state={this.state} handleHistory={this.handleHistory}/>
           </div>
       );

@@ -84,11 +84,13 @@ public class JenFlow {
         FoodRunner foodRunner = this.registerFoodRunner();
 
         //Send a PickUpRequest
-        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                        getResource("encodedImage"),
-                StandardCharsets.UTF_8);
-        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
-        this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
+        for(int i=0; i<3; i++) {
+            String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                            getResource("encodedImage"),
+                    StandardCharsets.UTF_8);
+            String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(), FoodTypes.VEG.name(), foodPic);
+            this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
+        }
 
         //Notify a FoodRunner...does not pull my transactions
         JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
