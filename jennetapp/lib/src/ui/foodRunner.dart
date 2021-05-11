@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +15,7 @@ import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
@@ -239,6 +244,7 @@ class PickUpListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/transaction/foodPic/?id="+tx.getId();
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -273,10 +279,8 @@ class PickUpListView extends StatelessWidget {
                           children: <Widget>[
                             AspectRatio(
                               aspectRatio: 2,
-                              child: Image.asset(
-                                'assets/hotel/food.jpg',
-                                fit: BoxFit.cover,
-                              ),
+                              child:
+                              Image.network(remoteUrl),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
@@ -438,19 +442,40 @@ class PickUpListView extends StatelessWidget {
     Future<int> future = client.accept(email, dropOffOrgId, tx);
     future.then((statusCode) {
       if (statusCode == 200) {
-        LocationUpdater.getLocation();
-        EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(
-            tx.getPickupNotification().getDropOffOrg());
-        embeddedNavigation.start();
+        Future<int> f = client.scheduleDropOff(tx);
+        f.then((statusCode) {
+          Future<int> f2 = client.notifyDelivery(tx);
+          f2.then((statusCode) {
+            if (statusCode == 200) {
+              LocationUpdater.getLocation();
+              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+                  tx.getPickupNotification().getDropOffOrg());
+              embeddedNavigation.start();
+            }
+            else
+            {
+                //TODO
+                print("STATUS_CODE: $statusCode");
+            }
+          });
+        });
       }
       else {
         //TODO
+        print("STATUS_CODE: $statusCode");
       }
     });
   }
 }
 
 /*
+
+
+
+
+
+
+
 ListView.builder(
                             itemCount: recoveryTxs.length,
                             padding: const EdgeInsets.only(top: 8),

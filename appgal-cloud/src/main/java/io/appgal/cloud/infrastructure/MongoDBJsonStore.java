@@ -7,7 +7,10 @@ import io.appgal.cloud.model.FoodRunner;
 import com.google.gson.JsonObject;
 
 import com.mongodb.client.*;
+import com.mongodb.client.gridfs.*;
 
+import org.apache.commons.io.IOUtils;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +20,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -66,12 +71,6 @@ public class MongoDBJsonStore {
     @PostConstruct
     public void start()
     {
-        //System.out.println("string "+this.mongodbConnectionString);
-        //System.out.println("host: "+this.mongodbHost);
-        //System.out.println("port "+this.mongodbPort);
-        //System.out.println("db "+this.database);
-        //System.out.println("pass "+this.password);
-
         String connectionString;
         if(this.mongodbHost.equals("localhost"))
         {
@@ -81,10 +80,6 @@ public class MongoDBJsonStore {
         {
             connectionString = MessageFormat.format(this.mongodbConnectionString,this.password,this.mongodbHost,this.database);
         }
-
-        logger.info("************");
-        logger.info(connectionString);
-        logger.info("************");
         this.mongoClient = MongoClients.create(connectionString);
         this.mongoDatabase = mongoClient.getDatabase(this.database);
 
@@ -247,6 +242,11 @@ public class MongoDBJsonStore {
         this.pickupRequestStore.storeScheduledPickUpNotification(schedulePickUpNotification);
     }
 
+    public SchedulePickUpNotification storeScheduledPickUpNotification(String foodPic,SchedulePickUpNotification schedulePickUpNotification)
+    {
+        return this.pickupRequestStore.storeScheduledPickUpNotification(foodPic,schedulePickUpNotification);
+    }
+
     public void updateScheduledPickUpNotification(SchedulePickUpNotification schedulePickUpNotification)
     {
         this.pickupRequestStore.updateScheduledPickUpNotification(schedulePickUpNotification);
@@ -258,9 +258,14 @@ public class MongoDBJsonStore {
     }
 
     //FoodRecovery
-    public void storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
+    public FoodRecoveryTransaction storeFoodRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase,foodRecoveryTransaction);
+        return this.foodRecoveryStore.storeFoodRecoveryTransaction(this.mongoDatabase, foodRecoveryTransaction);
+    }
+
+    public FoodRecoveryTransaction getFoodRecoveryTransaction(String id)
+    {
+        return this.foodRecoveryStore.getFoodRecoveryTransaction(this.mongoDatabase,id);
     }
 
     public List<FoodRecoveryTransaction> getFoodRecoveryTransactions(String orgId)
@@ -286,5 +291,10 @@ public class MongoDBJsonStore {
     public List<FoodRecoveryTransaction> getFoodRecoveryDropOffHistory(String orgId)
     {
         return this.foodRecoveryStore.getFoodRecoveryDropOffHistory(this.mongoDatabase, orgId);
+    }
+
+    public byte[] getImage(ObjectId fileId)
+    {
+        return this.pickupRequestStore.getImage(this.mongoDatabase,fileId);
     }
 }

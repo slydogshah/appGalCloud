@@ -28,6 +28,7 @@ public class MockData {
         Location location = new Location(0.0d, 0.0d);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
         schedulePickUpNotification.setFoodRunner(bugsBunny);
+        schedulePickUpNotification.setDropOffOrg(church);
 
         FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,dropOffNotification, bugsBunny);
         TransactionState txState = TransactionState.INPROGRESS;

@@ -58,6 +58,10 @@
       <artifactId>quarkus-resteasy-jsonb</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxb-provider</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
       <version>${quarkus.platform.version}</version>
@@ -80,6 +84,9 @@
       <artifactId>mongodb-driver-sync</artifactId>
       <version>4.1.0</version>
     </dependency>
+
+
+
     <dependency>
       <groupId>org.locationtech.spatial4j</groupId>
       <artifactId>spatial4j</artifactId>

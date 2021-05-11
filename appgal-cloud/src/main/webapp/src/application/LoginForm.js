@@ -153,10 +153,8 @@ class LoginForm extends React.Component {
       {
         ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
         ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('mobileRequired'));
         ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
         ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('phoneInvalid'));
         ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
         const required = (
                          <CAlert
@@ -176,11 +174,6 @@ class LoginForm extends React.Component {
             ReactDOM.render(required,document.getElementById('passwordRequired'));
             validationSuccess = false;
         }
-        if(this.state.mobile == null || this.state.mobile == "")
-        {
-          ReactDOM.render(required,document.getElementById('mobileRequired'));
-          validationSuccess = false;
-        }
         if(this.state.sourceOrgId == null || this.state.sourceOrgId == "")
         {
           ReactDOM.render(required,document.getElementById('organizationRequired'));
@@ -197,7 +190,7 @@ class LoginForm extends React.Component {
 
             const payload = {httpsAgent: agent,
                                         "email":this.state.email,
-                                        "mobile":this.state.mobile,
+                                        "mobile":"123",
                                         "password":this.state.password,
                                         "orgId":this.state.sourceOrgId,
                                         "orgName":this.state.sourceOrgId,
@@ -285,17 +278,6 @@ class LoginForm extends React.Component {
                                              );
                           ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
                           }
-                          if(violations.includes("phone_invalid"))
-                          {
-                              const phoneInvalid = (
-                                                                             <CAlert
-                                                                             color="warning"
-                                                                             >
-                                                                                Phone is not valid
-                                                                            </CAlert>
-                                                                         );
-                              ReactDOM.render(phoneInvalid,document.getElementById('phoneInvalid'));
-                          }
                       }
                       else
                       {
@@ -320,6 +302,7 @@ class LoginForm extends React.Component {
 
   render() {
     return (
+      <>
       <div className="c-app c-default-layout flex-row align-items-center">
             <CContainer>
               <CRow className="justify-content-center">
@@ -392,16 +375,6 @@ class LoginForm extends React.Component {
                                 <div id="password_mismatch"/>
                               </CInputGroup>
                               <CInputGroup className="mb-5">
-                                  <CInputGroupPrepend>
-                                      <CInputGroupText>
-                                        <CIcon name="cil-lock-locked" />
-                                      </CInputGroupText>
-                                  </CInputGroupPrepend>
-                                  <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={this.handleChange}/>
-                                  <div id="mobileRequired"/>
-                                  <div id="phoneInvalid"/>
-                              </CInputGroup>
-                              <CInputGroup className="mb-5">
                                 <CInputGroupPrepend>
                                     <CInputGroupText>
                                       <CIcon name="cil-lock-locked" />
@@ -437,6 +410,64 @@ class LoginForm extends React.Component {
               </CRow>
             </CContainer>
           </div>
+
+          <div class="page-content bg-white">
+                          <div class="banner-three bg-primary">
+                          <div class="container">
+                                      <div class="banner-inner">
+                                        <div class="row align-items-center">
+                                          <div class="col-md-6">
+                                            <div class="banner-content text-white">
+                                              <h6
+                                                data-wow-delay="0.5s"
+                                                data-wow-duration="3s"
+                                                class="wow fadeInUp sub-title text-primary"
+                                              >
+                                                Jen Summary
+                                              </h6>
+                                              <h1
+                                                data-wow-delay="1s"
+                                                data-wow-duration="3s"
+                                                class="wow fadeInUp m-b20"
+                                              >
+                                                #Jen Network
+                                              </h1>
+                                              <p
+                                                                    data-wow-delay="1.5s"
+                                                                    data-wow-duration="3s"
+                                                                    class="wow fadeInUp m-b30"
+                                                                  >
+                                                                    The #Jen: Network, short for Food Recovery Optimization
+                                                                    Network, is an Uber-like Network for FoodRunners, who can
+                                                                    volunteer to pick up food from restaurants, tech
+                                                                    cafeterias, parties, etc that they are going to discard
+                                                                    because it is extra. They can then deliver it to
+                                                                    participating organizations such as churches, food
+                                                                    pantries, etc so the people who are hungry can get a
+                                                                    deserving hearty meal.
+                                                                  </p>
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div
+                                              class="dz-media wow fadeIn"
+                                              data-wow-delay="1s"
+                                              data-wow-duration="3s"
+                                            >
+                                              <img
+                                                src="images/main-slider/slider3/pic1.png"
+                                                class="move-1"
+                                                alt=""
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                  </div>
+                             </div>
+                             </div>
+                          </div>
+
+      </>
     );
   }
 }

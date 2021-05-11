@@ -9,6 +9,7 @@ import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.restclient.GoogleApiClient;
 import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 
@@ -46,6 +47,9 @@ public class NetworkOrchestrator {
 
     @Inject
     private MapUtils mapUtils;
+
+    @Inject
+    private GoogleApiClient googleApiClient;
 
     @PostConstruct
     public void start()
@@ -111,9 +115,14 @@ public class NetworkOrchestrator {
         return sourceOrgs;
     }
     //--------FoodRunner Matching Process-----------------------------------------------
+    public void startPickUpProcess(String pic,SchedulePickUpNotification notification)
+    {
+        this.mongoDBJsonStore.storeScheduledPickUpNotification(pic,notification);
+    }
+
     public void schedulePickUp(SchedulePickUpNotification notification)
     {
-        this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
+        this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
         this.requestPipeline.add(notification);
 
         this.foodRecoveryOrchestrator.notifyForPickUp(notification);
@@ -121,35 +130,26 @@ public class NetworkOrchestrator {
 
     public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
     {
-        this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
+        /*this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
         this.dropOffPipeline.add(scheduleDropOffNotification);
 
-        this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);
+        this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);*/
     }
 
     public List<FoodRecoveryTransaction> findMyTransactions(String email)
     {
         List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
         try {
-            logger.info("*******************************************************************************************************");
-            logger.info("FOODRUNNER_EMAIL: "+email);
-            logger.info("*******************************************************************************************************");
-            FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
-            JsonUtil.print(this.getClass(), foodRunner.toJson());
+            FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
 
             List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
             for (FoodRecoveryTransaction tx : all) {
-                JsonUtil.print(this.getClass(), tx.toJson());
-
-
                 Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
                 if(source == null)
                 {
                     logger.info("SOURCE_LOCATION_NOT_FOUND");
                     continue;
                 }
-                JsonUtil.print(this.getClass(), source.toJson());
-
 
                 Location foodRunnerLocation = foodRunner.getLocation();
                 if(foodRunnerLocation == null)
@@ -157,18 +157,24 @@ public class NetworkOrchestrator {
                     logger.info("FOODRUNNER_LOCATION_NOT_FOUND");
                     continue;
                 }
-                JsonUtil.print(this.getClass(), foodRunnerLocation.toJson());
-
 
                 Double distance = this.mapUtils.calculateDistance(foodRunnerLocation.getLatitude(),
                         foodRunnerLocation.getLongitude(),
                         source.getLatitude(), source.getLongitude());
 
                 logger.info("**************DISTANCE*****************");
-                logger.info("DISTANCE: "+distance);
+                logger.info("ALGO_DISTANCE: "+distance);
                 logger.info("**************DISTANCE*****************");
 
                 if (distance <= 5.0d) {
+                    Location dropoff = tx.getPickUpNotification().getDropOffOrg().getLocation();
+
+                    String estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation,source);
+                    String estimatedDropOffTime = this.estimateTravelTime(source,dropoff);
+
+                    tx.setEstimatedPickupTime(estimatedPickupTime);
+                    tx.setEstimatedDropOffTime(estimatedDropOffTime);
+
                     myTransactions.add(tx);
                 }
             }
@@ -177,8 +183,14 @@ public class NetworkOrchestrator {
         }
         catch(Exception e)
         {
+            logger.error(e.getMessage(),e);
             return myTransactions;
         }
+    }
+
+    private String estimateTravelTime(Location start, Location end)
+    {
+        return this.googleApiClient.estimateTime(start,end).get("duration").getAsString();
     }
     //-------------------------
     public NotificationEngine getNotificationEngine()
@@ -188,10 +200,10 @@ public class NetworkOrchestrator {
 
     public JsonObject acceptRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+        FoodRecoveryTransaction stored = this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
 
         JsonObject json = new JsonObject();
-        json.addProperty("recoveryTransactionId", foodRecoveryTransaction.getId());
+        json.addProperty("recoveryTransactionId", stored.getId());
         return json;
     }
 }

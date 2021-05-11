@@ -1,7 +1,9 @@
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/scheduleDropOffNotification.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -26,6 +28,9 @@ class ActiveNetworkRestClient
       Map<String, dynamic> json = UrlFunctions.handleError(e, response);
       return jsonEncode(json);
     }
+
+    print(response.body);
+
     return response.body;
   }
 
@@ -132,11 +137,69 @@ class ActiveNetworkRestClient
     Map<String,dynamic> payload = new Map();
     payload["email"] = email;
     payload["dropOffOrgId"] = dropOffOrgId;
+    tx.getPickupNotification().setFoodRunner(FoodRunner.getActiveFoodRunner());
     payload["accepted"] = tx;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"/activeNetwork/accept/";
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
+    print(jsonEncode(payload));
     var response;
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: payload.toString()).
+      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
+      timeout(Duration(seconds: 30),onTimeout: () {
+        throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
+      });
+    }
+    catch (e) {
+      print(e);
+      json = UrlFunctions.handleError(e, response);
+      return json["statusCode"];
+    }
+
+    json = UrlFunctions.handleError(null, response);
+    if(json != null)
+    {
+      return json["statusCode"];
+    }
+
+    return response.statusCode;
+  }
+
+  Future<int> scheduleDropOff(FoodRecoveryTransaction tx) async
+  {
+    FoodRunner foodRunner = new FoodRunner(ActiveSession.getInstance().getProfile());
+    ScheduleDropOffNotification scheduleDropOffNotification = new ScheduleDropOffNotification(tx.getPickupNotification().getSourceOrg(),
+        foodRunner, tx.getPickupNotification().getStart());
+
+    var json;
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/scheduleDropOff/";
+    var response;
+    try {
+      response = await http.post(Uri.parse(remoteUrl), body: scheduleDropOffNotification.toString()).
+      timeout(Duration(seconds: 30),onTimeout: () {
+        throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
+      });
+    }
+    catch (e) {
+      print(e);
+      json = UrlFunctions.handleError(e, response);
+      return json["statusCode"];
+    }
+
+    json = UrlFunctions.handleError(null, response);
+    if(json != null)
+    {
+      return json["statusCode"];
+    }
+
+    return response.statusCode;
+  }
+
+  Future<int> notifyDelivery(FoodRecoveryTransaction tx) async
+  {
+    var json;
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/notifyDelivery/";
+    var response;
+    try {
+      response = await http.post(Uri.parse(remoteUrl), body: tx.toString()).
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });

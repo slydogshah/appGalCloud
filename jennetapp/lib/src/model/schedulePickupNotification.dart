@@ -81,7 +81,7 @@ class SchedulePickupNotification
     }
     if(this.foodRunner != null)
     {
-      json['foodRunner'] = this.sourceOrg;
+      json['foodRunner'] = this.foodRunner.toJson();
     }
     if(this.start != null)
     {

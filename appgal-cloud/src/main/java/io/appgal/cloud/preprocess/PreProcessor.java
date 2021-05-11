@@ -48,16 +48,10 @@ public class PreProcessor implements ContainerRequestFilter {
                 address.setZip("78703");
                 dropOffOrg.setAddress(address);
                 this.profileRegistrationService.registerSourceOrg(dropOffOrg);
-
-                logger.info("CREATING_ADMIN_PROFILE");
             }
             catch (Exception e)
             {
             }
-        }
-        else
-        {
-            logger.info("ADMIN_PROFILE_ACTIVE");
         }
     }
 }

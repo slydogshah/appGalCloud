@@ -3,13 +3,11 @@ package io.appgal.cloud.network.endpoint;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.model.FoodDetails;
-import io.appgal.cloud.model.ScheduleDropOffNotification;
-import io.appgal.cloud.model.SchedulePickUpNotification;
-import io.appgal.cloud.model.SourceOrg;
+import io.appgal.cloud.model.*;
 import io.appgal.cloud.network.services.FoodRecoveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
+import org.bson.internal.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +16,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,10 +28,10 @@ public class NotificationReceiver {
     private MongoDBJsonStore mongoDBJsonStore;
 
     @Inject
-    private NetworkOrchestrator networkOrchestrator;
+    private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
 
     @Inject
-    private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
+    private NetworkOrchestrator networkOrchestrator;
 
 
     @Path("/pickup/notifications")
@@ -84,12 +83,17 @@ public class NotificationReceiver {
             JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
             String orgId = json.get("orgId").getAsString();
 
+            String pic = null;
+            if(json.has("foodPic") && !json.get("foodPic").isJsonNull())
+            {
+                pic = json.get("foodPic").getAsString();
+            }
             SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
             FoodDetails foodDetails = FoodDetails.parse(payload);
             SchedulePickUpNotification notification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             notification.setFoodDetails(foodDetails);
             notification.setSourceOrg(sourceOrg);
-            this.mongoDBJsonStore.storeScheduledPickUpNotification(notification);
+            this.networkOrchestrator.startPickUpProcess(pic,notification);
 
             List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
 
@@ -110,10 +114,10 @@ public class NotificationReceiver {
     @Path("/schedulePickup")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response schedulePickUp(@RequestBody String jsonBody)
+    public Response schedulePickUp(@RequestBody String payload)
     {
         try {
-            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
             String pickupNotificationId = json.get("pickupNotificationId").getAsString();
             String dropOffOrgId = json.get("dropOffOrgId").getAsString();
 
@@ -147,28 +151,6 @@ public class NotificationReceiver {
         try {
             List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
             return Response.ok(scheduleDropOffNotificationList.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
-
-    @Path("/scheduleDropOff")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response scheduleDropOff(@RequestBody String jsonBody)
-    {
-        try {
-            ScheduleDropOffNotification notification = ScheduleDropOffNotification.parse(jsonBody);
-            this.networkOrchestrator.scheduleDropOff(notification);
-
-            JsonObject responseJson = new JsonObject();
-            responseJson.addProperty("success", true);
-            return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)
         {

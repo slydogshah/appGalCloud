@@ -10,13 +10,30 @@ import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.TransactionState;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
+import io.smallrye.mutiny.Uni;
+import org.apache.commons.io.IOUtils;
+import org.bson.internal.Base64;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -184,6 +201,7 @@ public class Transactions {
                 historyExists = true;
             }
             result.addProperty("historyExists",historyExists);
+            result.add("history",JsonParser.parseString(history.toString()).getAsJsonArray());
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)
@@ -229,5 +247,68 @@ public class Transactions {
             error.addProperty("exception", e.getMessage());
             return Response.status(500).entity(error.toString()).build();
         }
+    }
+
+    @Path("/recovery/transaction")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodRecoveryTransaction(@QueryParam("id") String id)
+    {
+        try {
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(id);
+            return Response.ok(tx.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/recovery/transaction/foodPic")
+    @GET
+    @Produces({ MediaType.APPLICATION_OCTET_STREAM })
+    public Response getFoodPic(@QueryParam("id") String id)
+    {
+        try {
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(id);
+            ObjectId imageId = new ObjectId(tx.getPickUpNotification().getFoodDetails().getFoodPic());
+            byte[] data = this.mongoDBJsonStore.getImage(imageId);
+            return Response.ok( (StreamingOutput) output -> {
+                try {
+                    logger.info(data.length+"");
+                    InputStream input = new ByteArrayInputStream(data);
+                    IOUtils.copy(input,output);
+                    output.flush();
+                } catch ( Exception e ) { e.printStackTrace(); }
+            } ).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @GET
+    @Path("/tx/img")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public javax.ws.rs.core.Response downloadFile() throws Exception {
+        FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction("2a9029d9-41a5-4434-91eb-962afc5dd576");
+
+        ObjectId imageId = new ObjectId(tx.getPickUpNotification().getFoodDetails().getFoodPic());
+        byte[] data = this.mongoDBJsonStore.getImage(imageId);
+        return Response.ok( (StreamingOutput) output -> {
+            try {
+                logger.info(data.length+"");
+                InputStream input = new ByteArrayInputStream(data);
+                IOUtils.copy(input,output);
+                output.flush();
+            } catch ( Exception e ) { e.printStackTrace(); }
+        } ).build();
     }
 }

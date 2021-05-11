@@ -2,10 +2,12 @@ package io.appgal.cloud.model;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.bson.internal.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 public class FoodDetails implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(FoodDetails.class);
@@ -72,11 +74,10 @@ public class FoodDetails implements Serializable {
         {
             jsonObject.addProperty("type",this.foodTypes.name());
         }
-        //TODO
-        /*if(this.foodPic != null)
+        if(this.foodPic != null)
         {
             jsonObject.addProperty("foodPic",this.foodPic);
-        }*/
+        }
         jsonObject.addProperty("quantityInPounds", this.quantityInPounds);
         return jsonObject;
     }

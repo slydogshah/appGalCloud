@@ -41,7 +41,7 @@ public class NotificationReceiverTest extends BaseTest {
 
         OffsetDateTime middle = OffsetDateTime.now(ZoneOffset.UTC).withHour(12).withMinute(0).withSecond(0);
 
-        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).plusDays(1);
+        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).plusDays(1).plusHours(1);
 
         List<OffsetDateTime> schedulePickUpNotificationList = new LinkedList<>();
         schedulePickUpNotificationList.add(middle);
@@ -66,6 +66,7 @@ public class NotificationReceiverTest extends BaseTest {
             JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
 
+            this.networkOrchestrator.startPickUpProcess(null,schedulePickUpNotification);
             this.networkOrchestrator.schedulePickUp(schedulePickUpNotification);
 
             if(cour.toEpochSecond() == end.toEpochSecond())
@@ -74,7 +75,7 @@ public class NotificationReceiverTest extends BaseTest {
             }
         }
 
-        logger.info(excluded.toString());
+        logger.info("EXCLUDED: "+excluded.toString());
         assertTrue(excluded.size()==1);
         Thread.sleep(5000);
 

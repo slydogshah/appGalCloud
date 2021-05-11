@@ -30,9 +30,19 @@ public class FoodRecoveryOrchestrator {
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(recoveryTx);
     }
 
-    public void notifyDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
+    public void notifyDropOff(FoodRecoveryTransaction foodRecoveryTransaction)
     {
+        this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+    }
 
+    public void notifyDelivery(FoodRecoveryTransaction foodRecoveryTransaction)
+    {
+        foodRecoveryTransaction.setTransactionState(TransactionState.CLOSED);
+        logger.info("**********BEFORE*************");
+        JsonUtil.print(this.getClass(),foodRecoveryTransaction.toJson());
+        FoodRecoveryTransaction tx = this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+        logger.info("**********AFTER*************");
+        JsonUtil.print(this.getClass(),tx.toJson());
     }
 
     //DropOff Location Recommendation Algorithm

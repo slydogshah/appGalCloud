@@ -10,7 +10,9 @@ import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
 import io.bugsbunny.test.components.MockData;
 import io.quarkus.test.junit.QuarkusTest;
+import org.apache.commons.io.IOUtils;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -371,7 +374,8 @@ public class MongoDBJsonStoreTests extends BaseTest {
 
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
 
-        List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(tx.getDropOffNotification().getSourceOrg().getOrgId());
+        List<FoodRecoveryTransaction> list = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(
+                tx.getPickUpNotification().getDropOffOrg().getOrgId());
         JsonUtil.print(this.getClass(),JsonParser.parseString(list.toString()));
         assertFalse(list.isEmpty());
     }
@@ -390,4 +394,19 @@ public class MongoDBJsonStoreTests extends BaseTest {
         JsonUtil.print(this.getClass(),JsonParser.parseString(list.toString()));
         assertFalse(list.isEmpty());
     }
+
+    /*@Test
+    public void storeImage() throws Exception
+    {
+        ObjectId imageId = this.mongoDBJsonStore.storeImage(
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("img.png")
+        );
+        byte[] data = this.mongoDBJsonStore.getImage(imageId);
+        logger.info(data.length+"");
+        logger.info("ObjectId: "+imageId.toHexString());
+
+        ObjectId newId = new ObjectId(imageId.toHexString());
+        byte[] stored = this.mongoDBJsonStore.getImage(newId);
+        logger.info(stored.length+"");
+    }*/
 }

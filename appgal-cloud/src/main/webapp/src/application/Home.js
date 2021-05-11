@@ -130,10 +130,8 @@ const WaitOnData = ({state, handlePickup, handlePickupHistory}) => {
                                      <CIcon name="cil-settings"/>
                                    </CDropdownToggle>
                                    <CDropdownMenu className="pt-0" placement="bottom-end">
-                                     <CDropdownItem onClick={handlePickup}>Schedule</CDropdownItem>
-                                     {state.data.historyExists && (
-                                        <CDropdownItem onClick={handlePickupHistory}>History</CDropdownItem>
-                                     )}
+                                    <CDropdownItem onClick={handlePickup}>Schedule</CDropdownItem>
+                                    <CDropdownItem onClick={handlePickupHistory}>History</CDropdownItem>
                                    </CDropdownMenu>
                                  </CDropdown>
                                </CWidgetDropdown>
@@ -282,9 +280,11 @@ class Home extends React.Component {
 
   render() {
      return (
+          <>
           <div>
             <WaitOnData state={this.state} handlePickup={this.handlePickup} handlePickupHistory={this.handlePickupHistory}/>
           </div>
+          </>
       );
   }
 }
