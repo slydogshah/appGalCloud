@@ -112,6 +112,11 @@ public class MongoDBJsonStore {
         this.profileStore.storeProfile(this.mongoDatabase,profile);
     }
 
+    public void updateProfile(Profile profile)
+    {
+        this.profileStore.updateProfile(this.mongoDatabase,profile);
+    }
+
     public Profile getProfile(String email)
     {
         return this.profileStore.getProfile(this.mongoDatabase,email);

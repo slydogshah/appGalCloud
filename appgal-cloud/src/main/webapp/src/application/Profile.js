@@ -1,4 +1,6 @@
 import React from "react";
+import { withRouter } from "react-router";
+import axios from 'axios'
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -12,6 +14,8 @@ import CardHeader from "../components/Card/CardHeader.js";
 import CardAvatar from "../components/Card/CardAvatar.js";
 import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
+
+import { AppContext,store} from "./AppContext"
 
 const styles = {
   cardCategoryWhite: {
@@ -34,58 +38,146 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function UserProfile() {
-  const classes = useStyles();
-  return (
-    <>
-    <br/><br/><br/>
-    <div>
-      <GridContainer>
-        <GridItem xs={12} sm={12} md={8}>
-          <Card>
-            <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
-            </CardHeader>
-            <CardBody>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Email address"
-                    id="email"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="New Password"
-                    id="newPassword"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Confirm New Password"
-                    id="confirmNewPassword"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-            </CardBody>
-            <CardFooter>
-              <Button color="primary">Update Profile</Button>
-            </CardFooter>
-          </Card>
-        </GridItem>
-      </GridContainer>
-    </div>
-    </>
-  );
+const WaitOnData = ({state}) => {
+    const classes = useStyles();
+    const profile = state.data;
+    if (profile === null) {
+          return (
+            <>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <p>Loading...</p>
+            </>
+          );
+    }
+    else{
+      const data = state.data;
+      const newPassword = null;
+      const confirmNewPassword = null;
+      state = {data: data, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
+      return (
+        <>
+        <br/><br/><br/>
+        <div>
+          <GridContainer>
+            <GridItem xs={12} sm={12} md={8}>
+              <Card>
+                <CardHeader color="primary">
+                  <h4 className={classes.cardTitleWhite}>Update Profile</h4>
+                </CardHeader>
+                <CardBody>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={4}>
+                      <CustomInput
+                        labelText="Email address"
+                        id="email"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                            value:profile.email,
+                            disabled: true
+                        }}
+                      />
+                    </GridItem>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomInput
+                        labelText="New Password"
+                        id="newPassword"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                            onChange:(event) => {
+                                const target = event.target;
+                                const value = target.value;
+                                const name = target.name;
+                                console.log("VALUE: "+value);
+                                const data = state.data;
+                                const newPassword = value;
+                                const confirmNewPassword = state.confirmNewPassword;
+                                state = {data: data, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
+                            }
+                        }}
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomInput
+                        labelText="Confirm New Password"
+                        id="confirmNewPassword"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                            onChange:(event) => {
+                                const target = event.target;
+                                const value = target.value;
+                                const name = target.name;
+                                console.log("VALUE: "+value);
+                                const data = state.data;
+                                const newPassword = state.newPassword;
+                                const confirmNewPassword = value;
+                                state = {data: data, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
+                            }
+                        }}
+                      />
+                    </GridItem>
+                  </GridContainer>
+                </CardBody>
+                <CardFooter>
+                  <Button color="primary" onClick={(e) => {
+                        console.log("PASS:" + state.newPassword);
+                        console.log("PASS2:" + state.confirmNewPassword);
+                        const email = store.getState().email;
+                        const payload = {
+                            "email":email,
+                            "password":state.newPassword
+                        };
+                        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/newPassword/";
+                        axios.post(apiUrl,payload).then((response) => {
+                            console.log("MY_DATA: "+JSON.stringify(response.data));
+                        });
+                    }}>Update</Button>
+                </CardFooter>
+              </Card>
+            </GridItem>
+          </GridContainer>
+        </div>
+        </>
+      );
+    }
 }
+
+class Profile extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {data: null};
+        //this.handleChange = this.handleChange.bind(this);
+        //this.handleRegistration = this.handleRegistration.bind(this);
+
+        this.renderMyData();
+    }
+
+    renderMyData()
+    {
+        const email = store.getState().email;
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
+        axios.get(apiUrl).then((response) => {
+            //console.log("MY_DATA: "+JSON.stringify(response.data));
+            this.setState({data: response.data});
+        });
+    }
+
+    render() {
+          return (
+                <>
+                <div id="parent">
+                      <WaitOnData state={this.state}/>
+                </div>
+                </>
+          );
+    }
+}
+
+export default withRouter(Profile)

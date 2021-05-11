@@ -1,5 +1,6 @@
 package io.appgal.cloud.infrastructure;
 
+import com.google.gson.JsonObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -49,6 +50,30 @@ public class ProfileStore {
         }
 
         MongoCollection<Document> collection = database.getCollection("profile");
+
+        Document doc = Document.parse(profile.toString());
+        collection.insertOne(doc);
+    }
+
+    public void updateProfile(MongoDatabase database,Profile profile)
+    {
+        if(this.getProfile(database,profile.getEmail()) == null)
+        {
+            return;
+        }
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        String email = profile.getEmail();
+        String queryJson = "{\"email\":\""+email+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            collection.deleteOne(document);
+            break;
+        }
 
         Document doc = Document.parse(profile.toString());
         collection.insertOne(doc);
