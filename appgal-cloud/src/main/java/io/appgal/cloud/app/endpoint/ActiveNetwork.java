@@ -203,9 +203,7 @@ public class ActiveNetwork {
     public Response notifyDelivery(@RequestBody String jsonBody)
     {
         try {
-            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
-
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(json.get("value").getAsJsonObject().toString());
+            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
 
             this.foodRecoveryOrchestrator.notifyDelivery(tx);
 

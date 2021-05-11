@@ -178,11 +178,11 @@ function DropOffTasks(props) {
 
 function notifyFoodDelivery(tx)
     {
-             //console.log("CALLED: "+JSON.stringify(tx));
-             //alert("CALLED: "+JSON.stringify(tx));
+             const payload = tx.value;
+             //alert(JSON.stringify(payload));
 
              const apiUrl = window.location.protocol +"//"+window.location.hostname+"/activeNetwork/notifyDelivery/";
-                      axios.post(apiUrl,tx).then((response) => {
+                      axios.post(apiUrl,payload).then((response) => {
                             console.log(JSON.stringify(response.data));
                             reRenderMyData();
               }).catch(err => {
