@@ -162,9 +162,17 @@ class AddPickupDetails extends React.Component
                             <CCol md="9" lg="7" xl="6">
                                 <CCard className="mx-4">
                                 <CCardBody className="p-4">
-                                    <h1>Add Pickup Details</h1>
-                                    <CLabel htmlFor="foodType">Food Type</CLabel>
+                                    <h1>Schedule A Pickup</h1>
+                                    <CInputGroup>
+                                     <CLabel htmlFor="ccmonth">Preferred Pickup Time</CLabel>
+                                     <CSelect custom name="ccmonth" id="ccmonth">
+                                       <option value="0">12:00 AM</option>
+                                       <option value="12">12:00 PM</option>
+                                       <option value="23">11:59 PM</option>
+                                     </CSelect>
+                                    </CInputGroup>
                                     <CInputGroup className="mb-3">
+                                        <CLabel htmlFor="foodType">Food Type</CLabel>
                                         <CSelect custom name="foodType" id="foodType" onChange={this.handleChange}>
                                             <option value="0">--Select--</option>
                                             <option value="VEG">VEG</option>
