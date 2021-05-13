@@ -84,7 +84,7 @@ public class JenFlow {
         FoodRunner foodRunner = this.registerFoodRunner();
 
         //Send a PickUpRequest
-        for(int i=0; i<3; i++) {
+        for(int i=0; i<20; i++) {
             String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
                             getResource("encodedImage"),
                     StandardCharsets.UTF_8);

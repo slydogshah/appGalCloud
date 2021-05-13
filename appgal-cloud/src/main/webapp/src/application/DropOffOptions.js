@@ -109,6 +109,80 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
+//const showNotification = place => {
+function ShowNotification(place){
+    console.log("*********SHOWNOTIFICATION********");
+
+    const [tl, setTL] = React.useState(false);
+    const [tc, setTC] = React.useState(false);
+    const [tr, setTR] = React.useState(false);
+    const [bl, setBL] = React.useState(false);
+    const [bc, setBC] = React.useState(false);
+    const [br, setBR] = React.useState(false);
+    /*React.useEffect(() => {
+        // Specify how to clean up after this effect:
+        return function cleanup() {
+          // to stop the warning of calling setState of unmounted component
+          var id = window.setTimeout(null, 0);
+          while (id--) {
+            window.clearTimeout(id);
+          }
+        };
+    });*/
+    switch (place) {
+      case "tl":
+        if (!tl) {
+          setTL(true);
+          setTimeout(function() {
+            setTL(false);
+          }, 6000);
+        }
+        break;
+      case "tc":
+        if (!tc) {
+          setTC(true);
+          setTimeout(function() {
+            setTC(false);
+          }, 6000);
+        }
+        break;
+      case "tr":
+        if (!tr) {
+          setTR(true);
+          setTimeout(function() {
+            setTR(false);
+          }, 6000);
+        }
+        break;
+      case "bl":
+        if (!bl) {
+          setBL(true);
+          setTimeout(function() {
+            setBL(false);
+          }, 6000);
+        }
+        break;
+      case "bc":
+        if (!bc) {
+          setBC(true);
+          setTimeout(function() {
+            setBC(false);
+          }, 6000);
+        }
+        break;
+      case "br":
+        if (!br) {
+          setBR(true);
+          setTimeout(function() {
+            setBR(false);
+          }, 6000);
+        }
+        break;
+      default:
+        break;
+    }
+};
+
 const DropOffOptionsView = ({dropOffOrgs,widget}) => {
     const classes = useStyles();
 
@@ -177,7 +251,9 @@ class DropOffOptions extends React.Component
 
     handlePickup(event)
     {
-         const dropOffOrgId = event.target.value;
+         console.log("*******PICKUP**********");
+         ShowNotification("tc");
+         /*const dropOffOrgId = event.target.value;
          const payload = {
             pickupNotificationId:this.props.location.state.data.pickupNotificationId,
             dropOffOrgId: dropOffOrgId,
@@ -189,34 +265,11 @@ class DropOffOptions extends React.Component
          const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
                   axios.post(apiUrl,payload).then((response) => {
                         console.log(JSON.stringify(response.data));
-                        this.element = (
-                                      <CModal
-                                        size="sm"
-                                        show={true}
-                                        color="success"
-                                        fade="true"
-                                      >
-                                        <CModalHeader>
-                                          <CModalTitle>Pickup Confirmation</CModalTitle>
-                                        </CModalHeader>
-                                        <CModalBody>
-                                             <CCallout color="info">
-                                              <div className="progress-group-prepend">
-                                                 <small className="text-muted">Your Pickup is scheduled</small>
-                                              </div>
-                                            </CCallout>
-                                        </CModalBody>
-                                        <CModalFooter>
-                                            <CButton color="success" onClick={this.handlePickupProcess}>OK</CButton>
-                                        </CModalFooter>
-                                      </CModal>
-                                 );
-                                 ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
-                                 ReactDOM.render(this.element,document.getElementById('schedulePickup'));
+                        ShowNotification("tc");
           }).catch(err => {
            //TODO
            console.log(JSON.stringify(err));
-          });
+          });*/
     }
 
     handlePickupProcess(event)
