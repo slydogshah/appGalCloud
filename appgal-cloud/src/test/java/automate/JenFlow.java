@@ -163,9 +163,9 @@ public class JenFlow {
         JsonElement responseJson = JsonParser.parseString(jsonString);
         //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
-        assertTrue(responseJson.getAsJsonObject().get("success").getAsJsonObject().get("producer").getAsBoolean());
+        assertTrue(responseJson.getAsJsonObject().get("producer").getAsBoolean());
 
-        return SourceOrg.parse(responseJson.getAsJsonObject().get("success").getAsJsonObject().toString());
+        return SourceOrg.parse(responseJson.getAsJsonObject().toString());
     }
 
     private SourceOrg registerDropOffOrg()
@@ -190,9 +190,9 @@ public class JenFlow {
         JsonElement responseJson = JsonParser.parseString(jsonString);
         //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
-        assertFalse(responseJson.getAsJsonObject().get("success").getAsJsonObject().get("producer").getAsBoolean());
+        assertFalse(responseJson.getAsJsonObject().get("producer").getAsBoolean());
 
-        return SourceOrg.parse(responseJson.getAsJsonObject().get("success").getAsJsonObject().toString());
+        return SourceOrg.parse(responseJson.getAsJsonObject().toString());
     }
 
     private FoodRunner registerFoodRunner()
