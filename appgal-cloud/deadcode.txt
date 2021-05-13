@@ -567,3 +567,56 @@ class Profile extends React.Component {
 }
 
 export default withRouter(Profile)
+
+
+<div className="c-app c-default-layout flex-row align-items-center">
+                          <CContainer>
+                            <CRow className="justify-content-center">
+                                <CCol md="9" lg="7" xl="6">
+                                    <CCard className="mx-4">
+                                    <CCardBody className="p-4">
+                                        <h1>Schedule A Pickup</h1>
+                                        <CInputGroup>
+                                         <CLabel htmlFor="ccmonth">Preferred Pickup Time</CLabel>
+                                         <CSelect custom name="ccmonth" id="ccmonth">
+                                           <option value="0">12:00 AM</option>
+                                           <option value="12">12:00 PM</option>
+                                           <option value="23">11:59 PM</option>
+                                         </CSelect>
+                                        </CInputGroup>
+                                        <CInputGroup className="mb-3">
+                                            <CLabel htmlFor="foodType">Food Type</CLabel>
+                                            <CSelect custom name="foodType" id="foodType" onChange="">
+                                                <option value="0">--Select--</option>
+                                                <option value="VEG">VEG</option>
+                                                <option value="NON_VEG">NON-VEG</option>
+                                            </CSelect>
+                                        </CInputGroup>
+                                        <CInputGroup className="mb-3">
+                                            <CInputGroupPrepend>
+                                              <CInputGroupText>
+                                                <CIcon name="cil-lock-locked" />
+                                              </CInputGroupText>
+                                            </CInputGroupPrepend>
+                                            <div className="form-group">
+                                              <label for="file">File upload</label>
+                                              <input id="file" name="file" type="file" onChange={(event) => {
+                                                const fileUpload = event.currentTarget.files[0];
+                                                setFieldValue("file", fileUpload);
+                                                this.state.upload = fileUpload;
+                                              }} className="form-control" />
+                                              <Thumb file={values.file} />
+                                            </div>
+                                        </CInputGroup>
+                                        <div id="errorAlert" />
+                                        <CButton color="success" block onClick="">Add Details</CButton>
+                                    </CCardBody>
+                                    </CCard>
+                                </CCol>
+                            </CRow>
+                          </CContainer>
+                      </div>
+                      </form>
+                    );
+                  }} />
+              </div>

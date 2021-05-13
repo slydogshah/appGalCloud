@@ -184,9 +184,9 @@ function RenderForm({state})
                                                        <Button color="primary" onClick={(e) => {
                                                                 const payload = {
                                                                             orgId: store.getState().sourceOrg.orgId,
-                                                                            time: state.time,
                                                                             foodType: state.foodType,
-                                                                            foodPic: store.getState().upload
+                                                                            foodPic: store.getState().upload,
+                                                                            time: state.time
                                                                         };
 
                                                                         alert(JSON.stringify(payload));
