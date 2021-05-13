@@ -195,6 +195,7 @@ public class Registration {
         }
         catch(AuthenticationException authenticationException)
         {
+            logger.error(authenticationException.getMessage(), authenticationException);
             return Response.status(401).entity(authenticationException.toString()).build();
         }
     }

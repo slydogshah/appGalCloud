@@ -100,7 +100,6 @@ function RenderLogin({state,props})
     return (
           <>
           <br/><br/><br/><br/><br/>
-          <div id="system_error"/>
           <div>
              <GridContainer>
                <GridItem xs={12} sm={12} md={8}>
@@ -117,19 +116,7 @@ function RenderLogin({state,props})
                          formControlProps={{
                            fullWidth: true
                          }}
-                         inputProps={{
-                             onChange:(event) => {
-                                 const target = event.target;
-                                 const value = target.value;
-                                 const name = target.name;
-                                 state.email = value;
-                                 console.log("NAME: "+name);
-                                 console.log("VALUE: "+value);
-                                 console.log(JSON.stringify(state));
-                             }
-                         }}
                        />
-                       <div id="profile_not_found"/>
                        </GridItem>
                      </GridContainer>
                      <GridContainer>
@@ -140,19 +127,7 @@ function RenderLogin({state,props})
                            formControlProps={{
                              fullWidth: true
                            }}
-                           inputProps={{
-                                onChange:(event) => {
-                                    const target = event.target;
-                                    const value = target.value;
-                                    const name = target.name;
-                                    state.password = value;
-                                    console.log("NAME: "+name);
-                                                                     console.log("VALUE: "+value);
-                                                                     console.log(JSON.stringify(state));
-                                }
-                            }}
                          />
-                         <div id="password_mismatch"/>
                        </GridItem>
                      </GridContainer>
                    </CardBody>
@@ -160,82 +135,7 @@ function RenderLogin({state,props})
                        <GridContainer>
                           <GridItem xs={12} sm={12} md={6}>
                              <Button color="primary" onClick={(e) => {
-                                ReactDOM.unmountComponentAtNode(document.getElementById('system_error'));
-                                ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
-                                ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
 
-                                const payload = {
-                                    "email":state.email,
-                                    "password":state.password
-                                };
-
-                                console.log(JSON.stringify(payload));
-
-                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
-                                axios.post(apiUrl,payload).then((response) => {
-                                      console.log(JSON.stringify(response.data));
-
-                                      store.setState(state => ({
-                                        ...state,
-                                        auth: true,
-                                        email:state.email,
-                                        sourceOrg: response.data.sourceOrg
-                                      }));
-
-                                      console.log("*******LOGIN_SUCCESS********");
-
-                                      if(response.data.sourceOrg.producer)
-                                      {
-                                             props.history.push({
-                                               pathname: "/home"
-                                             });
-                                      }
-                                      else
-                                      {
-                                              props.history.push({
-                                                pathname: "/dropOffHome"
-                                              });
-                                      }
-
-                                }).catch(err => {
-                                       console.log("ERROR(LOGIN): "+JSON.stringify(err));
-                                       if(err.response != null && err.response.status == 401)
-                                       {
-                                            if(err.response.data.message == "profile_not_found")
-                                            {
-                                                const profile_not_found = (
-                                                                      <CAlert
-                                                                      color="warning"
-                                                                      >
-                                                                         The email is not registered.
-                                                                     </CAlert>
-                                                                  );
-                                                ReactDOM.render(profile_not_found,document.getElementById('profile_not_found'));
-                                            }
-                                            else if(err.response.data.message == "password_mismatch")
-                                            {
-                                                const password_mismatch = (
-                                                                                          <CAlert
-                                                                                          color="warning"
-                                                                                          >
-                                                                                             Password does not match.
-                                                                                         </CAlert>
-                                                                                      );
-                                                                    ReactDOM.render(password_mismatch,document.getElementById('password_mismatch'));
-                                            }
-                                       }
-                                       else
-                                       {
-                                           const system_error = (
-                                                                                                         <CAlert
-                                                                                                         color="warning"
-                                                                                                         >
-                                                                                                            Unknown Error. Please check your Network Connection
-                                                                                                        </CAlert>
-                                                                                                     );
-                                                                                   ReactDOM.render(system_error,document.getElementById('system_error'));
-                                       }
-                                });
                              }}>Login</Button>
                           </GridItem>
                           <GridItem xs={12} sm={12} md={6}>
@@ -594,10 +494,62 @@ class LoginForm extends React.Component {
   render() {
     return (
       <>
-        <br/><br/><br/><br/><br/>
         <div id="parent">
                     <RenderLogin state={this.state} props={this.props}/>
         </div>
+        <div class="page-content bg-white">
+          <div class="container">
+                      <div class="banner-inner">
+                        <div class="row align-items-center">
+                          <div class="col-md-6">
+                            <div class="banner-content text-white">
+                              <h6
+                                data-wow-delay="0.5s"
+                                data-wow-duration="3s"
+                                class="wow fadeInUp sub-title text-primary"
+                              >
+                                Jen Summary
+                              </h6>
+                              <h1
+                                data-wow-delay="1s"
+                                data-wow-duration="3s"
+                                class="wow fadeInUp m-b20"
+                              >
+                                #Jen Network
+                              </h1>
+                              <p
+                                data-wow-delay="1.5s"
+                                data-wow-duration="3s"
+                                class="wow fadeInUp m-b30"
+                              >
+                                The #Jen: Network, short for Food Recovery Optimization
+                                Network, is an Uber-like Network for FoodRunners, who can
+                                volunteer to pick up food from restaurants, tech
+                                cafeterias, parties, etc that they are going to discard
+                                because it is extra. They can then deliver it to
+                                participating organizations such as churches, food
+                                pantries, etc so the people who are hungry can get a
+                                deserving hearty meal.
+                              </p>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div
+                              class="dz-media wow fadeIn"
+                              data-wow-delay="1s"
+                              data-wow-duration="3s"
+                            >
+                              <img
+                                src="images/main-slider/slider3/pic1.png"
+                                class="move-1"
+                                alt=""
+                              />
+                            </div>
+                          </div>
+                        </div>
+                  </div>
+             </div>
+          </div>
       </>
     );
   }
