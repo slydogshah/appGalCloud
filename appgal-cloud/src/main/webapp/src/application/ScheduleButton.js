@@ -76,7 +76,7 @@ class ScheduleButton extends React.Component
                                                   place="tc"
                                                   color="info"
                                                   icon={AddAlert}
-                                                  message="Welcome to MATERIAL DASHBOARD React - a beautiful freebie for every web developer."
+                                                  message="Your Pickup is scheduled"
                                                   open={true}
                                                   closeNotification={() => {
                                                     this.props.history.push({
