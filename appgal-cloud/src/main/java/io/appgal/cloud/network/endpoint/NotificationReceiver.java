@@ -17,6 +17,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,6 +95,10 @@ public class NotificationReceiver {
             SchedulePickUpNotification notification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             notification.setFoodDetails(foodDetails);
             notification.setSourceOrg(sourceOrg);
+
+            //TODO: read the time property and add the correct starttime
+            notification.setStart(OffsetDateTime.now(ZoneOffset.UTC));
+
             this.networkOrchestrator.startPickUpProcess(pic,notification);
 
             List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
