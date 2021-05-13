@@ -136,9 +136,7 @@ public class Registration {
 
             this.profileRegistrationService.registerSourceOrg(sourceOrg);
 
-            JsonObject responseJson = new JsonObject();
-            responseJson.add("success", sourceOrg.toJson());
-            return Response.ok(responseJson.toString()).build();
+            return Response.ok(sourceOrg.toString()).build();
         }
         catch(ResourceExistsException rxe)
         {

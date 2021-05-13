@@ -64,7 +64,7 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-function inputFieldComp() {
+function inputFieldComp(state) {
       const element = (
         <CustomInput
                  labelText="Register New Organization"
@@ -72,17 +72,34 @@ function inputFieldComp() {
                  formControlProps={{
                    fullWidth: true
                  }}
+                 inputProps={{
+                     onChange:(event) => {
+                         const target = event.target;
+                         const value = target.value;
+                         const name = target.name;
+                         state.sourceOrgId = value;
+                     }
+                 }}
                />
       );
       ReactDOM.unmountComponentAtNode(document.getElementById('orgInput'));
       ReactDOM.render(element,document.getElementById('orgInput'));
 }
 
-function dropDownComp() {
+function dropDownComp(state) {
       return (
         <div id="orgInput">
-            <CSelect custom name="sourceOrgId" onChange={(e)=>{
-                inputFieldComp();
+            <CSelect custom name="sourceOrgId" onChange={(event)=>{
+                if (event.target.value === "custom") {
+                    inputFieldComp(state);
+                }
+                else
+                {
+                   const target = event.target;
+                   const value = target.value;
+                   const name = target.name;
+                   state.sourceOrgId = value;
+                }
             }}>
               <option value="0">--Select Organization--</option>
               <option value="Irenes">Irenes</option>
@@ -123,9 +140,6 @@ function RenderLogin({state,props})
                                  const value = target.value;
                                  const name = target.name;
                                  state.email = value;
-                                 console.log("NAME: "+name);
-                                 console.log("VALUE: "+value);
-                                 console.log(JSON.stringify(state));
                              }
                          }}
                        />
@@ -146,9 +160,6 @@ function RenderLogin({state,props})
                                     const value = target.value;
                                     const name = target.name;
                                     state.password = value;
-                                    console.log("NAME: "+name);
-                                                                     console.log("VALUE: "+value);
-                                                                     console.log(JSON.stringify(state));
                                 }
                             }}
                          />
@@ -168,21 +179,14 @@ function RenderLogin({state,props})
                                     "email":state.email,
                                     "password":state.password
                                 };
-
-                                console.log(JSON.stringify(payload));
-
                                 const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
                                 axios.post(apiUrl,payload).then((response) => {
-                                      console.log(JSON.stringify(response.data));
-
                                       store.setState(state => ({
                                         ...state,
                                         auth: true,
                                         email:state.email,
                                         sourceOrg: response.data.sourceOrg
                                       }));
-
-                                      console.log("*******LOGIN_SUCCESS********");
 
                                       if(response.data.sourceOrg.producer)
                                       {
@@ -243,6 +247,7 @@ function RenderLogin({state,props})
                                 const element = (
                                     <>
                                               <br/><br/><br/><br/><br/>
+                                              <div id="errorAlert" />
                                               <div>
                                                  <GridContainer>
                                                    <GridItem xs={12} sm={12} md={8}>
@@ -259,7 +264,18 @@ function RenderLogin({state,props})
                                                              formControlProps={{
                                                                fullWidth: true
                                                              }}
+                                                             inputProps={{
+                                                                                             onChange:(event) => {
+                                                                                                 const target = event.target;
+                                                                                                 const value = target.value;
+                                                                                                 const name = target.name;
+                                                                                                 state.email = value;
+
+                                                                                             }
+                                                                                         }}
                                                            />
+                                                           <div id="emailRequired"/>
+                                                           <div id="emailInvalid"/>
                                                            </GridItem>
                                                          </GridContainer>
                                                          <GridContainer>
@@ -270,13 +286,30 @@ function RenderLogin({state,props})
                                                                formControlProps={{
                                                                  fullWidth: true
                                                                }}
+                                                               inputProps={{
+                                                                                               onChange:(event) => {
+                                                                                                   const target = event.target;
+                                                                                                   const value = target.value;
+                                                                                                   const name = target.name;
+                                                                                                   state.password = value;
+
+                                                                                               }
+                                                                                           }}
                                                              />
+                                                             <div id="passwordRequired"/>
+                                                             <div id="password_mismatch"/>
                                                            </GridItem>
                                                          </GridContainer>
                                                          <GridContainer>
                                                             <GridItem xs={12} sm={12} md={6}>
                                                                <br/>
-                                                               <CSelect custom name="producer" onChange="">
+                                                               <CSelect custom name="producer" onChange={(event)=>{
+                                                                    const target = event.target;
+                                                                    const value = target.value;
+                                                                    const name = target.name;
+                                                                    state.producer = value;
+
+                                                               }}>
                                                                 <option value="0">-- Select Organization Type--</option>
                                                                 <option value={true}>Pickup</option>
                                                                 <option value={false}>DropOff</option>
@@ -288,17 +321,134 @@ function RenderLogin({state,props})
                                                                 <div>
                                                                       <br/>
                                                                       {state.activeElementType === "dropdown"
-                                                                        ? dropDownComp()
-                                                                        : inputFieldComp()}
+                                                                        ? dropDownComp(state)
+                                                                        : inputFieldComp(state)}
                                                                </div>
                                                              </GridItem>
+                                                             <div id="organizationRequired"/>
                                                         </GridContainer>
                                                        </CardBody>
                                                        <CardFooter>
                                                            <GridContainer>
                                                               <GridItem xs={12} sm={12} md={6}>
                                                                <Button color="primary" onClick={(e) => {
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
+                                                                    const required = (
+                                                                                 <CAlert
+                                                                                 color="warning"
+                                                                                 >
+                                                                                    Required
+                                                                                </CAlert>
+                                                                             );
+                                                                let validationSuccess = true;
+                                                                if(state.email == null || state.email == "")
+                                                                {
+                                                                  ReactDOM.render(required,document.getElementById('emailRequired'));
+                                                                  validationSuccess = false;
+                                                                }
+                                                                if(state.password == null || state.password == "")
+                                                                {
+                                                                    ReactDOM.render(required,document.getElementById('passwordRequired'));
+                                                                    validationSuccess = false;
+                                                                }
+                                                                if(state.sourceOrgId == null || state.sourceOrgId == "")
+                                                                {
+                                                                  ReactDOM.render(required,document.getElementById('organizationRequired'));
+                                                                  validationSuccess = false;
+                                                                }
 
+                                                                if(!validationSuccess)
+                                                                {
+                                                                    return;
+                                                                }
+
+                                                                const agent = new https.Agent({
+                                                                              rejectUnauthorized: false
+                                                                            });
+
+                                                                const payload = {httpsAgent: agent,
+                                                                "email":state.email,
+                                                                "mobile":"123",
+                                                                "password":state.password,
+                                                                "orgId":state.sourceOrgId,
+                                                                "orgName":state.sourceOrgId,
+                                                                "orgType":state.orgType,
+                                                                "profileType":state.profileType,
+                                                                "orgContactEmail":state.email,
+                                                                "street":state.street,
+                                                                "zip":state.zip,
+                                                                "producer":state.producer};
+
+                                                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
+                                                                axios.post(apiUrl,payload).then((response) => {
+                                                                    console.log(JSON.stringify(response.data));
+                                                                    store.setState(state => ({
+                                                                             ...state,
+                                                                             auth: true,
+                                                                             email:state.email,
+                                                                             sourceOrg: response.data
+                                                                           }));
+
+                                                                   if(response.data.producer)
+                                                                   {
+                                                                       props.history.push({
+                                                                         pathname: "/home"
+                                                                       });
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                        props.history.push({
+                                                                          pathname: "/dropOffHome"
+                                                                        });
+                                                                  }
+                                                                }).catch(err => {
+                                                                    if(err.response != null && err.response.status == 409)
+                                                                    {
+                                                                         const element = (
+                                                                            <CAlert
+                                                                            color="dark"
+                                                                            closeButton
+                                                                            >
+                                                                             "This email is already registered"
+                                                                           </CAlert>
+                                                                         );
+                                                                         ReactDOM.render(element,document.getElementById('errorAlert'));
+                                                                    }
+                                                                    else if(err.response != null && err.response.status == 400)
+                                                                    {
+                                                                         console.log("ERROR(REG): "+JSON.stringify(err.response.data));
+
+                                                                        const violations = err.response.data.violations;
+                                                                        if(violations.includes("email_invalid"))
+                                                                        {
+                                                                        const emailInvalid = (
+                                                                                               <CAlert
+                                                                                               color="warning"
+                                                                                               >
+                                                                                                  Email is not valid
+                                                                                              </CAlert>
+                                                                                           );
+                                                                        ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                         const element = (
+                                                                            <CAlert
+                                                                            color="dark"
+                                                                            closeButton
+                                                                            >
+                                                                               "Unknown Error. Please check your Network Connection
+                                                                           </CAlert>
+                                                                        );
+                                                                        ReactDOM.render(element,document.getElementById('errorAlert'));
+                                                                    }
+                                                              });
                                                                }}>Register</Button>
                                                             </GridItem>
                                                             </GridContainer>
