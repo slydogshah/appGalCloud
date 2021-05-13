@@ -1,278 +1,183 @@
-import React, { useEffect, useState, createRef, lazy } from 'react'
-import ReactDOM from 'react-dom';
-import { Link } from 'react-router-dom'
+import React from "react";
 import { withRouter } from "react-router";
-import Modal from 'react-modal';
-import OverlayMixin from 'react-overlays';
 import axios from 'axios'
-import https from 'http';
-import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardGroup,
-  CCol,
-  CContainer,
-  CForm,
-  CInput,
-  CInputGroup,
-  CInputGroupPrepend,
-  CInputGroupText,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
-  CPopover,
-  CAlert,
-  CProgress,
-  CRow
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+// @material-ui/core components
+import { makeStyles } from "@material-ui/core/styles";
+import InputLabel from "@material-ui/core/InputLabel";
+// core components
+import GridItem from "../components/Grid/GridItem.js";
+import GridContainer from "../components/Grid/GridContainer.js";
+import CustomInput from "../components/CustomInput/CustomInput.js";
+import Button from "../components/CustomButtons/Button.js";
+import Card from "../components/Card/Card.js";
+import CardHeader from "../components/Card/CardHeader.js";
+import CardAvatar from "../components/Card/CardAvatar.js";
+import CardBody from "../components/Card/CardBody.js";
+import CardFooter from "../components/Card/CardFooter.js";
+
 import { AppContext,store} from "./AppContext"
 
-const WaitOnData = ({state, handleRegistration, handleChange}) => {
-          if (state.data === null) {
-                return <p>Loading...</p>;
-              }
-          return(
-            <div className="c-app c-default-layout flex-row align-items-center">
-                        <CContainer>
-                          <CRow className="justify-content-center">
-                            <CCol md="8">
-                              <CCardGroup>
-                                <CCard className="p-4">
-                                      <CCardBody>
-                                        <CForm>
-                                          <h1>Profile</h1>
-                                          <div id="system_error"/>
-                                          <CInputGroup className="mb-3">
-                                            <CInputGroupPrepend>
-                                              <CInputGroupText>
-                                                <CIcon name="cil-user" />
-                                              </CInputGroupText>
-                                            </CInputGroupPrepend>
-                                            <CInput type="text" placeholder="Username" autoComplete="username"
-                                            name="email" onChange={handleChange} value={state.data.email}/>
-                                            <div id="emailRequired"/>
-                                            <div id="emailInvalid"/>
-                                          </CInputGroup>
-                                          <CInputGroup className="mb-4">
-                                            <CInputGroupPrepend>
-                                              <CInputGroupText>
-                                                <CIcon name="cil-lock-locked" />
-                                              </CInputGroupText>
-                                            </CInputGroupPrepend>
-                                            <CInput type="password" placeholder="Password" autoComplete="current-password"
-                                            name="password" onChange={handleChange}/>
-                                            <div id="passwordRequired"/>
-                                            <div id="password_mismatch"/>
-                                          </CInputGroup>
-                                          <CInputGroup className="mb-5">
-                                              <CInputGroupPrepend>
-                                                                                  <CInputGroupText>
-                                                                                    <CIcon name="cil-lock-locked" />
-                                                                                  </CInputGroupText>
-                                                                                </CInputGroupPrepend>
-                                              <CInput type="text" placeholder="Mobile" autoComplete="mobile" name="mobile" onChange={handleChange}
-                                              value={state.data.mobile}/>
-                                              <div id="mobileRequired"/>
-                                              <div id="phoneInvalid"/>
-                                          </CInputGroup>
-                                          <CInputGroup className="mb-6">
-                                              <CInputGroupPrepend>
-                                                                                  <CInputGroupText>
-                                                                                    <CIcon name="cil-lock-locked" />
-                                                                                  </CInputGroupText>
-                                                                                </CInputGroupPrepend>
-                                              <CInput type="text" placeholder="Organization" autoComplete="organization"
-                                              name="sourceOrgId" onChange={handleChange}/>
-                                              <div id="organizationRequired"/>
-                                          </CInputGroup>
-                                          <br/><br/>
-                                          <CButton color="success" block onClick={handleRegistration}>Save</CButton>
-                                          <div id="errorAlert" />
-                                        </CForm>
-                                      </CCardBody>
-                                    </CCard>
-                              </CCardGroup>
-                            </CCol>
-                          </CRow>
-                        </CContainer>
-                      </div>
+const styles = {
+  cardCategoryWhite: {
+    color: "rgba(255,255,255,.62)",
+    margin: "0",
+    fontSize: "14px",
+    marginTop: "0",
+    marginBottom: "0"
+  },
+  cardTitleWhite: {
+    color: "#FFFFFF",
+    marginTop: "0px",
+    minHeight: "auto",
+    fontWeight: "300",
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: "3px",
+    textDecoration: "none"
+  }
+};
+
+const useStyles = makeStyles(styles);
+
+const WaitOnData = ({state}) => {
+    const classes = useStyles();
+    const profile = state.data;
+    if (profile === null) {
+          return (
+            <>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <p>Loading...</p>
+            </>
           );
+    }
+    else{
+      const data = state.data;
+      const newPassword = null;
+      const confirmNewPassword = null;
+      state = {data: data, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
+      return (
+        <>
+        <br/><br/><br/>
+        <div>
+          <GridContainer>
+            <GridItem xs={12} sm={12} md={8}>
+              <Card>
+                <CardHeader color="primary">
+                  <h4 className={classes.cardTitleWhite}>Update Profile</h4>
+                </CardHeader>
+                <CardBody>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={4}>
+                      <CustomInput
+                        labelText="Email address"
+                        id="email"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                            value:profile.email,
+                            disabled: true
+                        }}
+                      />
+                    </GridItem>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomInput
+                        labelText="New Password"
+                        id="newPassword"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                            onChange:(event) => {
+                                const target = event.target;
+                                const value = target.value;
+                                const name = target.name;
+                                console.log("VALUE: "+value);
+                                const data = state.data;
+                                const newPassword = value;
+                                const confirmNewPassword = state.confirmNewPassword;
+                                state = {data: data, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
+                            }
+                        }}
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomInput
+                        labelText="Confirm New Password"
+                        id="confirmNewPassword"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                            onChange:(event) => {
+                                const target = event.target;
+                                const value = target.value;
+                                const name = target.name;
+                                console.log("VALUE: "+value);
+                                const data = state.data;
+                                const newPassword = state.newPassword;
+                                const confirmNewPassword = value;
+                                state = {data: data, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
+                            }
+                        }}
+                      />
+                    </GridItem>
+                  </GridContainer>
+                </CardBody>
+                <CardFooter>
+                  <Button color="primary" onClick={(e) => {
+                        console.log("PASS:" + state.newPassword);
+                        console.log("PASS2:" + state.confirmNewPassword);
+                        const email = store.getState().email;
+                        const payload = {
+                            "email":email,
+                            "password":state.newPassword
+                        };
+                        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/newPassword/";
+                        axios.post(apiUrl,payload).then((response) => {
+                            console.log("MY_DATA: "+JSON.stringify(response.data));
+                        });
+                    }}>Update</Button>
+                </CardFooter>
+              </Card>
+            </GridItem>
+          </GridContainer>
+        </div>
+        </>
+      );
+    }
 }
 
 class Profile extends React.Component {
-  mixins = [OverlayMixin];
-  constructor(props) {
-    super(props);
-    this.state = {data: null};
-    this.handleChange = this.handleChange.bind(this);
-    this.handleRegistration = this.handleRegistration.bind(this);
+    constructor(props) {
+        super(props);
+        this.state = {data: null};
+        //this.handleChange = this.handleChange.bind(this);
+        //this.handleRegistration = this.handleRegistration.bind(this);
 
-    this.renderMyData();
-  }
-
-  handleChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    this.setState({
-          [name]: value
-    });
-  }
-
-  handleRegistration(event)
-      {
-        ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('mobileRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('phoneInvalid'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
-        const required = (
-                         <CAlert
-                         color="warning"
-                         >
-                            Required
-                        </CAlert>
-                     );
-        let validationSuccess = true;
-        if(this.state.email == null || this.state.email == "")
-        {
-          ReactDOM.render(required,document.getElementById('emailRequired'));
-          validationSuccess = false;
-        }
-        if(this.state.password == null || this.state.password == "")
-        {
-            ReactDOM.render(required,document.getElementById('passwordRequired'));
-            validationSuccess = false;
-        }
-        if(this.state.mobile == null || this.state.mobile == "")
-        {
-          ReactDOM.render(required,document.getElementById('mobileRequired'));
-          validationSuccess = false;
-        }
-        if(this.state.sourceOrgId == null || this.state.sourceOrgId == "")
-        {
-          ReactDOM.render(required,document.getElementById('organizationRequired'));
-          validationSuccess = false;
-        }
-
-        if(validationSuccess)
-        {
-            const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
-            // At request level
-            const agent = new https.Agent({
-              rejectUnauthorized: false
-            });
-            axios.post(apiUrl,{httpsAgent: agent,"email":this.state.email,"password":this.state.password,"mobile":this.state.mobile,"sourceOrgId":this.state.sourceOrgId,"profileType":this.state.profileType}).
-            then((response) => {
-                      const loginUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
-                      axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
-                      then((response) => {
-                          this.props.history.push({
-                              pathname: "/home",
-                              state: response.data
-                          });
-                      });
-            }).catch(err => {
-                      if(err.response != null && err.response.status == 401)
-                      {
-                           this.setState({
-                             "errorMessage": "Login Failed. Please check your Username and/or Password"
-                           });
-                           const element = (
-                                                                         <CAlert
-                                                                         color="dark"
-                                                                         closeButton
-                                                                         >
-                                                                            {this.state.errorMessage}
-                                                                        </CAlert>
-                                                                     );
-
-                                               ReactDOM.render(element,document.getElementById('errorAlert'));
-                      }
-                      else if(err.response != null && err.response.status == 409)
-                      {
-                           this.setState({
-                             "errorMessage": "This email is already registered"
-                           });
-                           const element = (
-                                                                                                  <CAlert
-                                                                                                  color="dark"
-                                                                                                  closeButton
-                                                                                                  >
-                                                                                                     {this.state.errorMessage}
-                                                                                                 </CAlert>
-                                                                                              );
-
-                                                                        ReactDOM.render(element,document.getElementById('errorAlert'));
-                      }
-                      else if(err.response != null && err.response.status == 400)
-                      {
-                          const violations = err.response.data.violations;
-                          if(violations.includes("email_invalid"))
-                          {
-                          const emailInvalid = (
-                                                 <CAlert
-                                                 color="warning"
-                                                 >
-                                                    Email is not valid
-                                                </CAlert>
-                                             );
-                          ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
-                          }
-                          if(violations.includes("phone_invalid"))
-                          {
-                              const phoneInvalid = (
-                                                                             <CAlert
-                                                                             color="warning"
-                                                                             >
-                                                                                Phone is not valid
-                                                                            </CAlert>
-                                                                         );
-                              ReactDOM.render(phoneInvalid,document.getElementById('phoneInvalid'));
-                          }
-                      }
-                      else
-                      {
-                           this.setState({
-                               "errorMessage": "Unknown Error. Please check your Network Connection"
-                           });
-                           const element = (
-                                                                                                  <CAlert
-                                                                                                  color="dark"
-                                                                                                  closeButton
-                                                                                                  >
-                                                                                                     {this.state.errorMessage}
-                                                                                                 </CAlert>
-                                                                                              );
-
-                                                                        ReactDOM.render(element,document.getElementById('errorAlert'));
-                      }
-                });
-
-        }
+        this.renderMyData();
     }
 
-    renderMyData(){
+    renderMyData()
+    {
         const email = store.getState().email;
         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
         axios.get(apiUrl).then((response) => {
+            //console.log("MY_DATA: "+JSON.stringify(response.data));
             this.setState({data: response.data});
         });
     }
 
-  render() {
-    return (
-            <div>
-                <WaitOnData state={this.state} handleRegistration={this.handleRegistration} handleChange={this.handleChange}/>
-            </div>
-    );
-  }
+    render() {
+          return (
+                <>
+                <div id="parent">
+                      <WaitOnData state={this.state}/>
+                </div>
+                </>
+          );
+    }
 }
 
 export default withRouter(Profile)

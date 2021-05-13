@@ -37,7 +37,7 @@ const TheHeader = () => {
         <>
             <CHeader withSubheader>
                           <div class="logo-header">
-                              <a href="index.html"
+                              <a href="/home"
                                 ><img src="images/jen-logo.PNG" alt=""
                               /></a>
                           </div>

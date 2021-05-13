@@ -136,9 +136,7 @@ public class Registration {
 
             this.profileRegistrationService.registerSourceOrg(sourceOrg);
 
-            JsonObject responseJson = new JsonObject();
-            responseJson.add("success", sourceOrg.toJson());
-            return Response.ok(responseJson.toString()).build();
+            return Response.ok(sourceOrg.toString()).build();
         }
         catch(ResourceExistsException rxe)
         {
@@ -195,7 +193,34 @@ public class Registration {
         }
         catch(AuthenticationException authenticationException)
         {
+            logger.error(authenticationException.getMessage(), authenticationException);
             return Response.status(401).entity(authenticationException.toString()).build();
+        }
+    }
+
+    @Path("newPassword")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response newPassword(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String email = json.get("email").getAsString();
+            String password = json.get("password").getAsString();
+
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            profile.setPassword(password);
+            this.mongoDBJsonStore.updateProfile(profile);
+
+            JsonObject success = new JsonObject();
+            success.addProperty("success",true);
+            return Response.ok(success.toString()).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
         }
     }
 }

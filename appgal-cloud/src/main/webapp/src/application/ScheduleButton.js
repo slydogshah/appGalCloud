@@ -42,8 +42,12 @@ import {
 } from '@coreui/react'
 import { AppContext,store} from "./AppContext"
 
+import AddAlert from "@material-ui/icons/AddAlert";
+import Snackbar from "../components/Snackbar/Snackbar.js";
+
 class ScheduleButton extends React.Component
 {
+    element;
     constructor(props)
     {
         super(props);
@@ -68,29 +72,44 @@ class ScheduleButton extends React.Component
                       axios.post(apiUrl,payload).then((response) => {
                             console.log(JSON.stringify(response.data));
                             this.element = (
-                                          <CModal
-                                            size="sm"
-                                            show={true}
-                                            color="success"
-                                            fade="true"
-                                          >
-                                            <CModalHeader>
-                                              <CModalTitle>Pickup Confirmation</CModalTitle>
-                                            </CModalHeader>
-                                            <CModalBody>
-                                                 <CCallout color="info">
-                                                  <div className="progress-group-prepend">
-                                                     <small className="text-muted">Your Pickup is scheduled</small>
-                                                  </div>
-                                                </CCallout>
-                                            </CModalBody>
-                                            <CModalFooter>
-                                                <CButton color="success" onClick={this.schedulePickupProcess}>OK</CButton>
-                                            </CModalFooter>
-                                          </CModal>
-                                     );
-                                     ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
-                                     ReactDOM.render(this.element,document.getElementById('schedulePickup'));
+                                <Snackbar
+                                                  place="tc"
+                                                  color="info"
+                                                  icon={AddAlert}
+                                                  message="Your Pickup is scheduled"
+                                                  open={true}
+                                                  closeNotification={() => {
+                                                    this.props.history.push({
+                                                                pathname: "/home"
+                                                            });
+                                                  }}
+                                                  close
+                                                />
+                            );
+                            /*this.element = (
+                                                                      <CModal
+                                                                        size="sm"
+                                                                        show={true}
+                                                                        color="success"
+                                                                        fade="true"
+                                                                      >
+                                                                        <CModalHeader>
+                                                                          <CModalTitle>Pickup Confirmation</CModalTitle>
+                                                                        </CModalHeader>
+                                                                        <CModalBody>
+                                                                             <CCallout color="info">
+                                                                              <div className="progress-group-prepend">
+                                                                                 <small className="text-muted">Your Pickup is scheduled</small>
+                                                                              </div>
+                                                                            </CCallout>
+                                                                        </CModalBody>
+                                                                        <CModalFooter>
+                                                                            <CButton color="success" onClick={this.schedulePickupProcess}>OK</CButton>
+                                                                        </CModalFooter>
+                                                                      </CModal>
+                                                                 );*/
+                            ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
+                            ReactDOM.render(this.element,document.getElementById('schedulePickup'));
               }).catch(err => {
                //TODO
                console.log(JSON.stringify(err));

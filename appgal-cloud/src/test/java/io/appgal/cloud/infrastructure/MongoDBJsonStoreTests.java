@@ -148,6 +148,30 @@ public class MongoDBJsonStoreTests extends BaseTest {
     }
 
     @Test
+    public void testUpdateProfile()
+    {
+        Profile profile = MockData.mockProfile();
+        this.mongoDBJsonStore.storeProfile(profile);
+
+        Profile storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
+        logger.info("*******");
+        logger.info(storedProfile.toString());
+        logger.info("*******");
+        assertTrue(storedProfile.getEmail().equals(profile.getEmail()));
+
+
+        profile = MockData.mockProfile();
+        profile.setPassword("new");
+        this.mongoDBJsonStore.updateProfile(profile);
+
+        storedProfile = this.mongoDBJsonStore.getProfile("blah@blah.com");
+        logger.info("*******");
+        logger.info(storedProfile.toString());
+        logger.info("*******");
+        assertEquals(storedProfile.getPassword(),"new");
+    }
+
+    @Test
     public void testSourceOrgLifecycle()
     {
         SourceOrg sourceOrg = MockData.mockProducerOrg();

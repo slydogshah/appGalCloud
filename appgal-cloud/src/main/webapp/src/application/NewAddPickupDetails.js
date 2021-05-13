@@ -1,6 +1,5 @@
 import React from 'react'
 import axios from 'axios'
-import { withRouter } from "react-router";
 import {
   CBadge,
   CCard,
@@ -121,7 +120,7 @@ class Thumb extends React.Component {
   }
 }
 
-function RenderForm({state,props})
+function RenderForm({state})
 {
     const classes = useStyles();
     const renderForm = ({ values, handleSubmit, setFieldValue }) => {
@@ -185,24 +184,12 @@ function RenderForm({state,props})
                                                        <Button color="primary" onClick={(e) => {
                                                                 const payload = {
                                                                             orgId: store.getState().sourceOrg.orgId,
-                                                                            time: state.time,
-                                                                            foodType: state.foodType
+                                                                            foodType: state.foodType,
+                                                                            foodPic: store.getState().upload,
+                                                                            time: state.time
                                                                         };
 
-                                                                console.log(JSON.stringify(payload));
-
-                                                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/";
-                                                                axios.post(apiUrl,payload).then((response) => {
-                                                                    console.log("*****INVOKED********");
-                                                                    console.log(JSON.stringify(response.data));
-                                                                    props.history.push({
-                                                                                    pathname: "/dropOffOptions",
-                                                                                    state: { data: response.data }
-                                                                                  });
-                                                                }).catch(err => {
-                                                                            //TODO
-                                                                            console.log("ERROR: "+JSON.stringify(err));
-                                                                });
+                                                                        alert(JSON.stringify(payload));
                                                          }}>Update</Button>
                                                      </CardFooter>
                                                    </Card>
@@ -293,7 +280,7 @@ class AddPickupDetails extends React.Component
         return(
             <>
                 <div id="parent">
-                    <RenderForm state={this.state} props={this.props}/>
+                    <RenderForm state={this.state}/>
                 </div>
             </>
         );
@@ -301,4 +288,4 @@ class AddPickupDetails extends React.Component
 
 }
 
-export default withRouter(AddPickupDetails)
+export default AddPickupDetails

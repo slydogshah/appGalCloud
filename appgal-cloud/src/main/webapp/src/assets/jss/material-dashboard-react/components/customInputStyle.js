@@ -4,7 +4,7 @@ import {
   successColor,
   grayColor,
   defaultFont
-} from "assets/jss/material-dashboard-react.js";
+} from "../../../jss/material-dashboard-react.js";
 
 const customInputStyle = {
   disabled: {
