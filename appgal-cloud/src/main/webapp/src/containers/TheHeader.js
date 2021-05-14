@@ -25,7 +25,7 @@ import {
 } from './index'
 import { useLocation } from 'react-router-dom'
 
-const TheHeader = () => {
+const TheHeader = (props) => {
   const location = useLocation();
 
   //console.log("LOCATION: "+location.pathname);
@@ -61,7 +61,7 @@ const TheHeader = () => {
               </CHeaderNav>
 
               <CHeaderNav className="px-3">
-                <TheHeaderDropdown />
+                <TheHeaderDropdown props={props}/>
               </CHeaderNav>
            </CHeader>
       );

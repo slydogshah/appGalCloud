@@ -458,6 +458,7 @@ function LaunchHome(props,producer)
     const orgId = store.getState().sourceOrg.orgId;
     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
     axios.get(apiUrl).then((response) => {
+        //console.log(JSON.stringify(props));
         if(producer)
         {
                props.history.push({

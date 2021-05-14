@@ -55,16 +55,6 @@ export default function App() {
                                   name="Login"
                                   render={(props) => <TheLayout {...props} />}
                                 />
-                                <Switch>
-                                    <PrivateRoute path="/home" name="Home" render={PrivateRoute}>
-                                        <Home/>
-                                    </PrivateRoute>
-                                </Switch>
-                                <Switch>
-                                    <PrivateRoute path="/pickupHistory" name="PickupHistory" render={PrivateRoute}>
-                                        <PickupHistory/>
-                                    </PrivateRoute>
-                                </Switch>
                     </Suspense>
               </BrowserRouter>
           </AppContext.Provider>

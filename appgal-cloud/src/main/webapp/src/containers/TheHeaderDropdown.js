@@ -34,15 +34,18 @@ import CustomInput from "../components/CustomInput/CustomInput.js";
 import Button from "../components/CustomButtons/Button.js";
 
 import styles from "../assets/jss/material-dashboard-react/components/headerLinksStyle.js";
+import axios from 'axios';
+import { AppContext,store} from "../application/AppContext"
 
 const useStyles = makeStyles(styles);
+
 
 //TODO: hook the actual logout routine
 
 
 
 //class TheHeaderDropdown extends React.Component {
-export default function AdminNavbarLinks() {
+export default function AdminNavbarLinks(props) {
         const classes = useStyles();
         const [openNotification, setOpenNotification] = React.useState(null);
         const [openProfile, setOpenProfile] = React.useState(null);
@@ -109,7 +112,31 @@ export default function AdminNavbarLinks() {
                               onClick={handleCloseProfile}
                               className={classes.dropdownItem}
                             >
-                              <CLink to="/home" className={classes.dropdownItem}>Home</CLink>
+                              <CLink className={classes.dropdownItem} onClick={(event)=>{
+                                        //console.log(JSON.stringify(props));
+                                        //console.log(JSON.stringify(props.props.props));
+                                        //console.log(JSON.stringify(props.props.history));
+                                        //TODO: unhardcode
+                                        const producer = true;
+                                        const orgId = store.getState().sourceOrg.orgId;
+                                        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+                                        axios.get(apiUrl).then((response) => {
+                                            if(producer)
+                                            {
+                                                   props.props.props.history.push({
+                                                     pathname: "/home",
+                                                     state: { data: response.data }
+                                                   });
+                                            }
+                                            else
+                                            {
+                                                    props.props.props.history.push({
+                                                      pathname: "/dropOffHome",
+                                                      state: { data: response.data }
+                                                    });
+                                            }
+                                        });
+                              }}>Home</CLink>
                             </MenuItem>
                             <MenuItem
                               onClick={handleCloseProfile}

@@ -979,3 +979,7 @@ export default withRouter(Profile)
                 tableHead: PropTypes.arrayOf(PropTypes.string),
                 tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
               };
+
+
+              {"props":{"history":{"length":46,"action":"PUSH","location":{"pathname":"/addPickupDetails","search":"","hash":"","key":"mvty97"}},"location":{"pathname":"/addPickupDetails","search":"","hash":"","key":"mvty97"},"match":{"path":"/","url":"/","isExact":false,"params":{}}}}
+
