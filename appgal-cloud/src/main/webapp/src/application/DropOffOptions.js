@@ -274,8 +274,25 @@ class DropOffOptions extends React.Component
 
     handlePickupProcess(event)
     {
-        this.props.history.push({
-            pathname: "/home"
+        //TODO:
+        const producer = true;
+        const orgId = store.getState().sourceOrg.orgId;
+        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+        axios.get(apiUrl).then((response) => {
+            if(producer)
+            {
+                   this.props.history.push({
+                     pathname: "/home",
+                     state: { data: response.data }
+                   });
+            }
+            else
+            {
+                    this.props.history.push({
+                      pathname: "/dropOffHome",
+                      state: { data: response.data }
+                    });
+            }
         });
     }
 

@@ -84,7 +84,7 @@ public class JenFlow {
         FoodRunner foodRunner = this.registerFoodRunner();
 
         //Send a PickUpRequest
-        for(int i=0; i<3; i++) {
+        for(int i=0; i<7; i++) {
             String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
                             getResource("encodedImage"),
                     StandardCharsets.UTF_8);
@@ -97,10 +97,10 @@ public class JenFlow {
                 foodRunner.getProfile().getPassword());
 
         //FoodRunner accepts....this will update to notificationSent=true
-        //List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
 
-        //FoodRecoveryTransaction accepted = myTransactions.get(0);
-        //this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        FoodRecoveryTransaction accepted = myTransactions.get(0);
+        this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         //FoodRunner notifies DropOffOrg
     }

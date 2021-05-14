@@ -188,18 +188,8 @@ function RenderLogin({state,props})
                                         sourceOrg: response.data.sourceOrg
                                       }));
 
-                                      if(response.data.sourceOrg.producer)
-                                      {
-                                             props.history.push({
-                                               pathname: "/home"
-                                             });
-                                      }
-                                      else
-                                      {
-                                              props.history.push({
-                                                pathname: "/dropOffHome"
-                                              });
-                                      }
+
+                                      LaunchHome(props,response.data.sourceOrg.producer);
 
                                 }).catch(err => {
                                        console.log("ERROR(LOGIN): "+JSON.stringify(err));
@@ -393,18 +383,7 @@ function RenderLogin({state,props})
                                                                              sourceOrg: response.data
                                                                            }));
 
-                                                                   if(response.data.producer)
-                                                                   {
-                                                                       props.history.push({
-                                                                         pathname: "/home"
-                                                                       });
-                                                                  }
-                                                                  else
-                                                                  {
-                                                                        props.history.push({
-                                                                          pathname: "/dropOffHome"
-                                                                        });
-                                                                  }
+                                                                   LaunchHome(props,response.data.producer);
                                                                 }).catch(err => {
                                                                     if(err.response != null && err.response.status == 409)
                                                                     {
@@ -472,6 +451,28 @@ function RenderLogin({state,props})
        </div>
        </>
     );
+}
+
+function LaunchHome(props,producer)
+{
+    const orgId = store.getState().sourceOrg.orgId;
+    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+    axios.get(apiUrl).then((response) => {
+        if(producer)
+        {
+               props.history.push({
+                 pathname: "/home",
+                 state: { data: response.data }
+               });
+        }
+        else
+        {
+                props.history.push({
+                  pathname: "/dropOffHome",
+                  state: { data: response.data }
+                });
+        }
+    });
 }
 
 class LoginForm extends React.Component {
