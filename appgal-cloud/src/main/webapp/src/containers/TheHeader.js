@@ -37,9 +37,8 @@ const TheHeader = (props) => {
         <>
             <CHeader withSubheader>
                           <div class="logo-header">
-                              <a href="/home"
-                                ><img src="images/jen-logo.PNG" alt=""
-                              /></a>
+                              <img src="images/jen-logo.PNG" alt=""
+                                                            />
                           </div>
                        </CHeader>
         </>
