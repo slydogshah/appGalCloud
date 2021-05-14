@@ -38,23 +38,15 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-const WaitOnData = ({state}) => {
+function ProfileView({state, props}) {
+    //console.log(JSON.stringify(props.history.location.state.data.pending.length));
     const classes = useStyles();
-    const profile = state.data;
-    if (profile === null) {
-          return (
-            <>
-            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-            <p>Loading...</p>
-            </>
-          );
-    }
-    else{
-      const data = state.data;
-      const newPassword = null;
-      const confirmNewPassword = null;
-      state = {data: data, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
-      return (
+    const profile = props.history.location.state.data;
+    const data = state.data;
+    const newPassword = null;
+    const confirmNewPassword = null;
+    state = {data: data, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
+    return (
         <>
         <br/><br/><br/>
         <div>
@@ -93,7 +85,7 @@ const WaitOnData = ({state}) => {
                                 const target = event.target;
                                 const value = target.value;
                                 const name = target.name;
-                                console.log("VALUE: "+value);
+                                //console.log("VALUE: "+value);
                                 const data = state.data;
                                 const newPassword = value;
                                 const confirmNewPassword = state.confirmNewPassword;
@@ -114,7 +106,7 @@ const WaitOnData = ({state}) => {
                                 const target = event.target;
                                 const value = target.value;
                                 const name = target.name;
-                                console.log("VALUE: "+value);
+                                //console.log("VALUE: "+value);
                                 const data = state.data;
                                 const newPassword = state.newPassword;
                                 const confirmNewPassword = value;
@@ -127,16 +119,37 @@ const WaitOnData = ({state}) => {
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
-                        console.log("PASS:" + state.newPassword);
-                        console.log("PASS2:" + state.confirmNewPassword);
-                        const email = store.getState().email;
+                        //console.log("PASS:" + state.newPassword);
+                        //console.log("PASS2:" + state.confirmNewPassword);
+                        const email = profile.email;
                         const payload = {
                             "email":email,
                             "password":state.newPassword
                         };
                         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/newPassword/";
                         axios.post(apiUrl,payload).then((response) => {
-                            console.log("MY_DATA: "+JSON.stringify(response.data));
+                            //console.log("MY_DATA: "+JSON.stringify(response.data));
+                            //TODO: unhardcode
+                            const producer = true;
+                            const orgId = store.getState().sourceOrg.orgId;
+                            const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+                            //console.log(apiUrl);
+                            axios.get(apiUrl).then((response) => {
+                                if(producer)
+                                {
+                                       props.history.push({
+                                         pathname: "/home",
+                                         state: { data: response.data }
+                                       });
+                                }
+                                else
+                                {
+                                        props.history.push({
+                                          pathname: "/dropOffHome",
+                                          state: { data: response.data }
+                                        });
+                                }
+                            });
                         });
                     }}>Update</Button>
                 </CardFooter>
@@ -145,39 +158,24 @@ const WaitOnData = ({state}) => {
           </GridContainer>
         </div>
         </>
-      );
-    }
+    );
 }
 
 class Profile extends React.Component {
     constructor(props) {
-        super(props);
-        this.state = {data: null};
-        //this.handleChange = this.handleChange.bind(this);
-        //this.handleRegistration = this.handleRegistration.bind(this);
+            super(props);
+            this.state = {data: null};
+        }
 
-        this.renderMyData();
-    }
-
-    renderMyData()
-    {
-        const email = store.getState().email;
-        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
-        axios.get(apiUrl).then((response) => {
-            //console.log("MY_DATA: "+JSON.stringify(response.data));
-            this.setState({data: response.data});
-        });
-    }
-
-    render() {
-          return (
+        render() {
+           return (
                 <>
-                <div id="parent">
-                      <WaitOnData state={this.state}/>
-                </div>
+                    <div id="parent">
+                      <ProfileView state={this.state} props={this.props} />
+                    </div>
                 </>
-          );
-    }
+            );
+        }
 }
 
 export default withRouter(Profile)

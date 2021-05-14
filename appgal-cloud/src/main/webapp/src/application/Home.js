@@ -83,8 +83,6 @@ const useStyles = makeStyles(styles);
 function HomeView({state, props}) {
   //console.log(JSON.stringify(props.history.location.state.data.pending.length));
   const classes = useStyles();
-  const orgId = store.getState().sourceOrg.orgId;
-  const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
 
   const inProgress = props.history.location.state.data.pending;
   var array = [];

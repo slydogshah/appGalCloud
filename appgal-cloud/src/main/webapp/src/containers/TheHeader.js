@@ -50,9 +50,8 @@ const TheHeader = (props) => {
       return (
             <CHeader withSubheader>
               <div class="logo-header">
-                  <a href="index.html"
-                    ><img src="images/jen-logo.PNG" alt=""
-                  /></a>
+                  <img src="images/jen-logo.PNG" alt=""
+                  />
               </div>
 
               <CHeaderNav className="d-md-down-none mr-auto">

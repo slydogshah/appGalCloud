@@ -142,7 +142,17 @@ export default function AdminNavbarLinks(props) {
                               onClick={handleCloseProfile}
                               className={classes.dropdownItem}
                             >
-                              <CLink to="/profile" className={classes.dropdownItem}>Account</CLink>
+                              <CLink className={classes.dropdownItem} onClick={(event)=>{
+                                    //const email = store.getState().email;
+                                    const email = "pickup@pickup.io";
+                                    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
+                                    axios.get(apiUrl).then((response) => {
+                                        props.props.props.history.push({
+                                         pathname: "/profile",
+                                         state: { data: response.data }
+                                       });
+                                    });
+                              }}>Account</CLink>
                             </MenuItem>
                             <Divider light />
                             <MenuItem
