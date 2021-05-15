@@ -102,6 +102,9 @@ public class JenFlow {
         FoodRecoveryTransaction accepted = myTransactions.get(0);
         this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
+        accepted = myTransactions.get(1);
+        this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+
         //FoodRunner notifies DropOffOrg
     }
 

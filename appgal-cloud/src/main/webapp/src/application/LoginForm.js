@@ -458,7 +458,15 @@ function RenderLogin({state,props})
 function LaunchHome(props,producer)
 {
     const orgId = store.getState().sourceOrg.orgId;
-    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+    var apiUrl;
+    if(producer)
+    {
+        apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+    }
+    else
+    {
+        apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropoff/?orgId="+orgId;
+    }
     axios.get(apiUrl).then((response) => {
         //console.log(JSON.stringify(props));
         if(producer)

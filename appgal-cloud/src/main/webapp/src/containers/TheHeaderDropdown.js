@@ -113,29 +113,34 @@ export default function AdminNavbarLinks(props) {
                               className={classes.dropdownItem}
                             >
                               <CLink className={classes.dropdownItem} onClick={(event)=>{
-                                        //console.log(JSON.stringify(props));
-                                        //console.log(JSON.stringify(props.props.props));
-                                        //console.log(JSON.stringify(props.props.history));
-                                        //TODO: unhardcode
-                                        const producer = true;
-                                        const orgId = store.getState().sourceOrg.orgId;
-                                        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
-                                        axios.get(apiUrl).then((response) => {
+                                            const orgId = store.getState().sourceOrg.orgId;
+                                            const producer = store.getState().sourceOrg.producer;
+                                            var apiUrl;
                                             if(producer)
                                             {
-                                                   props.props.props.history.push({
-                                                     pathname: "/home",
-                                                     state: { data: response.data }
-                                                   });
+                                                apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
                                             }
                                             else
                                             {
-                                                    props.props.props.history.push({
-                                                      pathname: "/dropOffHome",
-                                                      state: { data: response.data }
-                                                    });
+                                                apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropoff/?orgId="+orgId;
                                             }
-                                        });
+                                            axios.get(apiUrl).then((response) => {
+                                                //console.log(JSON.stringify(props));
+                                                if(producer)
+                                                {
+                                                       props.props.props.history.push({
+                                                         pathname: "/home",
+                                                         state: { data: response.data }
+                                                       });
+                                                }
+                                                else
+                                                {
+                                                        props.props.props.history.push({
+                                                          pathname: "/dropOffHome",
+                                                          state: { data: response.data }
+                                                        });
+                                                }
+                                            });
                               }}>Home</CLink>
                             </MenuItem>
                             <MenuItem
