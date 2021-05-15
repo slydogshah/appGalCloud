@@ -175,6 +175,7 @@ function RenderLogin({state,props})
                                 ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
                                 ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
 
+                                const login = state.email;
                                 const payload = {
                                     "email":state.email,
                                     "password":state.password
@@ -184,7 +185,7 @@ function RenderLogin({state,props})
                                       store.setState(state => ({
                                         ...state,
                                         auth: true,
-                                        email:state.email,
+                                        email:login,
                                         sourceOrg: response.data.sourceOrg
                                       }));
 
@@ -360,6 +361,7 @@ function RenderLogin({state,props})
                                                                               rejectUnauthorized: false
                                                                             });
 
+                                                                const login = state.email;
                                                                 const payload = {httpsAgent: agent,
                                                                 "email":state.email,
                                                                 "mobile":"123",
@@ -379,7 +381,7 @@ function RenderLogin({state,props})
                                                                     store.setState(state => ({
                                                                              ...state,
                                                                              auth: true,
-                                                                             email:state.email,
+                                                                             email:login,
                                                                              sourceOrg: response.data
                                                                            }));
 
@@ -477,278 +479,19 @@ function LaunchHome(props,producer)
 }
 
 class LoginForm extends React.Component {
-  mixins = [OverlayMixin];
   constructor(props) {
     super(props);
     this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'', producer:'',isModalOpen:false,
     street:'801 West Fifth Street',zip:'78703',
     activeElementType: "dropdown"};
-    this.handleChange = this.handleChange.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
-    this.handleRegistration = this.handleRegistration.bind(this);
   }
-
-  inputFieldComp() {
-      return <CInput type="text" placeholder="Organization" autoComplete="sourceOrgId" name="sourceOrgId" onChange={this.handleChange}/>;
-    }
-
-  dropDownComp() {
-      return (
-        <CSelect custom name="sourceOrgId" onChange={this.handleChange}>
-          <option value="0">--Select--</option>
-          <option value="Irenes">Irenes</option>
-          <option value="TraderJoe's">Trader Joe's</option>
-          <option value="ChiliParlor">Chili Parlor</option>
-          <option value="custom">Register New Organization</option>
-        </CSelect>
-      );
-    }
-
-  handleChange(event) {
-    if (event.target.value === "custom") {
-          this.setState({ activeElementType: "input" });
-    }
-    else
-    {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-
-        this.setState({
-                  [name]: value
-        });
-    }
-  }
-
-  handleLogin(event) {
-    ReactDOM.unmountComponentAtNode(document.getElementById('system_error'));
-    ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
-    ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
-
-    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
-    axios.post(apiUrl,{"email":this.state.username,"password":this.state.password}).then((response) => {
-          console.log(response.data);
-
-          store.setState(state => ({
-            ...state,
-            auth: true,
-            email:this.state.username,
-            sourceOrg: response.data.sourceOrg
-          }));
-
-          if(response.data.sourceOrg.producer)
-             {
-                 this.props.history.push({
-                   pathname: "/home"
-                 });
-            }
-            else
-            {
-                  this.props.history.push({
-                    pathname: "/dropOffHome"
-                  });
-            }
-
-    }).catch(err => {
-           //console.log("ERROR(LOGIN): "+JSON.stringify(err));
-           if(err.response != null && err.response.status == 401)
-           {
-                if(err.response.data.message == "profile_not_found")
-                {
-                    const profile_not_found = (
-                                          <CAlert
-                                          color="warning"
-                                          >
-                                             The email is not registered.
-                                         </CAlert>
-                                      );
-                    ReactDOM.render(profile_not_found,document.getElementById('profile_not_found'));
-                }
-                else if(err.response.data.message == "password_mismatch")
-                {
-                    const password_mismatch = (
-                                                              <CAlert
-                                                              color="warning"
-                                                              >
-                                                                 Password does not match.
-                                                             </CAlert>
-                                                          );
-                                        ReactDOM.render(password_mismatch,document.getElementById('password_mismatch'));
-                }
-           }
-           else
-           {
-               const system_error = (
-                                                                             <CAlert
-                                                                             color="warning"
-                                                                             >
-                                                                                Unknown Error. Please check your Network Connection
-                                                                            </CAlert>
-                                                                         );
-                                                       ReactDOM.render(system_error,document.getElementById('system_error'));
-           }
-    });
-
-    event.preventDefault();
-  }
-
-  handleRegistration(event)
-      {
-        ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
-        const required = (
-                         <CAlert
-                         color="warning"
-                         >
-                            Required
-                        </CAlert>
-                     );
-        let validationSuccess = true;
-        if(this.state.email == null || this.state.email == "")
-        {
-          ReactDOM.render(required,document.getElementById('emailRequired'));
-          validationSuccess = false;
-        }
-        if(this.state.password == null || this.state.password == "")
-        {
-            ReactDOM.render(required,document.getElementById('passwordRequired'));
-            validationSuccess = false;
-        }
-        if(this.state.sourceOrgId == null || this.state.sourceOrgId == "")
-        {
-          ReactDOM.render(required,document.getElementById('organizationRequired'));
-          validationSuccess = false;
-        }
-
-        if(validationSuccess)
-        {
-            const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
-            // At request level
-            const agent = new https.Agent({
-              rejectUnauthorized: false
-            });
-
-            const payload = {httpsAgent: agent,
-                                        "email":this.state.email,
-                                        "mobile":"123",
-                                        "password":this.state.password,
-                                        "orgId":this.state.sourceOrgId,
-                                        "orgName":this.state.sourceOrgId,
-                                        "orgType":this.state.orgType,
-                                        "profileType":this.state.profileType,
-                                        "orgContactEmail":this.state.email,
-                                        "street":this.state.street,
-                                        "zip":this.state.zip,
-                                        "producer":this.state.producer};
-            console.log("PAYLOAD: "+JSON.stringify(payload));
-
-            axios.post(apiUrl,payload).
-            then((response) => {
-                      console.log("RESPONSE: "+JSON.stringify(response));
-                      const loginUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
-                      axios.post(loginUrl,{"email":this.state.email,"password":this.state.password}).
-                      then((response) => {
-                        console.log("RESPONSE: "+JSON.stringify(response));
-                        store.setState(state => ({
-                                 ...state,
-                                 auth: true,
-                                 email:this.state.email,
-                                 sourceOrg: response.data.sourceOrg
-                               }));
-
-                       if(response.data.sourceOrg.producer)
-                       {
-                           this.props.history.push({
-                             pathname: "/home"
-                           });
-                      }
-                      else
-                      {
-                            this.props.history.push({
-                              pathname: "/dropOffHome"
-                            });
-                      }
-               });
-            }).catch(err => {
-                      if(err.response != null && err.response.status == 401)
-                      {
-                           this.setState({
-                             "errorMessage": "Login Failed. Please check your Username and/or Password"
-                           });
-                           const element = (
-                                                                         <CAlert
-                                                                         color="dark"
-                                                                         closeButton
-                                                                         >
-                                                                            {this.state.errorMessage}
-                                                                        </CAlert>
-                                                                     );
-
-                                               ReactDOM.render(element,document.getElementById('errorAlert'));
-                      }
-                      else if(err.response != null && err.response.status == 409)
-                      {
-                           this.setState({
-                             "errorMessage": "This email is already registered"
-                           });
-                           const element = (
-                                                                                                  <CAlert
-                                                                                                  color="dark"
-                                                                                                  closeButton
-                                                                                                  >
-                                                                                                     {this.state.errorMessage}
-                                                                                                 </CAlert>
-                                                                                              );
-
-                                                                        ReactDOM.render(element,document.getElementById('errorAlert'));
-                      }
-                      else if(err.response != null && err.response.status == 400)
-                      {
-                           console.log("ERROR(REG): "+JSON.stringify(err.response.data));
-
-                          const violations = err.response.data.violations;
-                          if(violations.includes("email_invalid"))
-                          {
-                          const emailInvalid = (
-                                                 <CAlert
-                                                 color="warning"
-                                                 >
-                                                    Email is not valid
-                                                </CAlert>
-                                             );
-                          ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
-                          }
-                      }
-                      else
-                      {
-                           this.setState({
-                               "errorMessage": "Unknown Error. Please check your Network Connection"
-                           });
-                           const element = (
-                                                                                                  <CAlert
-                                                                                                  color="dark"
-                                                                                                  closeButton
-                                                                                                  >
-                                                                                                     {this.state.errorMessage}
-                                                                                                 </CAlert>
-                                                                                              );
-
-                                                                        ReactDOM.render(element,document.getElementById('errorAlert'));
-                      }
-                });
-
-        }
-    }
 
   render() {
     return (
       <>
         <br/><br/><br/><br/><br/>
         <div id="parent">
-                    <RenderLogin state={this.state} props={this.props}/>
+            <RenderLogin state={this.state} props={this.props}/>
         </div>
       </>
     );

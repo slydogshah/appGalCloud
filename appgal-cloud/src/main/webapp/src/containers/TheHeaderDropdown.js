@@ -143,8 +143,7 @@ export default function AdminNavbarLinks(props) {
                               className={classes.dropdownItem}
                             >
                               <CLink className={classes.dropdownItem} onClick={(event)=>{
-                                    //const email = store.getState().email;
-                                    const email = "pickup@pickup.io";
+                                    const email = store.getState().email;
                                     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
                                     axios.get(apiUrl).then((response) => {
                                         props.props.props.history.push({
