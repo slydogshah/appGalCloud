@@ -101,8 +101,12 @@ function DropOffView({state, props}) {
       const row = [];
       const org = value.pickupNotification.sourceOrg.orgName;
       const orgContact = value.pickupNotification.sourceOrg.orgContactEmail;
+      const foodRunner = value.pickupNotification.foodRunner.profile.email;
+      const time = value.estimatedDropOffTime;
       row.push(org);
       row.push(orgContact);
+      row.push(foodRunner);
+      row.push(time);
       row.push(FoodReceivedButton(props,value));
       activeArray.push(row);
     }
@@ -113,8 +117,10 @@ function DropOffView({state, props}) {
         const row = [];
         const org = value.pickupNotification.sourceOrg.orgName;
         const orgContact = value.pickupNotification.sourceOrg.orgContactEmail;
+        const foodRunner = value.pickupNotification.foodRunner.profile.email;
         row.push(org);
         row.push(orgContact);
+        row.push(foodRunner);
         historyArray.push(row);
       }
   const deliveries = inProgress.length + active.length
@@ -176,7 +182,7 @@ function DropOffView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["Pickup Organization", "Contact Email", "Notify"]}
+                                        tableHead={["Pickup Organization", "Contact Email", "Food Runner", "Estimated Time", "Notify"]}
                                         tableData={activeArray}
                                       />
                                     </CardBody>
@@ -193,7 +199,7 @@ function DropOffView({state, props}) {
                                                                     <CardBody>
                                                                       <Table
                                                                         tableHeaderColor="warning"
-                                                                        tableHead={["Pickup Organization", "Contact Email"]}
+                                                                        tableHead={["Pickup Organization", "Contact Email", "Food Runner"]}
                                                                         tableData={historyArray}
                                                                       />
                                                                     </CardBody>

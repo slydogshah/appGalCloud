@@ -101,8 +101,10 @@ function HomeView({state, props}) {
       const row = [];
       const org = value.pickupNotification.dropOffOrg.orgName;
       const orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+      const foodRunner = value.pickupNotification.foodRunner.profile.email;
       row.push(org);
       row.push(orgContact);
+      row.push(foodRunner);
       activeArray.push(row);
     }
   const history = props.history.location.state.data.history;
@@ -111,8 +113,10 @@ function HomeView({state, props}) {
           const row = [];
           const org = value.pickupNotification.dropOffOrg.orgName;
           const orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+          const foodRunner = value.pickupNotification.foodRunner.profile.email;
           row.push(org);
           row.push(orgContact);
+          row.push(foodRunner);
           historyArray.push(row);
         }
     const deliveries = inProgress.length + active.length
@@ -186,7 +190,7 @@ function HomeView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["DropOff Organization", "Contact Email"]}
+                                        tableHead={["DropOff Organization", "Contact Email", "Food Runner"]}
                                         tableData={activeArray}
                                       />
                                     </CardBody>
@@ -203,7 +207,7 @@ function HomeView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["DropOff Organization", "Contact Email"]}
+                                        tableHead={["DropOff Organization", "Contact Email", "Food Runner"]}
                                         tableData={historyArray}
                                       />
                                     </CardBody>
