@@ -105,6 +105,17 @@ function HomeView({state, props}) {
       row.push(orgContact);
       activeArray.push(row);
     }
+  const history = props.history.location.state.data.history;
+        var historyArray = [];
+        for (const [index, value] of history.entries()) {
+          const row = [];
+          const org = value.pickupNotification.dropOffOrg.orgName;
+          const orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+          row.push(org);
+          row.push(orgContact);
+          historyArray.push(row);
+        }
+    const deliveries = inProgress.length + active.length
   return (
         <>
                             <br/><br/><br/><br/><br/>
@@ -114,7 +125,7 @@ function HomeView({state, props}) {
                                    <CCardGroup className="mb-4">
                                                                                     <CWidgetDropdown
                                                                                               color="gradient-primary"
-                                                                                              header={inProgress.length}
+                                                                                              header={deliveries}
                                                                                               text="Deliveries In-Progress"
                                                                                               footerSlot={
                                                                                                 <ChartLineSimple
@@ -177,6 +188,23 @@ function HomeView({state, props}) {
                                         tableHeaderColor="warning"
                                         tableHead={["DropOff Organization", "Contact Email"]}
                                         tableData={activeArray}
+                                      />
+                                    </CardBody>
+                                  </Card>
+                                </GridItem>
+                                <GridItem xs={12} sm={12} md={6}>
+                                  <Card>
+                                    <CardHeader color="primary">
+                                      <h4 className={classes.cardTitleWhite}>Pickup History</h4>
+                                      <p className={classes.cardCategoryWhite}>
+
+                                      </p>
+                                    </CardHeader>
+                                    <CardBody>
+                                      <Table
+                                        tableHeaderColor="warning"
+                                        tableHead={["DropOff Organization", "Contact Email"]}
+                                        tableData={historyArray}
                                       />
                                     </CardBody>
                                   </Card>
