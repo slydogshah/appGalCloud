@@ -437,8 +437,62 @@ class PickUpListView extends StatelessWidget {
   }
 
   void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
-    print(tx);
-    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+    //print("TX: "+tx.getPickupNotification().getSourceOrg().orgName);
+
+    //TODO
+    AlertDialog dialog = AlertDialog(
+      title: Text('Accept Food Pickup and DropOff'),
+      content: Text(
+        tx.getPickupNotification().getSourceOrg().orgName+": "+"506 West Avenue"+","+"78701",
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+      ),
+      actions: [
+        FlatButton(
+          textColor: Color(0xFF6200EE),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('CANCEL'),
+        ),
+        FlatButton(
+          textColor: Color(0xFF6200EE),
+          onPressed: () {
+            //Navigator.pop(context);
+            FocusScope.of(context).requestFocus(FocusNode());
+            ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+            Future<int> future = client.accept(email, dropOffOrgId, tx);
+            future.then((statusCode) {
+              if (statusCode == 200) {
+                Navigator.pop(context);
+                LocationUpdater.getLocation();
+                EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+                    tx.getPickupNotification().getDropOffOrg());
+                embeddedNavigation.start();
+              }
+              else {
+                //TODO
+                print("STATUS_CODE: $statusCode");
+              }
+            });
+          },
+          child: Text('START NAVIGATION'),
+        ),
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+
+    /*ActiveNetworkRestClient client = new ActiveNetworkRestClient();
     Future<int> future = client.accept(email, dropOffOrgId, tx);
     future.then((statusCode) {
       if (statusCode == 200) {
@@ -464,7 +518,7 @@ class PickUpListView extends StatelessWidget {
         //TODO
         print("STATUS_CODE: $statusCode");
       }
-    });
+    });*/
   }
 }
 
