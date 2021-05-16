@@ -461,13 +461,12 @@ class PickUpListView extends StatelessWidget {
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            //Navigator.pop(context);
+            Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
             Future<int> future = client.accept(email, dropOffOrgId, tx);
             future.then((statusCode) {
               if (statusCode == 200) {
-                Navigator.pop(context);
                 LocationUpdater.getLocation();
                 EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
                     tx.getPickupNotification().getDropOffOrg());

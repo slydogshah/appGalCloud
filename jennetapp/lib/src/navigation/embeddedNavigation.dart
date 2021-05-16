@@ -153,7 +153,7 @@ class EmbeddedNavigation
           Future<List<FoodRecoveryTransaction>> future = client
               .getFoodRecoveryTransaction(foodRunner.email);
           future.then((txs) {
-            Navigator.of(context, rootNavigator: true).pop();
+            //Navigator.of(context, rootNavigator: true).pop();
 
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) => FoodRunnerMainScene(txs)));
