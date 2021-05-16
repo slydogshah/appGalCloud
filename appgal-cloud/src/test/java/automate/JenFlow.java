@@ -235,6 +235,7 @@ public class JenFlow {
         json.addProperty("orgId", orgId);
         json.addProperty("foodType", foodType);
         json.addProperty("foodPic", foodPic);
+        json.addProperty("time","0:0");
 
         Response response = given().body(json.toString()).post("/notification/addPickupDetails/");
         String jsonString = response.getBody().print();
