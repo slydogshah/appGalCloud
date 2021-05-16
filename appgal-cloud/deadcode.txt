@@ -1420,3 +1420,40 @@ export default withRouter(DropOffHome)
 
 START: 1621057147
  START: 1621143604
+
+ {orgMap.map((prop, key) => {
+                       return (
+                         <option value={key}>{prop}</option>
+                       );
+               })}
+
+
+               function dropDownComp(state,orgs) {
+                     let map = new Map()
+                     for (const [index, value] of orgs.entries()) {
+                          map.set(value.orgId,value.orgName);
+                     }
+                     const options = [];
+                     for (let [key, value] of map) {
+                       options.push(<option value={key}>{value}</option>);
+                     }
+
+                     return (
+                       <div id="orgInput">
+                           <CSelect custom name="sourceOrgId" onChange={(event)=>{
+                               if (event.target.value === "custom") {
+                                   inputFieldComp(state);
+                               }
+                               else
+                               {
+                                  const target = event.target;
+                                  const value = target.value;
+                                  const name = target.name;
+                                  state.sourceOrgId = value;
+                               }
+                           }}>
+                             <option value="0">--Select Organization--</option>
+                           </CSelect>
+                       </div>
+                     );
+               }

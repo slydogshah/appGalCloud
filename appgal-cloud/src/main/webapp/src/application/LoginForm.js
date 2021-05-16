@@ -86,7 +86,15 @@ function inputFieldComp(state) {
       ReactDOM.render(element,document.getElementById('orgInput'));
 }
 
-function dropDownComp(state) {
+function dropDownComp(state,orgs) {
+      let map = new Map()
+       for (const [index, value] of orgs.entries()) {
+            map.set(value.orgId,value.orgName);
+       }
+       const options = [];
+       for (let [key, value] of map) {
+         options.push(<option value={key}>{value}</option>);
+       }
       return (
         <div id="orgInput">
             <CSelect custom name="sourceOrgId" onChange={(event)=>{
@@ -102,10 +110,8 @@ function dropDownComp(state) {
                 }
             }}>
               <option value="0">--Select Organization--</option>
-              <option value="Irenes">Irenes</option>
-              <option value="TraderJoe's">Trader Joe's</option>
-              <option value="ChiliParlor">Chili Parlor</option>
-              <option value="custom">Register New Organization</option>
+              {options}
+              <option value="custom">--Register New Organization--</option>
             </CSelect>
         </div>
       );
@@ -235,214 +241,218 @@ function RenderLogin({state,props})
                           </GridItem>
                           <GridItem xs={12} sm={12} md={6}>
                            <Button color="primary" onClick={(e) => {
+                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/orgs/";
+                                axios.get(apiUrl).then((response) => {
+                                const orgs = response.data;
                                 const element = (
-                                    <>
-                                              <br/><br/><br/><br/><br/>
-                                              <div id="errorAlert" />
-                                              <div>
-                                                 <GridContainer>
-                                                   <GridItem xs={12} sm={12} md={8}>
-                                                     <Card>
-                                                       <CardHeader color="primary">
-                                                         <h4 className={classes.cardTitleWhite}>Register</h4>
-                                                       </CardHeader>
-                                                       <CardBody>
-                                                         <GridContainer>
-                                                           <GridItem xs={12} sm={12} md={4}>
-                                                             <CustomInput
-                                                             labelText="Email address"
-                                                             id="email"
-                                                             formControlProps={{
-                                                               fullWidth: true
-                                                             }}
-                                                             inputProps={{
-                                                                                             onChange:(event) => {
-                                                                                                 const target = event.target;
-                                                                                                 const value = target.value;
-                                                                                                 const name = target.name;
-                                                                                                 state.email = value;
-
-                                                                                             }
+                                                                <>
+                                                                          <br/><br/><br/><br/><br/>
+                                                                          <div id="errorAlert" />
+                                                                          <div>
+                                                                             <GridContainer>
+                                                                               <GridItem xs={12} sm={12} md={8}>
+                                                                                 <Card>
+                                                                                   <CardHeader color="primary">
+                                                                                     <h4 className={classes.cardTitleWhite}>Register</h4>
+                                                                                   </CardHeader>
+                                                                                   <CardBody>
+                                                                                     <GridContainer>
+                                                                                       <GridItem xs={12} sm={12} md={4}>
+                                                                                         <CustomInput
+                                                                                         labelText="Email address"
+                                                                                         id="email"
+                                                                                         formControlProps={{
+                                                                                           fullWidth: true
                                                                                          }}
-                                                           />
-                                                           <div id="emailRequired"/>
-                                                           <div id="emailInvalid"/>
-                                                           </GridItem>
-                                                         </GridContainer>
-                                                         <GridContainer>
-                                                           <GridItem xs={12} sm={12} md={6}>
-                                                              <CustomInput
-                                                               labelText="Password"
-                                                               id="password"
-                                                               formControlProps={{
-                                                                 fullWidth: true
-                                                               }}
-                                                               inputProps={{
-                                                                                               onChange:(event) => {
-                                                                                                   const target = event.target;
-                                                                                                   const value = target.value;
-                                                                                                   const name = target.name;
-                                                                                                   state.password = value;
+                                                                                         inputProps={{
+                                                                                                                         onChange:(event) => {
+                                                                                                                             const target = event.target;
+                                                                                                                             const value = target.value;
+                                                                                                                             const name = target.name;
+                                                                                                                             state.email = value;
 
-                                                                                               }
+                                                                                                                         }
+                                                                                                                     }}
+                                                                                       />
+                                                                                       <div id="emailRequired"/>
+                                                                                       <div id="emailInvalid"/>
+                                                                                       </GridItem>
+                                                                                     </GridContainer>
+                                                                                     <GridContainer>
+                                                                                       <GridItem xs={12} sm={12} md={6}>
+                                                                                          <CustomInput
+                                                                                           labelText="Password"
+                                                                                           id="password"
+                                                                                           formControlProps={{
+                                                                                             fullWidth: true
                                                                                            }}
-                                                             />
-                                                             <div id="passwordRequired"/>
-                                                             <div id="password_mismatch"/>
-                                                           </GridItem>
-                                                         </GridContainer>
-                                                         <GridContainer>
-                                                            <GridItem xs={12} sm={12} md={6}>
-                                                               <br/>
-                                                               <CSelect custom name="producer" onChange={(event)=>{
-                                                                    const target = event.target;
-                                                                    const value = target.value;
-                                                                    const name = target.name;
-                                                                    state.producer = value;
+                                                                                           inputProps={{
+                                                                                                                           onChange:(event) => {
+                                                                                                                               const target = event.target;
+                                                                                                                               const value = target.value;
+                                                                                                                               const name = target.name;
+                                                                                                                               state.password = value;
 
-                                                               }}>
-                                                                <option value="0">-- Select Organization Type--</option>
-                                                                <option value={true}>Pickup</option>
-                                                                <option value={false}>DropOff</option>
-                                                              </CSelect>
-                                                            </GridItem>
-                                                         </GridContainer>
-                                                         <GridContainer>
-                                                             <GridItem xs={12} sm={12} md={6}>
-                                                                <div>
-                                                                      <br/>
-                                                                      {state.activeElementType === "dropdown"
-                                                                        ? dropDownComp(state)
-                                                                        : inputFieldComp(state)}
-                                                               </div>
-                                                             </GridItem>
-                                                             <div id="organizationRequired"/>
-                                                        </GridContainer>
-                                                       </CardBody>
-                                                       <CardFooter>
-                                                           <GridContainer>
-                                                              <GridItem xs={12} sm={12} md={6}>
-                                                               <Button color="primary" onClick={(e) => {
-                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
-                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
-                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
-                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
-                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
-                                                                    const required = (
-                                                                                 <CAlert
-                                                                                 color="warning"
-                                                                                 >
-                                                                                    Required
-                                                                                </CAlert>
-                                                                             );
-                                                                let validationSuccess = true;
-                                                                if(state.email == null || state.email == "")
-                                                                {
-                                                                  ReactDOM.render(required,document.getElementById('emailRequired'));
-                                                                  validationSuccess = false;
-                                                                }
-                                                                if(state.password == null || state.password == "")
-                                                                {
-                                                                    ReactDOM.render(required,document.getElementById('passwordRequired'));
-                                                                    validationSuccess = false;
-                                                                }
-                                                                if(state.sourceOrgId == null || state.sourceOrgId == "")
-                                                                {
-                                                                  ReactDOM.render(required,document.getElementById('organizationRequired'));
-                                                                  validationSuccess = false;
-                                                                }
+                                                                                                                           }
+                                                                                                                       }}
+                                                                                         />
+                                                                                         <div id="passwordRequired"/>
+                                                                                         <div id="password_mismatch"/>
+                                                                                       </GridItem>
+                                                                                     </GridContainer>
+                                                                                     <GridContainer>
+                                                                                        <GridItem xs={12} sm={12} md={6}>
+                                                                                           <br/>
+                                                                                           <CSelect custom name="producer" onChange={(event)=>{
+                                                                                                const target = event.target;
+                                                                                                const value = target.value;
+                                                                                                const name = target.name;
+                                                                                                state.producer = value;
 
-                                                                if(!validationSuccess)
-                                                                {
-                                                                    return;
-                                                                }
+                                                                                           }}>
+                                                                                            <option value="0">-- Select Organization Type--</option>
+                                                                                            <option value={true}>Pickup</option>
+                                                                                            <option value={false}>DropOff</option>
+                                                                                          </CSelect>
+                                                                                        </GridItem>
+                                                                                     </GridContainer>
+                                                                                     <GridContainer>
+                                                                                         <GridItem xs={12} sm={12} md={6}>
+                                                                                            <div>
+                                                                                                  <br/>
+                                                                                                  {state.activeElementType === "dropdown"
+                                                                                                    ? dropDownComp(state,orgs)
+                                                                                                    : inputFieldComp(state)}
+                                                                                           </div>
+                                                                                         </GridItem>
+                                                                                         <div id="organizationRequired"/>
+                                                                                    </GridContainer>
+                                                                                   </CardBody>
+                                                                                   <CardFooter>
+                                                                                       <GridContainer>
+                                                                                          <GridItem xs={12} sm={12} md={6}>
+                                                                                           <Button color="primary" onClick={(e) => {
+                                                                                                ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
+                                                                                                ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
+                                                                                                ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
+                                                                                                ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
+                                                                                                ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
+                                                                                                const required = (
+                                                                                                             <CAlert
+                                                                                                             color="warning"
+                                                                                                             >
+                                                                                                                Required
+                                                                                                            </CAlert>
+                                                                                                         );
+                                                                                            let validationSuccess = true;
+                                                                                            if(state.email == null || state.email == "")
+                                                                                            {
+                                                                                              ReactDOM.render(required,document.getElementById('emailRequired'));
+                                                                                              validationSuccess = false;
+                                                                                            }
+                                                                                            if(state.password == null || state.password == "")
+                                                                                            {
+                                                                                                ReactDOM.render(required,document.getElementById('passwordRequired'));
+                                                                                                validationSuccess = false;
+                                                                                            }
+                                                                                            if(state.sourceOrgId == null || state.sourceOrgId == "")
+                                                                                            {
+                                                                                              ReactDOM.render(required,document.getElementById('organizationRequired'));
+                                                                                              validationSuccess = false;
+                                                                                            }
 
-                                                                const agent = new https.Agent({
-                                                                              rejectUnauthorized: false
-                                                                            });
+                                                                                            if(!validationSuccess)
+                                                                                            {
+                                                                                                return;
+                                                                                            }
 
-                                                                const login = state.email;
-                                                                const payload = {httpsAgent: agent,
-                                                                "email":state.email,
-                                                                "mobile":"123",
-                                                                "password":state.password,
-                                                                "orgId":state.sourceOrgId,
-                                                                "orgName":state.sourceOrgId,
-                                                                "orgType":state.orgType,
-                                                                "profileType":state.profileType,
-                                                                "orgContactEmail":state.email,
-                                                                "street":state.street,
-                                                                "zip":state.zip,
-                                                                "producer":state.producer};
+                                                                                            const agent = new https.Agent({
+                                                                                                          rejectUnauthorized: false
+                                                                                                        });
 
-                                                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
-                                                                axios.post(apiUrl,payload).then((response) => {
-                                                                    console.log(JSON.stringify(response.data));
-                                                                    store.setState(state => ({
-                                                                             ...state,
-                                                                             auth: true,
-                                                                             email:login,
-                                                                             sourceOrg: response.data
-                                                                           }));
+                                                                                            const login = state.email;
+                                                                                            const payload = {httpsAgent: agent,
+                                                                                            "email":state.email,
+                                                                                            "mobile":"123",
+                                                                                            "password":state.password,
+                                                                                            "orgId":state.sourceOrgId,
+                                                                                            "orgName":state.sourceOrgId,
+                                                                                            "orgType":state.orgType,
+                                                                                            "profileType":state.profileType,
+                                                                                            "orgContactEmail":state.email,
+                                                                                            "street":state.street,
+                                                                                            "zip":state.zip,
+                                                                                            "producer":state.producer};
 
-                                                                   LaunchHome(props,response.data.producer);
-                                                                }).catch(err => {
-                                                                    if(err.response != null && err.response.status == 409)
-                                                                    {
-                                                                         const element = (
-                                                                            <CAlert
-                                                                            color="dark"
-                                                                            closeButton
-                                                                            >
-                                                                             "This email is already registered"
-                                                                           </CAlert>
-                                                                         );
-                                                                         ReactDOM.render(element,document.getElementById('errorAlert'));
-                                                                    }
-                                                                    else if(err.response != null && err.response.status == 400)
-                                                                    {
-                                                                         console.log("ERROR(REG): "+JSON.stringify(err.response.data));
+                                                                                            const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
+                                                                                            axios.post(apiUrl,payload).then((response) => {
+                                                                                                console.log(JSON.stringify(response.data));
+                                                                                                store.setState(state => ({
+                                                                                                         ...state,
+                                                                                                         auth: true,
+                                                                                                         email:login,
+                                                                                                         sourceOrg: response.data
+                                                                                                       }));
 
-                                                                        const violations = err.response.data.violations;
-                                                                        if(violations.includes("email_invalid"))
-                                                                        {
-                                                                        const emailInvalid = (
-                                                                                               <CAlert
-                                                                                               color="warning"
-                                                                                               >
-                                                                                                  Email is not valid
-                                                                                              </CAlert>
-                                                                                           );
-                                                                        ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
-                                                                        }
+                                                                                               LaunchHome(props,response.data.producer);
+                                                                                            }).catch(err => {
+                                                                                                if(err.response != null && err.response.status == 409)
+                                                                                                {
+                                                                                                     const element = (
+                                                                                                        <CAlert
+                                                                                                        color="dark"
+                                                                                                        closeButton
+                                                                                                        >
+                                                                                                         "This email is already registered"
+                                                                                                       </CAlert>
+                                                                                                     );
+                                                                                                     ReactDOM.render(element,document.getElementById('errorAlert'));
+                                                                                                }
+                                                                                                else if(err.response != null && err.response.status == 400)
+                                                                                                {
+                                                                                                     console.log("ERROR(REG): "+JSON.stringify(err.response.data));
 
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                         const element = (
-                                                                            <CAlert
-                                                                            color="dark"
-                                                                            closeButton
-                                                                            >
-                                                                               "Unknown Error. Please check your Network Connection
-                                                                           </CAlert>
-                                                                        );
-                                                                        ReactDOM.render(element,document.getElementById('errorAlert'));
-                                                                    }
-                                                              });
-                                                               }}>Register</Button>
-                                                            </GridItem>
-                                                            </GridContainer>
-                                                       </CardFooter>
-                                                     </Card>
-                                                   </GridItem>
-                                                 </GridContainer>
-                                           </div>
+                                                                                                    const violations = err.response.data.violations;
+                                                                                                    if(violations.includes("email_invalid"))
+                                                                                                    {
+                                                                                                    const emailInvalid = (
+                                                                                                                           <CAlert
+                                                                                                                           color="warning"
+                                                                                                                           >
+                                                                                                                              Email is not valid
+                                                                                                                          </CAlert>
+                                                                                                                       );
+                                                                                                    ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
+                                                                                                    }
 
-                                              </>
-                                );
-                                ReactDOM.unmountComponentAtNode(document.getElementById('parent'));
-                                ReactDOM.render(element,document.getElementById('parent'));
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                     const element = (
+                                                                                                        <CAlert
+                                                                                                        color="dark"
+                                                                                                        closeButton
+                                                                                                        >
+                                                                                                           "Unknown Error. Please check your Network Connection
+                                                                                                       </CAlert>
+                                                                                                    );
+                                                                                                    ReactDOM.render(element,document.getElementById('errorAlert'));
+                                                                                                }
+                                                                                          });
+                                                                                           }}>Register</Button>
+                                                                                        </GridItem>
+                                                                                        </GridContainer>
+                                                                                   </CardFooter>
+                                                                                 </Card>
+                                                                               </GridItem>
+                                                                             </GridContainer>
+                                                                       </div>
+
+                                                                          </>
+                                                            );
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('parent'));
+                                                            ReactDOM.render(element,document.getElementById('parent'));
+                                });
                            }}>Register</Button>
                         </GridItem>
                         </GridContainer>
