@@ -2,6 +2,7 @@ package io.appgal.cloud.model;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +91,18 @@ public class FoodRecoveryTransaction implements Serializable {
 
     public void setEstimatedDropOffTime(String estimatedDropOffTime) {
         this.estimatedDropOffTime = estimatedDropOffTime;
+    }
+
+    public String accept(MongoDBJsonStore mongoDBJsonStore)
+    {
+        synchronized (this) {
+            FoodRecoveryTransaction tx = mongoDBJsonStore.getFoodRecoveryTransaction(this.getId());
+            if(tx.getTransactionState() == TransactionState.SUBMITTED) {
+                FoodRecoveryTransaction stored = mongoDBJsonStore.storeFoodRecoveryTransaction(this);
+                return stored.getId();
+            }
+            return null;
+        }
     }
 
     public static FoodRecoveryTransaction parse(String json)

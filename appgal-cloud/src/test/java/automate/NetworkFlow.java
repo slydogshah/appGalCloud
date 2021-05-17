@@ -54,7 +54,7 @@ public class NetworkFlow {
     }
 
     @Test
-    public void flow1() throws Exception
+    public void flowExclusiveAccept() throws Exception
     {
         String pickupOrg = "pickup@pickup.io";
         String dropOffOrg = "dropoff@dropoff.io";
@@ -106,6 +106,10 @@ public class NetworkFlow {
         f2Transactions = this.getMyTransactions(f2.getProfile().getEmail());
         JsonUtil.print(this.getClass(),JsonParser.parseString(f2Transactions.toString()).getAsJsonArray());
         assertTrue(f2Transactions.isEmpty());
+
+        JsonObject error = this.acceptTransaction(f2.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        JsonUtil.print(this.getClass(),error);
+        assertEquals("TRANSACTION_IN_PROGRESS",error.get("exception").getAsString());
     }
 
     private SourceOrg registerPickupOrg(String email)
@@ -252,7 +256,7 @@ public class NetworkFlow {
         return myTransactions;
     }
 
-    private FoodRecoveryTransaction acceptTransaction(String email,String dropOffOrgId,FoodRecoveryTransaction accepted)
+    private JsonObject acceptTransaction(String email,String dropOffOrgId,FoodRecoveryTransaction accepted)
     {
         JsonObject json = new JsonObject();
         json.addProperty("email",email);
@@ -261,12 +265,16 @@ public class NetworkFlow {
         Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
         String jsonString = response.getBody().print();
         JsonObject responseJson = JsonParser.parseString(jsonString).getAsJsonObject();
+        if(response.statusCode() == 500)
+        {
+            return JsonParser.parseString(jsonString).getAsJsonObject();
+        }
         assertEquals(200, response.getStatusCode());
         String id = responseJson.get("recoveryTransactionId").getAsString();
 
         response = given().body(json.toString()).when().get("/tx/recovery/transaction?id="+id).andReturn();
         jsonString = response.getBody().print();
-        return FoodRecoveryTransaction.parse(jsonString);
+        return JsonParser.parseString(jsonString).getAsJsonObject();
     }
 
     private void scheduleDropOff(FoodRecoveryTransaction accepted)

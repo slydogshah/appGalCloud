@@ -200,10 +200,14 @@ public class NetworkOrchestrator {
 
     public JsonObject acceptRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        FoodRecoveryTransaction stored = this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+        String id = foodRecoveryTransaction.accept(this.mongoDBJsonStore);
+        if(id == null)
+        {
+            throw new RuntimeException("TRANSACTION_IN_PROGRESS");
+        }
 
         JsonObject json = new JsonObject();
-        json.addProperty("recoveryTransactionId", stored.getId());
+        json.addProperty("recoveryTransactionId", id);
         return json;
     }
 }
