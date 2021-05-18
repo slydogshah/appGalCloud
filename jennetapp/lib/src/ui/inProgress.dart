@@ -1,47 +1,35 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:app/hotel_booking/hotel_app_theme.dart';
-
-import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:app/src/navigation/embeddedNavigation.dart';
-import 'package:app/src/model/foodRecoveryTransaction.dart';
-import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
 
-import 'inProgress.dart';
-
-
-class FoodRunnerMainScene extends StatefulWidget {
+class InProgressMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
 
-  FoodRunnerMainScene(List<FoodRecoveryTransaction> recoveryTxs)
+  InProgressMainScene(List<FoodRecoveryTransaction> recoveryTxs)
   {
     this.recoveryTxs = recoveryTxs;
   }
 
   @override
-  _FoodRunnerMainState createState() => _FoodRunnerMainState(this.recoveryTxs);
+  _InProgressMainState createState() => _InProgressMainState(this.recoveryTxs);
 }
 
-class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProviderStateMixin {
+class _InProgressMainState extends State<InProgressMainScene> with TickerProviderStateMixin {
+  List<FoodRecoveryTransaction> recoveryTxs;
 
   AnimationController animationController;
-  List<FoodRecoveryTransaction> recoveryTxs;
 
   final ScrollController _scrollController = ScrollController();
 
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 5));
 
-  _FoodRunnerMainState(List<FoodRecoveryTransaction> recoveryTxs) {
+  _InProgressMainState(List<FoodRecoveryTransaction> recoveryTxs) {
     this.recoveryTxs = recoveryTxs;
   }
 
@@ -57,11 +45,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     animationController.dispose();
     super.dispose();
   }
-
-  /*@override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +78,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         body: Container(
                           color: primaryColor,
                           //color: Colors.pink,
-                          child: getPickUpList(),
+                          child: getInProgressList(),
                         ),
                       ),
                     )
@@ -109,7 +92,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     );
   }
 
-  Widget getPickUpList()
+  Widget getInProgressList()
   {
     Widget widget = ListView.builder(
       itemCount: recoveryTxs.length,
@@ -126,7 +109,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     (1 / count) * index, 1.0,
                     curve: Curves.fastOutSlowIn)));
         animationController.forward();
-        return PickUpListView(
+        return InProgressListView(
           animation: animation,
           animationController: animationController,
           tx: this.recoveryTxs[index],
@@ -163,7 +146,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     Radius.circular(32.0),
                   ),
                   onTap: () {
-                  //  Navigator.pop(context);
+                    //  Navigator.pop(context);
                   },
                   /*child: Padding(
                   //  padding: const EdgeInsets.all(8.0),
@@ -175,7 +158,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
             Expanded(
               child: Center(
                 child: Text(
-                  'Requests',
+                  'In-Progress',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 22,
@@ -211,7 +194,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                       ),
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => InProgressMainScene(this.recoveryTxs)));
+                            builder: (context) => InProgressMainScene(null)));
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -227,20 +210,14 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       ),
     );
   }
-
-  Future<bool> getData() async {
-    await Future<dynamic>.delayed(const Duration(milliseconds: 200));
-    return true;
-  }
 }
 
-class PickUpListView extends StatelessWidget {
-  const PickUpListView(
-      {Key key,
-        this.animationController,
-        this.animation,
-        this.tx,
-      })
+class InProgressListView extends StatelessWidget {
+  const InProgressListView({Key key,
+    this.animationController,
+    this.animation,
+    this.tx,
+  })
       : super(key: key);
 
   final AnimationController animationController;
@@ -249,7 +226,8 @@ class PickUpListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/transaction/foodPic/?id="+tx.getId();
+    String remoteUrl = UrlFunctions.getInstance().resolveHost() +
+        "tx/recovery/transaction/foodPic/?id=" + tx.getId();
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -263,8 +241,7 @@ class PickUpListView extends StatelessWidget {
                   left: 24, right: 24, top: 8, bottom: 16),
               child: InkWell(
                 splashColor: Colors.transparent,
-                onTap: () {
-                },
+                onTap: () {},
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16.0)),
@@ -303,17 +280,16 @@ class PickUpListView extends StatelessWidget {
                                         primary: Colors.pink
                                     ),
                                     onPressed: () {
-                                      Profile profile = ActiveSession.getInstance().getProfile();
-                                      handleAccept(context,profile.email,
-                                          tx.schedulePickupNotification.dropOffOrg.orgId,
-                                          tx);
+                                      Profile profile = ActiveSession
+                                          .getInstance().getProfile();
                                     },
                                   ),
                                 ],
                               ),
                             ),
                             Container(
-                              color: HotelAppTheme.buildLightTheme()
+                              color: HotelAppTheme
+                                  .buildLightTheme()
                                   .backgroundColor,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -331,7 +307,10 @@ class PickUpListView extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              tx.getPickupNotification().getSourceOrg().orgName,
+                                              tx
+                                                  .getPickupNotification()
+                                                  .getSourceOrg()
+                                                  .orgName,
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
@@ -386,7 +365,10 @@ class PickUpListView extends StatelessWidget {
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
                                         Text(
-                                          tx.getPickupNotification().getDropOffOrg().orgName,
+                                          tx
+                                              .getPickupNotification()
+                                              .getDropOffOrg()
+                                              .orgName,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -422,7 +404,8 @@ class PickUpListView extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Icon(
                                   Icons.favorite_border,
-                                  color: HotelAppTheme.buildLightTheme()
+                                  color: HotelAppTheme
+                                      .buildLightTheme()
                                       .primaryColor,
                                 ),
                               ),
@@ -440,62 +423,4 @@ class PickUpListView extends StatelessWidget {
       },
     );
   }
-
-  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
-    //print("TX: "+tx.getPickupNotification().getSourceOrg().orgName);
-
-    //TODO
-    AlertDialog dialog = AlertDialog(
-      title: Text('Accept Food Pickup and DropOff'),
-      content: Text(
-        tx.getPickupNotification().getSourceOrg().orgName+": "+"506 West Avenue"+","+"78701",
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-        ),
-      ),
-      actions: [
-        FlatButton(
-          textColor: Color(0xFF6200EE),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('CANCEL'),
-        ),
-        FlatButton(
-          textColor: Color(0xFF6200EE),
-          onPressed: () {
-            Navigator.pop(context);
-            FocusScope.of(context).requestFocus(FocusNode());
-            ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-            Future<int> future = client.accept(email, dropOffOrgId, tx);
-            future.then((statusCode) {
-              if (statusCode == 200) {
-                LocationUpdater.getLocation();
-                EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
-                    tx.getPickupNotification().getDropOffOrg());
-                embeddedNavigation.start();
-              }
-              else {
-                //TODO
-                print("STATUS_CODE: $statusCode");
-              }
-            });
-          },
-          child: Text('START NAVIGATION'),
-        ),
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
-  }
 }
-
-
