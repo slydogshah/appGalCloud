@@ -298,6 +298,11 @@ public class MongoDBJsonStore {
         return this.foodRecoveryStore.getFoodRecoveryDropOffHistory(this.mongoDatabase, orgId);
     }
 
+    public List<FoodRecoveryTransaction> getPickedUpTransactions(String email)
+    {
+        return this.foodRecoveryStore.getPickedUpTransactions(this.mongoDatabase,email);
+    }
+
     public byte[] getImage(ObjectId fileId)
     {
         return this.pickupRequestStore.getImage(this.mongoDatabase,fileId);

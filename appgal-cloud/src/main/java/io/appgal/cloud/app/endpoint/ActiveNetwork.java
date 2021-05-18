@@ -219,4 +219,48 @@ public class ActiveNetwork {
             return Response.status(500).entity(error.toString()).build();
         }
     }
+
+    @Path("/foodPickedUp")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response foodPickedUp(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String txId = json.get("txId").getAsString();
+
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
+            tx.setTransactionState(TransactionState.ONTHEWAY);
+            this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success",true);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/foodPickedUp")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodPickedUp(@QueryParam("email") String email)
+    {
+        try {
+            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getPickedUpTransactions(email);
+            return Response.ok(JsonParser.parseString(txs.toString()).getAsJsonArray().toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
 }

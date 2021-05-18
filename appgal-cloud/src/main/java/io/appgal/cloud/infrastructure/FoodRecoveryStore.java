@@ -182,4 +182,24 @@ public class FoodRecoveryStore {
         }
         return list;
     }
+
+    public List<FoodRecoveryTransaction> getPickedUpTransactions(MongoDatabase database,String email)
+    {
+        List<FoodRecoveryTransaction> list = new ArrayList<>();
+        MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
+
+        ///({$and:[{"pickupNotification.dropOffOrg.orgId":"dropoff.io"},{"transactionState":{$not:{ $regex: "CLOSED" }}}]}
+        String queryJson = "{$and:[{\"pickupNotification.foodRunner.profile.email\":\""+email+"\"},{\"transactionState\":\""+TransactionState.ONTHEWAY+"\"}]}";
+        logger.info(queryJson);
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            String documentJson = document.toJson();
+            list.add(FoodRecoveryTransaction.parse(documentJson));
+        }
+        return list;
+    }
 }
