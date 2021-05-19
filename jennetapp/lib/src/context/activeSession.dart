@@ -1,3 +1,4 @@
+import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 
@@ -9,6 +10,7 @@ class ActiveSession
 
   Profile profile;
   FoodRunnerLocation location;
+  FoodRecoveryTransaction current;
 
   ActiveSession();
 

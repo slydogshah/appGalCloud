@@ -488,8 +488,8 @@ class PickUpListView extends StatelessWidget {
 
               LocationUpdater.getLocation();
               EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
-                  tx.getPickupNotification().getDropOffOrg(),this.txs,true);
-              embeddedNavigation.start();
+                  tx.getPickupNotification().getDropOffOrg());
+              embeddedNavigation.start(tx);
             });
           },
           child: Text('START NAVIGATION'),

@@ -472,8 +472,8 @@ class InProgressListView extends StatelessWidget {
             FocusScope.of(context).requestFocus(FocusNode());
             LocationUpdater.getLocation();
             EmbeddedNavigation navigation = EmbeddedNavigation(context,
-                tx.getPickupNotification().getDropOffOrg(),this.txs,false);
-            navigation.start();
+                tx.getPickupNotification().getDropOffOrg());
+            navigation.start(tx);
           },
           child: Text('START NAVIGATION'),
         ),
