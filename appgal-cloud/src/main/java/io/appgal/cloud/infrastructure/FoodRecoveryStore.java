@@ -49,8 +49,6 @@ public class FoodRecoveryStore {
         Document doc = Document.parse(foodRecoveryTransaction.toString());
         collection.insertOne(doc);
 
-
-        bson = Document.parse(queryJson);
         iterable = collection.find(bson);
         cursor = iterable.cursor();
         while(cursor.hasNext())

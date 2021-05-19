@@ -311,7 +311,7 @@ class PickUpListView extends StatelessWidget {
                                 CrossAxisAlignment.end,
                                 children: <Widget>[
                                   ElevatedButton(
-                                    child: Text('Accept'),
+                                    child: Text("Accept"),
                                     style: ElevatedButton.styleFrom(
                                       //primary: Color(0xFF383EDB)
                                         primary: Colors.pink
