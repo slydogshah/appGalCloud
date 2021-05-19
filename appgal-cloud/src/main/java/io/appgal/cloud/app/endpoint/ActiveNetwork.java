@@ -163,30 +163,6 @@ public class ActiveNetwork {
 
             JsonObject responseJson = this.networkOrchestrator.acceptRecoveryTransaction(tx);
 
-            JsonObject result = new JsonObject();
-            JsonArray pending = new JsonArray();
-            JsonArray inProgress = new JsonArray();
-            List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
-            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
-
-            for(FoodRecoveryTransaction cour: transactions) {
-                if (cour.getTransactionState() == TransactionState.SUBMITTED)
-                {
-
-                    pending.add(cour.toJson());
-                }
-                else if(cour.getTransactionState() == TransactionState.INPROGRESS)
-                {
-                    inProgress.add(cour.toJson());
-                }
-            }
-            result.add("pending", pending);
-            result.add("inProgress",inProgress);
-
-
-
-            responseJson.add("txs",result);
-
             return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)

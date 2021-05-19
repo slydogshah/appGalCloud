@@ -483,8 +483,8 @@ class PickUpListView extends StatelessWidget {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-            Future<Map<String,List<FoodRecoveryTransaction>>> future = client.accept(email, dropOffOrgId, tx);
-            future.then((txs) {
+            Future<String> future = client.accept(email, dropOffOrgId, tx);
+            future.then((fuckyou) {
 
               LocationUpdater.getLocation();
               EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,

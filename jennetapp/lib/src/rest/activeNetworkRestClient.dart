@@ -210,9 +210,8 @@ class ActiveNetworkRestClient
     return response.statusCode;
   }
 
-  Future<Map<String,List<FoodRecoveryTransaction>>> accept(String email, String dropOffOrgId,FoodRecoveryTransaction tx) async
+  Future<String> accept(String email, String dropOffOrgId,FoodRecoveryTransaction tx) async
   {
-    Map<String,List<FoodRecoveryTransaction>> txs = new Map();
     Map<String,dynamic> payload = new Map();
     payload["email"] = email;
     payload["dropOffOrgId"] = dropOffOrgId;
@@ -228,47 +227,9 @@ class ActiveNetworkRestClient
     }
     catch (e) {
       print(e);
-      return txs;
+      return response.body;
     }
 
-    Map<String,dynamic> jsonResponse = jsonDecode(response.body);
-    Map<String,dynamic> object = jsonResponse['txs'];
-
-    if(object['pending'] != null) {
-      Iterable l = object['pending'];
-      List<FoodRecoveryTransaction> pending = [];
-      for (Map<String, dynamic> tx in l) {
-        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
-
-        print("TXID_PENDING:"+local.getId());
-
-        pending.add(local);
-      }
-      txs['pending'] = pending;
-    }
-    else{
-      print("TXID_PENDING:EMPTY");
-      txs ['pending'] = [];
-    }
-
-
-    if(object['inProgress'] != null) {
-      Iterable l = object['inProgress'];
-      List<FoodRecoveryTransaction> inProgress = [];
-      for (Map<String, dynamic> tx in l) {
-        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
-
-        print("TXID_INPROGRESS:"+local.getId());
-
-        inProgress.add(local);
-      }
-      txs['inProgress'] = inProgress;
-    }
-    else{
-      print("TXID_INPROGRESS:EMPTY");
-      txs ['inProgress'] = [];
-    }
-
-    return txs;
+    return response.body;
   }
 }
