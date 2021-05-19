@@ -105,6 +105,7 @@ function HomeView({state, props}) {
       row.push(org);
       row.push(orgContact);
       row.push(foodRunner);
+      row.push(FoodPickedUpButton(props,value));
       activeArray.push(row);
     }
   const history = props.history.location.state.data.history;
@@ -190,7 +191,7 @@ function HomeView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["DropOff Organization", "Contact Email", "Food Runner"]}
+                                        tableHead={["DropOff Organization", "Contact Email", "Food Runner","Notify"]}
                                         tableData={activeArray}
                                       />
                                     </CardBody>
@@ -218,6 +219,61 @@ function HomeView({state, props}) {
                             </>
   );
 }
+
+function FoodPickedUpButton(props,tx){
+    if(tx.transactionState == "INPROGRESS")
+    {
+        var element = (
+            <div className="progress-group-prepend">
+                <span className="progress-group-text">
+                    <CButton color="success" onClick={(event)=>{
+                        notifyFoodPickedup(props,tx);
+                    }}>Food Pickedup</CButton>
+                </span>
+             </div>
+        );
+        return element;
+    }
+    else
+    {
+        var element = (
+                    <div className="progress-group-prepend">
+                        <span className="progress-group-text">
+                            <CButton class="btn btn-dark" color="success" onClick={(event)=>{
+                            }}>Food Pickedup</CButton>
+                        </span>
+                     </div>
+                );
+        return element;
+    }
+}
+
+function notifyFoodPickedup(props,tx)
+    {
+             const payload = {
+                txId:tx.id
+             };
+             //alert(JSON.stringify(payload));
+
+             const apiUrl = window.location.protocol +"//"+window.location.hostname+"/activeNetwork/foodPickedUp/";
+             axios.post(apiUrl,payload).then((response) => {
+                    const orgId = store.getState().sourceOrg.orgId;
+                    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+                    axios.get(apiUrl).then((response) => {
+                        props.history.push({
+                          pathname: "/home",
+                          state: { data: response.data }
+                        });
+                    }).catch(err => {
+                                     //TODO
+                                     console.log(JSON.stringify(err));
+                                    });;
+
+              }).catch(err => {
+               //TODO
+               console.log(JSON.stringify(err));
+              });
+    }
 
 class Home extends React.Component {
     constructor(props) {

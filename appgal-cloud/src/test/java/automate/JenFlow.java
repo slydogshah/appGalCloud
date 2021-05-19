@@ -93,7 +93,7 @@ public class JenFlow {
         }
 
         //Notify a FoodRunner...does not pull my transactions
-        /*JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
+        JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
                 foodRunner.getProfile().getPassword());
 
         //FoodRunner accepts....this will update to notificationSent=true
@@ -105,7 +105,7 @@ public class JenFlow {
         accepted = myTransactions.get(1);
         this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
-        for(int i=0; i<7; i++)
+        /*for(int i=0; i<7; i++)
         {
             myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
             JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
