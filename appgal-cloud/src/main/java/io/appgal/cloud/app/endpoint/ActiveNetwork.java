@@ -140,11 +140,9 @@ public class ActiveNetwork {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
             JsonUtil.print(this.getClass(),json);
             String email = json.get("email").getAsString();
-            String dropOffOrgId = json.get("dropOffOrgId").getAsString();
             String accepted = json.get("accepted").getAsString();
 
             FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
-            SourceOrg dropoffOrg = this.mongoDBJsonStore.getSourceOrg(dropOffOrgId);
 
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(accepted);
             tx.setFoodRunner(foodRunner);
