@@ -331,7 +331,7 @@ public class NetworkFlow {
         JsonObject json = new JsonObject();
         json.addProperty("email",email);
         json.addProperty("dropOffOrgId",dropOffOrgId);
-        json.add("accepted",accepted.toJson());
+        json.addProperty("accepted",accepted.getId());
         Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
         String jsonString = response.getBody().print();
         JsonObject responseJson = JsonParser.parseString(jsonString).getAsJsonObject();
