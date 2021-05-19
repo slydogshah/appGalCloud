@@ -37,11 +37,6 @@ class EmbeddedNavigation
       this.context = buildContext;
       foodRunnerLocation = ActiveSession.getInstance().getLocation();
 
-      //print(foodRunnerLocation.getLatitude());
-      //print(foodRunnerLocation.getLongitude());
-      //print(sourceOrg.location.getLatitude());
-      //print(sourceOrg.location.getLongitude());
-
 
       if(Platform.isIOS) {
         _origin = WayPoint(
@@ -98,7 +93,6 @@ class EmbeddedNavigation
     wayPoints.add(_origin);
     wayPoints.add(_stop);
 
-    print(wayPoints.isEmpty);
 
     await _directions.startNavigation(
         wayPoints: wayPoints,
@@ -133,6 +127,7 @@ class EmbeddedNavigation
         _arrived = true;
         if (!_isMultipleStop) {
           await Future.delayed(Duration(seconds: 3));
+          /*
           Profile profile = ActiveSession.getInstance().getProfile();
           FoodRunner foodRunner = new FoodRunner(profile);
 
@@ -141,7 +136,7 @@ class EmbeddedNavigation
               .getFoodRecoveryTransaction(foodRunner.getProfile().email);
           future.then((txs) {
             finish(txs);
-          });
+          });*/
         } else {}
         break;
       case MapBoxEvent.navigation_finished:
@@ -178,8 +173,6 @@ class EmbeddedNavigation
   void finish(Map<String,List<FoodRecoveryTransaction>> txs)
   {
     FoodRecoveryTransaction tx = ActiveSession.getInstance().current;
-    print(tx.getId());
-    print(tx.getTransactionState());
     if(tx.getTransactionState() == "SUBMITTED") {
       Navigator.push(context, MaterialPageRoute(
           builder: (context) => FoodRunnerMainScene(txs)));

@@ -29,8 +29,6 @@ class ActiveNetworkRestClient
       return jsonEncode(json);
     }
 
-    print(response.body);
-
     return response.body;
   }
 
@@ -49,7 +47,6 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    //print(response.body);
     Map<String,dynamic> object = json.decode(response.body);
 
     if(object['pending'] != null) {
@@ -79,7 +76,6 @@ class ActiveNetworkRestClient
       txs ['inProgress'] = [];
     }
 
-
     return txs;
   }
 
@@ -91,7 +87,6 @@ class ActiveNetworkRestClient
     String host = UrlFunctions.getInstance().resolveHost();
 
     String remoteUrl = host+"tx/push/recovery/?email="+email;
-    //print("PUSHURL: "+remoteUrl);
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }
@@ -100,7 +95,6 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    //print(response.body);
     Map<String,dynamic> object = json.decode(response.body);
     Iterable l = object['pending'];
     for(Map<String, dynamic> tx in l)
@@ -123,10 +117,6 @@ class ActiveNetworkRestClient
     jsonMap['latitude'] = locationData.latitude;
     jsonMap['longitude'] = locationData.longitude;
     String jsonBody = jsonEncode(jsonMap);
-
-    print("**********SENDING_LOCATION_UPDATE**********");
-    print(jsonBody);
-    print("*******************************************");
 
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
@@ -217,7 +207,6 @@ class ActiveNetworkRestClient
     payload["dropOffOrgId"] = dropOffOrgId;
     payload["accepted"] = tx.getId();
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
-    print(jsonEncode(payload));
     var response;
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
