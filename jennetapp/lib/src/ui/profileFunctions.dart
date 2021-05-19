@@ -126,7 +126,7 @@ class ProfileFunctions
       activeSession.setProfile(foodRunner);
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client
+      Future<Map<String,List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
         //Navigator.pushReplacement(context, MaterialPageRoute(
@@ -189,7 +189,7 @@ class ProfileFunctions
       activeSession.setProfile(foodRunner);
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client
+      Future<Map<String,List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
 
@@ -321,7 +321,7 @@ class ProfileFunctions
       activeSession.setProfile(foodRunner);
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<List<FoodRecoveryTransaction>> future = client
+      Future<Map<String,List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
         //Navigator.pushReplacement(context, MaterialPageRoute(

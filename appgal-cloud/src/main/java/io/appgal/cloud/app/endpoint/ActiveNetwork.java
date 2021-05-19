@@ -141,12 +141,12 @@ public class ActiveNetwork {
             JsonUtil.print(this.getClass(),json);
             String email = json.get("email").getAsString();
             String dropOffOrgId = json.get("dropOffOrgId").getAsString();
-            JsonObject accepted = json.get("accepted").getAsJsonObject();
+            String accepted = json.get("accepted").getAsString();
 
             FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
             SourceOrg dropoffOrg = this.mongoDBJsonStore.getSourceOrg(dropOffOrgId);
 
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(accepted.toString());
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(accepted);
             tx.setFoodRunner(foodRunner);
             tx.setTransactionState(TransactionState.INPROGRESS);
 
@@ -162,6 +162,30 @@ public class ActiveNetwork {
             JsonUtil.print(this.getClass(),tx.toJson());
 
             JsonObject responseJson = this.networkOrchestrator.acceptRecoveryTransaction(tx);
+
+            JsonObject result = new JsonObject();
+            JsonArray pending = new JsonArray();
+            JsonArray inProgress = new JsonArray();
+            List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
+            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED)
+                {
+
+                    pending.add(cour.toJson());
+                }
+                else if(cour.getTransactionState() == TransactionState.INPROGRESS)
+                {
+                    inProgress.add(cour.toJson());
+                }
+            }
+            result.add("pending", pending);
+            result.add("inProgress",inProgress);
+
+
+
+            responseJson.add("txs",result);
 
             return Response.ok(responseJson.toString()).build();
         }

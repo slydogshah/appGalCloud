@@ -1,10 +1,12 @@
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
+import 'package:app/src/ui/inProgress.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -31,11 +33,15 @@ class EmbeddedNavigation
   bool _routeBuilt = false;
   bool _isNavigating = false;
   BuildContext context;
+  List<FoodRecoveryTransaction> recoveryTxs;
+  bool accept;
 
-  EmbeddedNavigation(BuildContext buildContext,SourceOrg sourceOrg)
+  EmbeddedNavigation(BuildContext buildContext,SourceOrg sourceOrg,List<FoodRecoveryTransaction> recoveryTxs,bool accept)
   {
       this.context = buildContext;
       foodRunnerLocation = ActiveSession.getInstance().getLocation();
+      this.recoveryTxs = recoveryTxs;
+      this.accept = accept;
 
       //print(foodRunnerLocation.getLatitude());
       //print(foodRunnerLocation.getLongitude());
@@ -134,13 +140,26 @@ class EmbeddedNavigation
           await Future.delayed(Duration(seconds: 3));
           //await _controller.finishNavigation();
 
-          Profile foodRunner = ActiveSession.getInstance().getProfile();
-          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<List<FoodRecoveryTransaction>> future = client
-              .getFoodRecoveryTransaction(foodRunner.email);
-          future.then((txs) {
-            Navigator.of(context, rootNavigator: true).pop();
+          //Navigator.of(context, rootNavigator: true).pop();
 
+          Profile profile = ActiveSession.getInstance().getProfile();
+          FoodRunner foodRunner = new FoodRunner(profile);
+
+          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
+          future.then((txs) {
+            /*if(this.accept) {
+              print("PENDING: $accept");
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => FoodRunnerMainScene(txs)));
+            }
+            else
+              {
+                print("PROGRESS: $accept");
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => InProgressMainScene(txs)));
+              }*/
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) => FoodRunnerMainScene(txs)));
           });
@@ -148,29 +167,53 @@ class EmbeddedNavigation
         break;
       case MapBoxEvent.navigation_finished:
         {
-          Profile foodRunner = ActiveSession.getInstance().getProfile();
-          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<List<FoodRecoveryTransaction>> future = client
-              .getFoodRecoveryTransaction(foodRunner.email);
-          future.then((txs) {
-            //Navigator.of(context, rootNavigator: true).pop();
+          Profile profile = ActiveSession.getInstance().getProfile();
+          FoodRunner foodRunner = new FoodRunner(profile);
 
+          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
+          future.then((txs) {
+            /*if(this.accept) {
+              print("PENDING: $accept");
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => FoodRunnerMainScene(txs)));
+            }
+            else
+              {
+                print("PROGRESS: $accept");
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => InProgressMainScene(txs)));
+              }*/
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) => FoodRunnerMainScene(txs)));
+
           });
         }
         break;
       case MapBoxEvent.navigation_cancelled:
         {
-          Profile foodRunner = ActiveSession.getInstance().getProfile();
-          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<List<FoodRecoveryTransaction>> future = client
-              .getFoodRecoveryTransaction(foodRunner.email);
-          future.then((txs) {
-            //Navigator.of(context, rootNavigator: true).pop();
+          Profile profile = ActiveSession.getInstance().getProfile();
+          FoodRunner foodRunner = new FoodRunner(profile);
 
+          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
+          future.then((txs) {
+            /*if(this.accept) {
+              print("PENDING: $accept");
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => FoodRunnerMainScene(txs)));
+            }
+            else
+              {
+                print("PROGRESS: $accept");
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => InProgressMainScene(txs)));
+              }*/
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) => FoodRunnerMainScene(txs)));
+
           });
         }
         break;

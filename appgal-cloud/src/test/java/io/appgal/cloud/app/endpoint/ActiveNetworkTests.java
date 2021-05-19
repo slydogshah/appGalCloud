@@ -452,6 +452,8 @@ public class ActiveNetworkTests extends BaseTest {
         json.add("accepted",accepted.toJson());
         Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
         String jsonString = response.getBody().print();
+        logger.info("**********ACCEPT_RESPONSE*************");
+        logger.info(jsonString);
         JsonObject responseJson = JsonParser.parseString(jsonString).getAsJsonObject();
         assertEquals(200, response.getStatusCode());
         String id = responseJson.get("recoveryTransactionId").getAsString();

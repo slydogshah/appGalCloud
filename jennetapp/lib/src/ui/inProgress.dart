@@ -1,26 +1,37 @@
 import 'package:app/hotel_booking/hotel_app_theme.dart';
+import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/navigation/embeddedNavigation.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'foodRunner.dart';
+
 class InProgressMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
+  List<FoodRecoveryTransaction> inProgressTxs;
+  Map<String,List<FoodRecoveryTransaction>> txs;
 
-  InProgressMainScene(List<FoodRecoveryTransaction> recoveryTxs)
+  InProgressMainScene(Map<String,List<FoodRecoveryTransaction>> txs)
   {
-    this.recoveryTxs = recoveryTxs;
+    this.txs = txs;
+    this.recoveryTxs = txs['pending'];
+    this.inProgressTxs = txs['inProgress'];
   }
 
   @override
-  _InProgressMainState createState() => _InProgressMainState(this.recoveryTxs);
+  _InProgressMainState createState() => _InProgressMainState(this.txs,this.recoveryTxs,this.inProgressTxs);
 }
 
 class _InProgressMainState extends State<InProgressMainScene> with TickerProviderStateMixin {
   List<FoodRecoveryTransaction> recoveryTxs;
+  List<FoodRecoveryTransaction> inProgressTxs;
+  Map<String,List<FoodRecoveryTransaction>> txs;
 
   AnimationController animationController;
 
@@ -29,8 +40,10 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 5));
 
-  _InProgressMainState(List<FoodRecoveryTransaction> recoveryTxs) {
+  _InProgressMainState(Map<String,List<FoodRecoveryTransaction>> txs,List<FoodRecoveryTransaction> recoveryTxs,List<FoodRecoveryTransaction> inProgressTxs) {
+    this.txs = txs;
     this.recoveryTxs = recoveryTxs;
+    this.inProgressTxs = inProgressTxs;
   }
 
   @override
@@ -95,12 +108,12 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
   Widget getInProgressList()
   {
     Widget widget = ListView.builder(
-      itemCount: recoveryTxs.length,
+      itemCount: inProgressTxs.length,
       padding: const EdgeInsets.only(top: 8),
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
         final int count =
-        recoveryTxs.length > 4 ? 4 : recoveryTxs.length;
+        inProgressTxs.length > 4 ? 4 : inProgressTxs.length;
         final Animation<double> animation =
         Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
@@ -112,7 +125,8 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
         return InProgressListView(
           animation: animation,
           animationController: animationController,
-          tx: this.recoveryTxs[index],
+          tx: this.inProgressTxs[index],
+          txs: this.inProgressTxs,
         );
       },
     ).build(context);
@@ -194,7 +208,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                       ),
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => InProgressMainScene(null)));
+                            builder: (context) => FoodRunnerMainScene(this.txs)));
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -217,12 +231,14 @@ class InProgressListView extends StatelessWidget {
     this.animationController,
     this.animation,
     this.tx,
+    this.txs,
   })
       : super(key: key);
 
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final FoodRecoveryTransaction tx;
+  final List<FoodRecoveryTransaction> txs;
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +290,7 @@ class InProgressListView extends StatelessWidget {
                                 CrossAxisAlignment.end,
                                 children: <Widget>[
                                   ElevatedButton(
-                                    child: Text('Accept'),
+                                    child: Text('DropOff'),
                                     style: ElevatedButton.styleFrom(
                                       //primary: Color(0xFF383EDB)
                                         primary: Colors.pink
@@ -282,6 +298,9 @@ class InProgressListView extends StatelessWidget {
                                     onPressed: () {
                                       Profile profile = ActiveSession
                                           .getInstance().getProfile();
+                                      handleDropOff(context,profile.email,
+                                          tx.schedulePickupNotification.dropOffOrg.orgId,
+                                          tx);
                                     },
                                   ),
                                 ],
@@ -420,6 +439,52 @@ class InProgressListView extends StatelessWidget {
             ),
           ),
         );
+      },
+    );
+  }
+
+  void handleDropOff(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
+    //print("TX: "+tx.getPickupNotification().getSourceOrg().orgName);
+
+    //TODO
+    AlertDialog dialog = AlertDialog(
+      title: Text('Start DropOff'),
+      content: Text(
+        tx.getPickupNotification().getDropOffOrg().orgName+": "+"506 West Avenue"+","+"78701",
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+      ),
+      actions: [
+        FlatButton(
+          textColor: Color(0xFF6200EE),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('CANCEL'),
+        ),
+        FlatButton(
+          textColor: Color(0xFF6200EE),
+          onPressed: () {
+            Navigator.pop(context);
+            FocusScope.of(context).requestFocus(FocusNode());
+            LocationUpdater.getLocation();
+            EmbeddedNavigation navigation = EmbeddedNavigation(context,
+                tx.getPickupNotification().getDropOffOrg(),this.txs,false);
+            navigation.start();
+          },
+          child: Text('START NAVIGATION'),
+        ),
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
       },
     );
   }

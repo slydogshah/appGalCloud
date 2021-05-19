@@ -34,9 +34,9 @@ class ActiveNetworkRestClient
     return response.body;
   }
 
-  Future<List<FoodRecoveryTransaction>> getFoodRecoveryTransaction(String email) async
+  Future<Map<String,List<FoodRecoveryTransaction>>> getFoodRecoveryTransaction(String email) async
   {
-    List<FoodRecoveryTransaction> txs = new List();
+    Map<String,List<FoodRecoveryTransaction>> txs = new Map();
     var response;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/foodRunner/?email="+email;
 
@@ -49,14 +49,37 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    print(response.body);
+    //print(response.body);
     Map<String,dynamic> object = json.decode(response.body);
-    Iterable l = object['pending'];
-    for(Map<String, dynamic> tx in l)
-    {
+
+    if(object['pending'] != null) {
+      Iterable l = object['pending'];
+      List<FoodRecoveryTransaction> pending = [];
+      for (Map<String, dynamic> tx in l) {
         FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
-        txs.add(local);
+        pending.add(local);
+      }
+      txs['pending'] = pending;
     }
+    else{
+      txs ['pending'] = [];
+    }
+
+
+    if(object['inProgress'] != null) {
+      Iterable l = object['inProgress'];
+      List<FoodRecoveryTransaction> inProgress = [];
+      for (Map<String, dynamic> tx in l) {
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+        inProgress.add(local);
+      }
+      txs['inProgress'] = inProgress;
+    }
+    else{
+      txs ['inProgress'] = [];
+    }
+
+
     return txs;
   }
 
@@ -131,14 +154,13 @@ class ActiveNetworkRestClient
     return response.body;
   }
 
-  Future<int> accept(String email, String dropOffOrgId,FoodRecoveryTransaction tx) async
+  Future<Map<String,List<FoodRecoveryTransaction>>> accept(String email, String dropOffOrgId,FoodRecoveryTransaction tx) async
   {
-    var json;
+    Map<String,List<FoodRecoveryTransaction>> txs = new Map();
     Map<String,dynamic> payload = new Map();
     payload["email"] = email;
     payload["dropOffOrgId"] = dropOffOrgId;
-    tx.getPickupNotification().setFoodRunner(FoodRunner.getActiveFoodRunner());
-    payload["accepted"] = tx;
+    payload["accepted"] = tx.getId();
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
     print(jsonEncode(payload));
     var response;
@@ -150,17 +172,48 @@ class ActiveNetworkRestClient
     }
     catch (e) {
       print(e);
-      json = UrlFunctions.handleError(e, response);
-      return json["statusCode"];
+      return txs;
     }
 
-    json = UrlFunctions.handleError(null, response);
-    if(json != null)
-    {
-      return json["statusCode"];
+    Map<String,dynamic> jsonResponse = jsonDecode(response.body);
+    Map<String,dynamic> object = jsonResponse['txs'];
+
+    if(object['pending'] != null) {
+      Iterable l = object['pending'];
+      List<FoodRecoveryTransaction> pending = [];
+      for (Map<String, dynamic> tx in l) {
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+
+        print("TXID_PENDING:"+local.getId());
+
+        pending.add(local);
+      }
+      txs['pending'] = pending;
+    }
+    else{
+      print("TXID_PENDING:EMPTY");
+      txs ['pending'] = [];
     }
 
-    return response.statusCode;
+
+    if(object['inProgress'] != null) {
+      Iterable l = object['inProgress'];
+      List<FoodRecoveryTransaction> inProgress = [];
+      for (Map<String, dynamic> tx in l) {
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+
+        print("TXID_INPROGRESS:"+local.getId());
+
+        inProgress.add(local);
+      }
+      txs['inProgress'] = inProgress;
+    }
+    else{
+      print("TXID_INPROGRESS:EMPTY");
+      txs ['inProgress'] = [];
+    }
+
+    return txs;
   }
 
   Future<int> scheduleDropOff(FoodRecoveryTransaction tx) async

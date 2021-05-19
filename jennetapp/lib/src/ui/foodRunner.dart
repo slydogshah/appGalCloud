@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -21,28 +22,36 @@ import 'inProgress.dart';
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
+  List<FoodRecoveryTransaction> inProgressTxs;
+  Map<String,List<FoodRecoveryTransaction>> txs;
 
-  FoodRunnerMainScene(List<FoodRecoveryTransaction> recoveryTxs)
+  FoodRunnerMainScene(Map<String,List<FoodRecoveryTransaction>> txs)
   {
-    this.recoveryTxs = recoveryTxs;
+    this.recoveryTxs = txs['pending'];
+    this.inProgressTxs = txs['inProgress'];
+    this.txs = txs;
   }
 
   @override
-  _FoodRunnerMainState createState() => _FoodRunnerMainState(this.recoveryTxs);
+  _FoodRunnerMainState createState() => _FoodRunnerMainState(this.txs,this.recoveryTxs,this.inProgressTxs);
 }
 
 class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProviderStateMixin {
 
   AnimationController animationController;
   List<FoodRecoveryTransaction> recoveryTxs;
+  List<FoodRecoveryTransaction> inProgressTxs;
+  Map<String,List<FoodRecoveryTransaction>> txs;
 
   final ScrollController _scrollController = ScrollController();
 
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 5));
 
-  _FoodRunnerMainState(List<FoodRecoveryTransaction> recoveryTxs) {
+  _FoodRunnerMainState(Map<String,List<FoodRecoveryTransaction>> txs,List<FoodRecoveryTransaction> recoveryTxs,List<FoodRecoveryTransaction> inProgressTxs) {
     this.recoveryTxs = recoveryTxs;
+    this.inProgressTxs = inProgressTxs;
+    this.txs = txs;
   }
 
   @override
@@ -130,6 +139,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
           animation: animation,
           animationController: animationController,
           tx: this.recoveryTxs[index],
+          txs: this.recoveryTxs,
         );
       },
     ).build(context);
@@ -210,8 +220,9 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         Radius.circular(32.0),
                       ),
                       onTap: () {
+
                         Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => InProgressMainScene(this.recoveryTxs)));
+                            builder: (context) => InProgressMainScene(this.txs)));
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -240,12 +251,15 @@ class PickUpListView extends StatelessWidget {
         this.animationController,
         this.animation,
         this.tx,
+        this.txs,
       })
       : super(key: key);
 
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final FoodRecoveryTransaction tx;
+  final List<FoodRecoveryTransaction> txs;
+
 
   @override
   Widget build(BuildContext context) {
@@ -469,18 +483,13 @@ class PickUpListView extends StatelessWidget {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-            Future<int> future = client.accept(email, dropOffOrgId, tx);
-            future.then((statusCode) {
-              if (statusCode == 200) {
-                LocationUpdater.getLocation();
-                EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
-                    tx.getPickupNotification().getDropOffOrg());
-                embeddedNavigation.start();
-              }
-              else {
-                //TODO
-                print("STATUS_CODE: $statusCode");
-              }
+            Future<Map<String,List<FoodRecoveryTransaction>>> future = client.accept(email, dropOffOrgId, tx);
+            future.then((txs) {
+
+              LocationUpdater.getLocation();
+              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+                  tx.getPickupNotification().getDropOffOrg(),this.txs,true);
+              embeddedNavigation.start();
             });
           },
           child: Text('START NAVIGATION'),
