@@ -24,9 +24,6 @@ public class FoodRecoveryStore {
     public FoodRecoveryTransaction storeFoodRecoveryTransaction(MongoDatabase database,FoodRecoveryTransaction foodRecoveryTransaction)
     {
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
-        //logger.info("*******************************STORE************************************************************************************");
-        //JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
-        //logger.info("*******************************************************************************************************************");
 
         FoodRecoveryTransaction exists = null;
         String queryJson = "{\"id\":\""+foodRecoveryTransaction.getId()+"\"}";
@@ -36,15 +33,8 @@ public class FoodRecoveryStore {
         while(cursor.hasNext())
         {
             Document document = cursor.next();
-            String documentJson = document.toJson();
-            exists = FoodRecoveryTransaction.parse(documentJson);
+            collection.deleteOne(document);
         }
-        if(exists != null)
-        {
-            bson = Document.parse(exists.toString());
-            collection.deleteOne(bson);
-        }
-
 
         Document doc = Document.parse(foodRecoveryTransaction.toString());
         collection.insertOne(doc);
