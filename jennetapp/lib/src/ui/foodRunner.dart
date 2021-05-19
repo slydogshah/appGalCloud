@@ -484,6 +484,7 @@ class PickUpListView extends StatelessWidget {
             FocusScope.of(context).requestFocus(FocusNode());
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
             Future<String> future = client.accept(email, dropOffOrgId, tx);
+            //donot rename this variable. It is symbolic
             future.then((fuckyou) {
 
               LocationUpdater.getLocation();
