@@ -153,12 +153,6 @@ public class ActiveNetwork {
             SchedulePickUpNotification pickUpNotification = tx.getPickUpNotification();
             pickUpNotification.setFoodRunner(foodRunner);
 
-            ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
-            dropOffNotification.setNotificationSent(true);
-            dropOffNotification.setSourceOrg(dropoffOrg);
-
-            tx.setDropOffNotification(dropOffNotification);
-
             JsonUtil.print(this.getClass(),tx.toJson());
 
             JsonObject responseJson = this.networkOrchestrator.acceptRecoveryTransaction(tx);

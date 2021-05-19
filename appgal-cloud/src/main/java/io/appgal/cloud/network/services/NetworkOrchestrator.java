@@ -4,13 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.appgal.cloud.infrastructure.DropOffPipeline;
 import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.restclient.GoogleApiClient;
-import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 
 import org.slf4j.Logger;
@@ -33,9 +31,6 @@ public class NetworkOrchestrator {
 
     @Inject
     private RequestPipeline requestPipeline;
-
-    @Inject
-    private DropOffPipeline dropOffPipeline;
 
     @Inject
     private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
@@ -126,14 +121,6 @@ public class NetworkOrchestrator {
         this.requestPipeline.add(notification);
 
         this.foodRecoveryOrchestrator.notifyForPickUp(notification);
-    }
-
-    public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
-    {
-        /*this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
-        this.dropOffPipeline.add(scheduleDropOffNotification);
-
-        this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);*/
     }
 
     public List<FoodRecoveryTransaction> findMyTransactions(String email)

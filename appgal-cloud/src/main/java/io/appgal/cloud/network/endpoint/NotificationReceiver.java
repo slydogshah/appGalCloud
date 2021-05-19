@@ -170,22 +170,4 @@ public class NotificationReceiver {
             return Response.status(500).entity(error.toString()).build();
         }
     }
-
-    @Path("/dropOff/notifications")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getDropOffNotifications(@QueryParam("orgId") String orgId)
-    {
-        try {
-            List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
-            return Response.ok(scheduleDropOffNotificationList.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
 }
