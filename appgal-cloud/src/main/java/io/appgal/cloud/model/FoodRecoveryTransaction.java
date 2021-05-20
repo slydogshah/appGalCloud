@@ -2,6 +2,7 @@ package io.appgal.cloud.model;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +14,6 @@ public class FoodRecoveryTransaction implements Serializable {
 
     private String id;
     private SchedulePickUpNotification pickUpNotification;
-    private ScheduleDropOffNotification dropOffNotification;
     private FoodRunner foodRunner;
     private TransactionState transactionState = TransactionState.SUBMITTED;
     private String estimatedPickupTime;
@@ -23,16 +23,14 @@ public class FoodRecoveryTransaction implements Serializable {
     {
     }
 
-    public FoodRecoveryTransaction(SchedulePickUpNotification pickUpNotification, ScheduleDropOffNotification dropOffNotification) {
+    public FoodRecoveryTransaction(SchedulePickUpNotification pickUpNotification) {
         this.pickUpNotification = pickUpNotification;
-        this.dropOffNotification = dropOffNotification;
     }
 
-    public FoodRecoveryTransaction(SchedulePickUpNotification pickUpNotification, ScheduleDropOffNotification dropOffNotification,
+    public FoodRecoveryTransaction(SchedulePickUpNotification pickUpNotification,
                                    FoodRunner foodRunner)
     {
         this.pickUpNotification = pickUpNotification;
-        this.dropOffNotification = dropOffNotification;
         this.foodRunner = foodRunner;
     }
 
@@ -42,14 +40,6 @@ public class FoodRecoveryTransaction implements Serializable {
 
     public void setPickUpNotification(SchedulePickUpNotification pickUpNotification) {
         this.pickUpNotification = pickUpNotification;
-    }
-
-    public ScheduleDropOffNotification getDropOffNotification() {
-        return dropOffNotification;
-    }
-
-    public void setDropOffNotification(ScheduleDropOffNotification dropOffNotification) {
-        this.dropOffNotification = dropOffNotification;
     }
 
     public FoodRunner getFoodRunner() {
@@ -92,6 +82,18 @@ public class FoodRecoveryTransaction implements Serializable {
         this.estimatedDropOffTime = estimatedDropOffTime;
     }
 
+    public String accept(MongoDBJsonStore mongoDBJsonStore)
+    {
+        synchronized (this) {
+            FoodRecoveryTransaction tx = mongoDBJsonStore.getFoodRecoveryTransaction(this.getId());
+            if(tx.getTransactionState() == TransactionState.SUBMITTED) {
+                FoodRecoveryTransaction stored = mongoDBJsonStore.storeFoodRecoveryTransaction(this);
+                return stored.getId();
+            }
+            return null;
+        }
+    }
+
     public static FoodRecoveryTransaction parse(String json)
     {
         FoodRecoveryTransaction foodRecoveryTransaction = new FoodRecoveryTransaction();
@@ -102,11 +104,6 @@ public class FoodRecoveryTransaction implements Serializable {
         {
             foodRecoveryTransaction.pickUpNotification = SchedulePickUpNotification.parse(
                     jsonObject.get("pickupNotification").toString());
-        }
-        if(jsonObject.has("dropOffNotification"))
-        {
-            foodRecoveryTransaction.dropOffNotification = ScheduleDropOffNotification.parse(
-                    jsonObject.get("dropOffNotification").toString());
         }
         if(jsonObject.has("foodRunner"))
         {
@@ -152,9 +149,6 @@ public class FoodRecoveryTransaction implements Serializable {
         }
         if(this.pickUpNotification != null) {
             jsonObject.add("pickupNotification", this.pickUpNotification.toJson());
-        }
-        if(this.dropOffNotification != null) {
-            jsonObject.add("dropOffNotification", this.dropOffNotification.toJson());
         }
         if(this.foodRunner != null)
         {

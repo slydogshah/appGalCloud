@@ -4,13 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.appgal.cloud.infrastructure.DropOffPipeline;
 import io.appgal.cloud.infrastructure.NotificationEngine;
 import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.restclient.GoogleApiClient;
-import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 
 import org.slf4j.Logger;
@@ -33,9 +31,6 @@ public class NetworkOrchestrator {
 
     @Inject
     private RequestPipeline requestPipeline;
-
-    @Inject
-    private DropOffPipeline dropOffPipeline;
 
     @Inject
     private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
@@ -128,14 +123,6 @@ public class NetworkOrchestrator {
         this.foodRecoveryOrchestrator.notifyForPickUp(notification);
     }
 
-    public void scheduleDropOff(ScheduleDropOffNotification scheduleDropOffNotification)
-    {
-        /*this.mongoDBJsonStore.storeScheduledDropOffNotification(scheduleDropOffNotification);
-        this.dropOffPipeline.add(scheduleDropOffNotification);
-
-        this.foodRecoveryOrchestrator.notifyDropOff(scheduleDropOffNotification);*/
-    }
-
     public List<FoodRecoveryTransaction> findMyTransactions(String email)
     {
         List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
@@ -200,10 +187,14 @@ public class NetworkOrchestrator {
 
     public JsonObject acceptRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
-        FoodRecoveryTransaction stored = this.mongoDBJsonStore.storeFoodRecoveryTransaction(foodRecoveryTransaction);
+        String id = foodRecoveryTransaction.accept(this.mongoDBJsonStore);
+        if(id == null)
+        {
+            throw new RuntimeException("TRANSACTION_IN_PROGRESS");
+        }
 
         JsonObject json = new JsonObject();
-        json.addProperty("recoveryTransactionId", stored.getId());
+        json.addProperty("recoveryTransactionId", id);
         return json;
     }
 }

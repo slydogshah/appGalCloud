@@ -29,14 +29,12 @@ class ActiveNetworkRestClient
       return jsonEncode(json);
     }
 
-    print(response.body);
-
     return response.body;
   }
 
-  Future<List<FoodRecoveryTransaction>> getFoodRecoveryTransaction(String email) async
+  Future<Map<String,List<FoodRecoveryTransaction>>> getFoodRecoveryTransaction(String email) async
   {
-    List<FoodRecoveryTransaction> txs = new List();
+    Map<String,List<FoodRecoveryTransaction>> txs = new Map();
     var response;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/foodRunner/?email="+email;
 
@@ -49,14 +47,35 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    print(response.body);
     Map<String,dynamic> object = json.decode(response.body);
-    Iterable l = object['pending'];
-    for(Map<String, dynamic> tx in l)
-    {
+
+    if(object['pending'] != null) {
+      Iterable l = object['pending'];
+      List<FoodRecoveryTransaction> pending = [];
+      for (Map<String, dynamic> tx in l) {
         FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
-        txs.add(local);
+        pending.add(local);
+      }
+      txs['pending'] = pending;
     }
+    else{
+      txs ['pending'] = [];
+    }
+
+
+    if(object['inProgress'] != null) {
+      Iterable l = object['inProgress'];
+      List<FoodRecoveryTransaction> inProgress = [];
+      for (Map<String, dynamic> tx in l) {
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+        inProgress.add(local);
+      }
+      txs['inProgress'] = inProgress;
+    }
+    else{
+      txs ['inProgress'] = [];
+    }
+
     return txs;
   }
 
@@ -68,7 +87,6 @@ class ActiveNetworkRestClient
     String host = UrlFunctions.getInstance().resolveHost();
 
     String remoteUrl = host+"tx/push/recovery/?email="+email;
-    //print("PUSHURL: "+remoteUrl);
     try {
       response = await http.get(Uri.parse(remoteUrl));
     }
@@ -77,7 +95,6 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    //print(response.body);
     Map<String,dynamic> object = json.decode(response.body);
     Iterable l = object['pending'];
     for(Map<String, dynamic> tx in l)
@@ -100,10 +117,6 @@ class ActiveNetworkRestClient
     jsonMap['latitude'] = locationData.latitude;
     jsonMap['longitude'] = locationData.longitude;
     String jsonBody = jsonEncode(jsonMap);
-
-    print("**********SENDING_LOCATION_UPDATE**********");
-    print(jsonBody);
-    print("*******************************************");
 
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
@@ -129,38 +142,6 @@ class ActiveNetworkRestClient
       print(e);
     }
     return response.body;
-  }
-
-  Future<int> accept(String email, String dropOffOrgId,FoodRecoveryTransaction tx) async
-  {
-    var json;
-    Map<String,dynamic> payload = new Map();
-    payload["email"] = email;
-    payload["dropOffOrgId"] = dropOffOrgId;
-    tx.getPickupNotification().setFoodRunner(FoodRunner.getActiveFoodRunner());
-    payload["accepted"] = tx;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
-    print(jsonEncode(payload));
-    var response;
-    try {
-      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
-      timeout(Duration(seconds: 30),onTimeout: () {
-        throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
-      });
-    }
-    catch (e) {
-      print(e);
-      json = UrlFunctions.handleError(e, response);
-      return json["statusCode"];
-    }
-
-    json = UrlFunctions.handleError(null, response);
-    if(json != null)
-    {
-      return json["statusCode"];
-    }
-
-    return response.statusCode;
   }
 
   Future<int> scheduleDropOff(FoodRecoveryTransaction tx) async
@@ -217,5 +198,27 @@ class ActiveNetworkRestClient
     }
 
     return response.statusCode;
+  }
+
+  Future<String> accept(String email, String dropOffOrgId,FoodRecoveryTransaction tx) async
+  {
+    Map<String,dynamic> payload = new Map();
+    payload["email"] = email;
+    payload["dropOffOrgId"] = dropOffOrgId;
+    payload["accepted"] = tx.getId();
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
+    var response;
+    try {
+      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
+      timeout(Duration(seconds: 30),onTimeout: () {
+        throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
+      });
+    }
+    catch (e) {
+      print(e);
+      return response.body;
+    }
+
+    return response.body;
   }
 }

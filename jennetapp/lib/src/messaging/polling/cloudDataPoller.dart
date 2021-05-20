@@ -213,7 +213,7 @@ class NotificationProcessor
           Profile foodRunner = activeSession.getProfile();
 
           ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<List<FoodRecoveryTransaction>> future = client
+          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
               .getFoodRecoveryTransaction(foodRunner.email);
           future.then((txs) {
             //Navigator.of(context, rootNavigator: true).pop();

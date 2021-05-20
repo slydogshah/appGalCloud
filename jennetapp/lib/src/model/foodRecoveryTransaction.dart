@@ -8,6 +8,7 @@ class FoodRecoveryTransaction
   SchedulePickupNotification schedulePickupNotification;
   String pickupEstimate;
   String dropOffEstimate;
+  String transactionState;
 
   FoodRecoveryTransaction(SchedulePickupNotification schedulePickupNotification)
   {
@@ -50,6 +51,16 @@ class FoodRecoveryTransaction
     this.id = id;
   }
 
+  String getTransactionState()
+  {
+      return this.transactionState;
+  }
+
+  void setTransactionState(String transactionState)
+  {
+    this.transactionState = transactionState;
+  }
+
   FoodRecoveryTransaction.fromJson(Map<String, dynamic> json)
   {
     if(json["pickupNotification"] != null)
@@ -59,6 +70,7 @@ class FoodRecoveryTransaction
     setPickupEstimate(json["estimatedPickupTime"]);
     setDropOffEstimate(json["estimatedDropOffTime"]);
     setId(json["id"]);
+    this.setTransactionState(json["transactionState"]);
   }
 
   Map<String, dynamic> toJson()
@@ -71,6 +83,7 @@ class FoodRecoveryTransaction
     }
     map["estimatedPickupTime"] = this.getPickupEstimate();
     map["estimatedDropOffTime"] = this.getDropOffEstimate();
+    map["transactionState"] = this.getTransactionState();
     return map;
   }
 

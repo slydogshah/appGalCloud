@@ -1,57 +1,49 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:app/hotel_booking/hotel_app_theme.dart';
-
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/navigation/embeddedNavigation.dart';
+import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:app/src/navigation/embeddedNavigation.dart';
-import 'package:app/src/model/foodRecoveryTransaction.dart';
-import 'package:app/src/rest/activeNetworkRestClient.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
 
-import 'inProgress.dart';
+import 'foodRunner.dart';
 
-
-class FoodRunnerMainScene extends StatefulWidget {
+class InProgressMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
   List<FoodRecoveryTransaction> inProgressTxs;
   Map<String,List<FoodRecoveryTransaction>> txs;
 
-  FoodRunnerMainScene(Map<String,List<FoodRecoveryTransaction>> txs)
+  InProgressMainScene(Map<String,List<FoodRecoveryTransaction>> txs)
   {
+    this.txs = txs;
     this.recoveryTxs = txs['pending'];
     this.inProgressTxs = txs['inProgress'];
-    this.txs = txs;
   }
 
   @override
-  _FoodRunnerMainState createState() => _FoodRunnerMainState(this.txs,this.recoveryTxs,this.inProgressTxs);
+  _InProgressMainState createState() => _InProgressMainState(this.txs,this.recoveryTxs,this.inProgressTxs);
 }
 
-class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProviderStateMixin {
-
-  AnimationController animationController;
+class _InProgressMainState extends State<InProgressMainScene> with TickerProviderStateMixin {
   List<FoodRecoveryTransaction> recoveryTxs;
   List<FoodRecoveryTransaction> inProgressTxs;
   Map<String,List<FoodRecoveryTransaction>> txs;
+
+  AnimationController animationController;
 
   final ScrollController _scrollController = ScrollController();
 
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 5));
 
-  _FoodRunnerMainState(Map<String,List<FoodRecoveryTransaction>> txs,List<FoodRecoveryTransaction> recoveryTxs,List<FoodRecoveryTransaction> inProgressTxs) {
+  _InProgressMainState(Map<String,List<FoodRecoveryTransaction>> txs,List<FoodRecoveryTransaction> recoveryTxs,List<FoodRecoveryTransaction> inProgressTxs) {
+    this.txs = txs;
     this.recoveryTxs = recoveryTxs;
     this.inProgressTxs = inProgressTxs;
-    this.txs = txs;
   }
 
   @override
@@ -66,11 +58,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     animationController.dispose();
     super.dispose();
   }
-
-  /*@override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +91,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         body: Container(
                           color: primaryColor,
                           //color: Colors.pink,
-                          child: getPickUpList(),
+                          child: getInProgressList(),
                         ),
                       ),
                     )
@@ -118,15 +105,15 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     );
   }
 
-  Widget getPickUpList()
+  Widget getInProgressList()
   {
     Widget widget = ListView.builder(
-      itemCount: recoveryTxs.length,
+      itemCount: inProgressTxs.length,
       padding: const EdgeInsets.only(top: 8),
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
         final int count =
-        recoveryTxs.length > 4 ? 4 : recoveryTxs.length;
+        inProgressTxs.length > 4 ? 4 : inProgressTxs.length;
         final Animation<double> animation =
         Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
@@ -135,11 +122,11 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     (1 / count) * index, 1.0,
                     curve: Curves.fastOutSlowIn)));
         animationController.forward();
-        return PickUpListView(
+        return InProgressListView(
           animation: animation,
           animationController: animationController,
-          tx: this.recoveryTxs[index],
-          txs: this.recoveryTxs,
+          tx: this.inProgressTxs[index],
+          txs: this.inProgressTxs,
         );
       },
     ).build(context);
@@ -173,7 +160,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     Radius.circular(32.0),
                   ),
                   onTap: () {
-                  //  Navigator.pop(context);
+                    //  Navigator.pop(context);
                   },
                   /*child: Padding(
                   //  padding: const EdgeInsets.all(8.0),
@@ -185,7 +172,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
             Expanded(
               child: Center(
                 child: Text(
-                  'Requests',
+                  'In-Progress',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 22,
@@ -220,9 +207,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         Radius.circular(32.0),
                       ),
                       onTap: () {
-
                         Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => InProgressMainScene(this.txs)));
+                            builder: (context) => FoodRunnerMainScene(this.txs)));
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -238,21 +224,15 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       ),
     );
   }
-
-  Future<bool> getData() async {
-    await Future<dynamic>.delayed(const Duration(milliseconds: 200));
-    return true;
-  }
 }
 
-class PickUpListView extends StatelessWidget {
-  const PickUpListView(
-      {Key key,
-        this.animationController,
-        this.animation,
-        this.tx,
-        this.txs,
-      })
+class InProgressListView extends StatelessWidget {
+  const InProgressListView({Key key,
+    this.animationController,
+    this.animation,
+    this.tx,
+    this.txs,
+  })
       : super(key: key);
 
   final AnimationController animationController;
@@ -260,10 +240,10 @@ class PickUpListView extends StatelessWidget {
   final FoodRecoveryTransaction tx;
   final List<FoodRecoveryTransaction> txs;
 
-
   @override
   Widget build(BuildContext context) {
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/transaction/foodPic/?id="+tx.getId();
+    String remoteUrl = UrlFunctions.getInstance().resolveHost() +
+        "tx/recovery/transaction/foodPic/?id=" + tx.getId();
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -277,8 +257,7 @@ class PickUpListView extends StatelessWidget {
                   left: 24, right: 24, top: 8, bottom: 16),
               child: InkWell(
                 splashColor: Colors.transparent,
-                onTap: () {
-                },
+                onTap: () {},
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16.0)),
@@ -311,14 +290,15 @@ class PickUpListView extends StatelessWidget {
                                 CrossAxisAlignment.end,
                                 children: <Widget>[
                                   ElevatedButton(
-                                    child: Text("Accept"),
+                                    child: Text('DropOff'),
                                     style: ElevatedButton.styleFrom(
                                       //primary: Color(0xFF383EDB)
                                         primary: Colors.pink
                                     ),
                                     onPressed: () {
-                                      Profile profile = ActiveSession.getInstance().getProfile();
-                                      handleAccept(context,profile.email,
+                                      Profile profile = ActiveSession
+                                          .getInstance().getProfile();
+                                      handleDropOff(context,profile.email,
                                           tx.schedulePickupNotification.dropOffOrg.orgId,
                                           tx);
                                     },
@@ -327,7 +307,8 @@ class PickUpListView extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              color: HotelAppTheme.buildLightTheme()
+                              color: HotelAppTheme
+                                  .buildLightTheme()
                                   .backgroundColor,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -345,7 +326,10 @@ class PickUpListView extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              tx.getPickupNotification().getSourceOrg().orgName,
+                                              tx
+                                                  .getPickupNotification()
+                                                  .getSourceOrg()
+                                                  .orgName,
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
@@ -400,7 +384,10 @@ class PickUpListView extends StatelessWidget {
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
                                         Text(
-                                          tx.getPickupNotification().getDropOffOrg().orgName,
+                                          tx
+                                              .getPickupNotification()
+                                              .getDropOffOrg()
+                                              .orgName,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -436,7 +423,8 @@ class PickUpListView extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Icon(
                                   Icons.favorite_border,
-                                  color: HotelAppTheme.buildLightTheme()
+                                  color: HotelAppTheme
+                                      .buildLightTheme()
                                       .primaryColor,
                                 ),
                               ),
@@ -455,14 +443,14 @@ class PickUpListView extends StatelessWidget {
     );
   }
 
-  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
+  void handleDropOff(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
     //print("TX: "+tx.getPickupNotification().getSourceOrg().orgName);
 
     //TODO
     AlertDialog dialog = AlertDialog(
-      title: Text('Accept Food Pickup and DropOff'),
+      title: Text('Start DropOff'),
       content: Text(
-        tx.getPickupNotification().getSourceOrg().orgName+": "+"506 West Avenue"+","+"78701",
+        tx.getPickupNotification().getDropOffOrg().orgName+": "+"506 West Avenue"+","+"78701",
         textAlign: TextAlign.left,
         style: TextStyle(
           fontWeight: FontWeight.w600,
@@ -482,16 +470,10 @@ class PickUpListView extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
-            ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-            Future<String> future = client.accept(email, dropOffOrgId, tx);
-            //donot rename this variable. It is symbolic
-            future.then((fuckyou) {
-
-              LocationUpdater.getLocation();
-              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
-                  tx.getPickupNotification().getDropOffOrg());
-              embeddedNavigation.start(tx);
-            });
+            LocationUpdater.getLocation();
+            EmbeddedNavigation navigation = EmbeddedNavigation(context,
+                tx.getPickupNotification().getDropOffOrg());
+            navigation.start(tx);
           },
           child: Text('START NAVIGATION'),
         ),
@@ -507,5 +489,3 @@ class PickUpListView extends StatelessWidget {
     );
   }
 }
-
-

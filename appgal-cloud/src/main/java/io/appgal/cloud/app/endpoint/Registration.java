@@ -65,6 +65,24 @@ public class Registration {
         }
     }
 
+    @Path("orgs")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response orgs()
+    {
+        try {
+            List<SourceOrg> orgs = this.mongoDBJsonStore.getSourceOrgs();
+            return Response.ok(JsonParser.parseString(orgs.toString()).getAsJsonArray().toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
     @Path("profile")
     @POST
     @Produces(MediaType.APPLICATION_JSON)

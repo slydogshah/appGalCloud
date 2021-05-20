@@ -56,6 +56,7 @@ public class Transactions {
         {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
+            JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
             //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
@@ -70,8 +71,13 @@ public class Transactions {
                     this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
                     pending.add(cour.toJson());
                 }
+                else
+                {
+                   inProgress.add(cour.toJson());
+                }
             }
             result.add("pending", pending);
+            result.add("inProgress",inProgress);
 
             return Response.ok(result.toString()).build();
         }

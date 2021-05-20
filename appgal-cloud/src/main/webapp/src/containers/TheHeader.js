@@ -25,7 +25,7 @@ import {
 } from './index'
 import { useLocation } from 'react-router-dom'
 
-const TheHeader = () => {
+const TheHeader = (props) => {
   const location = useLocation();
 
   //console.log("LOCATION: "+location.pathname);
@@ -37,9 +37,8 @@ const TheHeader = () => {
         <>
             <CHeader withSubheader>
                           <div class="logo-header">
-                              <a href="/home"
-                                ><img src="images/jen-logo.PNG" alt=""
-                              /></a>
+                              <img src="images/jen-logo.PNG" alt=""
+                                                            />
                           </div>
                        </CHeader>
         </>
@@ -50,9 +49,8 @@ const TheHeader = () => {
       return (
             <CHeader withSubheader>
               <div class="logo-header">
-                  <a href="index.html"
-                    ><img src="images/jen-logo.PNG" alt=""
-                  /></a>
+                  <img src="images/jen-logo.PNG" alt=""
+                  />
               </div>
 
               <CHeaderNav className="d-md-down-none mr-auto">
@@ -61,7 +59,7 @@ const TheHeader = () => {
               </CHeaderNav>
 
               <CHeaderNav className="px-3">
-                <TheHeaderDropdown />
+                <TheHeaderDropdown props={props}/>
               </CHeaderNav>
            </CHeader>
       );

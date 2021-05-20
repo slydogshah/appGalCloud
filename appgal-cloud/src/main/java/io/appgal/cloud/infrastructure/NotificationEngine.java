@@ -20,9 +20,6 @@ public class NotificationEngine extends TimerTask {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
-    @Inject
-    private DropOffPipeline dropOffPipeline;
-
     public void start()
     {
         this.timer = new Timer(true);
@@ -34,11 +31,6 @@ public class NotificationEngine extends TimerTask {
         return this.requestPipeline;
     }
 
-    public DropOffPipeline getDropOffPipeline()
-    {
-        return this.dropOffPipeline;
-    }
-
     @Override
     public void run()
     {
@@ -47,7 +39,6 @@ public class NotificationEngine extends TimerTask {
             while(true)
             {
                 this.requestPipeline.process();
-                this.dropOffPipeline.process();
             }
         }
         catch(Exception e)

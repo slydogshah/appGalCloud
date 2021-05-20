@@ -4,35 +4,32 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
-
 import io.appgal.cloud.util.MapUtils;
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
-
-import javax.inject.Inject;
-
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
-public class JenFlow {
-    private static Logger logger = LoggerFactory.getLogger(JenFlow.class);
+public class NetworkFlow {
+    private static Logger logger = LoggerFactory.getLogger(NetworkFlow.class);
 
     @Inject
     private MapUtils mapUtils;
@@ -57,34 +54,30 @@ public class JenFlow {
     }
 
     @Test
-    public void testImages() throws Exception
+    public void flowExclusiveAccept() throws Exception
     {
-        this.halfFlow();
-        SourceOrg pickup = this.mongoDBJsonStore.getSourceOrg("pickup.io");
-        SourceOrg dropOff = this.mongoDBJsonStore.getSourceOrg("dropoff.io");
+        String pickupOrg = "pickup@pickup.io";
+        String dropOffOrg = "dropoff@dropoff.io";
+        String f1Email = "f1@app.io";
+        String f2Email = "f2@app.io";
+        String f3Email = "f3@app.io";
 
-        //Send a PickUpRequest
-        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                        getResource("encodedImage"),
-                StandardCharsets.UTF_8);
-        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
-        this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
-    }
+        SourceOrg pickup = this.registerPickupOrg(pickupOrg,"506 West Ave","78701");
+        SourceOrg dropOff = this.registerDropOffOrg(dropOffOrg,"506 West Ave","78701");
 
-    @Test
-    public void halfFlow() throws Exception
-    {
-        //Register a Pickup Org
-        SourceOrg pickup = this.registerPickupOrg();
+        FoodRunner f1 = this.registerFoodRunner(f1Email);
+        FoodRunner f2 = this.registerFoodRunner(f2Email);
+        FoodRunner f3 = this.registerFoodRunner(f3Email);
 
-        //Register a DropOff Org
-        SourceOrg dropOff = this.registerDropOffOrg();
+        this.loginFoodRunner(f1.getProfile().getEmail(),
+                f1.getProfile().getPassword(),30.2698104d,-97.75115579999999d);
+        this.loginFoodRunner(f2.getProfile().getEmail(),
+                f2.getProfile().getPassword(),30.2698104d,-97.75115579999999d);
+        this.loginFoodRunner(f3.getProfile().getEmail(),
+                f3.getProfile().getPassword(),30.546084d,-97.873948d);
 
-        //Register a FoodRunner
-        FoodRunner foodRunner = this.registerFoodRunner();
-
-        //Send a PickUpRequest
-        for(int i=0; i<3; i++) {
+        //Send a PickupRequest
+        for(int i=0; i<1; i++) {
             String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
                             getResource("encodedImage"),
                     StandardCharsets.UTF_8);
@@ -92,65 +85,106 @@ public class JenFlow {
             this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
         }
 
-        //Notify a FoodRunner...does not pull my transactions
-        JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
-                foodRunner.getProfile().getPassword());
+        //Accept a PickupRequest
+        List<FoodRecoveryTransaction> f1Transactions = this.getMyTransactions(f1.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f1Transactions.toString()).getAsJsonArray());
+        assertFalse(f1Transactions.isEmpty());
 
-        //FoodRunner accepts....this will update to notificationSent=true
-        List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        List<FoodRecoveryTransaction> f2Transactions = this.getMyTransactions(f2.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f2Transactions.toString()).getAsJsonArray());
+        assertFalse(f2Transactions.isEmpty());
 
-        FoodRecoveryTransaction accepted = myTransactions.get(0);
-        this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        List<FoodRecoveryTransaction> f3Transactions = this.getMyTransactions(f3.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f3Transactions.toString()).getAsJsonArray());
+        assertTrue(f3Transactions.isEmpty());
 
-        accepted = myTransactions.get(1);
-        this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        //Let f1 accept a request
+        FoodRecoveryTransaction accepted = f1Transactions.get(0);
+        this.acceptTransaction(f1.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
-        /*for(int i=0; i<7; i++)
-        {
-            myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
-            JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
-        }*/
+        //Let f2 check and they should not see this request
+        f2Transactions = this.getMyTransactions(f2.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f2Transactions.toString()).getAsJsonArray());
+        assertTrue(f2Transactions.isEmpty());
+
+        JsonObject error = this.acceptTransaction(f2.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        JsonUtil.print(this.getClass(),error);
+        assertEquals("TRANSACTION_IN_PROGRESS",error.get("exception").getAsString());
     }
 
     @Test
-    public void fullFlow() throws Exception
+    public void flowDifferentCities() throws Exception
     {
-        //Register a Pickup Org
-        SourceOrg pickup = this.registerPickupOrg();
+        String p1Org = "p1@pickup.io";
+        String d1Org = "d1@dropoff.io";
+        String p2Org = "p2@pickup.io";
+        String d2Org = "d2@dropoff.io";
+        String f1Email = "f1@app.io";
+        String f2Email = "f2@app.io";
+        String f3Email = "f3@app.io";
+        String f4Email = "f4@app.io";
 
-        //Register a DropOff Org
-        SourceOrg dropOff = this.registerDropOffOrg();
+        SourceOrg p1 = this.registerPickupOrg(p1Org,"506 West Ave","78701");
+        SourceOrg d1 = this.registerPickupOrg(d1Org,"506 West Ave","78701");
+        SourceOrg p2 = this.registerDropOffOrg(p2Org, "2220 Ambush Canyon","78641");
+        SourceOrg d2 = this.registerDropOffOrg(d2Org, "2220 Ambush Canyon","78641");
 
-        //Register a FoodRunner
-        FoodRunner foodRunner = this.registerFoodRunner();
+        FoodRunner f1 = this.registerFoodRunner(f1Email);
+        FoodRunner f2 = this.registerFoodRunner(f2Email);
+        FoodRunner f3 = this.registerFoodRunner(f3Email);
+        FoodRunner f4 = this.registerFoodRunner(f4Email);
 
-        //Send a PickUpRequest
-        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
-                        getResource("encodedImage"),
-                StandardCharsets.UTF_8);
-        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(),FoodTypes.VEG.name(),foodPic);
-        this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
+        this.loginFoodRunner(f1.getProfile().getEmail(),
+                f1.getProfile().getPassword(),30.2698104d,-97.75115579999999d);
+        this.loginFoodRunner(f2.getProfile().getEmail(),
+                f2.getProfile().getPassword(),30.2698104d,-97.75115579999999d);
+        this.loginFoodRunner(f3.getProfile().getEmail(),
+                f3.getProfile().getPassword(),30.546084d,-97.873948d);
 
-        //Notify a FoodRunner...does not pull my transactions
-        JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(), foodRunner.getProfile().getPassword());
+        //Send a PickupRequest
+        for(int i=0; i<1; i++) {
+            String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                            getResource("encodedImage"),
+                    StandardCharsets.UTF_8);
+            String pickupNotificationId = this.sendPickUpDetails(p1.getOrgId(), FoodTypes.VEG.name(), foodPic);
+            this.schedulePickup(pickupNotificationId, d1.getOrgId(), p1);
 
-        //FoodRunner accepts....this will update to notificationSent=true
-        List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
-        JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
+            pickupNotificationId = this.sendPickUpDetails(p2.getOrgId(), FoodTypes.VEG.name(), foodPic);
+            this.schedulePickup(pickupNotificationId, d2.getOrgId(), p2);
+        }
 
-        FoodRecoveryTransaction accepted = myTransactions.get(0);
-        accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        //Accept a PickupRequest
+        List<FoodRecoveryTransaction> f1Transactions = this.getMyTransactions(f1.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f1Transactions.toString()).getAsJsonArray());
+        assertFalse(f1Transactions.isEmpty());
 
+        List<FoodRecoveryTransaction> f2Transactions = this.getMyTransactions(f2.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f2Transactions.toString()).getAsJsonArray());
+        assertFalse(f2Transactions.isEmpty());
 
-        //FoodRunner notifies deliver
-        this.notifyDelivery(accepted);
+        List<FoodRecoveryTransaction> f3Transactions = this.getMyTransactions(f3.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f3Transactions.toString()).getAsJsonArray());
+        assertFalse(f3Transactions.isEmpty());
+
+        //Let f1 accept a request
+        FoodRecoveryTransaction accepted = f1Transactions.get(0);
+        this.acceptTransaction(f1.getProfile().getEmail(),accepted.getPickUpNotification().getDropOffOrg().getOrgId(),accepted);
+
+        //Let f2 check and they should not see this request
+        f2Transactions = this.getMyTransactions(f2.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f2Transactions.toString()).getAsJsonArray());
+        assertTrue(f2Transactions.isEmpty());
+
+        accepted = f3Transactions.get(0);
+        this.acceptTransaction(f3.getProfile().getEmail(),accepted.getPickUpNotification().getDropOffOrg().getOrgId(),accepted);
+        f3Transactions = this.getMyTransactions(f3.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(f3Transactions.toString()).getAsJsonArray());
+        assertTrue(f3Transactions.isEmpty());
     }
 
-    private SourceOrg registerPickupOrg()
+    private SourceOrg registerPickupOrg(String email, String street, String zip)
     {
         JsonObject registrationJson = new JsonObject();
-        String id = UUID.randomUUID().toString();
-        String email = "pickup@pickup.io";
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("password", "password");
@@ -160,8 +194,8 @@ public class JenFlow {
         registrationJson.addProperty("orgContactEmail", email);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
         registrationJson.addProperty("producer", true);
-        registrationJson.addProperty("street","506 West Ave");
-        registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("street",street);
+        registrationJson.addProperty("zip",zip);
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -173,11 +207,9 @@ public class JenFlow {
         return SourceOrg.parse(responseJson.getAsJsonObject().toString());
     }
 
-    private SourceOrg registerDropOffOrg()
+    private SourceOrg registerDropOffOrg(String email, String street, String zip)
     {
         JsonObject registrationJson = new JsonObject();
-        String id = UUID.randomUUID().toString();
-        String email = "dropoff@dropoff.io";
         registrationJson.addProperty("email", email);
         registrationJson.addProperty("mobile", 8675309l);
         registrationJson.addProperty("password", "password");
@@ -187,8 +219,8 @@ public class JenFlow {
         registrationJson.addProperty("orgContactEmail", email);
         registrationJson.addProperty("profileType", ProfileType.ORG.name());
         registrationJson.addProperty("producer", false);
-        registrationJson.addProperty("street","801 West Fifth Street");
-        registrationJson.addProperty("zip","78703");
+        registrationJson.addProperty("street",street);
+        registrationJson.addProperty("zip",zip);
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -200,12 +232,9 @@ public class JenFlow {
         return SourceOrg.parse(responseJson.getAsJsonObject().toString());
     }
 
-    private FoodRunner registerFoodRunner()
+    private FoodRunner registerFoodRunner(String email)
     {
         JsonObject json = new JsonObject();
-        String id = UUID.randomUUID().toString();
-        String email = "jen@appgallabs.io";
-        json.addProperty("id", id);
         json.addProperty("email", email);
         json.addProperty("password", "password");
         json.addProperty("mobile", "123");
@@ -262,13 +291,13 @@ public class JenFlow {
         assertEquals(200, response.getStatusCode());
     }
 
-    private JsonObject loginFoodRunner(String email,String password)
+    private JsonObject loginFoodRunner(String email,String password,double lat,double lon)
     {
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
-        loginJson.addProperty("password", "password");
-        loginJson.addProperty("latitude", 30.2698104d);
-        loginJson.addProperty("longitude",-97.75115579999999);
+        loginJson.addProperty("password", password);
+        loginJson.addProperty("latitude", lat);
+        loginJson.addProperty("longitude",lon);
         Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
@@ -297,7 +326,7 @@ public class JenFlow {
         return myTransactions;
     }
 
-    private FoodRecoveryTransaction acceptTransaction(String email,String dropOffOrgId,FoodRecoveryTransaction accepted)
+    private JsonObject acceptTransaction(String email,String dropOffOrgId,FoodRecoveryTransaction accepted)
     {
         JsonObject json = new JsonObject();
         json.addProperty("email",email);
@@ -306,19 +335,29 @@ public class JenFlow {
         Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
         String jsonString = response.getBody().print();
         JsonObject responseJson = JsonParser.parseString(jsonString).getAsJsonObject();
+        if(response.statusCode() == 500)
+        {
+            return JsonParser.parseString(jsonString).getAsJsonObject();
+        }
         assertEquals(200, response.getStatusCode());
         String id = responseJson.get("recoveryTransactionId").getAsString();
 
         response = given().body(json.toString()).when().get("/tx/recovery/transaction?id="+id).andReturn();
         jsonString = response.getBody().print();
-        return FoodRecoveryTransaction.parse(jsonString);
+        return JsonParser.parseString(jsonString).getAsJsonObject();
+    }
+
+    private void scheduleDropOff(FoodRecoveryTransaction accepted)
+    {
+        Response response = given().body(accepted.toString()).when().post("/activeNetwork/scheduleDropOff").andReturn();
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        assertEquals(200, response.getStatusCode());
     }
 
     private void notifyDelivery(FoodRecoveryTransaction accepted)
     {
-        JsonObject json = new JsonObject();
-        json.addProperty("txId",accepted.getId());
-        Response response = given().body(json.toString()).when().post("/activeNetwork/notifyDelivery").andReturn();
+        Response response = given().body(accepted.toString()).when().post("/activeNetwork/notifyDelivery").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
         assertEquals(200, response.getStatusCode());

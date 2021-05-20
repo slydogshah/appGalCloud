@@ -17,8 +17,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -96,8 +99,27 @@ public class NotificationReceiver {
             notification.setFoodDetails(foodDetails);
             notification.setSourceOrg(sourceOrg);
 
-            //TODO: read the time property and add the correct starttime
-            notification.setStart(OffsetDateTime.now(ZoneOffset.UTC));
+            //read the time property and add the correct starttime
+            OffsetDateTime start = null;
+            String time = json.get("time").getAsString();
+            String[] timeSplit = time.split(":");
+            if(timeSplit[0].equals("0"))
+            {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY,Integer.parseInt(timeSplit[1]));
+                LocalDateTime localDate = LocalDateTime.ofInstant(calendar.toInstant(),ZoneOffset.UTC);
+                start = OffsetDateTime.of(localDate,ZoneOffset.UTC);
+            }
+            else
+            {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY,Integer.parseInt(timeSplit[1]));
+                LocalDateTime localDate = LocalDateTime.ofInstant(calendar.toInstant(),ZoneOffset.UTC);
+                start = OffsetDateTime.ofInstant(localDate.plus(1, ChronoUnit.DAYS).toInstant(ZoneOffset.UTC),ZoneOffset.UTC);
+            }
+
+            logger.info("START: "+start.toEpochSecond());
+            notification.setStart(start);
 
             this.networkOrchestrator.startPickUpProcess(pic,notification);
 
@@ -139,24 +161,6 @@ public class NotificationReceiver {
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);
             return Response.ok(responseJson.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
-
-    @Path("/dropOff/notifications")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getDropOffNotifications(@QueryParam("orgId") String orgId)
-    {
-        try {
-            List<ScheduleDropOffNotification> scheduleDropOffNotificationList = this.mongoDBJsonStore.getScheduledDropOffNotifications(orgId);
-            return Response.ok(scheduleDropOffNotificationList.toString()).build();
         }
         catch(Exception e)
         {

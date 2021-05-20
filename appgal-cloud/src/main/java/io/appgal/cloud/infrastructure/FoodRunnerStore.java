@@ -90,7 +90,6 @@ public class FoodRunnerStore {
         //JsonUtil.print(FoodRecoveryStore.class,foodRecoveryTransaction.toJson());
         //logger.info("*******************************************************************************************************************");
 
-        FoodRunner exists = null;
         String queryJson = "{\"profile.email\":\""+foodRunner.getProfile().getEmail()+"\"}";
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
@@ -99,14 +98,8 @@ public class FoodRunnerStore {
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            exists = FoodRunner.parse(documentJson);
+            collection.deleteOne(document);
         }
-        if(exists != null)
-        {
-            bson = Document.parse(exists.toString());
-            collection.deleteOne(bson);
-        }
-
 
         Document doc = Document.parse(foodRunner.toString());
         collection.insertOne(doc);

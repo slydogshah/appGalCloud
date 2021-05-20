@@ -25,6 +25,11 @@ class FoodRunner
     return json;
   }
 
+  Profile getProfile()
+  {
+    return this.profile;
+  }
+
   static getActiveFoodRunner()
   {
     Profile profile = ActiveSession.getInstance().getProfile();

@@ -57,12 +57,6 @@ public class MongoDBJsonStore {
     private FoodRunnerStore foodRunnerStore;
 
     @Inject
-    private DropOffStore dropOffStore;
-
-    @Inject
-    private TripStore tripStore;
-
-    @Inject
     private FoodRecoveryStore foodRecoveryStore;
 
     @Inject
@@ -179,48 +173,6 @@ public class MongoDBJsonStore {
         this.networkStore.clearActiveNetwork(this.mongoDatabase);
     }
 
-    //DropOff
-    public DropOffNotification findDropOffNotificationByFoodRunnerId(String foodRunnerId)
-    {
-        return this.dropOffStore.findDropOffNotificationByFoodRunnerId(this.mongoDatabase, foodRunnerId);
-    }
-
-    public void storeScheduledDropOffNotification(ScheduleDropOffNotification scheduleDropOffNotification)
-    {
-        this.dropOffStore.storeScheduledDropOffNotification(this.mongoDatabase,scheduleDropOffNotification);
-    }
-
-    public void updateScheduledDropOffNotification(ScheduleDropOffNotification notification)
-    {
-        this.dropOffStore.updateScheduledDropOffNotification(this.mongoDatabase, notification);
-    }
-
-    public JsonObject getScheduledDropOffNotification(String id)
-    {
-        return this.dropOffStore.getScheduledDropOffNotification(this.mongoDatabase,id);
-    }
-
-    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications(String orgId)
-    {
-        return this.dropOffStore.getScheduledDropOffNotifications(this.mongoDatabase, orgId);
-    }
-
-    public List<ScheduleDropOffNotification> getScheduledDropOffNotifications()
-    {
-        return this.dropOffStore.getScheduledDropOffNotifications(this.mongoDatabase);
-    }
-
-    //Trips
-    public void setCompletedTrip(CompletedTrip completedTrip)
-    {
-        this.tripStore.setCompletedTrip(this.mongoDatabase,completedTrip);
-    }
-
-    public List<CompletedTrip> getCompletedTrips()
-    {
-        return this.tripStore.getCompletedTrips(this.mongoDatabase);
-    }
-
     //Pickups
     public List<SchedulePickUpNotification> getSchedulePickUpNotifications()
     {
@@ -296,6 +248,11 @@ public class MongoDBJsonStore {
     public List<FoodRecoveryTransaction> getFoodRecoveryDropOffHistory(String orgId)
     {
         return this.foodRecoveryStore.getFoodRecoveryDropOffHistory(this.mongoDatabase, orgId);
+    }
+
+    public List<FoodRecoveryTransaction> getPickedUpTransactions(String email)
+    {
+        return this.foodRecoveryStore.getPickedUpTransactions(this.mongoDatabase,email);
     }
 
     public byte[] getImage(ObjectId fileId)

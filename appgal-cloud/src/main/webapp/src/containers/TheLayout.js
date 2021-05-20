@@ -1,10 +1,10 @@
 import React from 'react'
 import { TheContent, TheFooter, TheHeader } from './index'
 
-const TheLayout = () => {
+const TheLayout = (props) => {
   return (
     <div className="c-app c-default-layout">
-         <TheHeader/>
+         <TheHeader props={props} />
       <div className="c-wrapper">
         <div
           style={{

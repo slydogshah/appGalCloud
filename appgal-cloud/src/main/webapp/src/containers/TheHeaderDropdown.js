@@ -34,15 +34,18 @@ import CustomInput from "../components/CustomInput/CustomInput.js";
 import Button from "../components/CustomButtons/Button.js";
 
 import styles from "../assets/jss/material-dashboard-react/components/headerLinksStyle.js";
+import axios from 'axios';
+import { AppContext,store} from "../application/AppContext"
 
 const useStyles = makeStyles(styles);
+
 
 //TODO: hook the actual logout routine
 
 
 
 //class TheHeaderDropdown extends React.Component {
-export default function AdminNavbarLinks() {
+export default function AdminNavbarLinks(props) {
         const classes = useStyles();
         const [openNotification, setOpenNotification] = React.useState(null);
         const [openProfile, setOpenProfile] = React.useState(null);
@@ -109,13 +112,51 @@ export default function AdminNavbarLinks() {
                               onClick={handleCloseProfile}
                               className={classes.dropdownItem}
                             >
-                              <CLink to="/home" className={classes.dropdownItem}>Home</CLink>
+                              <CLink className={classes.dropdownItem} onClick={(event)=>{
+                                            const orgId = store.getState().sourceOrg.orgId;
+                                            const producer = store.getState().sourceOrg.producer;
+                                            var apiUrl;
+                                            if(producer)
+                                            {
+                                                apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+                                            }
+                                            else
+                                            {
+                                                apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropoff/?orgId="+orgId;
+                                            }
+                                            axios.get(apiUrl).then((response) => {
+                                                //console.log(JSON.stringify(props));
+                                                if(producer)
+                                                {
+                                                       props.props.props.history.push({
+                                                         pathname: "/home",
+                                                         state: { data: response.data }
+                                                       });
+                                                }
+                                                else
+                                                {
+                                                        props.props.props.history.push({
+                                                          pathname: "/dropOffHome",
+                                                          state: { data: response.data }
+                                                        });
+                                                }
+                                            });
+                              }}>Home</CLink>
                             </MenuItem>
                             <MenuItem
                               onClick={handleCloseProfile}
                               className={classes.dropdownItem}
                             >
-                              <CLink to="/profile" className={classes.dropdownItem}>Account</CLink>
+                              <CLink className={classes.dropdownItem} onClick={(event)=>{
+                                    const email = store.getState().email;
+                                    const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
+                                    axios.get(apiUrl).then((response) => {
+                                        props.props.props.history.push({
+                                         pathname: "/profile",
+                                         state: { data: response.data }
+                                       });
+                                    });
+                              }}>Account</CLink>
                             </MenuItem>
                             <Divider light />
                             <MenuItem

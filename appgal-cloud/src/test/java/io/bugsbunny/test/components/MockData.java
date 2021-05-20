@@ -21,8 +21,6 @@ public class MockData {
 
         //dropoff
         SourceOrg church = new SourceOrg("church", "Church", "mrchrist@church.com",false);
-        ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
-        dropOffNotification.setSourceOrg(church);
 
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(0.0d, 0.0d);
@@ -30,7 +28,7 @@ public class MockData {
         schedulePickUpNotification.setFoodRunner(bugsBunny);
         schedulePickUpNotification.setDropOffOrg(church);
 
-        FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,dropOffNotification, bugsBunny);
+        FoodRecoveryTransaction tx = new FoodRecoveryTransaction(schedulePickUpNotification,bugsBunny);
         TransactionState txState = TransactionState.INPROGRESS;
         tx.setTransactionState(txState);
 

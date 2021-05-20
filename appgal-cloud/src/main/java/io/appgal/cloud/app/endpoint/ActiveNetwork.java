@@ -82,6 +82,7 @@ public class ActiveNetwork {
         }
     }
 
+    //TODO
     @Path("/findBestDestination")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -140,24 +141,16 @@ public class ActiveNetwork {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
             JsonUtil.print(this.getClass(),json);
             String email = json.get("email").getAsString();
-            String dropOffOrgId = json.get("dropOffOrgId").getAsString();
-            JsonObject accepted = json.get("accepted").getAsJsonObject();
+            String accepted = json.get("accepted").getAsString();
 
             FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
-            SourceOrg dropoffOrg = this.mongoDBJsonStore.getSourceOrg(dropOffOrgId);
 
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(accepted.toString());
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(accepted);
             tx.setFoodRunner(foodRunner);
             tx.setTransactionState(TransactionState.INPROGRESS);
 
             SchedulePickUpNotification pickUpNotification = tx.getPickUpNotification();
             pickUpNotification.setFoodRunner(foodRunner);
-
-            ScheduleDropOffNotification dropOffNotification = new ScheduleDropOffNotification(UUID.randomUUID().toString());
-            dropOffNotification.setNotificationSent(true);
-            dropOffNotification.setSourceOrg(dropoffOrg);
-
-            tx.setDropOffNotification(dropOffNotification);
 
             JsonUtil.print(this.getClass(),tx.toJson());
 
@@ -180,8 +173,10 @@ public class ActiveNetwork {
     public Response scheduleDropOff(@RequestBody String jsonBody)
     {
         try {
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String txId = json.get("txId").getAsString();
 
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
             this.foodRecoveryOrchestrator.notifyDropOff(tx);
 
             JsonObject responseJson = new JsonObject();
@@ -203,13 +198,59 @@ public class ActiveNetwork {
     public Response notifyDelivery(@RequestBody String jsonBody)
     {
         try {
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String txId = json.get("txId").getAsString();
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
 
             this.foodRecoveryOrchestrator.notifyDelivery(tx);
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);
             return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/foodPickedUp")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response foodPickedUp(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String txId = json.get("txId").getAsString();
+
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
+            tx.setTransactionState(TransactionState.ONTHEWAY);
+            this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success",true);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/foodPickedUp")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFoodPickedUp(@QueryParam("email") String email)
+    {
+        try {
+            List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getPickedUpTransactions(email);
+            return Response.ok(JsonParser.parseString(txs.toString()).getAsJsonArray().toString()).build();
         }
         catch(Exception e)
         {

@@ -1,10 +1,12 @@
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
+import 'package:app/src/ui/inProgress.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -28,19 +30,12 @@ class EmbeddedNavigation
   bool _isMultipleStop = false;
   double _distanceRemaining, _durationRemaining;
   MapBoxNavigationViewController _controller;
-  bool _routeBuilt = false;
-  bool _isNavigating = false;
   BuildContext context;
 
   EmbeddedNavigation(BuildContext buildContext,SourceOrg sourceOrg)
   {
       this.context = buildContext;
       foodRunnerLocation = ActiveSession.getInstance().getLocation();
-
-      //print(foodRunnerLocation.getLatitude());
-      //print(foodRunnerLocation.getLongitude());
-      //print(sourceOrg.location.getLatitude());
-      //print(sourceOrg.location.getLongitude());
 
 
       if(Platform.isIOS) {
@@ -65,8 +60,9 @@ class EmbeddedNavigation
 
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> start() async {
-    _directions = MapBoxNavigation(onRouteEvent: _onEmbeddedRouteEvent);
+  Future<void> start(FoodRecoveryTransaction tx) async {
+    ActiveSession.getInstance().current = tx;
+    _directions = MapBoxNavigation(onRouteEvent: onEmbeddedRouteEvent);
     _options = MapBoxOptions(
         //initialLatitude: 36.1175275,
         //initialLongitude: -115.1839524,
@@ -94,23 +90,22 @@ class EmbeddedNavigation
     }
 
     var wayPoints = List<WayPoint>();
-                            wayPoints.add(_origin);
-                            wayPoints.add(_stop);
+    wayPoints.add(_origin);
+    wayPoints.add(_stop);
 
-                            print(wayPoints.isEmpty);
 
-                            await _directions.startNavigation(
-                                wayPoints: wayPoints,
-                                options: MapBoxOptions(
-                                    mode:
-                                        MapBoxNavigationMode.drivingWithTraffic,
-                                    simulateRoute: true,
-                                    language: "en",
-                                    units: VoiceUnits.metric));
+    await _directions.startNavigation(
+        wayPoints: wayPoints,
+        options: MapBoxOptions(
+            mode:
+                MapBoxNavigationMode.drivingWithTraffic,
+            simulateRoute: true,
+            language: "en",
+            units: VoiceUnits.metric));
   }
 
 
-  Future<void> _onEmbeddedRouteEvent(e) async {
+  Future<void> onEmbeddedRouteEvent(e) async {
     _distanceRemaining = await _directions.distanceRemaining;
     _durationRemaining = await _directions.durationRemaining;
 
@@ -132,50 +127,60 @@ class EmbeddedNavigation
         _arrived = true;
         if (!_isMultipleStop) {
           await Future.delayed(Duration(seconds: 3));
-          //await _controller.finishNavigation();
+          /*
+          Profile profile = ActiveSession.getInstance().getProfile();
+          FoodRunner foodRunner = new FoodRunner(profile);
 
-          Profile foodRunner = ActiveSession.getInstance().getProfile();
           ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<List<FoodRecoveryTransaction>> future = client
-              .getFoodRecoveryTransaction(foodRunner.email);
+          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
           future.then((txs) {
-            Navigator.of(context, rootNavigator: true).pop();
-
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => FoodRunnerMainScene(txs)));
-          });
+            finish(txs);
+          });*/
         } else {}
         break;
       case MapBoxEvent.navigation_finished:
         {
-          Profile foodRunner = ActiveSession.getInstance().getProfile();
-          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<List<FoodRecoveryTransaction>> future = client
-              .getFoodRecoveryTransaction(foodRunner.email);
-          future.then((txs) {
-            Navigator.of(context, rootNavigator: true).pop();
+          Profile profile = ActiveSession.getInstance().getProfile();
+          FoodRunner foodRunner = new FoodRunner(profile);
 
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => FoodRunnerMainScene(txs)));
+          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
+          future.then((txs) {
+            finish(txs);
           });
         }
         break;
       case MapBoxEvent.navigation_cancelled:
         {
-          Profile foodRunner = ActiveSession.getInstance().getProfile();
-          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<List<FoodRecoveryTransaction>> future = client
-              .getFoodRecoveryTransaction(foodRunner.email);
-          future.then((txs) {
-            Navigator.of(context, rootNavigator: true).pop();
+          Profile profile = ActiveSession.getInstance().getProfile();
+          FoodRunner foodRunner = new FoodRunner(profile);
 
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => FoodRunnerMainScene(txs)));
+          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
+          future.then((txs) {
+            finish(txs);
           });
         }
         break;
       default:
         break;
     }
+  }
+
+  void finish(Map<String,List<FoodRecoveryTransaction>> txs)
+  {
+    FoodRecoveryTransaction tx = ActiveSession.getInstance().current;
+    if(tx.getTransactionState() == "SUBMITTED") {
+      Navigator.push(context, MaterialPageRoute(
+          builder: (context) => FoodRunnerMainScene(txs)));
+    }
+    else
+      {
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => InProgressMainScene(txs)));
+      }
   }
 }
