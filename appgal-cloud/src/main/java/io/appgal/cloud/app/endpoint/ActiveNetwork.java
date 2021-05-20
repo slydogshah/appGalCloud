@@ -82,6 +82,7 @@ public class ActiveNetwork {
         }
     }
 
+    //TODO
     @Path("/findBestDestination")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -172,8 +173,10 @@ public class ActiveNetwork {
     public Response scheduleDropOff(@RequestBody String jsonBody)
     {
         try {
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String txId = json.get("txId").getAsString();
 
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
             this.foodRecoveryOrchestrator.notifyDropOff(tx);
 
             JsonObject responseJson = new JsonObject();
@@ -195,7 +198,9 @@ public class ActiveNetwork {
     public Response notifyDelivery(@RequestBody String jsonBody)
     {
         try {
-            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(jsonBody);
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String txId = json.get("txId").getAsString();
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
 
             this.foodRecoveryOrchestrator.notifyDelivery(tx);
 

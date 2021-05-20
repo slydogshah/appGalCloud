@@ -141,8 +141,6 @@ public class JenFlow {
         FoodRecoveryTransaction accepted = myTransactions.get(0);
         accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
-        //FoodRunner notifies DropOffOrg
-        this.scheduleDropOff(accepted);
 
         //FoodRunner notifies deliver
         this.notifyDelivery(accepted);
@@ -316,17 +314,11 @@ public class JenFlow {
         return FoodRecoveryTransaction.parse(jsonString);
     }
 
-    private void scheduleDropOff(FoodRecoveryTransaction accepted)
-    {
-        Response response = given().body(accepted.toString()).when().post("/activeNetwork/scheduleDropOff").andReturn();
-        String jsonString = response.getBody().print();
-        JsonElement responseJson = JsonParser.parseString(jsonString);
-        assertEquals(200, response.getStatusCode());
-    }
-
     private void notifyDelivery(FoodRecoveryTransaction accepted)
     {
-        Response response = given().body(accepted.toString()).when().post("/activeNetwork/notifyDelivery").andReturn();
+        JsonObject json = new JsonObject();
+        json.addProperty("txId",accepted.getId());
+        Response response = given().body(json.toString()).when().post("/activeNetwork/notifyDelivery").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
         assertEquals(200, response.getStatusCode());

@@ -226,7 +226,9 @@ function FoodReceivedButton(props,tx){
 
 function notifyFoodDelivery(props,tx)
     {
-             const payload = tx;
+             const payload = {
+                txId:tx.id
+             };
              //alert(JSON.stringify(payload));
 
              const apiUrl = window.location.protocol +"//"+window.location.hostname+"/activeNetwork/notifyDelivery/";

@@ -25,14 +25,13 @@ public class LocationAPI {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    //TODO
     @Path("update")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response receiveUpdate(@RequestBody String jsonBody)
     {
         try {
-            logger.info(jsonBody);
-
             JsonObject inputJson = JsonParser.parseString(jsonBody).getAsJsonObject();
             String email = inputJson.get("email").getAsString();
             FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
