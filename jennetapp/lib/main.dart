@@ -37,26 +37,32 @@ void main(String env)
 
 void launchApp()
 {
-  Future<Map<String,String>> future = ActiveSession.getInstance().readCredentials();
+  Future<Map<String,dynamic>> future = ActiveSession.getInstance().readCredentials();
   future.then((credentials){
     String email = credentials['email'];
     String password = credentials['password'];
+    double latitude = credentials['latitude'];
+    double longitude = credentials['longitude'];
     print(email);
     print(password);
+    print(latitude);
+    print(longitude);
     if(email == null || password == null) {
       runApp(new JenNetworkApp());
     }
     else
     {
-        autoLogin(email, password);
+        autoLogin(email, password,latitude,longitude);
     }
   });
 }
 
-void autoLogin(String email,String password) {
+void autoLogin(String email,String password,double latitude,double longitude) {
   AuthCredentials credentials = new AuthCredentials();
   credentials.email = email;
   credentials.password = password;
+  credentials.latitude = latitude;
+  credentials.longitude = longitude;
   ProfileRestClient profileRestClient = new ProfileRestClient();
   Future<Map<String, dynamic>> future = profileRestClient.login(credentials);
   future.then((json) {

@@ -34,6 +34,7 @@ class ActiveSession
   void setLocation(FoodRunnerLocation location)
   {
     this.location = location;
+    this.storeLocation(location);
   }
 
   static ActiveSession getInstance()
@@ -50,9 +51,18 @@ class ActiveSession
       box.write('password', profile.password);
   }
 
-  Future<Map<String,String>> readCredentials() async
+  void storeLocation(FoodRunnerLocation location) async
   {
-    Map<String,String> storedCredentials = new Map();
+    // Usage
+    final box = OkitoStorage; // For easier reference.
+
+    box.write('latitude', location.latitude);
+    box.write('longitude', location.longitude);
+  }
+
+  Future<Map<String,dynamic>> readCredentials() async
+  {
+    Map<String,dynamic> storedCredentials = new Map();
     await OkitoStorage.init();
 
     // Usage
@@ -61,9 +71,13 @@ class ActiveSession
 
     final String email = box.read<String>('email');
     final String password = box.read<String>('password');
+    final double latitude = box.read<double>('latitude');
+    final double longitude = box.read<double>('longitude');
 
     storedCredentials['email'] = email;
     storedCredentials['password'] = password;
+    storedCredentials['latitude'] = latitude;
+    storedCredentials['longitude'] = longitude;
 
     return storedCredentials;
   }
