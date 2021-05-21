@@ -165,8 +165,6 @@ class ProfileFunctions
     foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
 
-    //print("LOGIN: $location");
-
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
 

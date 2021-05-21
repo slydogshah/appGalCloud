@@ -19,6 +19,31 @@ import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 import 'inProgress.dart';
 
+class FoodRunnerApp extends StatelessWidget {
+  Map<String,List<FoodRecoveryTransaction>> txs;
+  FoodRunnerApp(Map<String,List<FoodRecoveryTransaction>> txs)
+  {
+    LocationUpdater.getLocation();
+    this.txs = txs;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Color primaryColor = Color(0xFF383EDB);
+    Color backgroundColor = Color(0xFF383EDB);
+    MaterialApp materialApp = new MaterialApp(
+        home: FoodRunnerMainScene(txs),
+        theme: ThemeData(
+            primaryColor: primaryColor,
+            backgroundColor: backgroundColor,
+            accentColor: backgroundColor,
+            accentColorBrightness: Brightness.dark
+        )
+    );
+    return materialApp;
+  }
+}
+
 
 class FoodRunnerMainScene extends StatefulWidget {
   List<FoodRecoveryTransaction> recoveryTxs;
