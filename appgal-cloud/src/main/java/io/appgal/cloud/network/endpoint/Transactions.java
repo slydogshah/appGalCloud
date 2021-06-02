@@ -71,7 +71,7 @@ public class Transactions {
                     this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
                     pending.add(cour.toJson());
                 }
-                else
+                else if(cour.getTransactionState() == TransactionState.INPROGRESS || cour.getTransactionState() == TransactionState.ONTHEWAY)
                 {
                    inProgress.add(cour.toJson());
                 }

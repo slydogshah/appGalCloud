@@ -142,8 +142,11 @@ public class JenFlow {
         accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
 
-        //FoodRunner notifies deliver
+        //Organization notifies delivery
         this.notifyDelivery(accepted);
+
+        myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
     }
 
     private SourceOrg registerPickupOrg()

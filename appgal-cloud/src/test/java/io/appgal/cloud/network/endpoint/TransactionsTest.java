@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import static io.restassured.RestAssured.given;
 
+//TODO: Add more tests
+
 @QuarkusTest
 public class TransactionsTest {
     private static Logger logger = LoggerFactory.getLogger(TransactionsTest.class);

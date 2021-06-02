@@ -192,31 +192,6 @@ public class ActiveNetwork {
         }
     }
 
-    @Path("/notifyDelivery")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response notifyDelivery(@RequestBody String jsonBody)
-    {
-        try {
-            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
-            String txId = json.get("txId").getAsString();
-            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
-
-            this.foodRecoveryOrchestrator.notifyDelivery(tx);
-
-            JsonObject responseJson = new JsonObject();
-            responseJson.addProperty("success", true);
-            return Response.ok(responseJson.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
-
     @Path("/foodPickedUp")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -251,6 +226,31 @@ public class ActiveNetwork {
         try {
             List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getPickedUpTransactions(email);
             return Response.ok(JsonParser.parseString(txs.toString()).getAsJsonArray().toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/notifyDelivery")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response notifyDelivery(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String txId = json.get("txId").getAsString();
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
+
+            this.foodRecoveryOrchestrator.notifyDelivery(tx);
+
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("success", true);
+            return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)
         {
