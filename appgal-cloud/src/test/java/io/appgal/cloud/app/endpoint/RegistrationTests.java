@@ -159,7 +159,7 @@ public class RegistrationTests extends BaseTest {
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
         loginJson.addProperty("password", "password");
-        response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         jsonString = response.getBody().prettyPrint();
         logger.info("****");
@@ -242,7 +242,7 @@ public class RegistrationTests extends BaseTest {
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
         loginJson.addProperty("password", "c");
-        response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
