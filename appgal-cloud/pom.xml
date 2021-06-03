@@ -106,6 +106,13 @@
       <artifactId>quarkus-container-image-jib</artifactId>
       <version>${quarkus.platform.version}</version>
     </dependency>
+
+    <!-- messaging -->
+    <dependency>
+      <groupId>com.twilio.sdk</groupId>
+      <artifactId>twilio</artifactId>
+      <version>8.13.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

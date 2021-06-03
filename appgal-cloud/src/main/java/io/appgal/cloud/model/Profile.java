@@ -43,6 +43,8 @@ public class Profile implements Serializable {
 
     private String chainId;
 
+    private String resetCode;
+
     public Profile()
     {
 
@@ -158,6 +160,14 @@ public class Profile implements Serializable {
         this.chainId = chainId;
     }
 
+    public String getResetCode() {
+        return resetCode;
+    }
+
+    public void setResetCode(String resetCode) {
+        this.resetCode = resetCode;
+    }
+
     @Override
     public String toString()
     {
@@ -232,6 +242,11 @@ public class Profile implements Serializable {
 
         if(jsonObject.has("chainId")) {
             profile.chainId = jsonObject.get("chainId").getAsString();
+        }
+
+        if(jsonObject.has("resetCode"))
+        {
+            profile.resetCode = jsonObject.get("resetCode").getAsString();
         }
 
         return profile;

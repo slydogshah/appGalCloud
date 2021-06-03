@@ -1,7 +1,6 @@
 package io.appgal.cloud.app.endpoint;
 
 import com.google.gson.*;
-import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
@@ -22,8 +21,14 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
+
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+
 @QuarkusTest
-public class RegistrationTests extends BaseTest {
+public class RegistrationTests  {
     private static Logger logger = LoggerFactory.getLogger(RegistrationTests.class);
 
     @Inject
@@ -258,5 +263,47 @@ public class RegistrationTests extends BaseTest {
         assertEquals(profile.getMobile(), 8675309l);
         assertEquals(profile.getPassword(), "c");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
+    }
+
+    @Test
+    public void testSendResetCode() throws Exception{
+        JsonObject json = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        json.addProperty("id", id);
+        json.addProperty("email", email);
+        json.addProperty("password", "c");
+        json.addProperty("mobile", 8675309l);
+        json.addProperty("photo", "photu");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        logger.info("******NEW_PROFILE******");
+        logger.info(json.toString());
+        logger.info("***********************");
+
+        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+        String jsonString = response.getBody().asString();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+
+        json = new JsonObject();
+        json.addProperty("email",email);
+        response = given().body(json.toString()).when().post("/registration/sendResetCode").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+
+        Twilio.init("ACfc5fb6ca2ca7e05f1af9067d7579418b", "c4bfa1088aa1277ff8dfeba1567a2d56");
+
+        Message message = Message.creator(new PhoneNumber("+15129151162"),
+                new PhoneNumber("+17082953630"),
+                "This is the ship that made the Kessel Run in fourteen parsecs?").create();
+
+        System.out.println(message.getSid());
     }
 }

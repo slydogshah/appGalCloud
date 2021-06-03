@@ -231,6 +231,38 @@ public class Registration {
         }
     }
 
+    @Path("sendResetCode")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response sendResetCode(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String email = json.get("email").getAsString();
+
+            //TODO: unmock reset code
+            String resetCode = "123456";
+
+            //+17082953630
+            //ACfc5fb6ca2ca7e05f1af9067d7579418b
+            //c4bfa1088aa1277ff8dfeba1567a2d56
+
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            profile.setResetCode(resetCode);
+            this.mongoDBJsonStore.updateProfile(profile);
+
+            JsonObject success = new JsonObject();
+            success.addProperty("success",true);
+            return Response.ok(success.toString()).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
     @Path("newPassword")
     @POST
     @Produces(MediaType.APPLICATION_JSON)

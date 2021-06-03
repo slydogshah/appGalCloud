@@ -75,7 +75,11 @@ public class ProfileStore {
             break;
         }
 
-        Document doc = Document.parse(profile.toString());
+        JsonObject profileJson = profile.toJson();
+        if(profile.getResetCode() != null) {
+            profileJson.addProperty("resetCode", profile.getResetCode());
+        }
+        Document doc = Document.parse(profileJson.toString());
         collection.insertOne(doc);
     }
 
