@@ -183,6 +183,13 @@ public class Registration {
             }
 
             String userAgent = request.getHeader("User-Agent");
+            logger.info("******USER_AGENT********");
+            logger.info(userAgent);
+            boolean appLogin = false;
+            if(userAgent.contains("Dart"))
+            {
+                appLogin = true;
+            }
 
             String email = jsonObject.get("email").getAsString();
             String password = jsonObject.get("password").getAsString();
@@ -197,10 +204,18 @@ public class Registration {
                 return Response.status(401).entity(profileNotFound.toString()).build();
             }
 
-            JsonObject responseJson;
+            JsonObject responseJson = null;
             if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
-                Location location = Location.parse(credentialsJson);
-                responseJson = this.profileRegistrationService.login(userAgent, email, password, location);
+                if(appLogin) {
+                    Location location = Location.parse(credentialsJson);
+                    responseJson = this.profileRegistrationService.login(userAgent, email, password, location);
+                }
+                else
+                {
+                    JsonObject forbidden = new JsonObject();
+                    forbidden.addProperty("message", "access_denied");
+                    return Response.status(403).entity(forbidden.toString()).build();
+                }
             }
             else
             {
