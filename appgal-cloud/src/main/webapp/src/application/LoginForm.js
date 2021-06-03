@@ -28,6 +28,7 @@ import {
   CProgress,
   CSelect,
   CLabel,
+  CLink,
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -467,6 +468,14 @@ function RenderLogin({state,props})
                                                             ReactDOM.render(element,document.getElementById('parent'));
                                 });
                            }}>Register</Button>
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                            <CLink className={classes.dropdownItem} onClick={(e) => {
+                                    props.history.push({
+                                        pathname: "/forgotPassword",
+                                    });
+                            }
+                            }>Forgot Password</CLink>
                         </GridItem>
                         </GridContainer>
                    </CardFooter>
