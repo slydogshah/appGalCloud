@@ -59,6 +59,14 @@ function ForgotPasswordView({state, props}) {
                         formControlProps={{
                           fullWidth: true
                         }}
+                        inputProps={{
+                             onChange:(event) => {
+                                 const target = event.target;
+                                 const value = target.value;
+                                 const name = target.name;
+                                 state.email = value;
+                             }
+                         }}
                       />
                     </GridItem>
                   </GridContainer>
@@ -70,14 +78,29 @@ function ForgotPasswordView({state, props}) {
                           formControlProps={{
                             fullWidth: true
                           }}
+                          inputProps={{
+                               onChange:(event) => {
+                                   const target = event.target;
+                                   const value = target.value;
+                                   const name = target.name;
+                                   state.mobileNumber = value;
+                               }
+                           }}
                         />
                       </GridItem>
                     </GridContainer>
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
-                        props.history.push({
-                            pathname: "/confirmResetCode",
+                        const payload = {
+                           email:state.email,
+                           mobileNumber:state.mobileNumber
+                        };
+                        var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/sendResetCode/";
+                        axios.post(apiUrl,payload).then((response) => {
+                            props.history.push({
+                                pathname: "/confirmResetCode",
+                            });
                         });
                     }}>Send Reset Code</Button>
                 </CardFooter>

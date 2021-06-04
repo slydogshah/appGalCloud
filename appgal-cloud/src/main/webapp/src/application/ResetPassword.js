@@ -59,6 +59,14 @@ function ResetPasswordView({state, props}) {
                         formControlProps={{
                           fullWidth: true
                         }}
+                        inputProps={{
+                           onChange:(event) => {
+                               const target = event.target;
+                               const value = target.value;
+                               const name = target.name;
+                               state.newPassword = value;
+                           }
+                       }}
                       />
                     </GridItem>
                   </GridContainer>
@@ -70,13 +78,33 @@ function ResetPasswordView({state, props}) {
                       formControlProps={{
                         fullWidth: true
                       }}
+                      inputProps={{
+                         onChange:(event) => {
+                             const target = event.target;
+                             const value = target.value;
+                             const name = target.name;
+                             state.confirmNewPassword = value;
+                         }
+                     }}
                     />
                   </GridItem>
                 </GridContainer>
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
-
+                          const payload = {
+                             newPassword:state.newPassword,
+                             confirmNewPassword:state.confirmNewPassword
+                          };
+                          /*var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/sendResetCode/";
+                          axios.post(apiUrl,payload).then((response) => {
+                              props.history.push({
+                                  pathname: "/resetPassword",
+                              });
+                          });*/
+                          props.history.push({
+                                pathname: "/",
+                          });
                     }}>Reset Password</Button>
                 </CardFooter>
               </Card>
