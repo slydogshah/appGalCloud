@@ -40,6 +40,7 @@ const useStyles = makeStyles(styles);
 
 function ConfirmResetCodeView({state, props}) {
     const classes = useStyles();
+    const resetEmail = props.history.location.state.data.email;
     return (
         <>
         <br/><br/><br/>
@@ -74,17 +75,19 @@ function ConfirmResetCodeView({state, props}) {
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
                         const payload = {
+                           email:resetEmail,
                            resetCode:state.resetCode
                         };
-                        /*var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/sendResetCode/";
+                        var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/verifyResetCode/";
                         axios.post(apiUrl,payload).then((response) => {
+                            const propagation = {
+                              email:resetEmail
+                            };
                             props.history.push({
                                 pathname: "/resetPassword",
+                                state: { data: propagation }
                             });
-                        });*/
-                        props.history.push({
-                                                        pathname: "/resetPassword",
-                                                    });
+                        });
                     }}>Confirm</Button>
                 </CardFooter>
               </Card>

@@ -98,8 +98,12 @@ function ForgotPasswordView({state, props}) {
                         };
                         var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/sendResetCode/";
                         axios.post(apiUrl,payload).then((response) => {
+                            const propagation = {
+                              email:state.email
+                            };
                             props.history.push({
                                 pathname: "/confirmResetCode",
+                                state: { data: propagation }
                             });
                         });
                     }}>Send Reset Code</Button>

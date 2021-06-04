@@ -40,6 +40,7 @@ const useStyles = makeStyles(styles);
 
 function ResetPasswordView({state, props}) {
     const classes = useStyles();
+    const resetEmail = props.history.location.state.data.email;
     return (
         <>
         <br/><br/><br/>
@@ -94,16 +95,15 @@ function ResetPasswordView({state, props}) {
                   <Button color="primary" onClick={(e) => {
                           const payload = {
                              newPassword:state.newPassword,
-                             confirmNewPassword:state.confirmNewPassword
+                             confirmNewPassword:state.confirmNewPassword,
+                             email:resetEmail,
+                             password:state.newPassword
                           };
-                          /*var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/sendResetCode/";
+                          var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/newPassword/";
                           axios.post(apiUrl,payload).then((response) => {
                               props.history.push({
-                                  pathname: "/resetPassword",
+                                  pathname: "/",
                               });
-                          });*/
-                          props.history.push({
-                                pathname: "/",
                           });
                     }}>Reset Password</Button>
                 </CardFooter>
