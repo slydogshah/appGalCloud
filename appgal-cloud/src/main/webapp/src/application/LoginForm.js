@@ -67,8 +67,11 @@ const useStyles = makeStyles(styles);
 
 function inputFieldComp(state) {
       const element = (
-        <CustomInput
-                 labelText="Register New Organization"
+           <>
+           <GridContainer>
+            <GridItem xs={12} sm={12} md={4}>
+                <CustomInput
+                 labelText="New Organization"
                  id="sourceOrgId"
                  formControlProps={{
                    fullWidth: true
@@ -82,6 +85,47 @@ function inputFieldComp(state) {
                      }
                  }}
                />
+            </GridItem>
+          </GridContainer>
+          <GridContainer>
+              <GridItem xs={12} sm={12} md={4}>
+                  <CustomInput
+                   labelText="Street"
+                   id="street"
+                   formControlProps={{
+                     fullWidth: true
+                   }}
+                   inputProps={{
+                       onChange:(event) => {
+                           const target = event.target;
+                           const value = target.value;
+                           const name = target.name;
+                           state.street = value;
+                       }
+                   }}
+                 />
+              </GridItem>
+            </GridContainer>
+           <GridContainer>
+           <GridItem xs={12} sm={12} md={4}>
+               <CustomInput
+                labelText="Zip"
+                id="zip"
+                formControlProps={{
+                  fullWidth: true
+                }}
+                inputProps={{
+                    onChange:(event) => {
+                        const target = event.target;
+                        const value = target.value;
+                        const name = target.name;
+                        state.zip = value;
+                    }
+                }}
+              />
+           </GridItem>
+         </GridContainer>
+         </>
       );
       ReactDOM.unmountComponentAtNode(document.getElementById('orgInput'));
       ReactDOM.render(element,document.getElementById('orgInput'));
@@ -522,7 +566,7 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'', producer:'',isModalOpen:false,
-    street:'801 West Fifth Street',zip:'78703',
+    street:'',zip:'',
     activeElementType: "dropdown"};
   }
 
