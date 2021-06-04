@@ -9,6 +9,7 @@ import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.restclient.TwilioClient;
 import io.appgal.cloud.util.JsonUtil;
 import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Path("registration")
 public class Registration {
@@ -40,6 +42,9 @@ public class Registration {
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
+
+    @Inject
+    private TwilioClient twilioClient;
 
     @Path("profile")
     @GET
@@ -240,17 +245,73 @@ public class Registration {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
 
             String email = json.get("email").getAsString();
-
-            //TODO: unmock reset code
-            String resetCode = "123456";
-
-            //+17082953630
-            //ACfc5fb6ca2ca7e05f1af9067d7579418b
-            //c4bfa1088aa1277ff8dfeba1567a2d56
+            String mobileNumber = json.get("mobileNumber").getAsString();
 
             Profile profile = this.mongoDBJsonStore.getProfile(email);
+            if(profile == null || profile.getProfileType() == ProfileType.FOOD_RUNNER)
+            {
+                JsonObject error = new JsonObject();
+                if(profile == null) {
+                    error.addProperty("message", "EMAIL_NOT_FOUND");
+                    return Response.status(404).entity(error.toString()).build();
+                }
+                else
+                {
+                    error.addProperty("message", "ACCESS_DENIED_FOR_PROFILE_TYPE");
+                    return Response.status(403).entity(error.toString()).build();
+                }
+            }
+
+            String resetCode = UUID.randomUUID().toString().substring(0,6);
+            logger.info("RESET_CODE: "+resetCode);
+
             profile.setResetCode(resetCode);
             this.mongoDBJsonStore.updateProfile(profile);
+
+            this.twilioClient.sendResetCode(mobileNumber,resetCode);
+
+            JsonObject success = new JsonObject();
+            success.addProperty("success",true);
+            return Response.ok(success.toString()).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
+    @Path("verifyResetCode")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response verifyResetCode(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String email = json.get("email").getAsString();
+            String resetCode = json.get("resetCode").getAsString();
+
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            JsonObject error = new JsonObject();
+            if(profile == null || profile.getProfileType() == ProfileType.FOOD_RUNNER)
+            {
+                if(profile == null) {
+                    error.addProperty("message", "EMAIL_NOT_FOUND");
+                    return Response.status(404).entity(error.toString()).build();
+                }
+                else
+                {
+                    error.addProperty("message", "ACCESS_DENIED_FOR_PROFILE_TYPE");
+                    return Response.status(403).entity(error.toString()).build();
+                }
+            }
+
+            if(!profile.getResetCode().equals(resetCode))
+            {
+                error.addProperty("message", "INVALID_RESET_CODE");
+                return Response.status(401).entity(error.toString()).build();
+            }
 
             JsonObject success = new JsonObject();
             success.addProperty("success",true);
