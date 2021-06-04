@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState, useEffect, useContext,Component } from 'react'
+import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
 import axios from 'axios'
+
+import {
+  CAlert
+} from '@coreui/react'
+
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -44,6 +50,7 @@ function ConfirmResetCodeView({state, props}) {
     return (
         <>
         <br/><br/><br/>
+        <div id="validation_error"/>
         <div>
           <GridContainer>
             <GridItem xs={12} sm={12} md={8}>
@@ -74,6 +81,7 @@ function ConfirmResetCodeView({state, props}) {
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
+                        ReactDOM.unmountComponentAtNode(document.getElementById('validation_error'));
                         const payload = {
                            email:resetEmail,
                            resetCode:state.resetCode
@@ -87,6 +95,40 @@ function ConfirmResetCodeView({state, props}) {
                                 pathname: "/resetPassword",
                                 state: { data: propagation }
                             });
+                        }).catch(err => {
+                                 if(err.response != null && err.response.status == 401)
+                                 {
+                                        const error = (
+                                                             <CAlert
+                                                             color="warning"
+                                                             >
+                                                                401: Reset Code is invalid
+                                                            </CAlert>
+                                                         );
+                                       ReactDOM.render(error,document.getElementById('validation_error'));
+                                 }
+                                 else if(err.response != null && err.response.status == 403)
+                                 {
+                                       const error = (
+                                                            <CAlert
+                                                            color="warning"
+                                                            >
+                                                               403: Access Denied.
+                                                           </CAlert>
+                                                        );
+                                      ReactDOM.render(error,document.getElementById('validation_error'));
+                                 }
+                                 else if(err.response != null && err.response.status == 500)
+                                   {
+                                         const error = (
+                                                              <CAlert
+                                                              color="warning"
+                                                              >
+                                                                 500: Unknown System Error
+                                                             </CAlert>
+                                                          );
+                                        ReactDOM.render(error,document.getElementById('validation_error'));
+                                   }
                         });
                     }}>Confirm</Button>
                 </CardFooter>

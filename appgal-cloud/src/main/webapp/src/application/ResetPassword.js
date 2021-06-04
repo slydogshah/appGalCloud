@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState, useEffect, useContext,Component } from 'react'
+import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
 import axios from 'axios'
+
+import {
+  CAlert
+} from '@coreui/react'
+
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -44,6 +50,7 @@ function ResetPasswordView({state, props}) {
     return (
         <>
         <br/><br/><br/>
+        <div id="validation_error"/>
         <div>
           <GridContainer>
             <GridItem xs={12} sm={12} md={8}>
@@ -93,18 +100,41 @@ function ResetPasswordView({state, props}) {
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
+                          ReactDOM.unmountComponentAtNode(document.getElementById('validation_error'));
                           const payload = {
                              newPassword:state.newPassword,
                              confirmNewPassword:state.confirmNewPassword,
-                             email:resetEmail,
-                             password:state.newPassword
+                             email:resetEmail
                           };
-                          var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/newPassword/";
+                          var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/resetPassword/";
                           axios.post(apiUrl,payload).then((response) => {
                               props.history.push({
                                   pathname: "/",
                               });
-                          });
+                          }).catch(err => {
+                                 if(err.response != null && err.response.status == 400)
+                                 {
+                                        const error = (
+                                                             <CAlert
+                                                             color="warning"
+                                                             >
+                                                                400: Your Confirm password does not match the New password
+                                                            </CAlert>
+                                                         );
+                                       ReactDOM.render(error,document.getElementById('validation_error'));
+                                 }
+                                 else if(err.response != null && err.response.status == 500)
+                                   {
+                                         const error = (
+                                                              <CAlert
+                                                              color="warning"
+                                                              >
+                                                                 500: Unknown System Error
+                                                             </CAlert>
+                                                          );
+                                        ReactDOM.render(error,document.getElementById('validation_error'));
+                                   }
+                        });
                     }}>Reset Password</Button>
                 </CardFooter>
               </Card>

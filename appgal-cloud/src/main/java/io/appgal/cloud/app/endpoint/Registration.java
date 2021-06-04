@@ -324,6 +324,7 @@ public class Registration {
         }
     }
 
+    //TODO: Validation Hardening
     @Path("newPassword")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -337,6 +338,40 @@ public class Registration {
 
             Profile profile = this.mongoDBJsonStore.getProfile(email);
             profile.setPassword(password);
+            this.mongoDBJsonStore.updateProfile(profile);
+
+            JsonObject success = new JsonObject();
+            success.addProperty("success",true);
+            return Response.ok(success.toString()).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
+    @Path("resetPassword")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response resetPassword(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String email = json.get("email").getAsString();
+            String newPassword = json.get("newPassword").getAsString();
+            String confirmPassword = json.get("confirmNewPassword").getAsString();
+
+            if(!newPassword.equals(confirmPassword))
+            {
+                JsonObject error = new JsonObject();
+                error.addProperty("message", "PASSWORDS_DONT_MATCH");
+                return Response.status(400).entity(error.toString()).build();
+            }
+
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            profile.setPassword(newPassword);
             this.mongoDBJsonStore.updateProfile(profile);
 
             JsonObject success = new JsonObject();
