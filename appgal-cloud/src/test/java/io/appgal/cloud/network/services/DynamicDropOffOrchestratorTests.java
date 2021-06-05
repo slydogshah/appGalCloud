@@ -2,7 +2,6 @@ package io.appgal.cloud.network.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
@@ -29,14 +28,10 @@ public class DynamicDropOffOrchestratorTests extends BaseTest {
     @Inject
     private DynamicDropOffOrchestrator dynamicDropOffOrchestrator;
 
-    @Inject
-    private RequestPipeline requestPipeline;
-
     @BeforeEach
     public void setUp() throws Exception
     {
         super.setUp();
-        this.requestPipeline.clear();
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
 
@@ -64,11 +59,7 @@ public class DynamicDropOffOrchestratorTests extends BaseTest {
             logger.info("********************************************");
             JsonUtil.print(this.getClass(),notification.toJson());
             logger.info(cour.toString() + ":" + cour.toEpochSecond());
-
-            this.requestPipeline.add(notification);
         }
-
-        this.requestPipeline.process();
         Thread.sleep(5000);
     }
 

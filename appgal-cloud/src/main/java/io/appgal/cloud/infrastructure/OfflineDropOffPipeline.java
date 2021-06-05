@@ -16,9 +16,6 @@ public class OfflineDropOffPipeline {
     private static Logger logger = LoggerFactory.getLogger(OfflineDropOffPipeline.class);
 
     @Inject
-    private RequestPipeline requestPipeline;
-
-    @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
     public void joinDropOffPipeline(FoodRunner foodRunner)

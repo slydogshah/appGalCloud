@@ -4,8 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.appgal.cloud.infrastructure.NotificationEngine;
-import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.restclient.GoogleApiClient;
@@ -30,15 +28,9 @@ public class NetworkOrchestrator {
     private MongoDBJsonStore mongoDBJsonStore;
 
     @Inject
-    private RequestPipeline requestPipeline;
-
-    @Inject
     private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
 
     private Map<String, Collection<FoodRunner>> finderResults;
-
-    @Inject
-    private NotificationEngine notificationEngine;
 
     @Inject
     private MapUtils mapUtils;
@@ -118,7 +110,6 @@ public class NetworkOrchestrator {
     public void schedulePickUp(SchedulePickUpNotification notification)
     {
         this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
-        this.requestPipeline.add(notification);
 
         this.foodRecoveryOrchestrator.notifyForPickUp(notification);
     }
@@ -180,11 +171,6 @@ public class NetworkOrchestrator {
         return this.googleApiClient.estimateTime(start,end).get("duration").getAsString();
     }
     //-------------------------
-    public NotificationEngine getNotificationEngine()
-    {
-        return this.notificationEngine;
-    }
-
     public JsonObject acceptRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
         String id = foodRecoveryTransaction.accept(this.mongoDBJsonStore);
