@@ -34,9 +34,12 @@ public class DynamicDropOffOrchestrator {
 
     public void notifyAvailability(String foodRunnerEmail)
     {
-        FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(foodRunnerEmail);
-        foodRunner.setOfflineCommunitySupport(true);
-        this.mongoDBJsonStore.updateFoodRunner(foodRunner);
+        FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(foodRunnerEmail);
+        if(foodRunner != null) {
+            foodRunner.setOfflineCommunitySupport(true);
+            this.mongoDBJsonStore.updateFoodRunner(foodRunner);
+            this.activeNetwork.flushToStore();
+        }
     }
 
     public JsonObject orchestrateOfflineCommunity()
@@ -62,9 +65,8 @@ public class DynamicDropOffOrchestrator {
                 FoodRunner cour = entry.getValue();
 
                 Location foodRunnerLocation = cour.getLocation();
-                if(foodRunnerLocation == null)
+                if(foodRunnerLocation == null || !cour.isOfflineCommunitySupport())
                 {
-                    logger.info("FOODRUNNER_LOCATION_NOT_FOUND");
                     continue;
                 }
 

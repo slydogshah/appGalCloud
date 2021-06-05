@@ -145,15 +145,21 @@ public class NetworkOrchestrator {
                 logger.info("**************DISTANCE*****************");
 
                 if (distance <= 5.0d) {
-                    Location dropoff = tx.getPickUpNotification().getDropOffOrg().getLocation();
+                    if(!foodRunner.isOfflineCommunitySupport()) {
+                        Location dropoff = tx.getPickUpNotification().getDropOffOrg().getLocation();
 
-                    String estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation,source);
-                    String estimatedDropOffTime = this.estimateTravelTime(source,dropoff);
+                        String estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation, source);
+                        String estimatedDropOffTime = this.estimateTravelTime(source, dropoff);
 
-                    tx.setEstimatedPickupTime(estimatedPickupTime);
-                    tx.setEstimatedDropOffTime(estimatedDropOffTime);
+                        tx.setEstimatedPickupTime(estimatedPickupTime);
+                        tx.setEstimatedDropOffTime(estimatedDropOffTime);
 
-                    myTransactions.add(tx);
+                        myTransactions.add(tx);
+                    }
+                    else
+                    {
+                        myTransactions.add(tx);
+                    }
                 }
             }
 

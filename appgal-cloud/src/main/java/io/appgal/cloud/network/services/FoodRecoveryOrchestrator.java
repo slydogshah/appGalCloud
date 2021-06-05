@@ -25,6 +25,7 @@ public class FoodRecoveryOrchestrator {
         FoodRecoveryTransaction recoveryTx = new FoodRecoveryTransaction();
         recoveryTx.setId(UUID.randomUUID().toString());
         recoveryTx.setPickUpNotification(schedulePickUpNotification);
+        recoveryTx.setOfflineCommunitySupport(schedulePickUpNotification.isDropOffDynamic());
 
         //start the transaction
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(recoveryTx);

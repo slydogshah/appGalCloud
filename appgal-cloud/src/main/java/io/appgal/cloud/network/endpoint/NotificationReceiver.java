@@ -153,13 +153,25 @@ public class NotificationReceiver {
         try {
             JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
             String pickupNotificationId = json.get("pickupNotificationId").getAsString();
-            String dropOffOrgId = json.get("dropOffOrgId").getAsString();
+            String dropOffOrgId = null;
+            if(json.has("dropOffOrgId"))
+            {
+                dropOffOrgId = json.get("dropOffOrgId").getAsString();
+            }
+            boolean enableOfflineCommunitySupport = false;
+            if(json.has("enableOfflineCommunitySupport"))
+            {
+                enableOfflineCommunitySupport = json.get("enableOfflineCommunitySupport").getAsBoolean();
+            }
 
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
                     getScheduledPickUpNotification(pickupNotificationId).toString());
-            SourceOrg dropOffOrg = this.mongoDBJsonStore.getSourceOrg(dropOffOrgId);
-            notification.setDropOffOrg(dropOffOrg);
-            JsonUtil.print(this.getClass(), notification.toJson());
+            if(dropOffOrgId != null) {
+                SourceOrg dropOffOrg = this.mongoDBJsonStore.getSourceOrg(dropOffOrgId);
+                notification.setDropOffOrg(dropOffOrg);
+                JsonUtil.print(this.getClass(), notification.toJson());
+            }
+            notification.setDropOffDynamic(enableOfflineCommunitySupport);
 
             this.networkOrchestrator.schedulePickUp(notification);
 
