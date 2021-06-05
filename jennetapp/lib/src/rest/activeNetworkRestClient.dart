@@ -133,7 +133,7 @@ class ActiveNetworkRestClient
     
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"offline/notification/";
     Map<String, dynamic> json = new Map();
-    json['foodRunnerId'] = foodRunnerId;
+    json['foodRunnerEmail'] = foodRunnerId;
     String jsonBody = jsonEncode(json);
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);

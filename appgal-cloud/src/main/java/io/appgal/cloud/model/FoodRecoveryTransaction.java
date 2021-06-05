@@ -18,6 +18,7 @@ public class FoodRecoveryTransaction implements Serializable {
     private TransactionState transactionState = TransactionState.SUBMITTED;
     private String estimatedPickupTime;
     private String estimatedDropOffTime;
+    private boolean offlineCommunitySupport = false;
 
     public FoodRecoveryTransaction()
     {
@@ -82,6 +83,14 @@ public class FoodRecoveryTransaction implements Serializable {
         this.estimatedDropOffTime = estimatedDropOffTime;
     }
 
+    public boolean isOfflineCommunitySupport() {
+        return offlineCommunitySupport;
+    }
+
+    public void setOfflineCommunitySupport(boolean offlineCommunitySupport) {
+        this.offlineCommunitySupport = offlineCommunitySupport;
+    }
+
     public String accept(MongoDBJsonStore mongoDBJsonStore)
     {
         synchronized (this) {
@@ -136,6 +145,11 @@ public class FoodRecoveryTransaction implements Serializable {
             foodRecoveryTransaction.estimatedDropOffTime = estimatedDropOffTime;
         }
 
+        if(jsonObject.has("offlineCommunitySupport"))
+        {
+            foodRecoveryTransaction.offlineCommunitySupport = jsonObject.get("offlineCommunitySupport").getAsBoolean();
+        }
+
         return foodRecoveryTransaction;
     }
 
@@ -169,6 +183,8 @@ public class FoodRecoveryTransaction implements Serializable {
         {
             jsonObject.addProperty("estimatedDropOffTime", this.estimatedDropOffTime);
         }
+
+        jsonObject.addProperty("offlineCommunitySupport",this.offlineCommunitySupport);
         return jsonObject;
     }
 

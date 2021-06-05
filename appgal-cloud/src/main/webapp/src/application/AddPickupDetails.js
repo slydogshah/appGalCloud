@@ -239,8 +239,6 @@ function RenderForm({state,props})
 
                                                                 const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/";
                                                                 axios.post(apiUrl,payload).then((response) => {
-                                                                    console.log("*****INVOKED********");
-                                                                    console.log(JSON.stringify(response.data));
                                                                     props.history.push({
                                                                                     pathname: "/dropOffOptions",
                                                                                     state: { data: response.data }

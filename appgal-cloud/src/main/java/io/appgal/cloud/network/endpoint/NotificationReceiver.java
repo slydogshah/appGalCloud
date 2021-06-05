@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.network.services.DynamicDropOffOrchestrator;
 import io.appgal.cloud.network.services.FoodRecoveryOrchestrator;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
@@ -37,6 +38,9 @@ public class NotificationReceiver {
 
     @Inject
     private NetworkOrchestrator networkOrchestrator;
+
+    @Inject
+    private DynamicDropOffOrchestrator dynamicDropOffOrchestrator;
 
 
     @Path("/pickup/notifications")
@@ -124,10 +128,12 @@ public class NotificationReceiver {
             this.networkOrchestrator.startPickUpProcess(pic,notification);
 
             List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
+            List<FoodRunner> foodRunners = this.dynamicDropOffOrchestrator.getOfflineDropOffHelpers();
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("pickupNotificationId",notification.getId());
             responseJson.add("dropOffOrgs", JsonParser.parseString(dropOffOrgs.toString()));
+            responseJson.add("offlineCommunityHelpers",JsonParser.parseString(foodRunners.toString()));
             return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)

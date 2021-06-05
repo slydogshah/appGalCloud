@@ -183,19 +183,28 @@ function ShowNotification(place){
     }
 };
 
-const DropOffOptionsView = ({dropOffOrgs,widget}) => {
+const DropOffOptionsView = ({dropOffOrgs,offlineCommunityHelpers,widget}) => {
     const classes = useStyles();
 
     const array = [];
     const orgArray = [];
+    const helperArray = [];
+    const orgTaskIndex = [];
+    const helperTaskIndex = [];
     for (const [index, value] of dropOffOrgs.entries()) {
-        console.log(JSON.stringify(value));
         const org = value.orgName +"- "+value.street+", "+value.zip;
         const orgId = value.orgId;
         const row = [org];
         const orgRow = [orgId];
         array.push(row);
         orgArray.push(orgRow);
+        orgTaskIndex.push(index);
+    }
+    for (const [index, value] of offlineCommunityHelpers.entries()) {
+            const email = value.profile.email;
+            const row = [email];
+            helperArray.push(row);
+            helperTaskIndex.push(index);
     }
 
     return(
@@ -213,7 +222,7 @@ const DropOffOptionsView = ({dropOffOrgs,widget}) => {
                             tabContent: (
                               <Tasks
                                 checkedIndexes={[0]}
-                                tasksIndexes={[0, 1]}
+                                tasksIndexes={orgTaskIndex}
                                 tasks={array}
                                 actions={orgArray}
                               />
@@ -225,9 +234,9 @@ const DropOffOptionsView = ({dropOffOrgs,widget}) => {
                             tabContent: (
                               <Tasks
                                 checkedIndexes={[0]}
-                                tasksIndexes={[0,1]}
-                                tasks={website}
-                                actions={orgArray}
+                                tasksIndexes={helperTaskIndex}
+                                tasks={helperArray}
+                                actions={helperArray}
                               />
                             )
                           },
@@ -299,6 +308,7 @@ class DropOffOptions extends React.Component
     render()
     {
         const dropOffOrgs = this.props.location.state.data.dropOffOrgs;
+        const offlineCommunityHelpers = this.props.location.state.data.offlineCommunityHelpers;
         return(
             <>
                 <br/>
@@ -306,7 +316,7 @@ class DropOffOptions extends React.Component
                                       <br/>
                                       <br/>
                                 <div id="schedulePickup"></div>
-                <DropOffOptionsView dropOffOrgs={dropOffOrgs} widget={this}/>
+                <DropOffOptionsView dropOffOrgs={dropOffOrgs} offlineCommunityHelpers={offlineCommunityHelpers} widget={this}/>
             </>
         );
     }

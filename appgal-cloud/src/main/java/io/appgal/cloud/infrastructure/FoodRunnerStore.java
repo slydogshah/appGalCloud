@@ -97,7 +97,6 @@ public class FoodRunnerStore {
         while(cursor.hasNext())
         {
             Document document = cursor.next();
-            String documentJson = document.toJson();
             collection.deleteOne(document);
         }
 
