@@ -128,7 +128,7 @@ public class NotificationReceiver {
             this.networkOrchestrator.startPickUpProcess(pic,notification);
 
             List<SourceOrg> dropOffOrgs = this.foodRecoveryOrchestrator.findDropOffOrganizations(orgId);
-            List<FoodRunner> foodRunners = this.dynamicDropOffOrchestrator.getOfflineDropOffHelpers();
+            List<FoodRunner> foodRunners = this.dynamicDropOffOrchestrator.getOfflineDropOffHelpers(notification.getSourceOrg());
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("pickupNotificationId",notification.getId());
