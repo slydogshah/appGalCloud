@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,10 @@ public class DynamicDropOffOrchestrator {
     private static Logger logger = LoggerFactory.getLogger(DynamicDropOffOrchestrator.class);
 
     @Inject
-    private MongoDBJsonStore mongoDBJsonStore;
+    private MapUtils mapUtils;
 
     @Inject
     private ActiveNetwork activeNetwork;
-
-    @Inject
-    private MapUtils mapUtils;
 
 
     public void notifyAvailability(String foodRunnerEmail)
@@ -37,21 +35,16 @@ public class DynamicDropOffOrchestrator {
         FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(foodRunnerEmail);
         if(foodRunner != null) {
             foodRunner.setOfflineCommunitySupport(true);
-            this.mongoDBJsonStore.updateFoodRunner(foodRunner);
-            this.activeNetwork.flushToStore();
+
+            JsonUtil.print(this.getClass(),foodRunner.toJson());
+
+            this.activeNetwork.addActiveFoodRunner(foodRunner);
+            System.out.println("ACTIVE_NETWORK_UPDATED");
         }
-    }
-
-    public JsonObject orchestrateOfflineCommunity()
-    {
-        JsonObject pipelineData = new JsonObject();
-        return pipelineData;
-    }
-
-    public JsonArray getOfflineDropOffPipeline()
-    {
-        JsonArray jsonArray = new JsonArray();
-        return jsonArray;
+        else
+        {
+            System.out.println("FOODRUNNER_NOT_FOUND: "+foodRunnerEmail);
+        }
     }
 
     public List<FoodRunner> getOfflineDropOffHelpers(SourceOrg pickup)
@@ -90,5 +83,17 @@ public class DynamicDropOffOrchestrator {
             logger.error(e.getMessage(),e);
             return helpers;
         }
+    }
+
+    public JsonObject orchestrateOfflineCommunity()
+    {
+        JsonObject pipelineData = new JsonObject();
+        return pipelineData;
+    }
+
+    public JsonArray getOfflineDropOffPipeline()
+    {
+        JsonArray jsonArray = new JsonArray();
+        return jsonArray;
     }
 }

@@ -145,7 +145,7 @@ public class Transactions {
             JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(orgId);
 
-            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
 
             for(FoodRecoveryTransaction cour: transactions) {

@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.restclient.GoogleApiClient;
+import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 
 import org.slf4j.Logger;
@@ -109,6 +110,7 @@ public class NetworkOrchestrator {
 
     public void schedulePickUp(SchedulePickUpNotification notification)
     {
+        JsonUtil.print(this.getClass(),notification.toJson());
         this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
 
         this.foodRecoveryOrchestrator.notifyForPickUp(notification);
