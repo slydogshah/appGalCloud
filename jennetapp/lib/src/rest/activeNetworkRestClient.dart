@@ -129,13 +129,13 @@ class ActiveNetworkRestClient
     return response.body;
   }
 
-  Future<String> notifyOfflineAvailability(String foodRunnerId) async
+  Future<String> notifyOfflineAvailability(String foodRunnerEmail) async
   {
     var response;
     
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"offline/notification/";
     Map<String, dynamic> json = new Map();
-    json['foodRunnerEmail'] = foodRunnerId;
+    json['foodRunnerEmail'] = foodRunnerEmail;
     String jsonBody = jsonEncode(json);
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
@@ -255,7 +255,7 @@ class ActiveNetworkRestClient
       return response.body;
     }
 
-    print("ACCEPT: "+response.body);
+    //print("ACCEPT: "+response.body);
 
     return response.body;
   }

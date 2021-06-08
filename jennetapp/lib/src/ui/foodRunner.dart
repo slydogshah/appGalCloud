@@ -264,9 +264,12 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                           Radius.circular(32.0),
                         ),
                         onTap: () {
-
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => InProgressMainScene(this.txs)));
+                          Profile profile = ActiveSession.getInstance().getProfile();
+                          ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+                          Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email);
+                          response.then((response){
+                            //print("RESPONSE: "+response.toString());
+                          });
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
