@@ -243,13 +243,26 @@ public class ActiveNetwork {
     {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String email = json.get("email").getAsString();
             String txId = json.get("txId").getAsString();
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
 
             this.foodRecoveryOrchestrator.notifyDelivery(tx);
 
+            List<FoodRecoveryTransaction> myTransactions = this.networkOrchestrator.findMyTransactions(email);
+            JsonArray inProgress = new JsonArray();
+            for(FoodRecoveryTransaction foodRecoveryTransaction:myTransactions)
+            {
+                if(foodRecoveryTransaction.getTransactionState() == TransactionState.INPROGRESS ||
+                        foodRecoveryTransaction.getTransactionState() == TransactionState.ONTHEWAY)
+                {
+                    inProgress.add(foodRecoveryTransaction.toJson());
+                }
+            }
+
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);
+            responseJson.add("inProgress",inProgress);
             return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)

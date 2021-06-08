@@ -174,11 +174,14 @@ class ActiveNetworkRestClient
     return response.statusCode;
   }
 
-  Future<int> notifyDelivery(FoodRecoveryTransaction tx) async
+  Future<List<FoodRecoveryTransaction>> notifyDelivery(FoodRecoveryTransaction tx) async
   {
+    List<FoodRecoveryTransaction> inProgress = [];
+
     var json;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/notifyDelivery/";
     Map<String,String> payload = new Map();
+    payload["email"] = ActiveSession.getInstance().profile.email;
     payload["txId"] = tx.getId();
     String jsonBody = jsonEncode(payload);
     var response;
@@ -191,16 +194,25 @@ class ActiveNetworkRestClient
     catch (e) {
       print(e);
       json = UrlFunctions.handleError(e, response);
-      return json["statusCode"];
+      throw new CloudBusinessException(json["statusCode"], "SYSTEM_ERROR");
     }
 
     json = UrlFunctions.handleError(null, response);
     if(json != null)
     {
-      return json["statusCode"];
+      throw new CloudBusinessException(json["statusCode"], "SYSTEM_ERROR");
     }
 
-    return response.statusCode;
+    Map<String,dynamic> object = jsonDecode(response.body);
+    if(object['inProgress'] != null) {
+      Iterable l = object['inProgress'];
+      for (Map<String, dynamic> tx in l) {
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+        inProgress.add(local);
+      }
+    }
+
+    return inProgress;
   }
 
   Future<String> accept(String email, FoodRecoveryTransaction tx) async
