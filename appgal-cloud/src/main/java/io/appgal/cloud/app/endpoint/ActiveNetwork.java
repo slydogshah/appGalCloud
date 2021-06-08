@@ -249,19 +249,29 @@ public class ActiveNetwork {
 
             this.foodRecoveryOrchestrator.notifyDelivery(tx);
 
-            List<FoodRecoveryTransaction> myTransactions = this.networkOrchestrator.findMyTransactions(email);
+            JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
-            for(FoodRecoveryTransaction foodRecoveryTransaction:myTransactions)
-            {
-                if(foodRecoveryTransaction.getTransactionState() == TransactionState.INPROGRESS ||
-                        foodRecoveryTransaction.getTransactionState() == TransactionState.ONTHEWAY)
+            List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
+            for(FoodRecoveryTransaction cour: transactions) {
+                if (cour.getTransactionState() == TransactionState.SUBMITTED)
                 {
-                    inProgress.add(foodRecoveryTransaction.toJson());
+                    cour.getPickUpNotification().setNotificationSent(true);
+                    SchedulePickUpNotification courPickUp = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
+                            getScheduledPickUpNotification(cour.getPickUpNotification().getId()).toString());
+                    courPickUp.setNotificationSent(true);
+                    this.mongoDBJsonStore.storeFoodRecoveryTransaction(cour);
+                    this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
+                    pending.add(cour.toJson());
+                }
+                else if(cour.getTransactionState() == TransactionState.INPROGRESS || cour.getTransactionState() == TransactionState.ONTHEWAY)
+                {
+                    inProgress.add(cour.toJson());
                 }
             }
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);
+            responseJson.add("pending",pending);
             responseJson.add("inProgress",inProgress);
             return Response.ok(responseJson.toString()).build();
         }

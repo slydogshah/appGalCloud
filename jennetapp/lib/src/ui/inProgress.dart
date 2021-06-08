@@ -488,12 +488,9 @@ class InProgressListView extends StatelessWidget {
               onPressed: () {
                 print(tx);
                 ActiveNetworkRestClient restClient = new ActiveNetworkRestClient();
-                Future<List<FoodRecoveryTransaction>> future = restClient.notifyDelivery(tx);
-                future.then((inProgress) {
+                Future<Map<String,List<FoodRecoveryTransaction>>> future = restClient.notifyDelivery(tx);
+                future.then((map) {
                   Navigator.of(context, rootNavigator: true).pop();
-
-                  Map<String,List<FoodRecoveryTransaction>> map = new Map();
-                  map["inProgress"] = inProgress;
 
                   Navigator.push(context, MaterialPageRoute(
                       builder: (context) => InProgressMainScene(map)));

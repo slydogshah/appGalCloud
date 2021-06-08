@@ -176,9 +176,9 @@ class ActiveNetworkRestClient
     return response.statusCode;
   }
 
-  Future<List<FoodRecoveryTransaction>> notifyDelivery(FoodRecoveryTransaction tx) async
+  Future<Map<String,List<FoodRecoveryTransaction>>> notifyDelivery(FoodRecoveryTransaction tx) async
   {
-    List<FoodRecoveryTransaction> inProgress = [];
+    Map<String,List<FoodRecoveryTransaction>> txs = new Map();
 
     var json;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/notifyDelivery/";
@@ -206,15 +206,35 @@ class ActiveNetworkRestClient
     }
 
     Map<String,dynamic> object = jsonDecode(response.body);
+
+    if(object['pending'] != null) {
+      Iterable l = object['pending'];
+      List<FoodRecoveryTransaction> pending = [];
+      for (Map<String, dynamic> tx in l) {
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+        pending.add(local);
+      }
+      txs['pending'] = pending;
+    }
+    else{
+      txs ['pending'] = [];
+    }
+
+
     if(object['inProgress'] != null) {
       Iterable l = object['inProgress'];
+      List<FoodRecoveryTransaction> inProgress = [];
       for (Map<String, dynamic> tx in l) {
         FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
         inProgress.add(local);
       }
+      txs['inProgress'] = inProgress;
+    }
+    else{
+      txs ['inProgress'] = [];
     }
 
-    return inProgress;
+    return txs;
   }
 
   Future<String> accept(String email, FoodRecoveryTransaction tx) async
