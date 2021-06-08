@@ -200,11 +200,10 @@ class ActiveNetworkRestClient
     return response.statusCode;
   }
 
-  Future<String> accept(String email, String dropOffOrgId,FoodRecoveryTransaction tx) async
+  Future<String> accept(String email, FoodRecoveryTransaction tx) async
   {
     Map<String,dynamic> payload = new Map();
     payload["email"] = email;
-    payload["dropOffOrgId"] = dropOffOrgId;
     payload["accepted"] = tx.getId();
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
     var response;

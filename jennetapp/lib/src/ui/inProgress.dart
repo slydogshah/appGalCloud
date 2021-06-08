@@ -244,6 +244,36 @@ class InProgressListView extends StatelessWidget {
   Widget build(BuildContext context) {
     String remoteUrl = UrlFunctions.getInstance().resolveHost() +
         "tx/recovery/transaction/foodPic/?id=" + tx.getId();
+    Widget buttons = null;
+    Text dropOffOrgName = null;
+    if(tx.getPickupNotification().getDropOffOrg() != null)
+    {
+      buttons = this.getButton(context, tx);
+      dropOffOrgName = Text(
+        tx
+            .getPickupNotification()
+            .getDropOffOrg()
+            .orgName,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
+        ),
+      );
+    }
+    else
+    {
+      buttons = this.getButtons(context, tx);
+      dropOffOrgName = Text(
+        "Community",
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
+        ),
+      );
+    }
+
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -280,32 +310,7 @@ class InProgressListView extends StatelessWidget {
                               child:
                               Image.network(remoteUrl),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 16, top: 8),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  ElevatedButton(
-                                    child: Text('DropOff'),
-                                    style: ElevatedButton.styleFrom(
-                                      //primary: Color(0xFF383EDB)
-                                        primary: Colors.pink
-                                    ),
-                                    onPressed: () {
-                                      Profile profile = ActiveSession
-                                          .getInstance().getProfile();
-                                      handleDropOff(context,profile.email,
-                                          tx.schedulePickupNotification.dropOffOrg.orgId,
-                                          tx);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
+                            buttons,
                             Container(
                               color: HotelAppTheme
                                   .buildLightTheme()
@@ -383,17 +388,7 @@ class InProgressListView extends StatelessWidget {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        Text(
-                                          tx
-                                              .getPickupNotification()
-                                              .getDropOffOrg()
-                                              .orgName,
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 22,
-                                          ),
-                                        ),
+                                        dropOffOrgName,
                                         Text(
                                           'DropOff: 15 minutes',
                                           style: TextStyle(
@@ -441,6 +436,125 @@ class InProgressListView extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget getButton(BuildContext context,FoodRecoveryTransaction tx)
+  {
+    Widget padding = Padding(
+      padding: const EdgeInsets.only(
+          right: 16, top: 8),
+      child: Column(
+        mainAxisAlignment:
+        MainAxisAlignment.center,
+        crossAxisAlignment:
+        CrossAxisAlignment.end,
+        children: <Widget>[
+          ElevatedButton(
+            child: Text('DropOff'),
+            style: ElevatedButton.styleFrom(
+              //primary: Color(0xFF383EDB)
+                primary: Colors.pink
+            ),
+            onPressed: () {
+              Profile profile = ActiveSession
+                  .getInstance().getProfile();
+              handleDropOff(context,profile.email,
+                  tx.schedulePickupNotification.dropOffOrg.orgId,
+                  tx);
+            },
+          ),
+        ],
+      ),
+    );
+    return padding;
+  }
+
+  Widget getButtons(BuildContext context,FoodRecoveryTransaction tx)
+  {
+    Widget container = Container(
+      color: HotelAppTheme
+          .buildLightTheme()
+          .backgroundColor,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 16, top: 8, bottom: 8),
+                child: Column(
+                  mainAxisAlignment:
+                  MainAxisAlignment.center,
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          right: 16, top: 8),
+                      child: Column(
+                        mainAxisAlignment:
+                        MainAxisAlignment.center,
+                        crossAxisAlignment:
+                        CrossAxisAlignment.end,
+                        children: <Widget>[
+                          ElevatedButton(
+                            child: Text('DropOff'),
+                            style: ElevatedButton.styleFrom(
+                              //primary: Color(0xFF383EDB)
+                                primary: Colors.pink
+                            ),
+                            onPressed: () {
+                              Profile profile = ActiveSession
+                                  .getInstance().getProfile();
+                              handleDropOff(context,profile.email,
+                                  tx.schedulePickupNotification.dropOffOrg.orgId,
+                                  tx);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                      const EdgeInsets.only(top: 4),
+                      child: Row(
+                        children: <Widget>[
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                right: 16, top: 8),
+            child: Column(
+              mainAxisAlignment:
+              MainAxisAlignment.center,
+              crossAxisAlignment:
+              CrossAxisAlignment.end,
+              children: <Widget>[
+                ElevatedButton(
+                  child: Text('Food Dropped Off'),
+                  style: ElevatedButton.styleFrom(
+                    //primary: Color(0xFF383EDB)
+                      primary: Colors.pink
+                  ),
+                  onPressed: () {
+                    //TODO
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    return container;
   }
 
   void handleDropOff(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {

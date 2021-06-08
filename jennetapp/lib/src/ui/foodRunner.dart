@@ -390,7 +390,6 @@ class PickUpListView extends StatelessWidget {
                                     onPressed: () {
                                       Profile profile = ActiveSession.getInstance().getProfile();
                                       handleAccept(context,profile.email,
-                                          tx.schedulePickupNotification.dropOffOrg.orgId,
                                           tx);
                                     },
                                   ),
@@ -519,7 +518,7 @@ class PickUpListView extends StatelessWidget {
     );
   }
 
-  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
+  void handleAccept(BuildContext context,String email, FoodRecoveryTransaction tx) {
     //print("TX: "+tx.getPickupNotification().getSourceOrg().orgName);
 
     //TODO
@@ -547,7 +546,7 @@ class PickUpListView extends StatelessWidget {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-            Future<String> future = client.accept(email, dropOffOrgId, tx);
+            Future<String> future = client.accept(email, tx);
             //donot rename this variable. It is symbolic
             future.then((fuckyou) {
 
