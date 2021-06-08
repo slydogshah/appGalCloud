@@ -111,10 +111,13 @@ public class ProfileRegistrationService {
 
             authResponse.add("profile", profile.toJson());
 
-            FoodRunner foodRunner = new FoodRunner();
-            foodRunner.setProfile(profile);
-            foodRunner.setLocation(location);
-            this.networkOrchestrator.enterNetwork(foodRunner);
+            FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
+            if(foodRunner == null) {
+                foodRunner = new FoodRunner();
+                foodRunner.setProfile(profile);
+                foodRunner.setLocation(location);
+                this.networkOrchestrator.enterNetwork(foodRunner);
+            }
 
             logger.info("AUTHENTICATION_SUCCESS: "+email);
             return authResponse;

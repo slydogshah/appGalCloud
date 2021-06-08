@@ -32,11 +32,11 @@ import ScheduleButton from '../../application/ScheduleButton'
 
 const useStyles = makeStyles(styles);
 
-function schedulePickup(props,history,pickupNotificationId,dropOffOrgId)
+function schedulePickup(props,history,pickupNotificationId,dropOffOrgId,enableOfflineCommunitySupport)
 {
      const payload = {
         pickupNotificationId:pickupNotificationId,
-        enableOfflineCommunitySupport:false,
+        enableOfflineCommunitySupport:enableOfflineCommunitySupport,
      };
      if(dropOffOrgId != null)
      {
@@ -130,7 +130,7 @@ export default function Tasks(props) {
                                                           classes={{ tooltip: classes.tooltip }}
                                                         >
                                                           <Button color="primary" onClick={(e) => {
-                                                            schedulePickup(props,history,pickupNotificationId,orgIds[value]);
+                                                            schedulePickup(props,history,pickupNotificationId,orgIds[value],false);
                                                           }}>Schedule</Button>
                                                         </Tooltip>
                                                     </TableCell>
@@ -181,7 +181,7 @@ export default function Tasks(props) {
                                           <GridContainer>
                                                 <GridItem xs={12} sm={12} md={6}>
                                                   <Button color="primary" onClick={(e) => {
-                                                      schedulePickup(props,history,pickupNotificationId,null);
+                                                      schedulePickup(props,history,pickupNotificationId,null,true);
                                                   }}>Schedule</Button>
                                                 </GridItem>
                                             </GridContainer>

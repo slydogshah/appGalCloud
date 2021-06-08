@@ -255,6 +255,26 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                       ),
                     ),
                   ),
+                  Tooltip(
+                    message: "Notify Availability",
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(32.0),
+                        ),
+                        onTap: () {
+
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => InProgressMainScene(this.txs)));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(FontAwesomeIcons.surprise),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             )
@@ -289,6 +309,32 @@ class PickUpListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/transaction/foodPic/?id="+tx.getId();
+    Widget dropoff = null;
+    if(tx.getPickupNotification().getDropOffOrg() != null)
+    {
+      dropoff = Text(
+        tx.getPickupNotification().getDropOffOrg().orgName,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
+        ),
+      );
+    }
+    else
+    {
+      dropoff = Tooltip(
+          message: "Offline Community Support",
+          child: Text(
+            "Community",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
+            ),
+          )
+      );
+    }
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -424,14 +470,7 @@ class PickUpListView extends StatelessWidget {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        Text(
-                                          tx.getPickupNotification().getDropOffOrg().orgName,
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 22,
-                                          ),
-                                        ),
+                                        dropoff,
                                         Text(
                                           'DropOff: 15 minutes',
                                           style: TextStyle(

@@ -87,9 +87,7 @@ public class NetworkStore {
     {
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
-        String queryJson = "{}";
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
+        FindIterable<Document> iterable = collection.find();
         MongoCursor<Document> cursor = iterable.cursor();
         while(cursor.hasNext())
         {
