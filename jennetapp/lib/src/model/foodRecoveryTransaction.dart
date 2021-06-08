@@ -79,11 +79,18 @@ class FoodRecoveryTransaction
     map["id"] = this.id;
     if(this.schedulePickupNotification != null)
     {
-      map["pickupNotification"] = this.schedulePickupNotification;
+      map["pickupNotification"] = this.schedulePickupNotification.toJson();
     }
-    map["estimatedPickupTime"] = this.getPickupEstimate();
-    map["estimatedDropOffTime"] = this.getDropOffEstimate();
-    map["transactionState"] = this.getTransactionState();
+    if(this.pickupEstimate != null) {
+      map["estimatedPickupTime"] = this.getPickupEstimate();
+    }
+    if(this.dropOffEstimate != null) {
+      map["estimatedDropOffTime"] = this.getDropOffEstimate();
+    }
+    if(this.transactionState != null) {
+      map["transactionState"] = this.getTransactionState();
+    }
+
     return map;
   }
 

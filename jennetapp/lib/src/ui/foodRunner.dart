@@ -519,9 +519,6 @@ class PickUpListView extends StatelessWidget {
   }
 
   void handleAccept(BuildContext context,String email, FoodRecoveryTransaction tx) {
-    //print("TX: "+tx.getPickupNotification().getSourceOrg().orgName);
-
-    //TODO
     AlertDialog dialog = AlertDialog(
       title: Text('Accept Food Pickup and DropOff'),
       content: Text(
@@ -552,7 +549,7 @@ class PickUpListView extends StatelessWidget {
 
               LocationUpdater.getLocation();
               EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
-                  tx.getPickupNotification().getDropOffOrg());
+                  tx.getPickupNotification().getSourceOrg());
               embeddedNavigation.start(tx);
             });
           },

@@ -178,9 +178,12 @@ class ActiveNetworkRestClient
   {
     var json;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/notifyDelivery/";
+    Map<String,String> payload = new Map();
+    payload["txId"] = tx.getId();
+    String jsonBody = jsonEncode(payload);
     var response;
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: tx.toString()).
+      response = await http.post(Uri.parse(remoteUrl), body: jsonBody).
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });

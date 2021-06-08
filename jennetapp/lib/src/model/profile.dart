@@ -59,15 +59,25 @@ class Profile {
     {
       json['id'] = this.id;
     }
-    json['email'] = this.email;
-    json['mobile'] = this.mobile;
-    json['photo'] =  this.photo;
+    if(this.email != null) {
+      json['email'] = this.email;
+    }
+    if(this.mobile != null) {
+      json['mobile'] = this.mobile;
+    }
+    if(this.photo != null) {
+      json['photo'] = this.photo;
+    }
     if(this.location != null)
     {
       json['location'] = this.location.toJson();
     }
-    json['password'] = this.password;
-    json['profileType'] = this.profileType;
+    if(this.password != null) {
+      json['password'] = this.password;
+    }
+    if(this.profileType != null) {
+      json['profileType'] = this.profileType;
+    }
 
     return json;
   }

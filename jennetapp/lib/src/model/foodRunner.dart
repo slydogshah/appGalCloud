@@ -14,10 +14,14 @@ class FoodRunner
 
   FoodRunner.fromJson(Map<String, dynamic> json);
 
-  Map<String, dynamic> toJson() =>
+  Map<String, dynamic> toJson()
   {
-    "profile": this.profile.toJson()
-  };
+    Map<String,dynamic> json = new Map();
+    if(this.profile != null){
+      json["profile"] = this.profile.toJson();
+    }
+    return json;
+  }
 
   String toString()
   {

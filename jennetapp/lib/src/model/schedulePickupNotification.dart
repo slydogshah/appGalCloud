@@ -75,6 +75,7 @@ class SchedulePickupNotification
   Map<String, dynamic> toJson()
   {
     Map<String, dynamic> json = new Map();
+
     if(this.sourceOrg != null)
     {
       json['sourceOrg'] = this.sourceOrg;
