@@ -139,11 +139,11 @@ public class ActiveNetwork {
     {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
-            JsonUtil.print(this.getClass(),json);
+            //JsonUtil.print(this.getClass(),json);
             String email = json.get("email").getAsString();
             String accepted = json.get("accepted").getAsString();
 
-            FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
+            FoodRunner foodRunner = this.networkOrchestrator.getActiveNetwork().findFoodRunnerByEmail(email);
 
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(accepted);
             tx.setFoodRunner(foodRunner);
@@ -152,7 +152,7 @@ public class ActiveNetwork {
             SchedulePickUpNotification pickUpNotification = tx.getPickUpNotification();
             pickUpNotification.setFoodRunner(foodRunner);
 
-            JsonUtil.print(this.getClass(),tx.toJson());
+            //JsonUtil.print(this.getClass(),tx.toJson());
 
             JsonObject responseJson = this.networkOrchestrator.acceptRecoveryTransaction(tx);
 

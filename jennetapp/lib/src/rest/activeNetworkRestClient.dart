@@ -47,7 +47,9 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    Map<String,dynamic> object = json.decode(response.body);
+    print(response.body);
+
+    Map<String,dynamic> object = jsonDecode(response.body);
 
     if(object['pending'] != null) {
       Iterable l = object['pending'];
@@ -95,7 +97,7 @@ class ActiveNetworkRestClient
       return txs;
     }
 
-    Map<String,dynamic> object = json.decode(response.body);
+    Map<String,dynamic> object = jsonDecode(response.body);
     Iterable l = object['pending'];
     for(Map<String, dynamic> tx in l)
     {

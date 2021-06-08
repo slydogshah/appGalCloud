@@ -48,6 +48,11 @@ public class NetworkOrchestrator {
         logger.info("*******");
     }
 
+    public ActiveNetwork getActiveNetwork()
+    {
+        return this.activeNetwork;
+    }
+
     public void enterNetwork(FoodRunner foodRunner)
     {
         this.activeNetwork.addActiveFoodRunner(foodRunner);
@@ -124,6 +129,8 @@ public class NetworkOrchestrator {
 
             List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
             for (FoodRecoveryTransaction tx : all) {
+                //logger.info("TX:ID>"+tx.getId()+", TX_STATE: "+tx.getTransactionState());
+
                 Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
                 if(source == null)
                 {
@@ -142,9 +149,9 @@ public class NetworkOrchestrator {
                         foodRunnerLocation.getLongitude(),
                         source.getLatitude(), source.getLongitude());
 
-                logger.info("**************DISTANCE*****************");
-                logger.info("ALGO_DISTANCE: "+distance);
-                logger.info("**************DISTANCE*****************");
+                //logger.info("**************DISTANCE*****************");
+                //logger.info("ALGO_DISTANCE: "+distance);
+                //logger.info("**************DISTANCE*****************");
 
                 if (distance <= 5.0d) {
                     if(!tx.isOfflineCommunitySupport()) {

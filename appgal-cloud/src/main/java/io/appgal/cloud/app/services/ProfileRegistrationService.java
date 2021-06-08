@@ -84,11 +84,11 @@ public class ProfileRegistrationService {
     {
         JsonObject authFailure = new JsonObject();
 
-        logger.info("LOGIN_EMAIL: "+email);
+        //logger.info("LOGIN_EMAIL: "+email);
 
         Profile profile = this.mongoDBJsonStore.getProfile(email);
 
-        logger.info("LOGIN_PROFILE: "+profile);
+        //logger.info("LOGIN_PROFILE: "+profile);
 
         if(profile == null)
         {
@@ -119,7 +119,7 @@ public class ProfileRegistrationService {
                 this.networkOrchestrator.enterNetwork(foodRunner);
             }
 
-            logger.info("AUTHENTICATION_SUCCESS: "+email);
+            //logger.info("AUTHENTICATION_SUCCESS: "+email);
             return authResponse;
         }
 
