@@ -235,6 +235,8 @@ class ActiveNetworkRestClient
       return response.body;
     }
 
+    print("ACCEPT: "+response.body);
+
     return response.body;
   }
 }

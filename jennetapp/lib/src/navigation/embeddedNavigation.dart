@@ -124,50 +124,40 @@ class EmbeddedNavigation
       case MapBoxEvent.navigation_running:
         break;
       case MapBoxEvent.on_arrival:
-        _arrived = true;
-        if (!_isMultipleStop) {
-          await Future.delayed(Duration(seconds: 3));
-          /*
-          Profile profile = ActiveSession.getInstance().getProfile();
-          FoodRunner foodRunner = new FoodRunner(profile);
-
-          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
-              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
-          future.then((txs) {
-            finish(txs);
-          });*/
-        } else {}
+        {
+          _arrived = true;
+          if (!_isMultipleStop) {
+            await Future.delayed(Duration(seconds: 3));
+          }
+          startFinish();
+        }
         break;
       case MapBoxEvent.navigation_finished:
         {
-          Profile profile = ActiveSession.getInstance().getProfile();
-          FoodRunner foodRunner = new FoodRunner(profile);
-
-          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
-              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
-          future.then((txs) {
-            finish(txs);
-          });
+          startFinish();
         }
         break;
       case MapBoxEvent.navigation_cancelled:
         {
-          Profile profile = ActiveSession.getInstance().getProfile();
-          FoodRunner foodRunner = new FoodRunner(profile);
-
-          ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-          Future<Map<String,List<FoodRecoveryTransaction>>> future = client
-              .getFoodRecoveryTransaction(foodRunner.getProfile().email);
-          future.then((txs) {
-            finish(txs);
-          });
+          startFinish();
         }
         break;
       default:
         break;
     }
+  }
+
+  void startFinish()
+  {
+    Profile profile = ActiveSession.getInstance().getProfile();
+    FoodRunner foodRunner = new FoodRunner(profile);
+
+    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+    Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+        .getFoodRecoveryTransaction(foodRunner.getProfile().email);
+    future.then((txs) {
+      finish(txs);
+    });
   }
 
   void finish(Map<String,List<FoodRecoveryTransaction>> txs)

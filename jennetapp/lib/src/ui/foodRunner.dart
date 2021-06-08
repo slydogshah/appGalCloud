@@ -546,7 +546,6 @@ class PickUpListView extends StatelessWidget {
             Future<String> future = client.accept(email, tx);
             //donot rename this variable. It is symbolic
             future.then((fuckyou) {
-
               LocationUpdater.getLocation();
               EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
                   tx.getPickupNotification().getSourceOrg());
