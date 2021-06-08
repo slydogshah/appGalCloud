@@ -31,16 +31,30 @@ class FoodRunnerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
-    MaterialApp materialApp = new MaterialApp(
-        home: FoodRunnerMainScene(txs),
-        theme: ThemeData(
-            primaryColor: primaryColor,
-            backgroundColor: backgroundColor,
-            accentColor: backgroundColor,
-            accentColorBrightness: Brightness.dark
-        )
-    );
-    return materialApp;
+    if(txs["inProgress"].length > 0) {
+      MaterialApp materialApp = new MaterialApp(
+          home: InProgressMainScene(txs),
+          theme: ThemeData(
+              primaryColor: primaryColor,
+              backgroundColor: backgroundColor,
+              accentColor: backgroundColor,
+              accentColorBrightness: Brightness.dark
+          )
+      );
+      return materialApp;
+    }
+    else{
+      MaterialApp materialApp = new MaterialApp(
+          home: FoodRunnerMainScene(txs),
+          theme: ThemeData(
+              primaryColor: primaryColor,
+              backgroundColor: backgroundColor,
+              accentColor: backgroundColor,
+              accentColorBrightness: Brightness.dark
+          )
+      );
+      return materialApp;
+    }
   }
 }
 
