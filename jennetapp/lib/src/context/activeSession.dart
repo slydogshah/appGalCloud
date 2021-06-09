@@ -1,4 +1,5 @@
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:okito/okito.dart';
@@ -12,6 +13,7 @@ class ActiveSession
   Profile profile;
   FoodRunnerLocation location;
   FoodRecoveryTransaction current;
+  FoodRunner foodRunner;
 
   ActiveSession();
 
@@ -23,6 +25,7 @@ class ActiveSession
   void setProfile(Profile profile)
   {
     this.profile = profile;
+    this.foodRunner = new FoodRunner(this.profile);
     this.storeCredentials(profile);
   }
 

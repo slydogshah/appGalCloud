@@ -6,6 +6,7 @@ import 'package:app/src/model/profile.dart';
 class FoodRunner
 {
   Profile profile;
+  bool offlineCommunitySupport;
 
   FoodRunner(Profile profile)
   {

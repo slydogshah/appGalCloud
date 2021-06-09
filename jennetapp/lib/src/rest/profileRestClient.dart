@@ -102,6 +102,7 @@ class ProfileRestClient
     }*/
 
     Map<String,dynamic> result = json['profile'];
+    result["offlineCommunitySupport"] = json["offlineCommunitySupport"];
     result['statusCode'] = 200;
     return result;
   }

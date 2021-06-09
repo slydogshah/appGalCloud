@@ -111,6 +111,7 @@ public class ProfileRegistrationService {
 
             authResponse.add("profile", profile.toJson());
 
+
             FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
             if(foodRunner == null) {
                 foodRunner = new FoodRunner();
@@ -118,6 +119,8 @@ public class ProfileRegistrationService {
                 foodRunner.setLocation(location);
                 this.networkOrchestrator.enterNetwork(foodRunner);
             }
+
+            authResponse.addProperty("offlineCommunitySupport",foodRunner.isOfflineCommunitySupport());
 
             //logger.info("AUTHENTICATION_SUCCESS: "+email);
             return authResponse;

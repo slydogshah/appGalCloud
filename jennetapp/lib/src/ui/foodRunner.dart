@@ -5,6 +5,7 @@ import 'package:app/hotel_booking/hotel_app_theme.dart';
 
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
@@ -186,6 +187,16 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   }
 
   Widget getAppBarUI(BuildContext context) {
+
+    Icon icon = new Icon(Icons.thumb_up_rounded);
+    Icon inProgress = new Icon(Icons.track_changes_rounded);
+    Color offline = Colors.white;
+    FoodRunner foodRunner = ActiveSession.getInstance().foodRunner;
+    if(foodRunner.offlineCommunitySupport){
+      offline = Colors.green;
+    }
+    Color progress = Colors.white;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.blueGrey,
@@ -212,12 +223,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     Radius.circular(32.0),
                   ),
                   onTap: () {
-                  //  Navigator.pop(context);
                   },
-                  /*child: Padding(
-                  //  padding: const EdgeInsets.all(8.0),
-                  //  child: Icon(Icons.arrow_back),
-                  ),*/
                 ),
               ),
             ),
@@ -239,40 +245,29 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  /*Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
-                      ),
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.favorite_border),
-                      ),
-                    ),
-                  ),*/
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
-                      ),
-                      onTap: () {
-
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => InProgressMainScene(this.txs)));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(FontAwesomeIcons.mapMarkerAlt),
+                  Tooltip(
+                    message: "DropOffs In Progress",
+                    child: Material(
+                      color: progress,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(32.0),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => InProgressMainScene(this.txs)));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: inProgress,
+                        ),
                       ),
                     ),
                   ),
                   Tooltip(
                     message: "Notify Availability",
                     child: Material(
-                      color: Colors.transparent,
+                      color: offline,
                       child: InkWell(
                         borderRadius: const BorderRadius.all(
                           Radius.circular(32.0),
@@ -287,7 +282,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Icon(FontAwesomeIcons.surprise),
+                          child: icon,
                         ),
                       ),
                     ),

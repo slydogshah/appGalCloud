@@ -69,8 +69,10 @@ void autoLogin(String email,String password,double latitude,double longitude) {
     //TODO check for error
 
     Profile foodRunner = Profile.fromJson(json);
+
     ActiveSession activeSession = ActiveSession.getInstance();
     activeSession.setProfile(foodRunner);
+    activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
 
     ActiveNetworkRestClient client = new ActiveNetworkRestClient();
     Future<Map<String, List<FoodRecoveryTransaction>>> future = client
