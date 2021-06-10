@@ -163,14 +163,7 @@ class EmbeddedNavigation
   void finish(Map<String,List<FoodRecoveryTransaction>> txs)
   {
     FoodRecoveryTransaction tx = ActiveSession.getInstance().current;
-    if(tx.getTransactionState() == "SUBMITTED") {
-      Navigator.push(context, MaterialPageRoute(
-          builder: (context) => FoodRunnerMainScene(txs)));
-    }
-    else
-      {
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => InProgressMainScene(txs)));
-      }
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => InProgressMainScene(txs)));
   }
 }

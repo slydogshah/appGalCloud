@@ -573,6 +573,25 @@ class PickUpListView extends StatelessWidget {
             FocusScope.of(context).requestFocus(FocusNode());
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
             Future<String> future = client.accept(email, tx);
+            future.then((fuckyou) {
+              ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+              Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+                  .getFoodRecoveryTransaction(email);
+              future.then((txs) {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => InProgressMainScene(txs)));
+              });
+            });
+          },
+          child: Text('ACCEPT without NAVIGATION'),
+        ),
+        FlatButton(
+          textColor: Color(0xFF6200EE),
+          onPressed: () {
+            Navigator.pop(context);
+            FocusScope.of(context).requestFocus(FocusNode());
+            ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+            Future<String> future = client.accept(email, tx);
             //donot rename this variable. It is symbolic
             future.then((fuckyou) {
               LocationUpdater.getLocation();
@@ -581,7 +600,7 @@ class PickUpListView extends StatelessWidget {
               embeddedNavigation.start(tx);
             });
           },
-          child: Text('START NAVIGATION'),
+          child: Text('ACCEPT with NAVIGATION'),
         ),
       ],
     );
