@@ -243,36 +243,38 @@ public class ActiveNetwork {
     {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
-            String email = json.get("email").getAsString();
+            String email = null;
+            if(json.has("email"))
+            {
+                email = json.get("email").getAsString();
+            }
             String txId = json.get("txId").getAsString();
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
 
             this.foodRecoveryOrchestrator.notifyDelivery(tx);
 
-            JsonArray pending = new JsonArray();
-            JsonArray inProgress = new JsonArray();
-            List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
-            for(FoodRecoveryTransaction cour: transactions) {
-                if (cour.getTransactionState() == TransactionState.SUBMITTED)
-                {
-                    cour.getPickUpNotification().setNotificationSent(true);
-                    SchedulePickUpNotification courPickUp = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
-                            getScheduledPickUpNotification(cour.getPickUpNotification().getId()).toString());
-                    courPickUp.setNotificationSent(true);
-                    this.mongoDBJsonStore.storeFoodRecoveryTransaction(cour);
-                    this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
-                    pending.add(cour.toJson());
-                }
-                else if(cour.getTransactionState() == TransactionState.INPROGRESS || cour.getTransactionState() == TransactionState.ONTHEWAY)
-                {
-                    inProgress.add(cour.toJson());
-                }
-            }
-
             JsonObject responseJson = new JsonObject();
+            if(email != null) {
+                JsonArray pending = new JsonArray();
+                JsonArray inProgress = new JsonArray();
+                List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
+                for (FoodRecoveryTransaction cour : transactions) {
+                    if (cour.getTransactionState() == TransactionState.SUBMITTED) {
+                        cour.getPickUpNotification().setNotificationSent(true);
+                        SchedulePickUpNotification courPickUp = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
+                                getScheduledPickUpNotification(cour.getPickUpNotification().getId()).toString());
+                        courPickUp.setNotificationSent(true);
+                        this.mongoDBJsonStore.storeFoodRecoveryTransaction(cour);
+                        this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
+                        pending.add(cour.toJson());
+                    } else if (cour.getTransactionState() == TransactionState.INPROGRESS || cour.getTransactionState() == TransactionState.ONTHEWAY) {
+                        inProgress.add(cour.toJson());
+                    }
+                }
+                responseJson.add("pending", pending);
+                responseJson.add("inProgress", inProgress);
+            }
             responseJson.addProperty("success", true);
-            responseJson.add("pending",pending);
-            responseJson.add("inProgress",inProgress);
             return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)
