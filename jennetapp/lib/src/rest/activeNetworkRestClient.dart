@@ -132,10 +132,13 @@ class ActiveNetworkRestClient
   Future<String> notifyOfflineAvailability(String foodRunnerEmail) async
   {
     var response;
+
+    FoodRunner foodRunner = ActiveSession.getInstance().foodRunner;
     
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"offline/notification/";
     Map<String, dynamic> json = new Map();
     json['foodRunnerEmail'] = foodRunnerEmail;
+    json['available'] = foodRunner.offlineCommunitySupport;
     String jsonBody = jsonEncode(json);
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);

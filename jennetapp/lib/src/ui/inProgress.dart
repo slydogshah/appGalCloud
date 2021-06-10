@@ -2,6 +2,7 @@ import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
@@ -134,6 +135,17 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
   }
 
   Widget getAppBarUI(BuildContext context) {
+    Icon icon = new Icon(Icons.thumb_up_rounded);
+    Icon requests = new Icon(Icons.notification_important_rounded);
+    Color offline = Colors.white;
+    FoodRunner foodRunner = ActiveSession.getInstance().foodRunner;
+    if(foodRunner.offlineCommunitySupport){
+      offline = Colors.green;
+    }
+    Color requestsIconColor = Colors.white;
+    if(this.recoveryTxs.length > 0) {
+          requestsIconColor = Colors.red;
+    }
     return Container(
       decoration: BoxDecoration(
         color: Colors.blueGrey,
@@ -200,19 +212,61 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                       ),
                     ),
                   ),*/
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
+                  Tooltip(
+                    message: "DropOffs In Progress",
+                    child: Material(
+                      color: requestsIconColor,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(32.0),
+                        ),
+                        onTap: () {
+                          if(this.recoveryTxs.length > 0) {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    FoodRunnerMainScene(this.txs)));
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: requests,
+                        ),
                       ),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => FoodRunnerMainScene(this.txs)));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(FontAwesomeIcons.mapMarkerAlt),
+                    ),
+                  ),
+                  Tooltip(
+                    message: "Notify Availability",
+                    child: Material(
+                      color: offline,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(32.0),
+                        ),
+                        onTap: () {
+                          if(foodRunner.offlineCommunitySupport){
+                            foodRunner.offlineCommunitySupport = false;
+                          }
+                          else{
+                            foodRunner.offlineCommunitySupport = true;
+                          }
+                          Profile profile = ActiveSession.getInstance().getProfile();
+                          ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+                          Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email,);
+                          response.then((response){
+                                setState(() {
+                                  if(foodRunner.offlineCommunitySupport){
+                                    offline = Colors.green;
+                                  }
+                                  else{
+                                    offline = Colors.white;
+                                  }
+                                });
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: icon,
+                        ),
                       ),
                     ),
                   ),

@@ -30,20 +30,15 @@ public class DynamicDropOffOrchestrator {
     private ActiveNetwork activeNetwork;
 
 
-    public void notifyAvailability(String foodRunnerEmail)
+    public void notifyAvailability(String foodRunnerEmail, boolean available)
     {
         FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(foodRunnerEmail);
         if(foodRunner != null) {
-            foodRunner.setOfflineCommunitySupport(true);
+            foodRunner.setOfflineCommunitySupport(available);
 
             JsonUtil.print(this.getClass(),foodRunner.toJson());
 
             this.activeNetwork.addActiveFoodRunner(foodRunner);
-            System.out.println("ACTIVE_NETWORK_UPDATED");
-        }
-        else
-        {
-            System.out.println("FOODRUNNER_NOT_FOUND: "+foodRunnerEmail);
         }
     }
 

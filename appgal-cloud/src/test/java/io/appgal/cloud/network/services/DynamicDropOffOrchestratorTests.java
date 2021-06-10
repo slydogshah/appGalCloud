@@ -51,13 +51,13 @@ public class DynamicDropOffOrchestratorTests extends BaseTest{
     @Test
     public void notifyAvailability() throws Exception
     {
-        this.dynamicDropOffOrchestrator.notifyAvailability(this.foodRunner.getProfile().getEmail());
+        this.dynamicDropOffOrchestrator.notifyAvailability(this.foodRunner.getProfile().getEmail(),true);
     }
 
     @Test
     public void getOfflineDropOffHelpers() throws Exception
     {
-        this.dynamicDropOffOrchestrator.notifyAvailability(this.foodRunner.getProfile().getEmail());
+        this.dynamicDropOffOrchestrator.notifyAvailability(this.foodRunner.getProfile().getEmail(),true);
 
         //Register a Pickup Org
         SourceOrg pickup = this.registerPickupOrg();

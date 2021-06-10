@@ -187,16 +187,17 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   }
 
   Widget getAppBarUI(BuildContext context) {
-
     Icon icon = new Icon(Icons.thumb_up_rounded);
-    Icon inProgress = new Icon(Icons.track_changes_rounded);
+    Icon inProgress = new Icon(Icons.view_list);
     Color offline = Colors.white;
     FoodRunner foodRunner = ActiveSession.getInstance().foodRunner;
     if(foodRunner.offlineCommunitySupport){
       offline = Colors.green;
     }
     Color progress = Colors.white;
-
+    if(this.inProgressTxs.length > 0) {
+      progress = Colors.red;
+    }
     return Container(
       decoration: BoxDecoration(
         color: Colors.blueGrey,
@@ -254,8 +255,11 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                           Radius.circular(32.0),
                         ),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => InProgressMainScene(this.txs)));
+                          if(this.inProgressTxs.length > 0) {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    InProgressMainScene(this.txs)));
+                          }
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -273,11 +277,24 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                           Radius.circular(32.0),
                         ),
                         onTap: () {
+                          if(foodRunner.offlineCommunitySupport){
+                            foodRunner.offlineCommunitySupport = false;
+                          }
+                          else{
+                            foodRunner.offlineCommunitySupport = true;
+                          }
                           Profile profile = ActiveSession.getInstance().getProfile();
                           ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
                           Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email);
                           response.then((response){
-                            //print("RESPONSE: "+response.toString());
+                            setState(() {
+                              if(foodRunner.offlineCommunitySupport){
+                                offline = Colors.green;
+                              }
+                              else{
+                                offline = Colors.white;
+                              }
+                            });
                           });
                         },
                         child: Padding(
