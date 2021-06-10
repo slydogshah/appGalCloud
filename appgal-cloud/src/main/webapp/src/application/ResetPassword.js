@@ -68,6 +68,7 @@ function ResetPasswordView({state, props}) {
                           fullWidth: true
                         }}
                         inputProps={{
+                           type:"password",
                            onChange:(event) => {
                                const target = event.target;
                                const value = target.value;
@@ -87,6 +88,7 @@ function ResetPasswordView({state, props}) {
                         fullWidth: true
                       }}
                       inputProps={{
+                         type:"password",
                          onChange:(event) => {
                              const target = event.target;
                              const value = target.value;

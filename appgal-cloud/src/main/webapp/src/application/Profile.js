@@ -81,6 +81,7 @@ function ProfileView({state, props}) {
                           fullWidth: true
                         }}
                         inputProps={{
+                            type:"password",
                             onChange:(event) => {
                                 const target = event.target;
                                 const value = target.value;
@@ -102,6 +103,7 @@ function ProfileView({state, props}) {
                           fullWidth: true
                         }}
                         inputProps={{
+                            type:"password",
                             onChange:(event) => {
                                 const target = event.target;
                                 const value = target.value;

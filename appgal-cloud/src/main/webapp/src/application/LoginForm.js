@@ -43,6 +43,8 @@ import CardHeader from "../components/Card/CardHeader.js";
 import CardAvatar from "../components/Card/CardAvatar.js";
 import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
 
 const styles = {
   cardCategoryWhite: {
@@ -179,7 +181,7 @@ function RenderLogin({state,props})
                    </CardHeader>
                    <CardBody>
                      <GridContainer>
-                       <GridItem xs={12} sm={12} md={4}>
+                       <GridItem xs={12} sm={12} md={6}>
                          <CustomInput
                          labelText="Email address"
                          id="email"
@@ -204,14 +206,16 @@ function RenderLogin({state,props})
                            labelText="Password"
                            id="password"
                            formControlProps={{
-                             fullWidth: true
-                           }}
+                              fullWidth: true
+                            }}
                            inputProps={{
+                                type:"password",
                                 onChange:(event) => {
                                     const target = event.target;
                                     const value = target.value;
                                     const name = target.name;
                                     state.password = value;
+                                    console.log("PASSWORD_ON_CHANGE...");
                                 }
                             }}
                          />
@@ -315,7 +319,7 @@ function RenderLogin({state,props})
                                                                                    </CardHeader>
                                                                                    <CardBody>
                                                                                      <GridContainer>
-                                                                                       <GridItem xs={12} sm={12} md={4}>
+                                                                                       <GridItem xs={12} sm={12} md={6}>
                                                                                          <CustomInput
                                                                                          labelText="Email address"
                                                                                          id="email"
@@ -345,6 +349,7 @@ function RenderLogin({state,props})
                                                                                              fullWidth: true
                                                                                            }}
                                                                                            inputProps={{
+                                                                                           type:"password",
                                                                                                                            onChange:(event) => {
                                                                                                                                const target = event.target;
                                                                                                                                const value = target.value;
