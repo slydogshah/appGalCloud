@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:app/hotel_booking/hotel_app_theme.dart';
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
@@ -116,6 +117,9 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
+    Profile profile = ActiveSession.getInstance().getProfile();
+    CloudDataPoller.startPolling(context,profile);
+    LocationUpdater.startPolling(profile);
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
