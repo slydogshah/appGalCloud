@@ -232,10 +232,11 @@ function RenderForm({state,props})
                                                                 const payload = {
                                                                             orgId: store.getState().sourceOrg.orgId,
                                                                             time: state.time,
+                                                                            foodPic:store.getState().upload,
                                                                             foodType: state.foodType
                                                                         };
 
-                                                                console.log(JSON.stringify(payload));
+
 
                                                                 const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/";
                                                                 axios.post(apiUrl,payload).then((response) => {

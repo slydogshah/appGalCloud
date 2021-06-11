@@ -115,9 +115,7 @@ public class NetworkOrchestrator {
 
     public void schedulePickUp(SchedulePickUpNotification notification)
     {
-        JsonUtil.print(this.getClass(),notification.toJson());
         this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
-
         this.foodRecoveryOrchestrator.notifyForPickUp(notification);
     }
 

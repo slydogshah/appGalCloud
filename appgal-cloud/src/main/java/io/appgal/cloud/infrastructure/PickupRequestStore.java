@@ -154,7 +154,13 @@ public class PickupRequestStore {
                 //System.out.println(foodPic);
 
                 String encodedImg = null;
+                String imageType = "jpg";
                 if(foodPic.startsWith("data:image")) {
+                    String[] tokens = foodPic.split(",");
+                    imageType = tokens[0];
+                    imageType = imageType.split(":")[1];
+                    imageType = imageType.split(";")[0];
+                    imageType = imageType.split("/")[1];
                     encodedImg = foodPic.split(",")[1];
                 }
                 else
@@ -175,7 +181,7 @@ public class PickupRequestStore {
                 ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                 BufferedImage image = ImageIO.read(bis);
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(image, "jpg", bos);
+                ImageIO.write(image, imageType, bos);
                 byte[] data = bos.toByteArray();
 
 

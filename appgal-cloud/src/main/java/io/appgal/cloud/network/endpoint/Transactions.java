@@ -281,6 +281,14 @@ public class Transactions {
     {
         try {
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(id);
+
+
+            if(tx == null || tx.getPickUpNotification().getFoodDetails().getFoodPic() == null)
+            {
+                JsonObject notFound = new JsonObject();
+                return Response.status(404).entity(notFound.toString()).build();
+            }
+
             ObjectId imageId = new ObjectId(tx.getPickUpNotification().getFoodDetails().getFoodPic());
             byte[] data = this.mongoDBJsonStore.getImage(imageId);
             return Response.ok( (StreamingOutput) output -> {
@@ -301,7 +309,7 @@ public class Transactions {
         }
     }
 
-    @GET
+    /*@GET
     @Path("/tx/img")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response downloadFile() throws Exception {
@@ -317,5 +325,5 @@ public class Transactions {
                 output.flush();
             } catch ( Exception e ) { e.printStackTrace(); }
         } ).build();
-    }
+    }*/
 }
