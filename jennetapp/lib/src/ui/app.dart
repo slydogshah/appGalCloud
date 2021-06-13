@@ -120,8 +120,6 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    CloudDataPoller.startPolling(context,null);
-
     this.title = "#Jen Network";
     this.titleWidget = Text(
         this.title,
