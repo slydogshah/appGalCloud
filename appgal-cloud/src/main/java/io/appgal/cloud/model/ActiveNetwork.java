@@ -9,10 +9,11 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.Serializable;
 import java.util.*;
 
-@ApplicationScoped
+@Singleton
 public class ActiveNetwork implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(ActiveNetwork.class);
 

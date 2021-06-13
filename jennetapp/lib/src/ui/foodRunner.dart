@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:app/hotel_booking/hotel_app_theme.dart';
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,6 +20,45 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 import 'inProgress.dart';
+
+class FoodRunnerApp extends StatelessWidget {
+  Map<String,List<FoodRecoveryTransaction>> txs;
+  FoodRunnerApp(Map<String,List<FoodRecoveryTransaction>> txs)
+  {
+    LocationUpdater.getLocation();
+    this.txs = txs;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Color primaryColor = Color(0xFF383EDB);
+    Color backgroundColor = Color(0xFF383EDB);
+    if(txs["inProgress"].length > 0) {
+      MaterialApp materialApp = new MaterialApp(
+          home: InProgressMainScene(txs),
+          theme: ThemeData(
+              primaryColor: primaryColor,
+              backgroundColor: backgroundColor,
+              accentColor: backgroundColor,
+              accentColorBrightness: Brightness.dark
+          )
+      );
+      return materialApp;
+    }
+    else{
+      MaterialApp materialApp = new MaterialApp(
+          home: FoodRunnerMainScene(txs),
+          theme: ThemeData(
+              primaryColor: primaryColor,
+              backgroundColor: backgroundColor,
+              accentColor: backgroundColor,
+              accentColorBrightness: Brightness.dark
+          )
+      );
+      return materialApp;
+    }
+  }
+}
 
 
 class FoodRunnerMainScene extends StatefulWidget {
@@ -76,6 +117,9 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
+    Profile profile = ActiveSession.getInstance().getProfile();
+    CloudDataPoller.startPolling(context,profile);
+    LocationUpdater.startPolling(profile);
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
@@ -147,6 +191,17 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   }
 
   Widget getAppBarUI(BuildContext context) {
+    Icon icon = new Icon(Icons.thumb_up_rounded);
+    Icon inProgress = new Icon(Icons.view_list);
+    Color offline = Colors.white;
+    FoodRunner foodRunner = ActiveSession.getInstance().foodRunner;
+    if(foodRunner.offlineCommunitySupport){
+      offline = Colors.green;
+    }
+    Color progress = Colors.white;
+    if(this.inProgressTxs.length > 0) {
+      progress = Colors.red;
+    }
     return Container(
       decoration: BoxDecoration(
         color: Colors.blueGrey,
@@ -173,12 +228,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                     Radius.circular(32.0),
                   ),
                   onTap: () {
-                  //  Navigator.pop(context);
                   },
-                  /*child: Padding(
-                  //  padding: const EdgeInsets.all(8.0),
-                  //  child: Icon(Icons.arrow_back),
-                  ),*/
                 ),
               ),
             ),
@@ -200,33 +250,61 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  /*Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
-                      ),
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.favorite_border),
+                  Tooltip(
+                    message: "DropOffs In Progress",
+                    child: Material(
+                      color: progress,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(32.0),
+                        ),
+                        onTap: () {
+                          if(this.inProgressTxs.length > 0) {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    InProgressMainScene(this.txs)));
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: inProgress,
+                        ),
                       ),
                     ),
-                  ),*/
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
-                      ),
-                      onTap: () {
-
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => InProgressMainScene(this.txs)));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(FontAwesomeIcons.mapMarkerAlt),
+                  ),
+                  Tooltip(
+                    message: "Notify Availability",
+                    child: Material(
+                      color: offline,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(32.0),
+                        ),
+                        onTap: () {
+                          if(foodRunner.offlineCommunitySupport){
+                            foodRunner.offlineCommunitySupport = false;
+                          }
+                          else{
+                            foodRunner.offlineCommunitySupport = true;
+                          }
+                          Profile profile = ActiveSession.getInstance().getProfile();
+                          ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+                          Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email);
+                          response.then((response){
+                            setState(() {
+                              if(foodRunner.offlineCommunitySupport){
+                                offline = Colors.green;
+                              }
+                              else{
+                                offline = Colors.white;
+                              }
+                            });
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: icon,
+                        ),
                       ),
                     ),
                   ),
@@ -264,6 +342,32 @@ class PickUpListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/transaction/foodPic/?id="+tx.getId();
+    Widget dropoff = null;
+    if(tx.getPickupNotification().getDropOffOrg() != null)
+    {
+      dropoff = Text(
+        tx.getPickupNotification().getDropOffOrg().orgName,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
+        ),
+      );
+    }
+    else
+    {
+      dropoff = Tooltip(
+          message: "Offline Community Support",
+          child: Text(
+            "Community",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
+            ),
+          )
+      );
+    }
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -319,7 +423,6 @@ class PickUpListView extends StatelessWidget {
                                     onPressed: () {
                                       Profile profile = ActiveSession.getInstance().getProfile();
                                       handleAccept(context,profile.email,
-                                          tx.schedulePickupNotification.dropOffOrg.orgId,
                                           tx);
                                     },
                                   ),
@@ -399,14 +502,7 @@ class PickUpListView extends StatelessWidget {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        Text(
-                                          tx.getPickupNotification().getDropOffOrg().orgName,
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 22,
-                                          ),
-                                        ),
+                                        dropoff,
                                         Text(
                                           'DropOff: 15 minutes',
                                           style: TextStyle(
@@ -455,10 +551,7 @@ class PickUpListView extends StatelessWidget {
     );
   }
 
-  void handleAccept(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
-    //print("TX: "+tx.getPickupNotification().getSourceOrg().orgName);
-
-    //TODO
+  void handleAccept(BuildContext context,String email, FoodRecoveryTransaction tx) {
     AlertDialog dialog = AlertDialog(
       title: Text('Accept Food Pickup and DropOff'),
       content: Text(
@@ -483,17 +576,35 @@ class PickUpListView extends StatelessWidget {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-            Future<String> future = client.accept(email, dropOffOrgId, tx);
+            Future<String> future = client.accept(email, tx);
+            future.then((fuckyou) {
+              ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+              Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+                  .getFoodRecoveryTransaction(email);
+              future.then((txs) {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => InProgressMainScene(txs)));
+              });
+            });
+          },
+          child: Text('ACCEPT without NAVIGATION'),
+        ),
+        FlatButton(
+          textColor: Color(0xFF6200EE),
+          onPressed: () {
+            Navigator.pop(context);
+            FocusScope.of(context).requestFocus(FocusNode());
+            ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+            Future<String> future = client.accept(email, tx);
             //donot rename this variable. It is symbolic
             future.then((fuckyou) {
-
               LocationUpdater.getLocation();
               EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
-                  tx.getPickupNotification().getDropOffOrg());
+                  tx.getPickupNotification().getSourceOrg());
               embeddedNavigation.start(tx);
             });
           },
-          child: Text('START NAVIGATION'),
+          child: Text('ACCEPT with NAVIGATION'),
         ),
       ],
     );

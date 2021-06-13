@@ -229,7 +229,6 @@ function notifyFoodDelivery(props,tx)
              const payload = {
                 txId:tx.id
              };
-             //alert(JSON.stringify(payload));
 
              const apiUrl = window.location.protocol +"//"+window.location.hostname+"/activeNetwork/notifyDelivery/";
              axios.post(apiUrl,payload).then((response) => {

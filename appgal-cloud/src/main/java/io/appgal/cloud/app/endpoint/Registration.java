@@ -9,6 +9,7 @@ import io.appgal.cloud.app.services.ProfileRegistrationService;
 import io.appgal.cloud.app.services.ResourceExistsException;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.restclient.TwilioClient;
 import io.appgal.cloud.util.JsonUtil;
 import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Path("registration")
 public class Registration {
@@ -40,6 +42,9 @@ public class Registration {
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
+
+    @Inject
+    private TwilioClient twilioClient;
 
     @Path("profile")
     @GET
@@ -183,6 +188,13 @@ public class Registration {
             }
 
             String userAgent = request.getHeader("User-Agent");
+            logger.info("******USER_AGENT********");
+            logger.info(userAgent);
+            boolean appLogin = false;
+            if(userAgent.contains("Dart"))
+            {
+                appLogin = true;
+            }
 
             String email = jsonObject.get("email").getAsString();
             String password = jsonObject.get("password").getAsString();
@@ -197,10 +209,18 @@ public class Registration {
                 return Response.status(401).entity(profileNotFound.toString()).build();
             }
 
-            JsonObject responseJson;
+            JsonObject responseJson = null;
             if(profile.getProfileType() == ProfileType.FOOD_RUNNER) {
-                Location location = Location.parse(credentialsJson);
-                responseJson = this.profileRegistrationService.login(userAgent, email, password, location);
+                if(appLogin) {
+                    Location location = Location.parse(credentialsJson);
+                    responseJson = this.profileRegistrationService.login(userAgent, email, password, location);
+                }
+                else
+                {
+                    JsonObject forbidden = new JsonObject();
+                    forbidden.addProperty("message", "access_denied");
+                    return Response.status(403).entity(forbidden.toString()).build();
+                }
             }
             else
             {
@@ -216,6 +236,95 @@ public class Registration {
         }
     }
 
+    @Path("sendResetCode")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response sendResetCode(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String email = json.get("email").getAsString();
+            String mobileNumber = json.get("mobileNumber").getAsString();
+
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            if(profile == null || profile.getProfileType() == ProfileType.FOOD_RUNNER)
+            {
+                JsonObject error = new JsonObject();
+                if(profile == null) {
+                    error.addProperty("message", "EMAIL_NOT_FOUND");
+                    return Response.status(404).entity(error.toString()).build();
+                }
+                else
+                {
+                    error.addProperty("message", "ACCESS_DENIED_FOR_PROFILE_TYPE");
+                    return Response.status(403).entity(error.toString()).build();
+                }
+            }
+
+            String resetCode = UUID.randomUUID().toString().substring(0,6);
+            logger.info("RESET_CODE: "+resetCode);
+
+            profile.setResetCode(resetCode);
+            this.mongoDBJsonStore.updateProfile(profile);
+
+            this.twilioClient.sendResetCode(mobileNumber,resetCode);
+
+            JsonObject success = new JsonObject();
+            success.addProperty("success",true);
+            return Response.ok(success.toString()).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
+    @Path("verifyResetCode")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response verifyResetCode(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String email = json.get("email").getAsString();
+            String resetCode = json.get("resetCode").getAsString();
+
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            JsonObject error = new JsonObject();
+            if(profile == null || profile.getProfileType() == ProfileType.FOOD_RUNNER)
+            {
+                if(profile == null) {
+                    error.addProperty("message", "EMAIL_NOT_FOUND");
+                    return Response.status(404).entity(error.toString()).build();
+                }
+                else
+                {
+                    error.addProperty("message", "ACCESS_DENIED_FOR_PROFILE_TYPE");
+                    return Response.status(403).entity(error.toString()).build();
+                }
+            }
+
+            if(!profile.getResetCode().equals(resetCode))
+            {
+                error.addProperty("message", "INVALID_RESET_CODE");
+                return Response.status(401).entity(error.toString()).build();
+            }
+
+            JsonObject success = new JsonObject();
+            success.addProperty("success",true);
+            return Response.ok(success.toString()).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
+    //TODO: Validation Hardening
     @Path("newPassword")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -229,6 +338,40 @@ public class Registration {
 
             Profile profile = this.mongoDBJsonStore.getProfile(email);
             profile.setPassword(password);
+            this.mongoDBJsonStore.updateProfile(profile);
+
+            JsonObject success = new JsonObject();
+            success.addProperty("success",true);
+            return Response.ok(success.toString()).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
+    @Path("resetPassword")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response resetPassword(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String email = json.get("email").getAsString();
+            String newPassword = json.get("newPassword").getAsString();
+            String confirmPassword = json.get("confirmNewPassword").getAsString();
+
+            if(!newPassword.equals(confirmPassword))
+            {
+                JsonObject error = new JsonObject();
+                error.addProperty("message", "PASSWORDS_DONT_MATCH");
+                return Response.status(400).entity(error.toString()).build();
+            }
+
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            profile.setPassword(newPassword);
             this.mongoDBJsonStore.updateProfile(profile);
 
             JsonObject success = new JsonObject();

@@ -4,11 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.appgal.cloud.infrastructure.NotificationEngine;
-import io.appgal.cloud.infrastructure.RequestPipeline;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.restclient.GoogleApiClient;
+import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 
 import org.slf4j.Logger;
@@ -30,15 +29,9 @@ public class NetworkOrchestrator {
     private MongoDBJsonStore mongoDBJsonStore;
 
     @Inject
-    private RequestPipeline requestPipeline;
-
-    @Inject
     private FoodRecoveryOrchestrator foodRecoveryOrchestrator;
 
     private Map<String, Collection<FoodRunner>> finderResults;
-
-    @Inject
-    private NotificationEngine notificationEngine;
 
     @Inject
     private MapUtils mapUtils;
@@ -53,6 +46,11 @@ public class NetworkOrchestrator {
         logger.info("*******");
         logger.info("NETWORK_ORCHESTRATOR_IS_ONLINE_NOW");
         logger.info("*******");
+    }
+
+    public ActiveNetwork getActiveNetwork()
+    {
+        return this.activeNetwork;
     }
 
     public void enterNetwork(FoodRunner foodRunner)
@@ -118,8 +116,6 @@ public class NetworkOrchestrator {
     public void schedulePickUp(SchedulePickUpNotification notification)
     {
         this.mongoDBJsonStore.updateScheduledPickUpNotification(notification);
-        this.requestPipeline.add(notification);
-
         this.foodRecoveryOrchestrator.notifyForPickUp(notification);
     }
 
@@ -131,6 +127,8 @@ public class NetworkOrchestrator {
 
             List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
             for (FoodRecoveryTransaction tx : all) {
+                //logger.info("TX:ID>"+tx.getId()+", TX_STATE: "+tx.getTransactionState());
+
                 Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
                 if(source == null)
                 {
@@ -149,20 +147,27 @@ public class NetworkOrchestrator {
                         foodRunnerLocation.getLongitude(),
                         source.getLatitude(), source.getLongitude());
 
-                logger.info("**************DISTANCE*****************");
-                logger.info("ALGO_DISTANCE: "+distance);
-                logger.info("**************DISTANCE*****************");
-
                 if (distance <= 5.0d) {
-                    Location dropoff = tx.getPickUpNotification().getDropOffOrg().getLocation();
+                    if(!tx.isOfflineCommunitySupport()) {
+                        Location dropoff = tx.getPickUpNotification().getDropOffOrg().getLocation();
 
-                    String estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation,source);
-                    String estimatedDropOffTime = this.estimateTravelTime(source,dropoff);
+                        String estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation, source);
+                        String estimatedDropOffTime = this.estimateTravelTime(source, dropoff);
 
-                    tx.setEstimatedPickupTime(estimatedPickupTime);
-                    tx.setEstimatedDropOffTime(estimatedDropOffTime);
+                        tx.setEstimatedPickupTime(estimatedPickupTime);
+                        tx.setEstimatedDropOffTime(estimatedDropOffTime);
 
-                    myTransactions.add(tx);
+                        myTransactions.add(tx);
+                    }
+                    else if(foodRunner.isOfflineCommunitySupport())
+                    {
+                        myTransactions.add(tx);
+                    }
+                }
+                else {
+                    logger.info("**************DISTANCE*****************");
+                    logger.info("ALGO_DISTANCE: "+distance);
+                    logger.info("**************DISTANCE*****************");
                 }
             }
 
@@ -180,11 +185,6 @@ public class NetworkOrchestrator {
         return this.googleApiClient.estimateTime(start,end).get("duration").getAsString();
     }
     //-------------------------
-    public NotificationEngine getNotificationEngine()
-    {
-        return this.notificationEngine;
-    }
-
     public JsonObject acceptRecoveryTransaction(FoodRecoveryTransaction foodRecoveryTransaction)
     {
         String id = foodRecoveryTransaction.accept(this.mongoDBJsonStore);

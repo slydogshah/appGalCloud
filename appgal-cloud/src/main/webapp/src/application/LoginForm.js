@@ -28,6 +28,7 @@ import {
   CProgress,
   CSelect,
   CLabel,
+  CLink,
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -42,6 +43,8 @@ import CardHeader from "../components/Card/CardHeader.js";
 import CardAvatar from "../components/Card/CardAvatar.js";
 import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
 
 const styles = {
   cardCategoryWhite: {
@@ -66,8 +69,11 @@ const useStyles = makeStyles(styles);
 
 function inputFieldComp(state) {
       const element = (
-        <CustomInput
-                 labelText="Register New Organization"
+           <>
+           <GridContainer>
+            <GridItem xs={12} sm={12} md={4}>
+                <CustomInput
+                 labelText="New Organization"
                  id="sourceOrgId"
                  formControlProps={{
                    fullWidth: true
@@ -81,6 +87,47 @@ function inputFieldComp(state) {
                      }
                  }}
                />
+            </GridItem>
+          </GridContainer>
+          <GridContainer>
+              <GridItem xs={12} sm={12} md={4}>
+                  <CustomInput
+                   labelText="Street"
+                   id="street"
+                   formControlProps={{
+                     fullWidth: true
+                   }}
+                   inputProps={{
+                       onChange:(event) => {
+                           const target = event.target;
+                           const value = target.value;
+                           const name = target.name;
+                           state.street = value;
+                       }
+                   }}
+                 />
+              </GridItem>
+            </GridContainer>
+           <GridContainer>
+           <GridItem xs={12} sm={12} md={4}>
+               <CustomInput
+                labelText="Zip"
+                id="zip"
+                formControlProps={{
+                  fullWidth: true
+                }}
+                inputProps={{
+                    onChange:(event) => {
+                        const target = event.target;
+                        const value = target.value;
+                        const name = target.name;
+                        state.zip = value;
+                    }
+                }}
+              />
+           </GridItem>
+         </GridContainer>
+         </>
       );
       ReactDOM.unmountComponentAtNode(document.getElementById('orgInput'));
       ReactDOM.render(element,document.getElementById('orgInput'));
@@ -124,6 +171,7 @@ function RenderLogin({state,props})
           <>
           <br/><br/><br/><br/><br/>
           <div id="system_error"/>
+          <div id="access_denied"/>
           <div>
              <GridContainer>
                <GridItem xs={12} sm={12} md={8}>
@@ -133,7 +181,7 @@ function RenderLogin({state,props})
                    </CardHeader>
                    <CardBody>
                      <GridContainer>
-                       <GridItem xs={12} sm={12} md={4}>
+                       <GridItem xs={12} sm={12} md={6}>
                          <CustomInput
                          labelText="Email address"
                          id="email"
@@ -158,14 +206,16 @@ function RenderLogin({state,props})
                            labelText="Password"
                            id="password"
                            formControlProps={{
-                             fullWidth: true
-                           }}
+                              fullWidth: true
+                            }}
                            inputProps={{
+                                type:"password",
                                 onChange:(event) => {
                                     const target = event.target;
                                     const value = target.value;
                                     const name = target.name;
                                     state.password = value;
+                                    console.log("PASSWORD_ON_CHANGE...");
                                 }
                             }}
                          />
@@ -178,6 +228,7 @@ function RenderLogin({state,props})
                           <GridItem xs={12} sm={12} md={6}>
                              <Button color="primary" onClick={(e) => {
                                 ReactDOM.unmountComponentAtNode(document.getElementById('system_error'));
+                                ReactDOM.unmountComponentAtNode(document.getElementById('access_denied'));
                                 ReactDOM.unmountComponentAtNode(document.getElementById('profile_not_found'));
                                 ReactDOM.unmountComponentAtNode(document.getElementById('password_mismatch'));
 
@@ -225,6 +276,17 @@ function RenderLogin({state,props})
                                                                     ReactDOM.render(password_mismatch,document.getElementById('password_mismatch'));
                                             }
                                        }
+                                       else if(err.response != null && err.response.status == 403)
+                                      {
+                                           const access_denied = (
+                                                                <CAlert
+                                                                color="warning"
+                                                                >
+                                                                   403: Access Denied.
+                                                               </CAlert>
+                                                            );
+                                          ReactDOM.render(access_denied,document.getElementById('access_denied'));
+                                      }
                                        else
                                        {
                                            const system_error = (
@@ -257,7 +319,7 @@ function RenderLogin({state,props})
                                                                                    </CardHeader>
                                                                                    <CardBody>
                                                                                      <GridContainer>
-                                                                                       <GridItem xs={12} sm={12} md={4}>
+                                                                                       <GridItem xs={12} sm={12} md={6}>
                                                                                          <CustomInput
                                                                                          labelText="Email address"
                                                                                          id="email"
@@ -287,6 +349,7 @@ function RenderLogin({state,props})
                                                                                              fullWidth: true
                                                                                            }}
                                                                                            inputProps={{
+                                                                                           type:"password",
                                                                                                                            onChange:(event) => {
                                                                                                                                const target = event.target;
                                                                                                                                const value = target.value;
@@ -455,6 +518,14 @@ function RenderLogin({state,props})
                                 });
                            }}>Register</Button>
                         </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                            <CLink className={classes.dropdownItem} onClick={(e) => {
+                                    props.history.push({
+                                        pathname: "/forgotPassword",
+                                    });
+                            }
+                            }>Forgot Password</CLink>
+                        </GridItem>
                         </GridContainer>
                    </CardFooter>
                  </Card>
@@ -500,7 +571,7 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {username:'',profileType:'ORG',email:'',password:'',mobile:'',sourceOrgId:'', producer:'',isModalOpen:false,
-    street:'801 West Fifth Street',zip:'78703',
+    street:'',zip:'',
     activeElementType: "dropdown"};
   }
 

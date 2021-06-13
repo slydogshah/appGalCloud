@@ -84,11 +84,11 @@ public class ProfileRegistrationService {
     {
         JsonObject authFailure = new JsonObject();
 
-        logger.info("LOGIN_EMAIL: "+email);
+        //logger.info("LOGIN_EMAIL: "+email);
 
         Profile profile = this.mongoDBJsonStore.getProfile(email);
 
-        logger.info("LOGIN_PROFILE: "+profile);
+        //logger.info("LOGIN_PROFILE: "+profile);
 
         if(profile == null)
         {
@@ -111,12 +111,18 @@ public class ProfileRegistrationService {
 
             authResponse.add("profile", profile.toJson());
 
-            FoodRunner foodRunner = new FoodRunner();
-            foodRunner.setProfile(profile);
-            foodRunner.setLocation(location);
-            this.networkOrchestrator.enterNetwork(foodRunner);
 
-            logger.info("AUTHENTICATION_SUCCESS: "+email);
+            FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
+            if(foodRunner == null) {
+                foodRunner = new FoodRunner();
+                foodRunner.setProfile(profile);
+                foodRunner.setLocation(location);
+                this.networkOrchestrator.enterNetwork(foodRunner);
+            }
+
+            authResponse.addProperty("offlineCommunitySupport",foodRunner.isOfflineCommunitySupport());
+
+            //logger.info("AUTHENTICATION_SUCCESS: "+email);
             return authResponse;
         }
 

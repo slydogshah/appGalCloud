@@ -139,11 +139,11 @@ public class ActiveNetwork {
     {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
-            JsonUtil.print(this.getClass(),json);
+            //JsonUtil.print(this.getClass(),json);
             String email = json.get("email").getAsString();
             String accepted = json.get("accepted").getAsString();
 
-            FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
+            FoodRunner foodRunner = this.networkOrchestrator.getActiveNetwork().findFoodRunnerByEmail(email);
 
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(accepted);
             tx.setFoodRunner(foodRunner);
@@ -152,7 +152,7 @@ public class ActiveNetwork {
             SchedulePickUpNotification pickUpNotification = tx.getPickUpNotification();
             pickUpNotification.setFoodRunner(foodRunner);
 
-            JsonUtil.print(this.getClass(),tx.toJson());
+            //JsonUtil.print(this.getClass(),tx.toJson());
 
             JsonObject responseJson = this.networkOrchestrator.acceptRecoveryTransaction(tx);
 
@@ -178,31 +178,6 @@ public class ActiveNetwork {
 
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
             this.foodRecoveryOrchestrator.notifyDropOff(tx);
-
-            JsonObject responseJson = new JsonObject();
-            responseJson.addProperty("success", true);
-            return Response.ok(responseJson.toString()).build();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.getMessage(), e);
-            JsonObject error = new JsonObject();
-            error.addProperty("exception", e.getMessage());
-            return Response.status(500).entity(error.toString()).build();
-        }
-    }
-
-    @Path("/notifyDelivery")
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response notifyDelivery(@RequestBody String jsonBody)
-    {
-        try {
-            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
-            String txId = json.get("txId").getAsString();
-            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
-
-            this.foodRecoveryOrchestrator.notifyDelivery(tx);
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);
@@ -251,6 +226,56 @@ public class ActiveNetwork {
         try {
             List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getPickedUpTransactions(email);
             return Response.ok(JsonParser.parseString(txs.toString()).getAsJsonArray().toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/notifyDelivery")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response notifyDelivery(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+            String email = null;
+            if(json.has("email"))
+            {
+                email = json.get("email").getAsString();
+            }
+            String txId = json.get("txId").getAsString();
+            FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
+
+            this.foodRecoveryOrchestrator.notifyDelivery(tx);
+
+            JsonObject responseJson = new JsonObject();
+            if(email != null) {
+                JsonArray pending = new JsonArray();
+                JsonArray inProgress = new JsonArray();
+                List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
+                for (FoodRecoveryTransaction cour : transactions) {
+                    if (cour.getTransactionState() == TransactionState.SUBMITTED) {
+                        cour.getPickUpNotification().setNotificationSent(true);
+                        SchedulePickUpNotification courPickUp = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
+                                getScheduledPickUpNotification(cour.getPickUpNotification().getId()).toString());
+                        courPickUp.setNotificationSent(true);
+                        this.mongoDBJsonStore.storeFoodRecoveryTransaction(cour);
+                        this.mongoDBJsonStore.storeScheduledPickUpNotification(courPickUp);
+                        pending.add(cour.toJson());
+                    } else if (cour.getTransactionState() == TransactionState.INPROGRESS || cour.getTransactionState() == TransactionState.ONTHEWAY) {
+                        inProgress.add(cour.toJson());
+                    }
+                }
+                responseJson.add("pending", pending);
+                responseJson.add("inProgress", inProgress);
+            }
+            responseJson.addProperty("success", true);
+            return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)
         {

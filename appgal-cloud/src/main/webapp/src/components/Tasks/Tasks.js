@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useEffect, useState, createRef, lazy } from 'react'
+import ReactDOM from 'react-dom';
+import { withRouter } from "react-router";
+import axios from 'axios'
 import PropTypes from "prop-types";
 import classnames from "classnames";
 // @material-ui/core components
@@ -17,72 +20,176 @@ import Check from "@material-ui/icons/Check";
 // core components
 import styles from "../../assets/jss/material-dashboard-react/components/tasksStyle.js";
 
+import GridItem from "../Grid/GridItem.js";
+import GridContainer from "../Grid/GridContainer.js";
+import Button from "../CustomButtons/Button.js";
+
+import { AppContext,store} from "../../application/AppContext"
+import AddAlert from "@material-ui/icons/AddAlert";
+import Snackbar from "../Snackbar/Snackbar.js";
+
 import ScheduleButton from '../../application/ScheduleButton'
 
 const useStyles = makeStyles(styles);
 
-export default function Tasks(props) {
-  const classes = useStyles();
-  const [checked, setChecked] = React.useState([...props.checkedIndexes]);
-  const handleToggle = value => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-    setChecked(newChecked);
-  };
-  const { tasksIndexes, tasks, rtlActive, actions } = props;
-  const tableCellClasses = classnames(classes.tableCell, {
-    [classes.tableCellRTL]: rtlActive
-  });
-  return (
-              <Table className={classes.table}>
-                <TableBody>
-                  {tasksIndexes.map(value => (
-                    <TableRow key={value} className={classes.tableRow}>
-                      <TableCell className={tableCellClasses}>{tasks[value]}</TableCell>
-                      <TableCell className={tableCellClasses}><div/></TableCell>
-                      <TableCell className={tableCellClasses}><div/></TableCell>
-                      <TableCell className={tableCellClasses}><div/></TableCell>
-                      <TableCell className={tableCellClasses}><div/></TableCell>
-                      <TableCell className={tableCellClasses}><div/></TableCell>
-                                  <TableCell className={tableCellClasses}><div/></TableCell>
-                                  <TableCell className={tableCellClasses}><div/></TableCell>
-                                  <TableCell className={tableCellClasses}><div/></TableCell>
-                                  <TableCell className={tableCellClasses}><div/></TableCell>
-                                              <TableCell className={tableCellClasses}><div/></TableCell>
-                                              <TableCell className={tableCellClasses}><div/></TableCell>
-                                              <TableCell className={tableCellClasses}><div/></TableCell>
-                                              <TableCell className={tableCellClasses}><div/></TableCell>
-                                                          <TableCell className={tableCellClasses}><div/></TableCell>
-                                                          <TableCell className={tableCellClasses}><div/></TableCell>
-                                                          <TableCell className={tableCellClasses}><div/></TableCell>
-                                                          <TableCell className={tableCellClasses}><div/></TableCell>
-                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
-                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
-                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
-                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+function schedulePickup(props,history,pickupNotificationId,dropOffOrgId,enableOfflineCommunitySupport)
+{
+     const payload = {
+        pickupNotificationId:pickupNotificationId,
+        enableOfflineCommunitySupport:enableOfflineCommunitySupport,
+     };
+     if(dropOffOrgId != null)
+     {
+        payload.dropOffOrgId = dropOffOrgId;
+     }
 
-
-                      <TableCell className={classes.tableActions}>
-                        <Tooltip
-                          id="tooltip-top-start"
-                          title="Schedule a Pickup"
-                          placement="top"
-                          classes={{ tooltip: classes.tooltip }}
-                        >
-                          <ScheduleButton value={actions[value]}/>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            );
+     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
+     axios.post(apiUrl,payload).then((response) => {
+        //console.log(JSON.stringify(response.data));
+        const element = (
+            <Snackbar
+                      place="tc"
+                      color="info"
+                      icon={AddAlert}
+                      message="Your Pickup is scheduled"
+                      open={true}
+                      closeNotification={() => {
+                            const orgId = store.getState().sourceOrg.orgId;
+                            const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+                            axios.get(apiUrl).then((response) => {
+                                history.push({
+                                 pathname: "/home",
+                                 state: { data: response.data }
+                               });
+                            });
+                      }}
+                      close
+            />
+        );
+        ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
+        ReactDOM.render(element,document.getElementById('schedulePickup'));
+      }).catch(err => {
+       //TODO
+       console.log(JSON.stringify(err));
+      });
 }
+
+export default function Tasks(props) {
+    const classes = useStyles();
+              const [checked, setChecked] = React.useState([...props.checkedIndexes]);
+              const handleToggle = value => {
+                const currentIndex = checked.indexOf(value);
+                const newChecked = [...checked];
+                if (currentIndex === -1) {
+                  newChecked.push(value);
+                } else {
+                  newChecked.splice(currentIndex, 1);
+                }
+                setChecked(newChecked);
+              };
+              const { tasksIndexes, tasks, rtlActive, actions, status,orgIds,pickupNotificationId,history } = props;
+              const tableCellClasses = classnames(classes.tableCell, {
+                [classes.tableCellRTL]: rtlActive
+              });
+
+              if(status)
+              {
+              return (    <>
+                          <Table className={classes.table}>
+                            <TableBody>
+                              {tasksIndexes.map(value => (
+                                <TableRow key={value} className={classes.tableRow}>
+                                  <TableCell className={tableCellClasses}>{tasks[value]}</TableCell>
+                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+
+                                    <TableCell className={classes.tableActions}>
+                                                        <Tooltip
+                                                          id="tooltip-top-start"
+                                                          title="Schedule a Pickup"
+                                                          placement="top"
+                                                          classes={{ tooltip: classes.tooltip }}
+                                                        >
+                                                          <Button color="primary" onClick={(e) => {
+                                                            schedulePickup(props,history,pickupNotificationId,orgIds[value],false);
+                                                          }}>Schedule</Button>
+                                                        </Tooltip>
+                                                    </TableCell>
+
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                          </>
+                        );
+                        }
+                        else
+                        {
+                            return (    <>
+                                          <Table className={classes.table}>
+                                            <TableBody>
+                                              {tasksIndexes.map(value => (
+                                                <TableRow key={value} className={classes.tableRow}>
+                                                  <TableCell className={tableCellClasses}>{tasks[value]}</TableCell>
+                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                                              <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                          <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                      <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+                                                                                                  <TableCell className={tableCellClasses}><div/></TableCell>
+
+
+
+                                                </TableRow>
+                                              ))}
+                                            </TableBody>
+                                          </Table>
+                                          <GridContainer>
+                                                <GridItem xs={12} sm={12} md={6}>
+                                                  <Button color="primary" onClick={(e) => {
+                                                      schedulePickup(props,history,pickupNotificationId,null,true);
+                                                  }}>Schedule</Button>
+                                                </GridItem>
+                                            </GridContainer>
+                                          </>
+                                        );
+                        }
+}
+
 
 Tasks.propTypes = {
   tasksIndexes: PropTypes.arrayOf(PropTypes.number),

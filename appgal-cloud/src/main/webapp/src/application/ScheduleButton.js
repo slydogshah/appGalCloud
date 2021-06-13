@@ -51,86 +51,62 @@ class ScheduleButton extends React.Component
     constructor(props)
     {
         super(props);
-        //console.log("State: "+JSON.stringify(this.props.value));
         this.schedulePickup = this.schedulePickup.bind(this);
         this.schedulePickupProcess = this.schedulePickupProcess.bind(this);
     }
 
     schedulePickup(event)
     {
-             const dropOffOrgId = event.target.value;
+         const dropOffOrgId = event.target.value;
 
-             const payload = {
-                pickupNotificationId:this.props.location.state.data.pickupNotificationId,
-                dropOffOrgId: dropOffOrgId,
-                sourceOrg:store.getState().sourceOrg
-             };
+         const payload = {
+            pickupNotificationId:this.props.location.state.data.pickupNotificationId,
+            dropOffOrgId: dropOffOrgId,
+            enableOfflineCommunitySupport:false,
+            sourceOrg:store.getState().sourceOrg
+         };
 
-             //console.log(JSON.stringify(payload));
-
-             const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
-                      axios.post(apiUrl,payload).then((response) => {
-                            console.log(JSON.stringify(response.data));
-                            this.element = (
-                                <Snackbar
-                                                  place="tc"
-                                                  color="info"
-                                                  icon={AddAlert}
-                                                  message="Your Pickup is scheduled"
-                                                  open={true}
-                                                  closeNotification={() => {
-                                                        //TODO:
-                                                                        const producer = true;
-                                                                        const orgId = store.getState().sourceOrg.orgId;
-                                                                        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
-                                                                        axios.get(apiUrl).then((response) => {
-                                                                            if(producer)
-                                                                            {
-                                                                                   this.props.history.push({
-                                                                                     pathname: "/home",
-                                                                                     state: { data: response.data }
-                                                                                   });
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                    this.props.history.push({
-                                                                                      pathname: "/dropOffHome",
-                                                                                      state: { data: response.data }
-                                                                                    });
-                                                                            }
-                                                                        });
-                                                  }}
-                                                  close
-                                                />
-                            );
-                            /*this.element = (
-                                                                      <CModal
-                                                                        size="sm"
-                                                                        show={true}
-                                                                        color="success"
-                                                                        fade="true"
-                                                                      >
-                                                                        <CModalHeader>
-                                                                          <CModalTitle>Pickup Confirmation</CModalTitle>
-                                                                        </CModalHeader>
-                                                                        <CModalBody>
-                                                                             <CCallout color="info">
-                                                                              <div className="progress-group-prepend">
-                                                                                 <small className="text-muted">Your Pickup is scheduled</small>
-                                                                              </div>
-                                                                            </CCallout>
-                                                                        </CModalBody>
-                                                                        <CModalFooter>
-                                                                            <CButton color="success" onClick={this.schedulePickupProcess}>OK</CButton>
-                                                                        </CModalFooter>
-                                                                      </CModal>
-                                                                 );*/
-                            ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
-                            ReactDOM.render(this.element,document.getElementById('schedulePickup'));
-              }).catch(err => {
-               //TODO
-               console.log(JSON.stringify(err));
-              });
+         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
+         axios.post(apiUrl,payload).then((response) => {
+            console.log(JSON.stringify(response.data));
+            this.element = (
+                <Snackbar
+                                  place="tc"
+                                  color="info"
+                                  icon={AddAlert}
+                                  message="Your Pickup is scheduled"
+                                  open={true}
+                                  closeNotification={() => {
+                                        //TODO:
+                                        const producer = true;
+                                        const orgId = store.getState().sourceOrg.orgId;
+                                        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+                                        axios.get(apiUrl).then((response) => {
+                                            if(producer)
+                                            {
+                                                   this.props.history.push({
+                                                     pathname: "/home",
+                                                     state: { data: response.data }
+                                                   });
+                                            }
+                                            else
+                                            {
+                                                    this.props.history.push({
+                                                      pathname: "/dropOffHome",
+                                                      state: { data: response.data }
+                                                    });
+                                            }
+                                        });
+                                  }}
+                                  close
+                                />
+                );
+                ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
+                ReactDOM.render(this.element,document.getElementById('schedulePickup'));
+          }).catch(err => {
+           //TODO
+           console.log(JSON.stringify(err));
+          });
     }
 
     schedulePickupProcess(event)

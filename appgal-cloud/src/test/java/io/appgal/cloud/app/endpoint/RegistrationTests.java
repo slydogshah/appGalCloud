@@ -1,8 +1,6 @@
 package io.appgal.cloud.app.endpoint;
 
 import com.google.gson.*;
-import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.model.Location;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.model.ProfileType;
 import io.appgal.cloud.model.SourceOrg;
@@ -15,15 +13,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+
 @QuarkusTest
-public class RegistrationTests extends BaseTest {
+public class RegistrationTests  extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(RegistrationTests.class);
 
     @Inject
@@ -159,7 +158,7 @@ public class RegistrationTests extends BaseTest {
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
         loginJson.addProperty("password", "password");
-        response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         jsonString = response.getBody().prettyPrint();
         logger.info("****");
@@ -242,7 +241,7 @@ public class RegistrationTests extends BaseTest {
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
         loginJson.addProperty("password", "c");
-        response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
 
         String jsonString = response.getBody().prettyPrint();
         logger.info("****");
@@ -258,5 +257,303 @@ public class RegistrationTests extends BaseTest {
         assertEquals(profile.getMobile(), 8675309l);
         assertEquals(profile.getPassword(), "c");
         assertEquals(profile.getProfileType().name(), "FOOD_RUNNER");
+    }
+
+    @Test
+    public void testSendResetCode() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("mobileNumber","+15129151162");
+        response = given().body(json.toString()).when().post("/registration/sendResetCode").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testSendResetCodeNotRegistered() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email","random@random.com");
+        json.addProperty("mobileNumber","+15129151162");
+        response = given().body(json.toString()).when().post("/registration/sendResetCode").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(404, response.getStatusCode());
+    }
+
+    @Test
+    public void testSendResetCodeFoodRunnerNotAllowed() throws Exception{
+        JsonObject json = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        json.addProperty("id", id);
+        json.addProperty("email", email);
+        json.addProperty("password", "c");
+        json.addProperty("mobile", 8675309l);
+        json.addProperty("photo", "photu");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        logger.info("******NEW_PROFILE******");
+        logger.info(json.toString());
+        logger.info("***********************");
+
+        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+        String jsonString = response.getBody().asString();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+
+        json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("mobileNumber","+15129151162");
+        response = given().body(json.toString()).when().post("/registration/sendResetCode").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(403, response.getStatusCode());
+    }
+
+    @Test
+    public void testVerifyResetCodeInvalid() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("mobileNumber","+15129151162");
+        response = given().body(json.toString()).when().post("/registration/sendResetCode").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+
+        json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("resetCode","123456");
+        response = given().body(json.toString()).when().post("/registration/verifyResetCode").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(401, response.getStatusCode());
+    }
+
+    @Test
+    public void testVerifyResetCodeValid() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("mobileNumber","+15129151162");
+        response = given().body(json.toString()).when().post("/registration/sendResetCode").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+
+        Profile profile = this.mongoDBJsonStore.getProfile(email);
+        json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("resetCode",profile.getResetCode());
+        response = given().body(json.toString()).when().post("/registration/verifyResetCode").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testResetPasswordSuccess() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("newPassword","blah");
+        json.addProperty("confirmNewPassword","blah");
+        response = given().body(json.toString()).when().post("/registration/resetPassword").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testResetPasswordFail() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("newPassword","blah");
+        json.addProperty("confirmNewPassword","blahb");
+        response = given().body(json.toString()).when().post("/registration/resetPassword").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(400, response.getStatusCode());
     }
 }

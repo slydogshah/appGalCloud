@@ -1,7 +1,9 @@
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
@@ -63,6 +65,9 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
+    Profile profile = ActiveSession.getInstance().getProfile();
+    CloudDataPoller.startPolling(context,profile);
+    LocationUpdater.startPolling(profile);
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
@@ -134,6 +139,17 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
   }
 
   Widget getAppBarUI(BuildContext context) {
+    Icon icon = new Icon(Icons.thumb_up_rounded);
+    Icon requests = new Icon(Icons.notification_important_rounded);
+    Color offline = Colors.white;
+    FoodRunner foodRunner = ActiveSession.getInstance().foodRunner;
+    if(foodRunner.offlineCommunitySupport){
+      offline = Colors.green;
+    }
+    Color requestsIconColor = Colors.white;
+    if(this.recoveryTxs.length > 0) {
+          requestsIconColor = Colors.red;
+    }
     return Container(
       decoration: BoxDecoration(
         color: Colors.blueGrey,
@@ -200,19 +216,61 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                       ),
                     ),
                   ),*/
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
+                  Tooltip(
+                    message: "DropOffs In Progress",
+                    child: Material(
+                      color: requestsIconColor,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(32.0),
+                        ),
+                        onTap: () {
+                          if(this.recoveryTxs.length > 0) {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    FoodRunnerMainScene(this.txs)));
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: requests,
+                        ),
                       ),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => FoodRunnerMainScene(this.txs)));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(FontAwesomeIcons.mapMarkerAlt),
+                    ),
+                  ),
+                  Tooltip(
+                    message: "Notify Availability",
+                    child: Material(
+                      color: offline,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(32.0),
+                        ),
+                        onTap: () {
+                          if(foodRunner.offlineCommunitySupport){
+                            foodRunner.offlineCommunitySupport = false;
+                          }
+                          else{
+                            foodRunner.offlineCommunitySupport = true;
+                          }
+                          Profile profile = ActiveSession.getInstance().getProfile();
+                          ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+                          Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email,);
+                          response.then((response){
+                                setState(() {
+                                  if(foodRunner.offlineCommunitySupport){
+                                    offline = Colors.green;
+                                  }
+                                  else{
+                                    offline = Colors.white;
+                                  }
+                                });
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: icon,
+                        ),
                       ),
                     ),
                   ),
@@ -244,6 +302,36 @@ class InProgressListView extends StatelessWidget {
   Widget build(BuildContext context) {
     String remoteUrl = UrlFunctions.getInstance().resolveHost() +
         "tx/recovery/transaction/foodPic/?id=" + tx.getId();
+    Widget buttons = null;
+    Text dropOffOrgName = null;
+    if(tx.getPickupNotification().getDropOffOrg() != null)
+    {
+      buttons = this.getButton(context, tx);
+      dropOffOrgName = Text(
+        tx
+            .getPickupNotification()
+            .getDropOffOrg()
+            .orgName,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
+        ),
+      );
+    }
+    else
+    {
+      buttons = this.getButton(context, tx);
+      dropOffOrgName = Text(
+        "Community",
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
+        ),
+      );
+    }
+
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -280,32 +368,7 @@ class InProgressListView extends StatelessWidget {
                               child:
                               Image.network(remoteUrl),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 16, top: 8),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  ElevatedButton(
-                                    child: Text('DropOff'),
-                                    style: ElevatedButton.styleFrom(
-                                      //primary: Color(0xFF383EDB)
-                                        primary: Colors.pink
-                                    ),
-                                    onPressed: () {
-                                      Profile profile = ActiveSession
-                                          .getInstance().getProfile();
-                                      handleDropOff(context,profile.email,
-                                          tx.schedulePickupNotification.dropOffOrg.orgId,
-                                          tx);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
+                            buttons,
                             Container(
                               color: HotelAppTheme
                                   .buildLightTheme()
@@ -383,17 +446,7 @@ class InProgressListView extends StatelessWidget {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        Text(
-                                          tx
-                                              .getPickupNotification()
-                                              .getDropOffOrg()
-                                              .orgName,
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 22,
-                                          ),
-                                        ),
+                                        dropOffOrgName,
                                         Text(
                                           'DropOff: 15 minutes',
                                           style: TextStyle(
@@ -441,6 +494,72 @@ class InProgressListView extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget getButton(BuildContext context,FoodRecoveryTransaction tx)
+  {
+    Widget padding = null;
+    if(tx.getPickupNotification().getDropOffOrg() != null) {
+      padding = Padding(
+        padding: const EdgeInsets.only(
+            right: 16, top: 8),
+        child: Column(
+          mainAxisAlignment:
+          MainAxisAlignment.center,
+          crossAxisAlignment:
+          CrossAxisAlignment.end,
+          children: <Widget>[
+            ElevatedButton(
+              child: Text('DropOff'),
+              style: ElevatedButton.styleFrom(
+                //primary: Color(0xFF383EDB)
+                  primary: Colors.pink
+              ),
+              onPressed: () {
+                Profile profile = ActiveSession
+                    .getInstance().getProfile();
+                handleDropOff(context, profile.email,
+                    tx.schedulePickupNotification.dropOffOrg.orgId,
+                    tx);
+              },
+            ),
+          ],
+        ),
+      );
+    }
+    else{
+      padding = Padding(
+        padding: const EdgeInsets.only(
+            right: 16, top: 8),
+        child: Column(
+          mainAxisAlignment:
+          MainAxisAlignment.center,
+          crossAxisAlignment:
+          CrossAxisAlignment.end,
+          children: <Widget>[
+            ElevatedButton(
+              child: Text('Community DropOff'),
+              style: ElevatedButton.styleFrom(
+                //primary: Color(0xFF383EDB)
+                  primary: Colors.pink
+              ),
+              onPressed: () {
+                print(tx);
+                ActiveNetworkRestClient restClient = new ActiveNetworkRestClient();
+                Future<Map<String,List<FoodRecoveryTransaction>>> future = restClient.notifyDelivery(tx);
+                future.then((map) {
+                  Navigator.of(context, rootNavigator: true).pop();
+
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => InProgressMainScene(map)));
+                });
+              },
+            ),
+          ],
+        ),
+      );
+    }
+    return padding;
   }
 
   void handleDropOff(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {

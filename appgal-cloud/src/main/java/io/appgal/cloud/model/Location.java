@@ -53,14 +53,14 @@ public class Location implements Serializable {
         Location location = new Location();
 
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        if(jsonObject.has("latitude")) {
+        if(jsonObject.has("latitude") && !jsonObject.get("latitude").isJsonNull()) {
             location.latitude = jsonObject.get("latitude").getAsDouble();
         }
         else
         {
             location.latitude = 0.0d;
         }
-        if(jsonObject.has("longitude")) {
+        if(jsonObject.has("longitude") && !jsonObject.get("longitude").isJsonNull()) {
             location.longitude = jsonObject.get("longitude").getAsDouble();
         }
         else

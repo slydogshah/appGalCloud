@@ -142,8 +142,11 @@ public class JenFlow {
         accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
 
-        //FoodRunner notifies deliver
+        //Organization notifies delivery
         this.notifyDelivery(accepted);
+
+        myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
     }
 
     private SourceOrg registerPickupOrg()
@@ -269,7 +272,7 @@ public class JenFlow {
         loginJson.addProperty("password", "password");
         loginJson.addProperty("latitude", 30.2698104d);
         loginJson.addProperty("longitude",-97.75115579999999);
-        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        Response response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
         //JsonUtil.print(this.getClass(), responseJson);

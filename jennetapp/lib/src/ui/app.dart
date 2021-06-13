@@ -1,6 +1,7 @@
 import 'package:app/hotel_booking/filters_screen.dart';
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -129,11 +130,6 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
 
     TextFormField emailTextField = TextFormField(
       controller: new TextEditingController(),
-      autovalidateMode:AutovalidateMode.always,
-      validator: (value) {
-        return this.emailRejectedMessage;
-      },
-      onChanged: (String txt) {},
       style: const TextStyle(
         fontSize: 18,
       ),
@@ -677,10 +673,9 @@ class LoginView extends StatelessWidget {
                                                             FlatButton(
                                                               textColor: Color(0xFF6200EE),
                                                               onPressed: () {
-                                                                FocusScope.of(context).requestFocus(FocusNode());
-                                                                profileFunctions.showAlertDialogRegister(context, this,
-                                                                    this.loginState, emailTextField,
-                                                                    passwordTextField,"FOOD_RUNNER");
+                                                                Navigator.pop(context);
+                                                                Navigator.push(context, MaterialPageRoute(
+                                                                    builder: (context) => Registration()));
                                                               },
                                                               child: Text('ACCEPT'),
                                                             ),
@@ -745,9 +740,6 @@ class LoginView extends StatelessWidget {
         },
       );
     }
-  }
-
-  void handleAccept(BuildContext context) {
   }
 
   Widget getLoginUIBar(BuildContext context, TextFormField emailTextField) {

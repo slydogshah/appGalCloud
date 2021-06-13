@@ -97,16 +97,15 @@ public class FoodRecoveryStore {
         List<FoodRecoveryTransaction> list = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("foodRecoveryTransaction");
 
-        String queryJson = "{}";
-        //logger.info(queryJson);
-        Bson bson = Document.parse(queryJson);
-        FindIterable<Document> iterable = collection.find(bson);
+        FindIterable<Document> iterable = collection.find();
         MongoCursor<Document> cursor = iterable.cursor();
         while(cursor.hasNext())
         {
             Document document = cursor.next();
             String documentJson = document.toJson();
-            list.add(FoodRecoveryTransaction.parse(documentJson));
+            FoodRecoveryTransaction tx = FoodRecoveryTransaction.parse(documentJson);
+            //logger.info("STORED_TX:ID>"+tx.getId()+", STORED_TX_STATE: "+tx.getTransactionState());
+            list.add(tx);
         }
         return list;
     }

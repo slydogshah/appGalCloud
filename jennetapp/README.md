@@ -1,4 +1,4 @@
-# jennetapp
+# Jen Network
 
 A new Flutter project.
 

@@ -298,7 +298,7 @@ public class NetworkFlow {
         loginJson.addProperty("password", password);
         loginJson.addProperty("latitude", lat);
         loginJson.addProperty("longitude",lon);
-        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        Response response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
         //JsonUtil.print(this.getClass(), responseJson);

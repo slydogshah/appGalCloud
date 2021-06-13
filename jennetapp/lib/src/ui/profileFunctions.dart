@@ -124,33 +124,12 @@ class ProfileFunctions
 
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
+      activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<Map<String,List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-        //Navigator.pushReplacement(context, MaterialPageRoute(
-        //    builder: (context) => FoodRunnerMainScene(txs)));
-        /*if(txs!=null && !txs.isEmpty) {
-          Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
-        }
-        else
-        {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => DesignCourseHomeScreen()));
-        }*/
-
-        //Navigator.of(context, rootNavigator: true).pop();
-        /*if(txs != null && !txs.isEmpty) {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
-        }
-        else
-        {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => EmptyHome()));
-        }*/
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
       });
@@ -164,8 +143,6 @@ class ProfileFunctions
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
     ProfileRestClient profileRestClient = new ProfileRestClient();
-
-    //print("LOGIN: $location");
 
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
@@ -181,40 +158,16 @@ class ProfileFunctions
         loginScene.notifySystemError("System Error: Please try again");
         return;
       }
-
-
-
       Profile foodRunner = Profile.fromJson(json);
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
+      activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<Map<String,List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-
-        /*if(txs!=null && !txs.isEmpty) {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
-        }
-        else
-        {
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => DesignCourseHomeScreen()));
-        }*/
-
         Navigator.of(context, rootNavigator: true).pop();
-
-        /*if(txs != null && !txs.isEmpty) {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
-        }
-        else
-        {
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => EmptyHome()));
-        }*/
-
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerMainScene(txs)));
 
@@ -227,9 +180,62 @@ class ProfileFunctions
   void showCards(BuildContext context, Profile profile) 
   {
     //print("PROFILE: $profile");
-    //CloudDataPoller.startPolling(context,profile);
+    CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   void showAlertDialogRegistration(BuildContext context,final RegistrationState registrationState, final RegisterView state,

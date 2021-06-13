@@ -88,8 +88,17 @@ function HomeView({state, props}) {
   var array = [];
   for (const [index, value] of inProgress.entries()) {
     const row = [];
-    const org = value.pickupNotification.dropOffOrg.orgName;
-    const orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+    const org = "";
+    const orgContact = "";
+    if(value.pickupNotification.dropOffOrg == null)
+    {
+        org = "Offline Community DropOff";
+        orgContact = "";
+    }
+    else{
+        org = value.pickupNotification.dropOffOrg.orgName;
+        orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+    }
     row.push(org);
     row.push(orgContact);
     array.push(row);
@@ -99,8 +108,17 @@ function HomeView({state, props}) {
     var activeArray = [];
     for (const [index, value] of active.entries()) {
       const row = [];
-      const org = value.pickupNotification.dropOffOrg.orgName;
-      const orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+      const org = "";
+          const orgContact = "";
+          if(value.pickupNotification.dropOffOrg == null)
+          {
+              org = "Offline Community DropOff";
+              orgContact = "";
+          }
+          else{
+              org = value.pickupNotification.dropOffOrg.orgName;
+              orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+          }
       const foodRunner = value.pickupNotification.foodRunner.profile.email;
       row.push(org);
       row.push(orgContact);
@@ -112,8 +130,17 @@ function HomeView({state, props}) {
         var historyArray = [];
         for (const [index, value] of history.entries()) {
           const row = [];
-          const org = value.pickupNotification.dropOffOrg.orgName;
-          const orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+          const org = "";
+              const orgContact = "";
+              if(value.pickupNotification.dropOffOrg == null)
+              {
+                  org = "Offline Community DropOff";
+                  orgContact = "";
+              }
+              else{
+                  org = value.pickupNotification.dropOffOrg.orgName;
+                  orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+              }
           const foodRunner = value.pickupNotification.foodRunner.profile.email;
           row.push(org);
           row.push(orgContact);

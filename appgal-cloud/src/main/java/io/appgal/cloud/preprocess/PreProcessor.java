@@ -35,7 +35,7 @@ public class PreProcessor implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext context) {
-        if(this.mongoDBJsonStore.getSourceOrg("church") == null) {
+        /*if(this.mongoDBJsonStore.getSourceOrg("church") == null) {
             try
             {
                 SourceOrg dropOffOrg = new SourceOrg();
@@ -52,6 +52,6 @@ public class PreProcessor implements ContainerRequestFilter {
             catch (Exception e)
             {
             }
-        }
+        }*/
     }
 }

@@ -270,6 +270,13 @@ public class ActiveNetworkTests extends BaseTest {
         responseJson = JsonParser.parseString(jsonString);
         JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
+
+        response = given().get("/tx/recovery/transaction/foodPic/?id="+txId);
+        assertEquals(200, response.getStatusCode());
+
+        response = given().get("/tx/recovery/transaction/foodPic/?id=blah");
+        logger.info("STATUS: "+response.getStatusCode());
+        assertEquals(404, response.getStatusCode());
     }
 
     private SourceOrg registerPickupOrg()
@@ -436,7 +443,7 @@ public class ActiveNetworkTests extends BaseTest {
         loginJson.addProperty("password", password);
         loginJson.addProperty("latitude", 30.2698104d);
         loginJson.addProperty("longitude",-97.75115579999999);
-        Response response = given().body(loginJson.toString()).when().post("/registration/login").andReturn();
+        Response response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
         //JsonUtil.print(this.getClass(), responseJson);

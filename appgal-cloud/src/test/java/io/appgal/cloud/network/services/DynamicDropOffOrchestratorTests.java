@@ -1,94 +1,195 @@
 package io.appgal.cloud.network.services;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.appgal.cloud.infrastructure.RequestPipeline;
+import com.google.gson.JsonParser;
+import io.appgal.cloud.app.services.ProfileRegistrationService;
+import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 import io.bugsbunny.test.components.BaseTest;
+import io.bugsbunny.test.components.MockData;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.response.Response;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class DynamicDropOffOrchestratorTests extends BaseTest {
+public class DynamicDropOffOrchestratorTests extends BaseTest{
     private static Logger logger = LoggerFactory.getLogger(DynamicDropOffOrchestratorTests.class);
 
     @Inject
     private DynamicDropOffOrchestrator dynamicDropOffOrchestrator;
 
     @Inject
-    private RequestPipeline requestPipeline;
+    private ProfileRegistrationService profileRegistrationService;
+
+    private FoodRunner foodRunner;
 
     @BeforeEach
     public void setUp() throws Exception
     {
-        super.setUp();
-        this.requestPipeline.clear();
+        this.foodRunner = MockData.mockFoodRunner();
+        this.foodRunner.getProfile().setEmail("jen@appgallabs.io");
+        this.profileRegistrationService.register(foodRunner.getProfile());
+        this.loginFoodRunner(foodRunner.getProfile().getEmail(),foodRunner.getProfile().getPassword());
+    }
 
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).withHour(1).withMinute(0).withSecond(0);
+    @Test
+    public void notifyAvailability() throws Exception
+    {
+        this.dynamicDropOffOrchestrator.notifyAvailability(this.foodRunner.getProfile().getEmail(),true);
+    }
 
-        OffsetDateTime middle = OffsetDateTime.now(ZoneOffset.UTC).withHour(12).withMinute(0).withSecond(0);
+    @Test
+    public void getOfflineDropOffHelpers() throws Exception
+    {
+        this.dynamicDropOffOrchestrator.notifyAvailability(this.foodRunner.getProfile().getEmail(),true);
 
-        OffsetDateTime end = OffsetDateTime.now(ZoneOffset.UTC).withHour(20).withMinute(0).withSecond(0);
+        //Register a Pickup Org
+        SourceOrg pickup = this.registerPickupOrg();
 
-        List<OffsetDateTime> schedulePickUpNotificationList = new LinkedList<>();
-        schedulePickUpNotificationList.add(middle);
-        schedulePickUpNotificationList.add(end);
-        schedulePickUpNotificationList.add(start);
-        logger.info(schedulePickUpNotificationList.toString());
+        List<FoodRunner> helpers = this.dynamicDropOffOrchestrator.getOfflineDropOffHelpers(pickup);
+        JsonUtil.print(this.getClass(),JsonParser.parseString(helpers.toString()));
 
-        for (OffsetDateTime cour : schedulePickUpNotificationList) {
-            SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
-            sourceOrg.setProducer(true);
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
-            Location location = new Location(0.0d, 0.0d);
-            FoodRunner bugsBunny = new FoodRunner(profile, location);
+        //Send a PickUpRequest
+        String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                        getResource("encodedImage"),
+                StandardCharsets.UTF_8);
+        String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(), FoodTypes.VEG.name(), foodPic);
+        this.schedulePickup(pickupNotificationId, pickup);
 
-            SchedulePickUpNotification notification = new SchedulePickUpNotification(UUID.randomUUID().toString());
-            notification.setDropOffDynamic(true);
-            notification.setFoodRunner(bugsBunny);
-            notification.setStart(cour);
-            logger.info("********************************************");
-            JsonUtil.print(this.getClass(),notification.toJson());
-            logger.info(cour.toString() + ":" + cour.toEpochSecond());
+        //FoodRunner accepts....this will update to notificationSent=true
+        List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
 
-            this.requestPipeline.add(notification);
+        FoodRecoveryTransaction accepted = myTransactions.get(0);
+        accepted = this.acceptTransaction(foodRunner.getProfile().getEmail(),accepted);
+    }
+
+    private JsonObject loginFoodRunner(String email,String password)
+    {
+        JsonObject loginJson = new JsonObject();
+        loginJson.addProperty("email", email);
+        loginJson.addProperty("password", password);
+        loginJson.addProperty("latitude", 30.2698104d);
+        loginJson.addProperty("longitude",-97.75115579999999);
+        Response response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        //JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+        return responseJson.getAsJsonObject();
+    }
+
+    private SourceOrg registerPickupOrg()
+    {
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = "pickup@pickup.io";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "password");
+        registrationJson.addProperty("orgId", "pickup.io");
+        registrationJson.addProperty("orgName", "Pickup Inc");
+        registrationJson.addProperty("orgType", true);
+        registrationJson.addProperty("orgContactEmail", email);
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("producer", true);
+        registrationJson.addProperty("street","506 West Ave");
+        registrationJson.addProperty("zip","78701");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        //JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+        assertTrue(responseJson.getAsJsonObject().get("producer").getAsBoolean());
+
+        return SourceOrg.parse(responseJson.getAsJsonObject().toString());
+    }
+
+    private String sendPickUpDetails(String orgId,String foodType,String foodPic)
+    {
+        JsonObject json = new JsonObject();
+        json.addProperty("orgId", orgId);
+        json.addProperty("foodType", foodType);
+        json.addProperty("foodPic", foodPic);
+        json.addProperty("time","0:0");
+
+        Response response = given().body(json.toString()).post("/notification/addPickupDetails/");
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        //JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+
+        return responseJson.getAsJsonObject().get("pickupNotificationId").getAsString();
+    }
+
+    private void schedulePickup(String pickupNotificationId,SourceOrg pickupOrg)
+    {
+        JsonObject json = new JsonObject();
+        json.addProperty("pickupNotificationId", pickupNotificationId);
+        json.addProperty("enableOfflineCommunitySupport", true);
+        json.add("sourceOrg", pickupOrg.toJson());
+
+        Response response = given().body(json.toString()).post("/notification/schedulePickup/");
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        logger.info("*************SCHEDULE_PICKUP****************");
+        JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+    }
+
+    private List<FoodRecoveryTransaction> getMyTransactions(String email)
+    {
+        Response response = given().get("/tx/recovery/foodRunner/?email="+email);
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        //JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+
+        JsonArray pending = responseJson.getAsJsonObject().get("pending").getAsJsonArray();
+        List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
+        Iterator<JsonElement> itr = pending.iterator();
+        while(itr.hasNext())
+        {
+            FoodRecoveryTransaction cour = FoodRecoveryTransaction.parse(itr.next().getAsJsonObject().toString());
+            myTransactions.add(cour);
         }
 
-        this.requestPipeline.process();
-        Thread.sleep(5000);
+        return myTransactions;
     }
 
-    @Test
-    public void notifyAvailability()
+    private FoodRecoveryTransaction acceptTransaction(String email,FoodRecoveryTransaction accepted)
     {
-        this.dynamicDropOffOrchestrator.notifyAvailability("123");
-    }
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        json.addProperty("enableOfflineCommunitySupport",true);
+        json.addProperty("accepted",accepted.getId());
+        Response response = given().body(json.toString()).when().post("/activeNetwork/accept").andReturn();
+        String jsonString = response.getBody().print();
+        logger.info("**********ACCEPT_RESPONSE*************");
+        logger.info(jsonString);
+        JsonObject responseJson = JsonParser.parseString(jsonString).getAsJsonObject();
+        assertEquals(200, response.getStatusCode());
+        String id = responseJson.get("recoveryTransactionId").getAsString();
 
-    @Test
-    public void testOrchestrateOfflineCommunity()
-    {
-        JsonObject json = this.dynamicDropOffOrchestrator.orchestrateOfflineCommunity();
-        JsonUtil.print(this.getClass(),json);
-    }
-
-    @Test
-    public void testGetOfflineDropOffPipeline() throws Exception
-    {
-        JsonArray pipeline = this.dynamicDropOffOrchestrator.getOfflineDropOffPipeline();
-        JsonUtil.print(this.getClass(),pipeline);
+        response = given().body(json.toString()).when().get("/tx/recovery/transaction?id="+id).andReturn();
+        jsonString = response.getBody().print();
+        return FoodRecoveryTransaction.parse(jsonString);
     }
 }

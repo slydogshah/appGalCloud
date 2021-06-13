@@ -2,6 +2,9 @@ import React from 'react';
 
 //Application
 const Login = React.lazy(() => import('./application/Login'));
+const ForgotPassword = React.lazy(() => import('./application/ForgotPassword'));
+const ConfirmResetCode = React.lazy(() => import('./application/ConfirmResetCode'));
+const ResetPassword = React.lazy(() => import('./application/ResetPassword'));
 const Home = React.lazy(() => import('./application/Home'));
 const PickupHistory = React.lazy(() => import('./application/PickupHistory'));
 const AddPickupDetails = React.lazy(() => import('./application/AddPickupDetails'));
@@ -13,6 +16,9 @@ const DropOffHistory = React.lazy(() => import('./application/DropOffHistory'));
 
 const routes = [
   { path: '/', exact: true, name: 'Login', component: Login},
+  { path: '/forgotPassword', exact: true, name: 'Forgot Password', component: ForgotPassword},
+  { path: '/resetPassword', exact: true, name: 'Reset Password', component: ResetPassword},
+  { path: '/confirmResetCode', exact: true, name: 'Confirm Reset Code', component: ConfirmResetCode},
   { path: '/home', exact: true, name: 'Home', component: Home },
   { path: '/profile', exact: true, name: 'Profile', component: Profile },
   { path: '/pickupHistory', exact: true, name: 'Pickup History', component: PickupHistory },

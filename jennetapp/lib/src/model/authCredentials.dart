@@ -6,11 +6,30 @@ class AuthCredentials
 {
   String email;
   String password;
+  double latitude;
+  double longitude;
   int statusCode;
 
   Profile profile;
 
   AuthCredentials();
+
+  double getLatitude()
+  {
+    return this.latitude;
+  }
+  void setLatitude(double latitude)
+  {
+    this.latitude = latitude;
+  }
+  double getLongitude()
+  {
+    return this.longitude;
+  }
+  void setLongitude(double longitude)
+  {
+    this.longitude = longitude;
+  }
 
   AuthCredentials.fromJson(Map<String, dynamic> json)
   {
@@ -20,6 +39,8 @@ class AuthCredentials
     email = this.profile.email;
     password = this.profile.password;
     statusCode = profileJson['statusCode'];
+    latitude = profileJson['latitude'];
+    longitude = profileJson[longitude];
   }
 
   Map<String, dynamic> toJson() =>
@@ -27,7 +48,9 @@ class AuthCredentials
     "email": this.email,
     "password": this.password,
     "statusCode": this.statusCode,
-    "profile": this.profile
+    "profile": this.profile,
+    "latitude":this.latitude,
+    "longitude":this.longitude
   };
 
   String toString()

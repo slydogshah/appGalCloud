@@ -47,183 +47,15 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
 
   void notifyEmailIsInvalid(String emailValue,String passwordValue,bool emailValid,bool passwordRequired) {
     setState(() {
-      // This call to setState tells the Flutter framework that
-      // something has changed in this State, which causes it to rerun
-      // the build method below so that the display can reflect the
-      // updated values. If you change _counter without calling
-      // setState(), then the build method won't be called again,
-      // and so nothing would appear to happen.
       this.emailIsInvalid = emailValid;
       this.passwordIsRequired = passwordRequired;
       this.email = emailValue;
       this.password = passwordValue;
-      //print("EmailValid: $emailIsInvalid");
-      //print("PasswordValid: $passwordIsRequired");
-      //print("PhoneValid: $phoneIsInvalid");
     });
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    /*final cursorColor = Theme.of(context).cursorColor;
-    const sizedBoxSpace = SizedBox(height: 24);
-    ProfileFunctions profileFunctions = new ProfileFunctions();
-
-    final _formKey = GlobalKey<FormState>();
-
-    TextFormField email = TextFormField(
-        controller: TextEditingController(text:this.email),
-        textCapitalization: TextCapitalization.words,
-        cursorColor: cursorColor,
-        decoration: InputDecoration(
-          filled: true,
-          icon: Icon(Icons.person),
-          //hintText: "Your email address",
-          labelText:
-          "Email",
-        ),
-        validator: (value) {
-          try {
-            if (this.emailIsInvalid) {
-              if (value.isEmpty) {
-                return "Email is required";
-              }
-              else {
-                return 'Email is invalid';
-              }
-            }
-            if (value.isEmpty) {
-              if (this.emailIsInvalid) {
-                return "Email is required";
-              }
-              else {
-                return null;
-              }
-            }
-            return null;
-          }finally{
-            this.emailIsInvalid = false;
-          }
-
-        },
-        autovalidateMode:AutovalidateMode.always
-    );
-    TextFormField password = TextFormField(
-        controller: TextEditingController(text:this.password),
-        obscureText: true,
-        decoration: InputDecoration(
-            filled: true,
-            icon: Icon(Icons.visibility_off),
-            //hintText: "Your email address",
-            labelText:
-            "Password"
-        ),
-        validator: (value) {
-          try {
-            if (this.passwordIsRequired) {
-              if (value.isEmpty) {
-                return "Password is required";
-              }
-              else {
-                return null;
-              }
-            }
-            if (value.isEmpty) {
-              if (this.passwordIsRequired) {
-                return "Password is required";
-              }
-              else {
-                return null;
-              }
-            }
-            return null;
-          }finally{
-            this.passwordIsRequired = false;
-          }
-        },
-        autovalidateMode:AutovalidateMode.always
-    );
-    TextFormField mobile = TextFormField(
-        controller: TextEditingController(text:this.phone),
-        textCapitalization: TextCapitalization.words,
-        cursorColor: cursorColor,
-        decoration: InputDecoration(
-          filled: true,
-          icon: Icon(Icons.phone),
-          hintText: "Your phone number",
-          labelText:
-          "Phone",
-        ),
-        validator: (value) {
-          try {
-            if (this.phoneIsInvalid) {
-              if (value.isEmpty) {
-                return "Phone is required";
-              }
-              else {
-                return 'Phone is invalid';
-              }
-            }
-            if (value.isEmpty) {
-              if (this.phoneIsInvalid) {
-                return "Phone is required";
-              }
-              else {
-                return null;
-              }
-            }
-            return null;
-          }finally{
-            this.phoneIsInvalid = false;
-          }
-        },
-        autovalidateMode:AutovalidateMode.always
-    );
-    Scrollbar scrollbar = new Scrollbar(child: SingleChildScrollView(
-        dragStartBehavior: DragStartBehavior.down,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            sizedBoxSpace,
-            email,
-            sizedBoxSpace,
-            password,
-            sizedBoxSpace,
-            mobile,
-            sizedBoxSpace,
-            Center(
-                child: RaisedButton(
-                    child: Text("Register"),
-                    onPressed: ()
-                    {
-                      if (_formKey.currentState.validate()) {
-                        emailIsInvalid = false;
-                        passwordIsRequired = false;
-                        phoneIsInvalid = false;
-                        this.email = "";
-                        this.password = "";
-                        this.phone = "";
-
-                        profileFunctions.showAlertDialogRegistration(context, this, email, password,mobile,"FOOD_RUNNER");
-                      }
-                    }
-                )
-            ),
-          ],
-        )
-    )
-    );
-
-    Form form = new Form(key:_formKey,child:scrollbar);
-    Scaffold scaffold = new Scaffold(appBar: CupertinoNavigationBar(
-        middle: Text("Register"),
-      ),
-      body: form,);
-
-    return scaffold;*/
-
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
     return Theme(
@@ -249,24 +81,6 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                         headerSliverBuilder:
                             (BuildContext context, bool innerBoxIsScrolled) {
                           return <Widget>[
-                            /*SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                      (BuildContext context, int index) {
-                                    return Column(
-                                      children: <Widget>[
-                                        getSearchBarUI(),
-                                        getTimeDateUI(),
-                                      ],
-                                    );
-                                  }, childCount: 1),
-                            ),*/
-                            /*SliverPersistentHeader(
-                              pinned: true,
-                              floating: true,
-                              delegate: ContestTabHeader(
-                                getFilterBarUI(),
-                              ),
-                            ),*/
                           ];
                         },
                         body: Container(
@@ -377,19 +191,6 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                       ),
                     ),
                   ),
-                  /*Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
-                      ),
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(FontAwesomeIcons.mapMarkerAlt),
-                      ),
-                    ),
-                  ),*/
                 ],
               ),
             )
@@ -500,62 +301,11 @@ class RegisterView extends StatelessWidget {
                                           children: <Widget>[
                                             email,
                                             password,
-                                            /*Padding(
-                                              padding:
-                                              const EdgeInsets.only(top: 4),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                                children: <Widget>[
-                                                  ElevatedButton(
-                                                    child: Text('Login'),
-                                                    style: ElevatedButton.styleFrom(
-                                                      //primary: Color(0xFF383EDB)
-                                                        primary: Colors.pink
-                                                    ),
-                                                    onPressed: () {
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),*/
                                           ],
                                         ),
                                       ),
                                     ),
                                   ),
-                                  /*Padding(
-                                    padding: const EdgeInsets.only(
-                                        right: 16, top: 8),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.end,
-                                      children: <Widget>[
-                                        ElevatedButton(
-                                          child: Text('Login'),
-                                          style: ElevatedButton.styleFrom(
-                                            //primary: Color(0xFF383EDB)
-                                              primary: Colors.pink
-                                          ),
-                                          onPressed: () {
-                                          },
-                                        ),
-                                        ElevatedButton(
-                                          child: Text('Register'),
-                                          style: ElevatedButton.styleFrom(
-                                            //primary: Color(0xFF383EDB)
-                                              primary: Colors.pink
-                                          ),
-                                          onPressed: () {
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),*/
                                 ],
                               ),
                             ),
@@ -639,23 +389,6 @@ class RegisterView extends StatelessWidget {
                     blurRadius: 8.0),
               ],
             ),
-            /*child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(32.0),
-                ),
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Icon(FontAwesomeIcons.search,
-                      size: 20,
-                      color: HotelAppTheme.buildLightTheme().backgroundColor),
-                ),
-              ),
-            ),*/
           ),
         ],
       ),

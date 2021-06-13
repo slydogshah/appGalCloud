@@ -87,8 +87,12 @@ public class NetworkStore {
     {
         MongoCollection<Document> collection = database.getCollection("activeFoodRunners");
 
-        String json = "{}";
-
-        collection.deleteMany(new Document());
+        FindIterable<Document> iterable = collection.find();
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            collection.deleteOne(document);
+        }
     }
 }

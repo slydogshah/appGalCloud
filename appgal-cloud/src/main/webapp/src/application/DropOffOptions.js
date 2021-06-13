@@ -76,6 +76,7 @@ import TableCell from "@material-ui/core/TableCell";
 import Edit from "@material-ui/icons/Edit";
 import Close from "@material-ui/icons/Close";
 import Check from "@material-ui/icons/Check";
+import Button from "../components/CustomButtons/Button.js";
 
 const styles = {
   cardCategoryWhite: {
@@ -183,60 +184,115 @@ function ShowNotification(place){
     }
 };
 
-const DropOffOptionsView = ({dropOffOrgs,widget}) => {
+const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) => {
     const classes = useStyles();
-
-    const array = [];
     const orgArray = [];
+    const orgStatus = [];
+    const orgIdArray = [];
+    const helperArray = [];
+    const orgTaskIndex = [];
+    const helperTaskIndex = [];
+    const helperArrayStatus = [];
     for (const [index, value] of dropOffOrgs.entries()) {
-        console.log(JSON.stringify(value));
         const org = value.orgName +"- "+value.street+", "+value.zip;
-        const orgId = value.orgId;
         const row = [org];
-        const orgRow = [orgId];
-        array.push(row);
-        orgArray.push(orgRow);
+        orgArray.push(row);
+        orgTaskIndex.push(index);
+
+        const orgId = value.orgId;
+        orgIdArray.push(orgId);
+    }
+    for (const [index, value] of offlineCommunityHelpers.entries()) {
+            const email = value.profile.email;
+            const row = [email];
+            helperArray.push(row);
+            helperTaskIndex.push(index);
+            helperArrayStatus.push(true);
     }
 
-    return(
-        <>
-            <br/><br/><br/>
-            <GridContainer>
-                    <GridItem xs={12} sm={12} md={6}>
-                      <CustomTabs
-                        title="DropOff Options"
-                        headerColor="primary"
-                        tabs={[
-                          {
-                            tabName: "Organizations",
-                            tabIcon: BugReport,
-                            tabContent: (
-                              <Tasks
-                                checkedIndexes={[0]}
-                                tasksIndexes={[0, 1]}
-                                tasks={array}
-                                actions={orgArray}
-                              />
-                            )
-                          },
-                          {
-                            tabName: "Homeless Helpers",
-                            tabIcon: Code,
-                            tabContent: (
-                              <Tasks
-                                checkedIndexes={[0]}
-                                tasksIndexes={[0,1]}
-                                tasks={website}
-                                actions={orgArray}
-                              />
-                            )
-                          },
-                        ]}
-                      />
-                    </GridItem>
-                  </GridContainer>
-        </>
-    );
+    if(offlineCommunityHelpers.length > 0)
+    {
+        return(
+            <>
+                <br/><br/><br/>
+                <GridContainer>
+                        <GridItem xs={12} sm={12} md={6}>
+                          <CustomTabs
+                            title="DropOff Options"
+                            headerColor="primary"
+                            tabs={[
+                              {
+                                tabName: "Organizations",
+                                tabIcon: BugReport,
+                                tabContent: (
+                                  <Tasks
+                                    checkedIndexes={[0]}
+                                    tasksIndexes={orgTaskIndex}
+                                    tasks={orgArray}
+                                    actions={orgArray}
+                                    status={true}
+                                    orgIds={orgIdArray}
+                                    pickupNotificationId={props.location.state.data.pickupNotificationId}
+                                    history={props.history}
+                                  />
+                                )
+                              },
+                              {
+                                tabName: "Homeless Helpers",
+                                tabIcon: Code,
+                                tabContent: (
+                                  <Tasks
+                                    checkedIndexes={[0]}
+                                    tasksIndexes={helperTaskIndex}
+                                    tasks={helperArray}
+                                    actions={helperArray}
+                                    status = {false}
+                                    pickupNotificationId={props.location.state.data.pickupNotificationId}
+                                    history={props.history}
+                                  />
+                                )
+                              },
+                            ]}
+                          />
+                        </GridItem>
+                      </GridContainer>
+            </>
+        );
+    }
+    else
+    {
+        return(
+                    <>
+                        <br/><br/><br/>
+                        <GridContainer>
+                                <GridItem xs={12} sm={12} md={6}>
+                                  <CustomTabs
+                                    title="DropOff Options"
+                                    headerColor="primary"
+                                    tabs={[
+                                      {
+                                        tabName: "Organizations",
+                                        tabIcon: BugReport,
+                                        tabContent: (
+                                          <Tasks
+                                            checkedIndexes={[0]}
+                                            tasksIndexes={orgTaskIndex}
+                                            tasks={orgArray}
+                                            actions={orgArray}
+                                            status={true}
+                                            orgIds={orgIdArray}
+                                            pickupNotificationId={props.location.state.data.pickupNotificationId}
+                                            history={props.history}
+                                          />
+                                        )
+                                      },
+                                    ]}
+                                  />
+                                </GridItem>
+                              </GridContainer>
+                    </>
+                );
+    }
 }
 
 class DropOffOptions extends React.Component
@@ -299,6 +355,7 @@ class DropOffOptions extends React.Component
     render()
     {
         const dropOffOrgs = this.props.location.state.data.dropOffOrgs;
+        const offlineCommunityHelpers = this.props.location.state.data.offlineCommunityHelpers;
         return(
             <>
                 <br/>
@@ -306,7 +363,7 @@ class DropOffOptions extends React.Component
                                       <br/>
                                       <br/>
                                 <div id="schedulePickup"></div>
-                <DropOffOptionsView dropOffOrgs={dropOffOrgs} widget={this}/>
+                <DropOffOptionsView props={this.props} dropOffOrgs={dropOffOrgs} offlineCommunityHelpers={offlineCommunityHelpers} widget={this}/>
             </>
         );
     }
