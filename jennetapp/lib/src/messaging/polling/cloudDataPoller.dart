@@ -48,55 +48,22 @@ class CloudDataPoller
 
   static void showNotification(List<FoodRecoveryTransaction> txs)
   {
-    for(FoodRecoveryTransaction tx in txs) {
-      notificationProcessor.showNotification(context,tx.getPickupNotification().getSourceOrg().orgName);
-    }
-  }
-  //--------ios--------------------------------------------
-  static void startIOSPolling(Profile profile) async
-  {
-    // Configure BackgroundFetch.
-    int status = await BackgroundFetch.configure(BackgroundFetchConfig(
-      minimumFetchInterval: 15,
-      forceAlarmManager: false,
-      stopOnTerminate: true,
-      startOnBoot: false,
-      requiresBatteryNotLow: false,
-      requiresCharging: false,
-      requiresStorageNotLow: false,
-      requiresDeviceIdle: false,
-      requiredNetworkType: NetworkType.NONE,
-    ), standardTask,fetchTimeout);
-    print('[BackgroundFetchIOS] configure success: $status');
+    /*for(FoodRecoveryTransaction tx in txs) {
+      //notificationProcessor.showNotification(context,tx.getPickupNotification().getSourceOrg().orgName);
+    }*/
   }
   //--------android----------------------------------------
-  static void startAndroidPolling(Profile profile) async
-  {
-    // Configure BackgroundFetch.
-    int status = await BackgroundFetch.configure(BackgroundFetchConfig(
-      minimumFetchInterval: 15,
-      forceAlarmManager: false,
-      stopOnTerminate: true,
-      startOnBoot: false,
-      requiresBatteryNotLow: false,
-      requiresCharging: false,
-      requiresStorageNotLow: false,
-      requiresDeviceIdle: false,
-      requiredNetworkType: NetworkType.NONE,
-    ), standardTask,fetchTimeout);
-    print('[BackgroundFetchAndroid] configure success: $status');
-  }
-
   static void standardTask(String taskId) async
   {
-    Profile profile = ActiveSession.getInstance().getProfile();
-    pollData(profile);
+    print("POLLING_DATA: "+taskId);
+    //Profile profile = ActiveSession.getInstance().getProfile();
+    //pollData(profile);
 
     BackgroundFetch.finish(taskId);
 
     BackgroundFetch.scheduleTask(TaskConfig(
-        taskId: "flutter_background_fetch",
-        delay: 120000, //every 5 minutes
+        taskId: "com.transistorsoft.customtask",
+        delay: 1000, //every 5 minutes
         periodic: false,
         forceAlarmManager: true,
         stopOnTerminate: true,
@@ -107,16 +74,15 @@ class CloudDataPoller
   }
 
   static void fetchTimeout(String taskId) {
-    print("[BackgroundFetch] TIMEOUT: $taskId");
-
-    Profile profile = ActiveSession.getInstance().getProfile();
-    pollData(profile);
+    print("POLLING_DATA"+taskId);
+    //Profile profile = ActiveSession.getInstance().getProfile();
+    //pollData(profile);
 
     BackgroundFetch.finish(taskId);
 
     BackgroundFetch.scheduleTask(TaskConfig(
-        taskId: "flutter_background_fetch",
-        delay: 100,
+        taskId: "com.transistorsoft.customtask",
+        delay: 1000,
         periodic: false,
         forceAlarmManager: true,
         stopOnTerminate: true,
@@ -125,15 +91,54 @@ class CloudDataPoller
         requiresCharging: true
     ));
   }
-  //--------------------------------------------------------
+
   static void pollData(Profile profile)
   {
-    ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
-    activeNetworkRestClient.getFoodRecoveryPush(profile.email);
+    print("POLLING_DATA");
+    //ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
+    //activeNetworkRestClient.getFoodRecoveryPush(profile.email);
+  }
+
+  static void startIOSPolling(Profile profile) async
+  {
+  // Configure BackgroundFetch.
+  /*print("STARTING_IOS_POLLING");
+      int status = await BackgroundFetch.configure(BackgroundFetchConfig(
+        minimumFetchInterval: 15,
+        forceAlarmManager: false,
+        stopOnTerminate: true,
+        startOnBoot: false,
+        requiresBatteryNotLow: false,
+        requiresCharging: false,
+        requiresStorageNotLow: false,
+        requiresDeviceIdle: false,
+        requiredNetworkType: NetworkType.NONE,
+      ), standardTask,fetchTimeout);
+      print('[BackgroundFetchIOS] CONFIGURE_SUCCESS: $status');*/
+    notificationProcessor._repeatNotification();
+    //notificationProcessor._zonedScheduleNotification();
+  }
+  static void startAndroidPolling(Profile profile) async
+  {
+    // Configure BackgroundFetch.
+    /*int status = await BackgroundFetch.configure(BackgroundFetchConfig(
+      minimumFetchInterval: 15,
+      forceAlarmManager: false,
+      stopOnTerminate: true,
+      startOnBoot: false,
+      requiresBatteryNotLow: false,
+      requiresCharging: false,
+      requiresStorageNotLow: false,
+      requiresDeviceIdle: false,
+      requiredNetworkType: NetworkType.NONE,
+    ), standardTask,fetchTimeout);
+    print('[BackgroundFetchAndroid] configure success: $status');*/
+    notificationProcessor._repeatNotification();
+    //notificationProcessor._zonedScheduleNotification();
   }
 }
 
-
+//-------------------------------------
 
 class ReceivedNotification {
   final int id;
@@ -172,10 +177,12 @@ class NotificationProcessor
 
     await this.configureLocalTimeZone();
 
+    this._requestPermissions();
+
     final NotificationAppLaunchDetails notificationAppLaunchDetails =
     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
+    /*const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings("secondary_icon");
 
     /// Note: permissions aren't requested here just to demonstrate that can be
@@ -225,13 +232,45 @@ class NotificationProcessor
             //Navigator.push(context, MaterialPageRoute(
             //    builder: (context) => FoodRunnerMainScene(txs)));
           });
+        });*/
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('app_icon');
+
+    /// Note: permissions aren't requested here just to demonstrate that can be
+    /// done later
+    final IOSInitializationSettings initializationSettingsIOS =
+    IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+        onDidReceiveLocalNotification:
+            (int id, String title, String body, String payload) async {
+          didReceiveLocalNotificationSubject.add(ReceivedNotification(
+              id: id, title: title, body: body, payload: payload));
+        });
+    const MacOSInitializationSettings initializationSettingsMacOS =
+    MacOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false);
+    final InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsIOS,
+        macOS: initializationSettingsMacOS);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (String payload) async {
+          if (payload != null) {
+            debugPrint('notification payload: $payload');
+          }
+          selectedNotificationPayload = payload;
+          selectNotificationSubject.add(payload);
         });
   }
 
   Future<void> configureLocalTimeZone() async {
     tz.initializeTimeZones();
-    final String timeZoneName =
-    await platform.invokeMethod<String>('getTimeZoneName');
+    final String timeZoneName = await platform.invokeMethod<String>('getTimeZoneName');
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
@@ -247,6 +286,60 @@ class NotificationProcessor
     await flutterLocalNotificationsPlugin.show(
         0, "PickUp Request", body, platformChannelSpecifics,
         payload: '');
+  }
+
+  Future<void> _zonedScheduleNotification() async {
+    print("ZONE_NOTIFICATION_SCHEDULED");
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'scheduled title',
+        'scheduled body',
+        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+        const NotificationDetails(
+            android: AndroidNotificationDetails('your channel id',
+                'your channel name', 'your channel description')),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime);
+  }
+
+  Future<void> _repeatNotification() async {
+    print("NOTIFICATION_TEST_SCHEDULED");
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails('repeating channel id',
+        'repeating channel name', 'repeating description');
+    const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.periodicallyShow(0, '#Jen Network',
+        'body', RepeatInterval.everyMinute, platformChannelSpecifics,
+        androidAllowWhileIdle: true);
+  }
+
+  void _requestPermissions() {
+    if(Platform.isIOS) {
+      IOSFlutterLocalNotificationsPlugin test = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>();
+      if (test != null) {
+        test.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+      }
+
+      MacOSFlutterLocalNotificationsPlugin test2 = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin>();
+
+      if (test2 != null) {
+        test2.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+      }
+    }
   }
 }
 
@@ -265,7 +358,7 @@ class WorkManagerProcessor
     );
   }
 
-  void callbackDispatcher() {
+  static void callbackDispatcher() {
     Workmanager.Workmanager().executeTask((task, inputData) async {
       switch (task) {
         case simpleTaskKey:
