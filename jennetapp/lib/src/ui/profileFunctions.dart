@@ -180,7 +180,7 @@ class ProfileFunctions
   void showCards(BuildContext context, Profile profile) 
   {
     //print("PROFILE: $profile");
-    //CloudDataPoller.startPolling(context,profile);
+    CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
   }
 

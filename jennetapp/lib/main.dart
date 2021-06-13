@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:app/src/context/activeSession.dart';
+//import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
@@ -10,6 +11,10 @@ import 'package:app/src/ui/app.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'notifications.dart';
 
 class MyHttpOverrides extends HttpOverrides{
   @override
@@ -31,8 +36,71 @@ void main(String env)
   config.then((jsonMap) {
     UrlFunctions.getInstance().androidApiUrl = jsonMap['androidApiUrl'];
     UrlFunctions.getInstance().iosApiUrl = jsonMap['iosApiUrl'];
+    print("APP_URL: "+UrlFunctions.getInstance().iosApiUrl);
     launchApp();
   });
+}
+
+/*Future<void> main() async {
+  // needed if you intend to initialize in the `main` function
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final NotificationAppLaunchDetails notificationAppLaunchDetails =
+  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  String initialRoute = HomePage.routeName;
+  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+    selectedNotificationPayload = notificationAppLaunchDetails.payload;
+    initialRoute = SecondPage.routeName;
+  }
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('app_icon');
+
+  /// Note: permissions aren't requested here just to demonstrate that can be
+  /// done later
+  final IOSInitializationSettings initializationSettingsIOS =
+  IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {
+        didReceiveLocalNotificationSubject.add(ReceivedNotification(
+            id: id, title: title, body: body, payload: payload));
+      });
+  const MacOSInitializationSettings initializationSettingsMacOS =
+  MacOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false);
+  final InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+      macOS: initializationSettingsMacOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+        if (payload != null) {
+          debugPrint('notification payload: $payload');
+        }
+        selectedNotificationPayload = payload;
+        selectNotificationSubject.add(payload);
+      });
+  runApp(
+    MaterialApp(
+      initialRoute: initialRoute,
+      routes: <String, WidgetBuilder>{
+        HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails),
+        SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)
+      },
+    ),
+  );
+}*/
+
+Future<void> _configureLocalTimeZone() async {
+  tz.initializeTimeZones();
+  final String timeZoneName =
+  await platform.invokeMethod<String>('getTimeZoneName');
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 void launchApp()

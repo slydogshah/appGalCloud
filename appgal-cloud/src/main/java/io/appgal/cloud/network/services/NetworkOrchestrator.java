@@ -147,10 +147,6 @@ public class NetworkOrchestrator {
                         foodRunnerLocation.getLongitude(),
                         source.getLatitude(), source.getLongitude());
 
-                //logger.info("**************DISTANCE*****************");
-                //logger.info("ALGO_DISTANCE: "+distance);
-                //logger.info("**************DISTANCE*****************");
-
                 if (distance <= 5.0d) {
                     if(!tx.isOfflineCommunitySupport()) {
                         Location dropoff = tx.getPickUpNotification().getDropOffOrg().getLocation();
@@ -167,6 +163,11 @@ public class NetworkOrchestrator {
                     {
                         myTransactions.add(tx);
                     }
+                }
+                else {
+                    logger.info("**************DISTANCE*****************");
+                    logger.info("ALGO_DISTANCE: "+distance);
+                    logger.info("**************DISTANCE*****************");
                 }
             }
 

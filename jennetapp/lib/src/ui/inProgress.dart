@@ -1,6 +1,7 @@
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/profile.dart';
@@ -64,6 +65,9 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
+    Profile profile = ActiveSession.getInstance().getProfile();
+    CloudDataPoller.startPolling(context,profile);
+    LocationUpdater.startPolling(profile);
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
