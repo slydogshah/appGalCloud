@@ -105,7 +105,6 @@ class ActiveNetworkRestClient
       txs.add(local);
     }
 
-    CloudDataPoller.showNotification(txs);
     return txs;
   }
 
