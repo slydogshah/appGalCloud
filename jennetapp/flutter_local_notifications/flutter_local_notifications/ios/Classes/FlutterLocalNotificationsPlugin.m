@@ -2,6 +2,7 @@
 
 @implementation FlutterLocalNotificationsPlugin{
     FlutterEventSink eventSink;
+    NSMutableDictionary* listeners;
     FlutterMethodChannel* _channel;
     bool _displayAlert;
     bool _playSound;
@@ -758,13 +759,15 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
 - (void)application:(UIApplication*)application
 didReceiveLocalNotification:(UILocalNotification*)notification {
+
     if(@available(iOS 10.0, *)) {
         return;
     }
     if(![self isAFlutterLocalNotification:notification.userInfo]) {
         return;
     }
-    
+
+
     NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
     arguments[ID]= notification.userInfo[NOTIFICATION_ID];
     if (notification.userInfo[TITLE] != [NSNull null]) {
@@ -779,16 +782,99 @@ didReceiveLocalNotification:(UILocalNotification*)notification {
     [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
 }
 
+/*
+-(void (^)(NSString* taskId, BOOL timeout)) createTaskCallback {
+    return ^void(NSString* taskId, BOOL timeout){
+        if (self->eventSink != nil) {
+            self->eventSink(@{
+                @"taskId": @"TASK_ID",
+                @"timeout": false
+            });
+        }
+    };
+}
+*/
+
+- (void) startListening:(id)listener emitter:(FlutterEventSink)emitter {
+    // Prepare callback dictionary
+    if (self->listeners == nil) self->listeners = [NSMutableDictionary new];
+
+    // Get callback id
+    NSString* currentListenerId =
+        [[NSNumber numberWithUnsignedInteger:[((NSObject*) listener) hash]] stringValue];
+
+    // Prepare a timer like self calling task
+    void (^callback)(void) = ^() {
+        void (^callback)(void) = [self->listeners valueForKey:currentListenerId];
+        if ([self->listeners valueForKey:currentListenerId] != nil) {
+            int time = (int) CFAbsoluteTimeGetCurrent();
+
+            emitter([NSString stringWithFormat:@"Hello Listener! %d", time]);
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+        }
+    };
+
+    // Run task
+    [self->listeners setObject:callback forKey:currentListenerId];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+}
+
+- (void) cancelListening:(id)listener {
+    // Get callback id
+    NSString* currentListenerId =
+        [[NSNumber numberWithUnsignedInteger:[((NSObject*) listener) hash]] stringValue];
+
+    // Remove callback
+    [self->listeners removeObjectForKey:currentListenerId];
+}
+
 #pragma mark FlutterStreamHandler impl
 
 - (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)sink {
     eventSink = sink;
+    [self startListening:arguments emitter:eventSink];
     return nil;
 }
 
 - (FlutterError*)onCancelWithArguments:(id)arguments {
+    [self cancelListening:arguments];
     eventSink = nil;
     return nil;
 }
 
+/*
+- (void) startListening:(id)listener emitter:(FlutterEventSink)emitter {
+    // Prepare callback dictionary
+    if (self->listeners == nil) self->listeners = [NSMutableDictionary new];
+
+    // Get callback id
+    NSString* currentListenerId =
+        [[NSNumber numberWithUnsignedInteger:[((NSObject*) listener) hash]] stringValue];
+
+    // Prepare a timer like self calling task
+    void (^callback)(void) = ^() {
+        void (^callback)(void) = [self->listeners valueForKey:currentListenerId];
+        if ([self->listeners valueForKey:currentListenerId] != nil) {
+            int time = (int) CFAbsoluteTimeGetCurrent();
+
+            emitter([NSString stringWithFormat:@"Hello Listener! %d", time]);
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+        }
+    };
+
+    // Run task
+    [self->listeners setObject:callback forKey:currentListenerId];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+}
+- (void) cancelListening:(id)listener {
+    // Get callback id
+    NSString* currentListenerId =
+        [[NSNumber numberWithUnsignedInteger:[((NSObject*) listener) hash]] stringValue];
+
+    // Remove callback
+    [self->listeners removeObjectForKey:currentListenerId];
+}
+*/
 @end

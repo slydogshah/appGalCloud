@@ -434,14 +434,7 @@ class IOSFlutterLocalNotificationsPlugin
         };
       }*/
     _eventsFetch.listen((dynamic event) {
-      print("********EVENT_RECEIVED*********");
-      if (event['timeout']) {
-        //onTimeout(taskId);
-        print("********************TIMEOUT_RECEIVED******************");
-      } else {
-        //onFetch(taskId);
-        print("********************EVENT_RECEIVED******************");
-      }
+      //print("********EVENT_RECEIVED!!!*********");
     });
 
 
