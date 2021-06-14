@@ -1,5 +1,6 @@
 package com.dexterous.flutterlocalnotifications;
 
+import android.util.Log;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -75,6 +76,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
@@ -129,6 +131,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private Context applicationContext;
     private Activity mainActivity;
     private Intent launchIntent;
+
+    private EventChannel mEventChannelTask;
+    private FetchStreamHandler mFetchCallback;
+    private static final String EVENT_CHANNEL_NAME = "dexterous.com/flutter/local_notifications/events";
+    private BinaryMessenger mMessenger;
+    public static EventChannel.EventSink eventSink;
 
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
@@ -897,7 +905,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
         this.applicationContext = context;
         this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
+        this.mMessenger = binaryMessenger;
         this.channel.setMethodCallHandler(this);
+
+        mFetchCallback = new FetchStreamHandler();
+        mEventChannelTask = new EventChannel(mMessenger, EVENT_CHANNEL_NAME);
+        mEventChannelTask.setStreamHandler(mFetchCallback);
     }
 
     @Override
@@ -1303,5 +1316,42 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             channelPayload.put("ledColor", channel.getLightColor());
         }
         return channelPayload;
+    }
+
+
+    class FetchStreamHandler implements EventChannel.StreamHandler {
+        private EventChannel.EventSink mEventSink;
+
+        /*@Override
+        public void onFetch(String taskId) {
+            Map<String, Object> event = new HashMap<>();
+            event.put("timeout", false);
+            event.put("taskId", taskId);
+            if (mEventSink == null) {
+                Log.e("ON_FETCH", "FetchStreamHandler.onFetch mEventSink is null.  Cannot fire Dart callback");
+                return;
+            }
+            mEventSink.success(event);
+        }*/
+        /*@Override
+        public void onTimeout(String taskId) {
+            Map<String, Object> event = new HashMap<>();
+            event.put("timeout", true);
+            event.put("taskId", taskId);
+            if (mEventSink == null) {
+                Log.e("ON_TIMEOUT", "FetchStreamHandler.onTimeout mEventSink is null.  Cannot fire Dart callback");
+                return;
+            }
+            mEventSink.success(event);
+        }*/
+        @Override
+        public void onListen(Object args, EventChannel.EventSink eventSink) {
+            mEventSink = eventSink;
+            FlutterLocalNotificationsPlugin.eventSink = eventSink;
+        }
+        @Override
+        public void onCancel(Object args) {
+
+        }
     }
 }

@@ -14,6 +14,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by michaelbui on 24/3/18.
@@ -25,6 +27,12 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
+        if(FlutterLocalNotificationsPlugin.eventSink != null) {
+            Map<String, Object> event = new HashMap<>();
+            event.put("timeout", false);
+            FlutterLocalNotificationsPlugin.eventSink.success(event);
+        }
+
         String notificationDetailsJson = intent.getStringExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_DETAILS);
         if (StringUtils.isNullOrEmpty(notificationDetailsJson)) {
             // This logic is needed for apps that used the plugin prior to 0.3.4

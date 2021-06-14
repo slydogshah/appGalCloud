@@ -70,6 +70,10 @@ class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback? _onSelectNotification;
 
+  static const _EVENT_CHANNEL_NAME = "dexterous.com/flutter/local_notifications/events";
+  static const EventChannel _eventChannelTask = EventChannel(_EVENT_CHANNEL_NAME);
+  Stream<dynamic> _eventsFetch = _eventChannelTask.receiveBroadcastStream();
+
   /// Initializes the plugin. Call this method on application before using the
   /// plugin further.
   ///
@@ -80,6 +84,27 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
   }) async {
+    print("********************STARTING_EVENT_LISTENER11******************");
+    _eventsFetch = _eventChannelTask.receiveBroadcastStream();
+    print(_eventsFetch);
+    /*if (onTimeout == null) {
+        onTimeout = (String taskId) {
+          print(
+              "[BackgroundFetch] task timed-out without onTimeout callback: $taskId.  You should provide an onTimeout callback to BackgroundFetch.configure.");
+          finish(taskId);
+        };
+      }*/
+    _eventsFetch.listen((dynamic event) {
+      //print("********EVENT_RECEIVED*********");
+      if (event['timeout']) {
+        //onTimeout(taskId);
+        print("********************TIMEOUT_RECEIVED******************");
+      } else {
+        //onFetch(taskId);
+        print("********************FETCH_RECEIVED******************");
+      }
+    });
+
     _onSelectNotification = onSelectNotification;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
@@ -374,6 +399,10 @@ class IOSFlutterLocalNotificationsPlugin
 
   DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
+  static const _EVENT_CHANNEL_NAME = "dexterous.com/flutter/local_notifications/events";
+  static const EventChannel _eventChannelTask = EventChannel(_EVENT_CHANNEL_NAME);
+  Stream<dynamic> _eventsFetch = _eventChannelTask.receiveBroadcastStream();
+
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
@@ -394,6 +423,28 @@ class IOSFlutterLocalNotificationsPlugin
     IOSInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
   }) async {
+    print("********************STARTING_EVENT_LISTENER11******************");
+    _eventsFetch = _eventChannelTask.receiveBroadcastStream();
+    print(_eventsFetch);
+    /*if (onTimeout == null) {
+        onTimeout = (String taskId) {
+          print(
+              "[BackgroundFetch] task timed-out without onTimeout callback: $taskId.  You should provide an onTimeout callback to BackgroundFetch.configure.");
+          finish(taskId);
+        };
+      }*/
+    _eventsFetch.listen((dynamic event) {
+      print("********EVENT_RECEIVED*********");
+      if (event['timeout']) {
+        //onTimeout(taskId);
+        print("********************TIMEOUT_RECEIVED******************");
+      } else {
+        //onFetch(taskId);
+        print("********************EVENT_RECEIVED******************");
+      }
+    });
+
+
     _onSelectNotification = onSelectNotification;
     _onDidReceiveLocalNotification =
         initializationSettings.onDidReceiveLocalNotification;

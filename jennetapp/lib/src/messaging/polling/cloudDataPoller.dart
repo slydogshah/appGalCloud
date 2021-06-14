@@ -62,9 +62,6 @@ class NotificationProcessor
   final BehaviorSubject<String> selectNotificationSubject =
   BehaviorSubject<String>();
 
-  static const MethodChannel platform =
-  MethodChannel('dexterx.dev/flutter_local_notifications_example');
-
   Future<void> configureProcessor(BuildContext context) async {
     this.context = context;
 
@@ -117,7 +114,7 @@ class NotificationProcessor
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, '#Jen Network',
-        'body', RepeatInterval.everyMinute, platformChannelSpecifics,
+        'BLAH_BLAH', RepeatInterval.everyMinute, platformChannelSpecifics,
         androidAllowWhileIdle: true);
   }
 

@@ -1,6 +1,7 @@
 #import "FlutterLocalNotificationsPlugin.h"
 
 @implementation FlutterLocalNotificationsPlugin{
+    FlutterEventSink eventSink;
     FlutterMethodChannel* _channel;
     bool _displayAlert;
     bool _playSound;
@@ -72,6 +73,9 @@ NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 
+static NSString *const PLUGIN_PATH = @"dexterous.com/flutter/local_notifications";
+static NSString *const EVENT_CHANNEL_NAME = @"events";
+
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
     EveryMinute,
@@ -104,6 +108,10 @@ static FlutterError *getFlutterError(NSError *error) {
     FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] initWithChannel:channel registrar:registrar];
     [registrar addApplicationDelegate:instance];
     [registrar addMethodCallDelegate:instance channel:channel];
+
+    NSString *eventPath = [NSString stringWithFormat:@"%@/%@", PLUGIN_PATH, EVENT_CHANNEL_NAME];
+    FlutterEventChannel* eventChannel = [FlutterEventChannel eventChannelWithName:eventPath binaryMessenger:[registrar messenger]];
+    [eventChannel setStreamHandler:instance];
 }
 
 - (instancetype)initWithChannel:(FlutterMethodChannel *)channel registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
@@ -769,6 +777,18 @@ didReceiveLocalNotification:(UILocalNotification*)notification {
         arguments[PAYLOAD] =notification.userInfo[PAYLOAD];
     }
     [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
+}
+
+#pragma mark FlutterStreamHandler impl
+
+- (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)sink {
+    eventSink = sink;
+    return nil;
+}
+
+- (FlutterError*)onCancelWithArguments:(id)arguments {
+    eventSink = nil;
+    return nil;
 }
 
 @end
