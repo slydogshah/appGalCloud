@@ -113,17 +113,20 @@ class FlutterLocalNotificationsPlugin {
   Future<bool?> initialize(
     InitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
+    Function notificationCallback = callback
   }) async {
     if (_platform.isAndroid) {
       return resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.android!,
-              onSelectNotification: onSelectNotification);
+              onSelectNotification: onSelectNotification,
+          notificationCallback: notificationCallback);
     } else if (_platform.isIOS) {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.iOS!,
-              onSelectNotification: onSelectNotification);
+              onSelectNotification: onSelectNotification,
+              notificationCallback: notificationCallback);
     } else if (_platform.isMacOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
@@ -131,6 +134,10 @@ class FlutterLocalNotificationsPlugin {
               onSelectNotification: onSelectNotification);
     }
     return true;
+  }
+
+  static void callback(){
+    print("*******GENERIC_CALLBACK_INVOKED_CLEAN*******");
   }
 
   /// Returns info on if a notification created from this plugin had been used

@@ -442,7 +442,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             default:
                 break;
         }
-        return repeatInterval;
+        //return repeatInterval;
+        return 5000;
     }
 
     private static void saveScheduledNotification(Context context, NotificationDetails notificationDetails) {

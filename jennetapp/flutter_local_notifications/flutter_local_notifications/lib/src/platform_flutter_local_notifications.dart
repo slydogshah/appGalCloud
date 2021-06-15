@@ -74,6 +74,8 @@ class AndroidFlutterLocalNotificationsPlugin
   static const EventChannel _eventChannelTask = EventChannel(_EVENT_CHANNEL_NAME);
   Stream<dynamic> _eventsFetch = _eventChannelTask.receiveBroadcastStream();
 
+  static void callback(){}
+
   /// Initializes the plugin. Call this method on application before using the
   /// plugin further.
   ///
@@ -83,26 +85,13 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> initialize(
     AndroidInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
+        Function notificationCallback=callback
   }) async {
     print("********************STARTING_EVENT_LISTENER11******************");
     _eventsFetch = _eventChannelTask.receiveBroadcastStream();
     print(_eventsFetch);
-    /*if (onTimeout == null) {
-        onTimeout = (String taskId) {
-          print(
-              "[BackgroundFetch] task timed-out without onTimeout callback: $taskId.  You should provide an onTimeout callback to BackgroundFetch.configure.");
-          finish(taskId);
-        };
-      }*/
     _eventsFetch.listen((dynamic event) {
-      //print("********EVENT_RECEIVED*********");
-      if (event['timeout']) {
-        //onTimeout(taskId);
-        print("********************TIMEOUT_RECEIVED******************");
-      } else {
-        //onFetch(taskId);
-        print("********************FETCH_RECEIVED******************");
-      }
+      notificationCallback();
     });
 
     _onSelectNotification = onSelectNotification;
@@ -403,6 +392,9 @@ class IOSFlutterLocalNotificationsPlugin
   static const EventChannel _eventChannelTask = EventChannel(_EVENT_CHANNEL_NAME);
   Stream<dynamic> _eventsFetch = _eventChannelTask.receiveBroadcastStream();
 
+  static void callback()
+  {
+  }
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
@@ -422,20 +414,13 @@ class IOSFlutterLocalNotificationsPlugin
   Future<bool?> initialize(
     IOSInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
+        Function notificationCallback=callback
   }) async {
     print("********************STARTING_EVENT_LISTENER11******************");
     _eventsFetch = _eventChannelTask.receiveBroadcastStream();
     print(_eventsFetch);
-    /*if (onTimeout == null) {
-        onTimeout = (String taskId) {
-          print(
-              "[BackgroundFetch] task timed-out without onTimeout callback: $taskId.  You should provide an onTimeout callback to BackgroundFetch.configure.");
-          finish(taskId);
-        };
-      }*/
     _eventsFetch.listen((dynamic event) {
-      //print("********EVENT_RECEIVED!!!*********");
-      print(event);
+      notificationCallback();
     });
 
 

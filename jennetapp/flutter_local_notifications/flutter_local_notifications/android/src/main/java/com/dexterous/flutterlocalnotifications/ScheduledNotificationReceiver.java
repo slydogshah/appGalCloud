@@ -29,7 +29,6 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         if(FlutterLocalNotificationsPlugin.eventSink != null) {
             Map<String, Object> event = new HashMap<>();
-            event.put("timeout", false);
             FlutterLocalNotificationsPlugin.eventSink.success(event);
         }
 
@@ -51,7 +50,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
             Type type = new TypeToken<NotificationDetails>() {
             }.getType();
             NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
-            FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+            //FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
             if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
                 FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
             } else if (notificationDetails.matchDateTimeComponents != null) {
