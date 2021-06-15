@@ -1408,3 +1408,227 @@ class PickUpListView extends StatelessWidget {
     );
   }
 }
+
+
+/*@override
+  Widget build(BuildContext context) {
+    Color primaryColor = Color(0xFF383EDB);
+    Color backgroundColor = Color(0xFF383EDB);
+    MaterialApp materialApp = new MaterialApp(
+        home: new MyCustomForm(),
+        theme: ThemeData(
+            primaryColor: primaryColor,
+            backgroundColor: backgroundColor,
+            accentColor: backgroundColor,
+            accentColorBrightness: Brightness.dark
+        )
+    );
+    return materialApp;
+  }*/
+
+  /*final appTitle = 'Form Validation Demo';
+
+      return MaterialApp(
+        title: appTitle,
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text(appTitle),
+          ),
+          body: MyCustomForm(),
+        ),
+      );*/
+
+
+      // Create a Form widget.
+      class MyCustomForm extends StatefulWidget {
+        @override
+        MyCustomFormState createState() {
+          return MyCustomFormState();
+        }
+      }
+
+      // Create a corresponding State class.
+      // This class holds data related to the form.
+      class MyCustomFormState extends State<MyCustomForm> {
+        // Create a global key that uniquely identifies the Form widget
+        // and allows validation of the form.
+        //
+        // Note: This is a GlobalKey<FormState>,
+        // not a GlobalKey<MyCustomFormState>.
+        final _formKey = GlobalKey<FormState>();
+
+        @override
+        Widget build(BuildContext context) {
+          Color primaryColor = Color(0xFF383EDB);
+          Color backgroundColor = Color(0xFF383EDB);
+
+          Row children = Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 16, top: 8, bottom: 8),
+                    child: Column(
+                      mainAxisAlignment:
+                      MainAxisAlignment.center,
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextFormField(
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                        ),
+                        TextFormField(
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Validate returns true if the form is valid, or false otherwise.
+                              if (_formKey.currentState.validate()) {
+                                // If the form is valid, display a snackbar. In the real world,
+                                // you'd often call a server or save the information in a database.
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(content: Text('Processing Data')));
+                              }
+                            },
+                            child: Text('Submit'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+
+          Theme theme = Theme(
+            data: HotelAppTheme.buildLightTheme(),
+            child: Container(
+              child: Scaffold(
+                body: Stack(
+                  children: <Widget>[
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          //getAppBarUI(context, titleWidget),
+                          Expanded(
+                            child: NestedScrollView(
+                              //controller: _scrollController,
+                              headerSliverBuilder:
+                                  (BuildContext context, bool innerBoxIsScrolled) {
+                                return <Widget>[
+                                ];
+                              },
+                              body: /*Container(
+                                color: primaryColor,
+                                //color: Colors.pink,
+                                child: ListView.builder(
+                                  itemCount: 3,
+                                  padding: const EdgeInsets.only(top: 8),
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final int count = 3;
+                                    final Animation<double> animation =
+                                    Tween<double>(begin: 0.0, end: 1.0).animate(
+                                        CurvedAnimation(
+                                            parent: animationController,
+                                            curve: Interval(
+                                                (1 / count) * index, 1.0,
+                                                curve: Curves.fastOutSlowIn)));
+                                    animationController.forward();
+                                    return LoginView(
+                                      callback: () {},
+                                      animation: animation,
+                                      index: index,
+                                      loginState: this,
+                                      emailTextField: emailTextField,
+                                      passwordTextField: passwordTextField,
+                                      animationController: animationController,
+                                    );
+                                  },
+                                ),
+                              ),*/
+                              Container(
+                                  color: primaryColor,
+                                  child: children
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+
+          // Build a Form widget using the _formKey created above.
+          /*return Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                TextFormField(
+                  // The validator receives the text that the user has entered.
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  // The validator receives the text that the user has entered.
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Validate returns true if the form is valid, or false otherwise.
+                      if (_formKey.currentState.validate()) {
+                        // If the form is valid, display a snackbar. In the real world,
+                        // you'd often call a server or save the information in a database.
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('Processing Data')));
+                      }
+                    },
+                    child: Text('Submit'),
+                  ),
+                ),
+              ],
+            ),
+          );*/
+          return theme;
+        }
+      }
