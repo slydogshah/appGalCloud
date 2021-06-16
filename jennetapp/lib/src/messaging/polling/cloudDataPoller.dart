@@ -4,6 +4,7 @@ import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/ui/profileFunctions.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -118,6 +119,9 @@ class NotificationProcessor
           }
           selectedNotificationPayload = payload;
           selectNotificationSubject.add(payload);
+
+
+          ProfileFunctions.launchAppFromNotification(context);
         },notificationCallback: checkNewPickupRequests);
 
     if(Platform.isAndroid) {
