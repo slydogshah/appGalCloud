@@ -184,6 +184,21 @@ class ProfileFunctions
     LocationUpdater.startPolling(profile);
   }
 
+  static void launchAppFromNotification(BuildContext context)
+  {
+    ActiveSession activeSession = ActiveSession.getInstance();
+    Profile foodRunner = activeSession.getProfile();
+
+    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+    Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+        .getFoodRecoveryTransaction(foodRunner.email);
+    future.then((txs) {
+      Navigator.of(context, rootNavigator: true).pop();
+      Navigator.push(context, MaterialPageRoute(
+          builder: (context) => FoodRunnerMainScene(txs)));
+    });
+  }
+
 
 
 

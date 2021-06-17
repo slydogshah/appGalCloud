@@ -217,10 +217,10 @@ packages:
   flutter_local_notifications:
     dependency: "direct main"
     description:
-      name: flutter_local_notifications
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.0.0+4"
+      path: "flutter_local_notifications/flutter_local_notifications"
+      relative: true
+    source: path
+    version: "5.0.0+1"
   flutter_local_notifications_platform_interface:
     dependency: transitive
     description:
@@ -231,10 +231,10 @@ packages:
   flutter_mapbox_navigation:
     dependency: "direct main"
     description:
-      name: flutter_mapbox_navigation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.24"
+      path: flutter_mapbox_navigation
+      relative: true
+    source: path
+    version: "0.0.19"
   flutter_staggered_grid_view:
     dependency: "direct main"
     description:
@@ -808,13 +808,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
-  workmanager:
-    dependency: "direct main"
-    description:
-      name: workmanager
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.1"
   xdg_directories:
     dependency: transitive
     description:

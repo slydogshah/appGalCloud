@@ -36,13 +36,20 @@ dependencies:
   external_app_launcher: ^0.0.1
   uuid: ^2.2.2
   location: ^4.0.0
-  flutter_mapbox_navigation: ^0.0.19
-  background_fetch: '^0.7.2'
+  #flutter_mapbox_navigation: ^0.0.19
+  flutter_mapbox_navigation:
+    # When depending on this package from a real application you should use:
+    #   flutter_mapbox_navigation: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    path: ./flutter_mapbox_navigation
   device_info: ^2.0.0
   path_provider: ^2.0.0
   rxdart: ^0.26.0-nullsafety.1
-  flutter_local_notifications: ^5.0.0+1
-  workmanager: ^0.4.0
+  flutter_local_notifications:
+    path: ./flutter_local_notifications/flutter_local_notifications
+  background_fetch: '^0.7.2'
   font_awesome_flutter: ^8.8.1
   smooth_star_rating: ^1.1.1
   intl: ^0.16.0

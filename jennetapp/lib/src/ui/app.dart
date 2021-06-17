@@ -35,7 +35,6 @@ class JenNetworkApp extends StatelessWidget {
   }
 }
 
-
 class Login extends StatefulWidget
 {
   @override
@@ -56,11 +55,15 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
   final ScrollController _scrollController = ScrollController();
   String title;
   Text titleWidget;
+  TextEditingController emailController;
+  TextEditingController passwordController;
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
+    this.emailController = new TextEditingController();
+    this.passwordController = new TextEditingController();
     super.initState();
   }
 
@@ -120,6 +123,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    //print(0);
     this.title = "#Jen Network";
     this.titleWidget = Text(
         this.title,
@@ -129,7 +133,12 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     );
 
     TextFormField emailTextField = TextFormField(
-      controller: new TextEditingController(),
+      controller: this.emailController,
+      autovalidateMode:AutovalidateMode.always,
+      validator: (value) {
+        return this.emailRejectedMessage;
+      },
+      onChanged: (String txt) {},
       style: const TextStyle(
         fontSize: 18,
       ),
@@ -143,7 +152,7 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     );
 
     TextFormField passwordTextField = TextFormField(
-      controller: TextEditingController(),
+      controller: this.passwordController,
       autovalidateMode:AutovalidateMode.always,
       validator: (value) {
         if(this.passwordRejectedMessage != null)
@@ -223,8 +232,35 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
                                 animation: animation,
                                 index: index,
                                 loginState: this,
-                                emailTextField: emailTextField,
-                                passwordTextField: passwordTextField,
+                                emailTextField: /*TextFormField(
+                                  controller: this.emailController,
+                                  autovalidateMode:AutovalidateMode.always,
+                                  validator: (value) {
+                                    return this.emailRejectedMessage;
+                                  },
+                                  onChanged: (String txt) {},
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                  cursorColor: HotelAppTheme
+                                      .buildLightTheme()
+                                      .primaryColor,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'Email...',
+                                  ),
+                                ),*/
+                                emailTextField,
+                                passwordTextField: /*TextFormField(
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter some text';
+                                    }
+                                    return null;
+                                  },
+                                ),*/
+                                passwordTextField,
                                 animationController: animationController,
                               );
                             },
@@ -241,16 +277,6 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
       ),
     );
 
-    /*MaterialApp materialApp = new MaterialApp(
-        home: new Login(),
-        theme: ThemeData(
-            primaryColor: primaryColor,
-            backgroundColor: backgroundColor,
-            accentColor: backgroundColor,
-            accentColorBrightness: Brightness.dark
-        ),
-    );
-    return materialApp;*/
     return theme;
   }
 

@@ -32,10 +32,15 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
   AnimationController animationController;
   final ScrollController _scrollController = ScrollController();
 
+  TextEditingController emailController;
+  TextEditingController passwordController;
+
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
+    this.emailController = new TextEditingController();
+    this.passwordController = new TextEditingController();
     super.initState();
   }
 
@@ -105,6 +110,8 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                                 registrationState: this,
                                 animation: animation,
                                 animationController: animationController,
+                                emailController: this.emailController,
+                                passwordController: this.passwordController,
                               );
                             },
                           ),
@@ -207,6 +214,8 @@ class RegisterView extends StatelessWidget {
       {Key key,
         this.registrationState,
         this.animationController,
+        this.emailController,
+        this.passwordController,
         this.animation,
         this.callback})
       : super(key: key);
@@ -215,11 +224,13 @@ class RegisterView extends StatelessWidget {
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final RegistrationState registrationState;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
 
   @override
   Widget build(BuildContext context) {
     TextField emailTextField = TextField(
-      controller: TextEditingController(),
+      controller: this.emailController,
       onChanged: (String txt) {},
       style: const TextStyle(
         fontSize: 18,
@@ -233,7 +244,7 @@ class RegisterView extends StatelessWidget {
     Widget email = this.getLoginUIBar(context,emailTextField);
 
     TextField passwordTextField = TextField(
-      controller: TextEditingController(),
+      controller: this.passwordController,
       onChanged: (String txt) {},
       obscureText: true,
       style: const TextStyle(

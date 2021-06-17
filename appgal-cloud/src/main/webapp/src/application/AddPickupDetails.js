@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom';
 import axios from 'axios'
 import { withRouter } from "react-router";
 import {
@@ -57,6 +58,8 @@ import CardHeader from "../components/Card/CardHeader.js";
 import CardAvatar from "../components/Card/CardAvatar.js";
 import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
+import AddAlert from "@material-ui/icons/AddAlert";
+import Snackbar from "../components/Snackbar/Snackbar.js";
 
 const styles = {
   cardCategoryWhite: {
@@ -229,6 +232,18 @@ function RenderForm({state,props})
                                                      </CardBody>
                                                      <CardFooter>
                                                        <Button color="primary" onClick={(e) => {
+                                                                //show progress bar
+                                                                var element = (
+                                                                        <Snackbar
+                                                                          place="tc"
+                                                                          color="info"
+                                                                          icon={AddAlert}
+                                                                          message="Starting a Pickup Request...."
+                                                                          open={true}
+                                                                        />
+                                                                );
+                                                                ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                ReactDOM.render(element,document.getElementById('progress'));
                                                                 const payload = {
                                                                             orgId: store.getState().sourceOrg.orgId,
                                                                             time: state.time,
@@ -240,11 +255,13 @@ function RenderForm({state,props})
 
                                                                 const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/";
                                                                 axios.post(apiUrl,payload).then((response) => {
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                     props.history.push({
                                                                                     pathname: "/dropOffOptions",
                                                                                     state: { data: response.data }
                                                                                   });
                                                                 }).catch(err => {
+                                                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                             //TODO
                                                                             console.log("ERROR: "+JSON.stringify(err));
                                                                 });
@@ -337,6 +354,7 @@ class AddPickupDetails extends React.Component
     render() {
         return(
             <>
+                <div id="progress"/>
                 <div id="parent">
                     <RenderForm state={this.state} props={this.props}/>
                 </div>
