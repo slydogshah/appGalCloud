@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
 import axios from 'axios'
 // @material-ui/core components
@@ -16,6 +17,8 @@ import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
 
 import { AppContext,store} from "./AppContext"
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
+import Snackbar from "../components/Snackbar/Snackbar.js";
 
 const styles = {
   cardCategoryWhite: {
@@ -128,6 +131,18 @@ function ProfileView({state, props}) {
                             "email":email,
                             "password":state.newPassword
                         };
+                        //show progress bar
+                        var element = (
+                                <Snackbar
+                                  place="tc"
+                                  color="info"
+                                  icon={DonutLargeOutlinedIcon}
+                                  message="Loading...."
+                                  open={true}
+                                />
+                        );
+                        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                        ReactDOM.render(element,document.getElementById('progress'));
                         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/newPassword/";
                         axios.post(apiUrl,payload).then((response) => {
                             //console.log("MY_DATA: "+JSON.stringify(response.data));
@@ -137,6 +152,7 @@ function ProfileView({state, props}) {
                             const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
                             //console.log(apiUrl);
                             axios.get(apiUrl).then((response) => {
+                                ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                 if(producer)
                                 {
                                        props.history.push({
@@ -172,6 +188,7 @@ class Profile extends React.Component {
         render() {
            return (
                 <>
+                    <div id="progress"/>
                     <div id="parent">
                       <ProfileView state={this.state} props={this.props} />
                     </div>

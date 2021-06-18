@@ -45,7 +45,7 @@ import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
-import AddAlert from "@material-ui/icons/AddAlert";
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 import Snackbar from "../components/Snackbar/Snackbar.js";
 
 const styles = {
@@ -238,7 +238,7 @@ function RenderLogin({state,props})
                                         <Snackbar
                                           place="tc"
                                           color="info"
-                                          icon={AddAlert}
+                                          icon={DonutLargeOutlinedIcon}
                                           message="Authentication In Progress...."
                                           open={true}
                                         />
@@ -262,7 +262,7 @@ function RenderLogin({state,props})
                                       }));
                                       LaunchHome(props,response.data.sourceOrg.producer);
                                 }).catch(err => {
-                                       console.log("ERROR(LOGIN): "+JSON.stringify(err));
+                                       ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                        if(err.response != null && err.response.status == 401)
                                        {
                                             if(err.response.data.message == "profile_not_found")
@@ -315,8 +315,21 @@ function RenderLogin({state,props})
                           </GridItem>
                           <GridItem xs={12} sm={12} md={6}>
                            <Button color="primary" onClick={(e) => {
+                                //show progress bar
+                                var element = (
+                                                                            <Snackbar
+                                                                              place="tc"
+                                                                              color="info"
+                                                                              icon={DonutLargeOutlinedIcon}
+                                                                              message="Loading...."
+                                                                              open={true}
+                                                                            />
+                                                                    );
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                    ReactDOM.render(element,document.getElementById('progress'));
                                 const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/orgs/";
                                 axios.get(apiUrl).then((response) => {
+                                ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                 const orgs = response.data;
                                 const element = (
                                         <>
@@ -459,9 +472,21 @@ function RenderLogin({state,props})
                                                         "zip":state.zip,
                                                         "producer":state.producer};
 
+                                                        var element = (
+                                                                                                                                    <Snackbar
+                                                                                                                                      place="tc"
+                                                                                                                                      color="info"
+                                                                                                                                      icon={DonutLargeOutlinedIcon}
+                                                                                                                                      message="Authentication In Progress...."
+                                                                                                                                      open={true}
+                                                                                                                                    />
+                                                                                                                            );
+                                                                                                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                                                                            ReactDOM.render(element,document.getElementById('progress'));
+
                                                         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
                                                         axios.post(apiUrl,payload).then((response) => {
-                                                            console.log(JSON.stringify(response.data));
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                             store.setState(state => ({
                                                                      ...state,
                                                                      auth: true,
@@ -471,6 +496,7 @@ function RenderLogin({state,props})
 
                                                            LaunchHome(props,response.data.producer);
                                                         }).catch(err => {
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                             if(err.response != null && err.response.status == 409)
                                                             {
                                                                  const element = (
@@ -565,7 +591,7 @@ function LaunchHome(props,producer)
             <Snackbar
               place="tc"
               color="info"
-              icon={AddAlert}
+              icon={DonutLargeOutlinedIcon}
               message="Authentication In Progress...."
               open={true}
             />
@@ -589,6 +615,8 @@ function LaunchHome(props,producer)
                   state: { data: response.data }
                 });
         }
+    }).catch(err => {
+        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
     });
 }
 

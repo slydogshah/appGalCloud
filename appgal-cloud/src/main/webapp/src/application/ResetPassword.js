@@ -22,6 +22,8 @@ import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
 
 import { AppContext,store} from "./AppContext"
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
+import Snackbar from "../components/Snackbar/Snackbar.js";
 
 const styles = {
   cardCategoryWhite: {
@@ -108,12 +110,26 @@ function ResetPasswordView({state, props}) {
                              confirmNewPassword:state.confirmNewPassword,
                              email:resetEmail
                           };
+                          //show progress bar
+                                                                                                          var element = (
+                                                                                                                  <Snackbar
+                                                                                                                    place="tc"
+                                                                                                                    color="info"
+                                                                                                                    icon={DonutLargeOutlinedIcon}
+                                                                                                                    message="Loading...."
+                                                                                                                    open={true}
+                                                                                                                  />
+                                                                                                          );
+                                                                                                          ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                                                          ReactDOM.render(element,document.getElementById('progress'));
                           var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/resetPassword/";
                           axios.post(apiUrl,payload).then((response) => {
+                              ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                               props.history.push({
                                   pathname: "/",
                               });
                           }).catch(err => {
+                                 ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                  if(err.response != null && err.response.status == 400)
                                  {
                                         const error = (
@@ -156,6 +172,7 @@ class ResetPassword extends React.Component {
         render() {
            return (
                 <>
+                    <div id="progress"/>
                     <div id="parent">
                       <ResetPasswordView state={this.state} props={this.props} />
                     </div>
