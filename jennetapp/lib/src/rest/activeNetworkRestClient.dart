@@ -148,36 +148,6 @@ class ActiveNetworkRestClient
     return response.body;
   }
 
-  Future<int> scheduleDropOff(FoodRecoveryTransaction tx) async
-  {
-    FoodRunner foodRunner = new FoodRunner(ActiveSession.getInstance().getProfile());
-    ScheduleDropOffNotification scheduleDropOffNotification = new ScheduleDropOffNotification(tx.getPickupNotification().getSourceOrg(),
-        foodRunner, tx.getPickupNotification().getStart());
-
-    var json;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/scheduleDropOff/";
-    var response;
-    try {
-      response = await http.post(Uri.parse(remoteUrl), body: scheduleDropOffNotification.toString()).
-      timeout(Duration(seconds: 30),onTimeout: () {
-        throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
-      });
-    }
-    catch (e) {
-      print(e);
-      json = UrlFunctions.handleError(e, response);
-      return json["statusCode"];
-    }
-
-    json = UrlFunctions.handleError(null, response);
-    if(json != null)
-    {
-      return json["statusCode"];
-    }
-
-    return response.statusCode;
-  }
-
   Future<Map<String,List<FoodRecoveryTransaction>>> notifyDelivery(FoodRecoveryTransaction tx) async
   {
     Map<String,List<FoodRecoveryTransaction>> txs = new Map();

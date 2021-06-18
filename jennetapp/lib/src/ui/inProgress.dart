@@ -255,8 +255,21 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                           }
                           Profile profile = ActiveSession.getInstance().getProfile();
                           ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+                          // set up the SimpleDialog
+                          SimpleDialog dialog = SimpleDialog(
+                              children: [CupertinoActivityIndicator()]
+                          );
+
+                          // show the dialog
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return dialog;
+                            },
+                          );
                           Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email,);
                           response.then((response){
+                                Navigator.of(context, rootNavigator: true).pop();
                                 setState(() {
                                   if(foodRunner.offlineCommunitySupport){
                                     offline = Colors.green;
@@ -545,6 +558,18 @@ class InProgressListView extends StatelessWidget {
               ),
               onPressed: () {
                 print(tx);
+                // set up the SimpleDialog
+                SimpleDialog dialog = SimpleDialog(
+                    children: [CupertinoActivityIndicator()]
+                );
+
+                // show the dialog
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return dialog;
+                  },
+                );
                 ActiveNetworkRestClient restClient = new ActiveNetworkRestClient();
                 Future<Map<String,List<FoodRecoveryTransaction>>> future = restClient.notifyDelivery(tx);
                 future.then((map) {

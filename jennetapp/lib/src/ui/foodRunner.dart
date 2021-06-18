@@ -289,8 +289,21 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                           }
                           Profile profile = ActiveSession.getInstance().getProfile();
                           ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+                          // set up the SimpleDialog
+                          SimpleDialog dialog = SimpleDialog(
+                              children: [CupertinoActivityIndicator()]
+                          );
+
+                          // show the dialog
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return dialog;
+                            },
+                          );
                           Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email);
                           response.then((response){
+                            Navigator.of(context, rootNavigator: true).pop();
                             setState(() {
                               if(foodRunner.offlineCommunitySupport){
                                 offline = Colors.green;
@@ -576,12 +589,39 @@ class PickUpListView extends StatelessWidget {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+            // set up the SimpleDialog
+            SimpleDialog dialog = SimpleDialog(
+                children: [CupertinoActivityIndicator()]
+            );
+
+            // show the dialog
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return dialog;
+              },
+            );
             Future<String> future = client.accept(email, tx);
             future.then((fuckyou) {
+              Navigator.of(context, rootNavigator: true).pop();
               ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+              // set up the SimpleDialog
+              SimpleDialog dialog = SimpleDialog(
+                  children: [CupertinoActivityIndicator()]
+              );
+
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return dialog;
+                },
+              );
               Future<Map<String,List<FoodRecoveryTransaction>>> future = client
                   .getFoodRecoveryTransaction(email);
               future.then((txs) {
+                Navigator.of(context, rootNavigator: true).pop();
+
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => InProgressMainScene(txs)));
               });
@@ -594,10 +634,27 @@ class PickUpListView extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
+
+            // set up the SimpleDialog
+            SimpleDialog dialog = SimpleDialog(
+                children: [CupertinoActivityIndicator()]
+            );
+
+            // show the dialog
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return dialog;
+              },
+            );
+
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
             Future<String> future = client.accept(email, tx);
             //donot rename this variable. It is symbolic
             future.then((fuckyou) {
+              Navigator.of(context, rootNavigator: true).pop();
+
+
               LocationUpdater.getLocation();
               EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
                   tx.getPickupNotification().getSourceOrg());

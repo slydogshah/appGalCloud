@@ -103,7 +103,7 @@ public class JenFlow {
         this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         accepted = myTransactions.get(1);
-        //this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
+        this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         /*for(int i=0; i<7; i++)
         {
