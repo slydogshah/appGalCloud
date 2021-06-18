@@ -7,6 +7,7 @@ import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:app/src/ui/inProgress.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -156,10 +157,23 @@ class EmbeddedNavigation
     Profile profile = ActiveSession.getInstance().getProfile();
     FoodRunner foodRunner = new FoodRunner(profile);
 
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+        children: [CupertinoActivityIndicator()]
+    );
+
+    // show the dialog
+    showDialog(
+      context: this.context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
     ActiveNetworkRestClient client = new ActiveNetworkRestClient();
     Future<Map<String,List<FoodRecoveryTransaction>>> future = client
         .getFoodRecoveryTransaction(foodRunner.getProfile().email);
     future.then((txs) {
+      Navigator.of(context, rootNavigator: true).pop();
       finish(txs);
     });
   }
