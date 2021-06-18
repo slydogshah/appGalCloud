@@ -77,6 +77,8 @@ import ChartLineSimple from '../views/charts/ChartLineSimple'
 import CIcon from '@coreui/icons-react'
 
 import { AppContext,store} from "./AppContext"
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
+import Snackbar from "../components/Snackbar/Snackbar.js";
 
 const useStyles = makeStyles(styles);
 
@@ -282,8 +284,21 @@ function notifyFoodPickedup(props,tx)
              };
              //alert(JSON.stringify(payload));
 
+             //show progress bar
+                                                                     var element = (
+                                                                             <Snackbar
+                                                                               place="tc"
+                                                                               color="info"
+                                                                               icon={DonutLargeOutlinedIcon}
+                                                                               message="Loading...."
+                                                                               open={true}
+                                                                             />
+                                                                     );
+                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                     ReactDOM.render(element,document.getElementById('progress'));
              const apiUrl = window.location.protocol +"//"+window.location.hostname+"/activeNetwork/foodPickedUp/";
              axios.post(apiUrl,payload).then((response) => {
+                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                     const orgId = store.getState().sourceOrg.orgId;
                     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
                     axios.get(apiUrl).then((response) => {
@@ -292,6 +307,7 @@ function notifyFoodPickedup(props,tx)
                           state: { data: response.data }
                         });
                     }).catch(err => {
+                     ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                      //TODO
                                      console.log(JSON.stringify(err));
                                     });;
@@ -311,6 +327,7 @@ class Home extends React.Component {
     render() {
        return (
             <>
+                <div id="progress"/>
                 <div id="parent">
                   <HomeView state={this.state} props={this.props} />
                 </div>
