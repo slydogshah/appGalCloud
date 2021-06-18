@@ -256,9 +256,22 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                             foodRunner.offlineCommunitySupport = true;
                           }
                           Profile profile = ActiveSession.getInstance().getProfile();
+                          // set up the SimpleDialog
+                          SimpleDialog dialog = SimpleDialog(
+                              children: [CupertinoActivityIndicator()]
+                          );
+
+                          // show the dialog
+                          showDialog(
+                            context: this.context,
+                            builder: (BuildContext context) {
+                              return dialog;
+                            },
+                          );
                           ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
                           Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email,);
                           response.then((response){
+                                Navigator.of(context, rootNavigator: true).pop();
                                 setState(() {
                                   if(foodRunner.offlineCommunitySupport){
                                     offline = Colors.green;
