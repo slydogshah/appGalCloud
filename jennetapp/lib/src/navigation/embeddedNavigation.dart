@@ -32,13 +32,17 @@ class EmbeddedNavigation
   MapBoxNavigationViewController _controller;
   BuildContext context;
 
-  EmbeddedNavigation(BuildContext buildContext,SourceOrg sourceOrg)
+  EmbeddedNavigation(BuildContext buildContext,SourceOrg sourceOrg,FoodRunnerLocation foodRunnerLocation)
   {
       this.context = buildContext;
-      foodRunnerLocation = ActiveSession.getInstance().getLocation();
+      this.foodRunnerLocation = foodRunnerLocation;
 
+      _origin = WayPoint(
+          name: "Start",
+          latitude: this.foodRunnerLocation.getLatitude(),
+          longitude: this.foodRunnerLocation.getLongitude());
 
-      if(Platform.isIOS) {
+      /*if(Platform.isIOS) {
         _origin = WayPoint(
             name: "Start",
             latitude: 30.2698104,
@@ -50,7 +54,7 @@ class EmbeddedNavigation
             name: "Start",
             latitude: foodRunnerLocation.getLatitude(),
             longitude: foodRunnerLocation.getLongitude());
-      }
+      }*/
 
       _stop = WayPoint(
           name: "Stop",

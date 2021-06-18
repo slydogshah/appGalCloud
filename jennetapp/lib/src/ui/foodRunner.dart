@@ -7,6 +7,7 @@ import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRunner.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
@@ -641,10 +642,16 @@ class PickUpListView extends StatelessWidget {
             //donot rename this variable. It is symbolic
             future.then((fuckyou) {
               Navigator.of(context, rootNavigator: true).pop();
-              LocationUpdater.getLocation();
-              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
-                  tx.getPickupNotification().getSourceOrg());
-              embeddedNavigation.start(tx);
+
+
+              Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
+              locationFuture.then((foodRunnerLocation){
+                //print("**********");
+                //print(foodRunnerLocation);
+                EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+                    tx.getPickupNotification().getSourceOrg(),foodRunnerLocation);
+                embeddedNavigation.start(tx);
+              });
             });
           },
           child: Text('ACCEPT with NAVIGATION'),

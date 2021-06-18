@@ -4,6 +4,7 @@ import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunner.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
@@ -589,10 +590,15 @@ class InProgressListView extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
-            LocationUpdater.getLocation();
-            EmbeddedNavigation navigation = EmbeddedNavigation(context,
-                tx.getPickupNotification().getDropOffOrg());
-            navigation.start(tx);
+
+            Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
+            locationFuture.then((foodRunnerLocation){
+              //print("**********");
+              //print(foodRunnerLocation);
+              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+                  tx.getPickupNotification().getSourceOrg(),foodRunnerLocation);
+              embeddedNavigation.start(tx);
+            });
           },
           child: Text('START NAVIGATION'),
         ),
