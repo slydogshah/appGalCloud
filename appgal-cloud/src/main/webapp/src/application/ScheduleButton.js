@@ -42,7 +42,8 @@ import {
 } from '@coreui/react'
 import { AppContext,store} from "./AppContext"
 
-import AddAlert from "@material-ui/icons/AddAlert";
+import AddAlert from '@material-ui/icons/AddAlert';
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 import Snackbar from "../components/Snackbar/Snackbar.js";
 
 class ScheduleButton extends React.Component
@@ -66,8 +67,21 @@ class ScheduleButton extends React.Component
             sourceOrg:store.getState().sourceOrg
          };
 
+         //show progress bar
+                                                                 var element = (
+                                                                         <Snackbar
+                                                                           place="tc"
+                                                                           color="info"
+                                                                           icon={DonutLargeOutlinedIcon}
+                                                                           message="Loading...."
+                                                                           open={true}
+                                                                         />
+                                                                 );
+                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                 ReactDOM.render(element,document.getElementById('progress'));
          const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
          axios.post(apiUrl,payload).then((response) => {
+            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
             console.log(JSON.stringify(response.data));
             this.element = (
                 <Snackbar
@@ -104,6 +118,7 @@ class ScheduleButton extends React.Component
                 ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
                 ReactDOM.render(this.element,document.getElementById('schedulePickup'));
           }).catch(err => {
+           ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
            //TODO
            console.log(JSON.stringify(err));
           });
@@ -137,6 +152,7 @@ class ScheduleButton extends React.Component
     {
         return(
             <>
+                <div id="progress"/>
                 <div className="progress-group-prepend">
                     <span className="progress-group-text">
                         <CButton color="success" value={this.props.value} onClick={this.schedulePickup}>Schedule</CButton>

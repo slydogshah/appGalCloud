@@ -58,7 +58,7 @@ import CardHeader from "../components/Card/CardHeader.js";
 import CardAvatar from "../components/Card/CardAvatar.js";
 import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
-import AddAlert from "@material-ui/icons/AddAlert";
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 import Snackbar from "../components/Snackbar/Snackbar.js";
 
 const styles = {
@@ -237,7 +237,7 @@ function RenderForm({state,props})
                                                                         <Snackbar
                                                                           place="tc"
                                                                           color="info"
-                                                                          icon={AddAlert}
+                                                                          icon={DonutLargeOutlinedIcon}
                                                                           message="Starting a Pickup Request...."
                                                                           open={true}
                                                                         />
