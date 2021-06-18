@@ -6,6 +6,7 @@ import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
@@ -564,13 +565,11 @@ class InProgressListView extends StatelessWidget {
   }
 
   void handleDropOff(BuildContext context,String email, String dropOffOrgId, FoodRecoveryTransaction tx) {
-    //print("TX: "+tx.getPickupNotification().getSourceOrg().orgName);
-
-    //TODO
+    SourceOrg dropOffOrg = tx.getPickupNotification().getDropOffOrg();
     AlertDialog dialog = AlertDialog(
       title: Text('Start DropOff'),
       content: Text(
-        tx.getPickupNotification().getDropOffOrg().orgName+": "+"506 West Avenue"+","+"78701",
+        dropOffOrg.orgName+": "+dropOffOrg.street+","+dropOffOrg.zip,
         textAlign: TextAlign.left,
         style: TextStyle(
           fontWeight: FontWeight.w600,

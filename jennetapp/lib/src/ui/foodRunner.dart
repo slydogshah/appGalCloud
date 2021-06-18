@@ -9,6 +9,7 @@ import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -553,10 +554,11 @@ class PickUpListView extends StatelessWidget {
   }
 
   void handleAccept(BuildContext context,String email, FoodRecoveryTransaction tx) {
+    SourceOrg dropOffOrg = tx.getPickupNotification().getDropOffOrg();
     AlertDialog dialog = AlertDialog(
       title: Text('Accept Food Pickup and DropOff'),
       content: Text(
-        tx.getPickupNotification().getSourceOrg().orgName+": "+"506 West Avenue"+","+"78701",
+        dropOffOrg.orgName+": "+dropOffOrg.street+","+dropOffOrg.zip,
         textAlign: TextAlign.left,
         style: TextStyle(
           fontWeight: FontWeight.w600,
