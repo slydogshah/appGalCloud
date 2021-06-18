@@ -23,6 +23,9 @@ import CardFooter from "../components/Card/CardFooter.js";
 
 import { AppContext,store} from "./AppContext"
 
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
+import Snackbar from "../components/Snackbar/Snackbar.js";
+
 const styles = {
   cardCategoryWhite: {
     color: "rgba(255,255,255,.62)",
@@ -86,8 +89,22 @@ function ConfirmResetCodeView({state, props}) {
                            email:resetEmail,
                            resetCode:state.resetCode
                         };
+
+                        //show progress bar
+                                                                                var element = (
+                                                                                        <Snackbar
+                                                                                          place="tc"
+                                                                                          color="info"
+                                                                                          icon={DonutLargeOutlinedIcon}
+                                                                                          message="Loading...."
+                                                                                          open={true}
+                                                                                        />
+                                                                                );
+                                                                                ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                                ReactDOM.render(element,document.getElementById('progress'));
                         var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/verifyResetCode/";
                         axios.post(apiUrl,payload).then((response) => {
+                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                             const propagation = {
                               email:resetEmail
                             };
@@ -96,6 +113,7 @@ function ConfirmResetCodeView({state, props}) {
                                 state: { data: propagation }
                             });
                         }).catch(err => {
+                                 ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                  if(err.response != null && err.response.status == 401)
                                  {
                                         const error = (
@@ -149,6 +167,7 @@ class ConfirmResetCode extends React.Component {
         render() {
            return (
                 <>
+                    <div id="progress"/>
                     <div id="parent">
                       <ConfirmResetCodeView state={this.state} props={this.props} />
                     </div>

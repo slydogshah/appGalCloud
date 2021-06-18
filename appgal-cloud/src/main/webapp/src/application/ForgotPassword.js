@@ -23,6 +23,8 @@ import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
 
 import { AppContext,store} from "./AppContext"
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
+import Snackbar from "../components/Snackbar/Snackbar.js";
 
 const styles = {
   cardCategoryWhite: {
@@ -105,8 +107,22 @@ function ForgotPasswordView({state, props}) {
                            email:state.email,
                            mobileNumber:state.mobileNumber
                         };
+
+                        //show progress bar
+                                                        var element = (
+                                                                <Snackbar
+                                                                  place="tc"
+                                                                  color="info"
+                                                                  icon={DonutLargeOutlinedIcon}
+                                                                  message="Loading...."
+                                                                  open={true}
+                                                                />
+                                                        );
+                                                        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                        ReactDOM.render(element,document.getElementById('progress'));
                         var apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/sendResetCode/";
                         axios.post(apiUrl,payload).then((response) => {
+                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                             const propagation = {
                               email:state.email
                             };
@@ -115,6 +131,7 @@ function ForgotPasswordView({state, props}) {
                                 state: { data: propagation }
                             });
                         }).catch(err => {
+                           ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                            if(err.response != null && err.response.status == 404)
                            {
                                   const error = (
@@ -168,6 +185,7 @@ class ForgotPassword extends React.Component {
         render() {
            return (
                 <>
+                    <div id="progress"/>
                     <div id="parent">
                       <ForgotPasswordView state={this.state} props={this.props} />
                     </div>
