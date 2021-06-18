@@ -30,7 +30,7 @@ class LocationUpdater
       }
   }
 
-  static void getLocation() async
+  static Future<FoodRunnerLocation> getLocation() async
   {
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -50,21 +50,12 @@ class LocationUpdater
       }
     }
 
-    Future<LocationData> locationData = location.getLocation();
-    locationData.then((data){
-      print("LOCATION_RETURNED: $data");
-      FoodRunnerLocation foodRunnerLocation = new FoodRunnerLocation(data.latitude,data.longitude);
-      ActiveSession.getInstance().setLocation(foodRunnerLocation);
-      FoodRunnerLocation active = ActiveSession.getInstance().getLocation();
-      print("FOOD_LOCATION_RETURNED: $active");
-    });
-
-    /*FoodRunnerLocation foodRunnerLocation = new FoodRunnerLocation(0.0,0.0);
+    LocationData data = await location.getLocation();
+    FoodRunnerLocation foodRunnerLocation = new FoodRunnerLocation(data.latitude,data.longitude);
     ActiveSession.getInstance().setLocation(foodRunnerLocation);
     FoodRunnerLocation active = ActiveSession.getInstance().getLocation();
-    print("FOOD_LOCATION_RETURNED: $active");*/
-
-    //print("JUST_LEFT");
+    //print("FOOD_LOCATION_RETURNED: $active");
+    return active;
   }
   //--------ios--------------------------------------------
   static void startIOSPolling(Profile profile) async
@@ -96,7 +87,8 @@ class LocationUpdater
       map['latitude'] = data.latitude;
       map['longitude'] = data.longitude;
       LocationData location = LocationData.fromMap(map);
-      activeNetworkClient.sendLocationUpdate(location);
+      Future<String> future = activeNetworkClient.sendLocationUpdate(location);
+      future.then((result){}).catchError((error){});
     });
   }
   //--------android----------------------------------------
@@ -129,7 +121,8 @@ class LocationUpdater
       map['latitude'] = data.latitude;
       map['longitude'] = data.longitude;
       LocationData location = LocationData.fromMap(map);
-      activeNetworkClient.sendLocationUpdate(location);
+      Future<String> future = activeNetworkClient.sendLocationUpdate(location);
+      future.then((result){}).catchError((error){});
     });
   }
 }

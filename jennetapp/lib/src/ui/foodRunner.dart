@@ -7,7 +7,9 @@ import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRunner.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -288,9 +290,22 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                             foodRunner.offlineCommunitySupport = true;
                           }
                           Profile profile = ActiveSession.getInstance().getProfile();
+                          // set up the SimpleDialog
+                          SimpleDialog dialog = SimpleDialog(
+                              children: [CupertinoActivityIndicator()]
+                          );
+
+                          // show the dialog
+                          showDialog(
+                            context: this.context,
+                            builder: (BuildContext context) {
+                              return dialog;
+                            },
+                          );
                           ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
                           Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email);
                           response.then((response){
+                            Navigator.of(context, rootNavigator: true).pop();
                             setState(() {
                               if(foodRunner.offlineCommunitySupport){
                                 offline = Colors.green;
@@ -299,6 +314,36 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                                 offline = Colors.white;
                               }
                             });
+                          }).catchError((error){
+                            Navigator.of(context, rootNavigator: true).pop();
+                            AlertDialog dialog = AlertDialog(
+                              title: Text('System Error....'),
+                              content: Text(
+                                "Unknown System Error....",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              actions: [
+                                FlatButton(
+                                  textColor: Color(0xFF6200EE),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            );
+
+                            // show the dialog
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return dialog;
+                              },
+                            );
                           });
                         },
                         child: Padding(
@@ -552,10 +597,11 @@ class PickUpListView extends StatelessWidget {
   }
 
   void handleAccept(BuildContext context,String email, FoodRecoveryTransaction tx) {
+    SourceOrg dropOffOrg = tx.getPickupNotification().getDropOffOrg();
     AlertDialog dialog = AlertDialog(
       title: Text('Accept Food Pickup and DropOff'),
       content: Text(
-        tx.getPickupNotification().getSourceOrg().orgName+": "+"506 West Avenue"+","+"78701",
+        dropOffOrg.orgName+": "+dropOffOrg.street+","+dropOffOrg.zip,
         textAlign: TextAlign.left,
         style: TextStyle(
           fontWeight: FontWeight.w600,
@@ -575,16 +621,106 @@ class PickUpListView extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
+
+            // set up the SimpleDialog
+            SimpleDialog dialog = SimpleDialog(
+                children: [CupertinoActivityIndicator()]
+            );
+
+            // show the dialog
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return dialog;
+              },
+            );
+
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
             Future<String> future = client.accept(email, tx);
-            future.then((fuckyou) {
+            future.then((result) {
+              Navigator.of(context, rootNavigator: true).pop();
+
+
+              // set up the SimpleDialog
+              SimpleDialog dialog = SimpleDialog(
+                  children: [CupertinoActivityIndicator()]
+              );
+
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return dialog;
+                },
+              );
               ActiveNetworkRestClient client = new ActiveNetworkRestClient();
               Future<Map<String,List<FoodRecoveryTransaction>>> future = client
                   .getFoodRecoveryTransaction(email);
               future.then((txs) {
+                Navigator.of(context, rootNavigator: true).pop();
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => InProgressMainScene(txs)));
+              }).catchError((e) {
+                Navigator.of(context, rootNavigator: true).pop();
+                AlertDialog dialog = AlertDialog(
+                  title: Text('System Error....'),
+                  content: Text(
+                    "Unknown System Error....",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  actions: [
+                    FlatButton(
+                      textColor: Color(0xFF6200EE),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                );
+
+                // show the dialog
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return dialog;
+                  },
+                );
               });
+            }).catchError((error){
+              Navigator.of(context, rootNavigator: true).pop();
+              AlertDialog dialog = AlertDialog(
+                title: Text('System Error....'),
+                content: Text(
+                  "Unknown System Error....",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                actions: [
+                  FlatButton(
+                    textColor: Color(0xFF6200EE),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return dialog;
+                },
+              );
             });
           },
           child: Text('ACCEPT without NAVIGATION'),
@@ -594,14 +730,63 @@ class PickUpListView extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
             FocusScope.of(context).requestFocus(FocusNode());
+            // set up the SimpleDialog
+            SimpleDialog dialog = SimpleDialog(
+                children: [CupertinoActivityIndicator()]
+            );
+
+            // show the dialog
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return dialog;
+              },
+            );
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
             Future<String> future = client.accept(email, tx);
             //donot rename this variable. It is symbolic
-            future.then((fuckyou) {
-              LocationUpdater.getLocation();
-              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
-                  tx.getPickupNotification().getSourceOrg());
-              embeddedNavigation.start(tx);
+            future.then((result) {
+              Navigator.of(context, rootNavigator: true).pop();
+
+
+              Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
+              locationFuture.then((foodRunnerLocation){
+                //print("**********");
+                //print(foodRunnerLocation);
+                EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+                    tx.getPickupNotification().getSourceOrg(),foodRunnerLocation);
+                embeddedNavigation.start(tx);
+              });
+            }).catchError((error){
+              Navigator.of(context, rootNavigator: true).pop();
+              AlertDialog dialog = AlertDialog(
+                title: Text('System Error....'),
+                content: Text(
+                  "Unknown System Error....",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                actions: [
+                  FlatButton(
+                    textColor: Color(0xFF6200EE),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return dialog;
+                },
+              );
             });
           },
           child: Text('ACCEPT with NAVIGATION'),

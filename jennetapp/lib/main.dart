@@ -5,6 +5,7 @@ import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:app/src/ui/app.dart';
@@ -134,19 +135,26 @@ void autoLogin(String email,String password,double latitude,double longitude) {
   ProfileRestClient profileRestClient = new ProfileRestClient();
   Future<Map<String, dynamic>> future = profileRestClient.login(credentials);
   future.then((json) {
-    //TODO check for error
+    if(json['statusCode'] != 200)
+    {
+      runApp(new JenNetworkApp());
+    }
+    else {
+      Profile foodRunner = Profile.fromJson(json);
 
-    Profile foodRunner = Profile.fromJson(json);
+      ActiveSession activeSession = ActiveSession.getInstance();
+      activeSession.setProfile(foodRunner);
+      activeSession.foodRunner.offlineCommunitySupport =
+      json["offlineCommunitySupport"];
 
-    ActiveSession activeSession = ActiveSession.getInstance();
-    activeSession.setProfile(foodRunner);
-    activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
-
-    ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-    Future<Map<String, List<FoodRecoveryTransaction>>> future = client
-        .getFoodRecoveryTransaction(foodRunner.email);
-    future.then((txs) {
-      runApp(new FoodRunnerApp(txs));
-    });
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<Map<String, List<FoodRecoveryTransaction>>> future = client
+          .getFoodRecoveryTransaction(foodRunner.email);
+      future.then((txs) {
+          runApp(new FoodRunnerApp(txs));
+      }).catchError((e) {
+        runApp(new JenNetworkApp());
+      });
+    }
   });
 }

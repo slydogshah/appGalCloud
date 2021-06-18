@@ -54,9 +54,9 @@ class ProfileRestClient
 
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/login/";
     try {
-      //TODO: IOS location issue. most likely simulator related
       Map<String,dynamic> payload = credentials.toJson();
-      if (Platform.isIOS) {
+
+      /*if (Platform.isIOS) {
         payload["latitude"] = 30.2698104;
         payload["longitude"] = -97.75115579999999;
       }
@@ -66,7 +66,9 @@ class ProfileRestClient
         payload["longitude"] = credentials.longitude;
         //payload["latitude"] = 30.2698104;
         //payload["longitude"] = -97.75115579999999;
-      }
+      }*/
+      payload["latitude"] = credentials.latitude;
+      payload["longitude"] = credentials.longitude;
 
        response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
        timeout(Duration(seconds: 30),onTimeout: () {
@@ -92,14 +94,6 @@ class ProfileRestClient
     }
 
     json  = jsonDecode(response.body);
-
-    /*Iterable sourceOrgIterable = json['sourceOrgs'];
-    List<SourceOrg> sourceOrgs = new List();
-    for(Map<String, dynamic> sourceOrgJson in sourceOrgIterable)
-    {
-        SourceOrg sourceOrg = SourceOrg.fromJson(sourceOrgJson);
-        sourceOrgs.add(sourceOrg);
-    }*/
 
     Map<String,dynamic> result = json['profile'];
     result["offlineCommunitySupport"] = json["offlineCommunitySupport"];

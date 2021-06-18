@@ -8,6 +8,8 @@ class SourceOrg
     String orgName;
     String orgContactEmail;
     bool isProducer=false;
+    String street;
+    String zip;
 
     FoodRunnerLocation location = new FoodRunnerLocation(0.0, 0.0);
 
@@ -40,6 +42,12 @@ class SourceOrg
         foodRunnerLocation.longitude = json['longitude'];
       }
       this.location = foodRunnerLocation;
+      if(json['street'] != null){
+        this.street = json['street'];
+      }
+      if(json['zip'] != null){
+        this.zip = json['zip'];
+      }
     }
 
     Map<String, dynamic> toJson()
@@ -56,6 +64,8 @@ class SourceOrg
       json['producer'] = this.isProducer;
       json['latitude'] = this.location.latitude;
       json['longitude'] = this.location.longitude;
+      json['street'] = this.street;
+      json['zip'] = this.zip;
       return json;
     }
 

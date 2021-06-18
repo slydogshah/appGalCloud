@@ -77,7 +77,7 @@ class NotificationProcessor
             0, '#Jen Network', "You have ($numberOfRequests) new pickup requests", platformChannelSpecifics,
             payload: 'item x');
       }
-    });
+    }).catchError((e) {});
   }
 
   Future<void> configureProcessor(BuildContext context) async {
