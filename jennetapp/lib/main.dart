@@ -5,6 +5,7 @@ import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/rest/cloudBusinessException.dart';
 import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:app/src/ui/app.dart';
@@ -150,7 +151,9 @@ void autoLogin(String email,String password,double latitude,double longitude) {
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-        runApp(new FoodRunnerApp(txs));
+          runApp(new FoodRunnerApp(txs));
+      }).catchError((e) {
+        runApp(new JenNetworkApp());
       });
     }
   });

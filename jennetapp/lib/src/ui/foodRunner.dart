@@ -630,6 +630,36 @@ class PickUpListView extends StatelessWidget {
                 Navigator.of(context, rootNavigator: true).pop();
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => InProgressMainScene(txs)));
+              }).catchError((e) {
+                Navigator.of(context, rootNavigator: true).pop();
+                AlertDialog dialog = AlertDialog(
+                  title: Text('System Error....'),
+                  content: Text(
+                    "Unknown System Error....",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  actions: [
+                    FlatButton(
+                      textColor: Color(0xFF6200EE),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                );
+
+                // show the dialog
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return dialog;
+                  },
+                );
               });
             });
           },

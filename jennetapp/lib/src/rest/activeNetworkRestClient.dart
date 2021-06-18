@@ -15,23 +15,6 @@ import 'cloudBusinessException.dart';
 
 class ActiveNetworkRestClient
 {
-  Future<String> getSchedulePickUpNotification(String email) async
-  {
-    var response;
-
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"notification/pickup/notifications/?email="+email;
-    try {
-      response = await http.get(Uri.parse(remoteUrl));
-    }
-    catch (e) {
-      print(e);
-      Map<String, dynamic> json = UrlFunctions.handleError(e, response);
-      return jsonEncode(json);
-    }
-
-    return response.body;
-  }
-
   Future<Map<String,List<FoodRecoveryTransaction>>> getFoodRecoveryTransaction(String email) async
   {
     Map<String,List<FoodRecoveryTransaction>> txs = new Map();
@@ -43,8 +26,8 @@ class ActiveNetworkRestClient
       response = await http.get(Uri.parse(remoteUrl));
     }
     catch (e) {
-      print(e);
-      return txs;
+      //print(e);
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
     print(response.body);
