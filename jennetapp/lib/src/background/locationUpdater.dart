@@ -87,7 +87,8 @@ class LocationUpdater
       map['latitude'] = data.latitude;
       map['longitude'] = data.longitude;
       LocationData location = LocationData.fromMap(map);
-      activeNetworkClient.sendLocationUpdate(location);
+      Future<String> future = activeNetworkClient.sendLocationUpdate(location);
+      future.then((result){}).catchError((error){});
     });
   }
   //--------android----------------------------------------
@@ -120,7 +121,8 @@ class LocationUpdater
       map['latitude'] = data.latitude;
       map['longitude'] = data.longitude;
       LocationData location = LocationData.fromMap(map);
-      activeNetworkClient.sendLocationUpdate(location);
+      Future<String> future = activeNetworkClient.sendLocationUpdate(location);
+      future.then((result){}).catchError((error){});
     });
   }
 }

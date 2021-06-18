@@ -76,8 +76,7 @@ class ActiveNetworkRestClient
       response = await http.get(Uri.parse(remoteUrl));
     }
     catch (e) {
-      print(e);
-      return txs;
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
     Map<String,dynamic> object = jsonDecode(response.body);
@@ -106,7 +105,7 @@ class ActiveNetworkRestClient
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     }
     catch (e) {
-      print(e);
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
     return response.body;
   }
@@ -126,39 +125,31 @@ class ActiveNetworkRestClient
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     }
     catch (e) {
-      print(e);
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
     return response.body;
   }
 
-  Future<int> scheduleDropOff(FoodRecoveryTransaction tx) async
+  Future<String> accept(String email, FoodRecoveryTransaction tx) async
   {
-    FoodRunner foodRunner = new FoodRunner(ActiveSession.getInstance().getProfile());
-    ScheduleDropOffNotification scheduleDropOffNotification = new ScheduleDropOffNotification(tx.getPickupNotification().getSourceOrg(),
-        foodRunner, tx.getPickupNotification().getStart());
-
-    var json;
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/scheduleDropOff/";
+    Map<String,dynamic> payload = new Map();
+    payload["email"] = email;
+    payload["accepted"] = tx.getId();
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
     var response;
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: scheduleDropOffNotification.toString()).
+      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });
     }
     catch (e) {
-      print(e);
-      json = UrlFunctions.handleError(e, response);
-      return json["statusCode"];
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
-    json = UrlFunctions.handleError(null, response);
-    if(json != null)
-    {
-      return json["statusCode"];
-    }
+    //print("ACCEPT: "+response.body);
 
-    return response.statusCode;
+    return response.body;
   }
 
   Future<Map<String,List<FoodRecoveryTransaction>>> notifyDelivery(FoodRecoveryTransaction tx) async
@@ -179,7 +170,6 @@ class ActiveNetworkRestClient
       });
     }
     catch (e) {
-      print(e);
       json = UrlFunctions.handleError(e, response);
       throw new CloudBusinessException(json["statusCode"], "SYSTEM_ERROR");
     }
@@ -220,28 +210,5 @@ class ActiveNetworkRestClient
     }
 
     return txs;
-  }
-
-  Future<String> accept(String email, FoodRecoveryTransaction tx) async
-  {
-    Map<String,dynamic> payload = new Map();
-    payload["email"] = email;
-    payload["accepted"] = tx.getId();
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
-    var response;
-    try {
-      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
-      timeout(Duration(seconds: 30),onTimeout: () {
-        throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
-      });
-    }
-    catch (e) {
-      print(e);
-      return response.body;
-    }
-
-    //print("ACCEPT: "+response.body);
-
-    return response.body;
   }
 }

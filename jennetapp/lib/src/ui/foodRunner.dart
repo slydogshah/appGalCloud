@@ -314,6 +314,36 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                                 offline = Colors.white;
                               }
                             });
+                          }).catchError((error){
+                            Navigator.of(context, rootNavigator: true).pop();
+                            AlertDialog dialog = AlertDialog(
+                              title: Text('System Error....'),
+                              content: Text(
+                                "Unknown System Error....",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              actions: [
+                                FlatButton(
+                                  textColor: Color(0xFF6200EE),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            );
+
+                            // show the dialog
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return dialog;
+                              },
+                            );
                           });
                         },
                         child: Padding(
@@ -607,7 +637,7 @@ class PickUpListView extends StatelessWidget {
 
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
             Future<String> future = client.accept(email, tx);
-            future.then((fuckyou) {
+            future.then((result) {
               Navigator.of(context, rootNavigator: true).pop();
 
 
@@ -661,6 +691,36 @@ class PickUpListView extends StatelessWidget {
                   },
                 );
               });
+            }).catchError((error){
+              Navigator.of(context, rootNavigator: true).pop();
+              AlertDialog dialog = AlertDialog(
+                title: Text('System Error....'),
+                content: Text(
+                  "Unknown System Error....",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                actions: [
+                  FlatButton(
+                    textColor: Color(0xFF6200EE),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return dialog;
+                },
+              );
             });
           },
           child: Text('ACCEPT without NAVIGATION'),
@@ -685,7 +745,7 @@ class PickUpListView extends StatelessWidget {
             ActiveNetworkRestClient client = new ActiveNetworkRestClient();
             Future<String> future = client.accept(email, tx);
             //donot rename this variable. It is symbolic
-            future.then((fuckyou) {
+            future.then((result) {
               Navigator.of(context, rootNavigator: true).pop();
 
 
@@ -697,6 +757,36 @@ class PickUpListView extends StatelessWidget {
                     tx.getPickupNotification().getSourceOrg(),foodRunnerLocation);
                 embeddedNavigation.start(tx);
               });
+            }).catchError((error){
+              Navigator.of(context, rootNavigator: true).pop();
+              AlertDialog dialog = AlertDialog(
+                title: Text('System Error....'),
+                content: Text(
+                  "Unknown System Error....",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                actions: [
+                  FlatButton(
+                    textColor: Color(0xFF6200EE),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return dialog;
+                },
+              );
             });
           },
           child: Text('ACCEPT with NAVIGATION'),
