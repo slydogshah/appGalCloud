@@ -27,6 +27,7 @@ import Button from "../CustomButtons/Button.js";
 import { AppContext,store} from "../../application/AppContext"
 import AddAlert from "@material-ui/icons/AddAlert";
 import Snackbar from "../Snackbar/Snackbar.js";
+import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 
 import ScheduleButton from '../../application/ScheduleButton'
 
@@ -34,6 +35,7 @@ const useStyles = makeStyles(styles);
 
 function schedulePickup(props,history,pickupNotificationId,dropOffOrgId,enableOfflineCommunitySupport)
 {
+
      const payload = {
         pickupNotificationId:pickupNotificationId,
         enableOfflineCommunitySupport:enableOfflineCommunitySupport,
@@ -43,8 +45,21 @@ function schedulePickup(props,history,pickupNotificationId,dropOffOrgId,enableOf
         payload.dropOffOrgId = dropOffOrgId;
      }
 
+//show progress bar
+                                                                var element = (
+                                                                        <Snackbar
+                                                                          place="tc"
+                                                                          color="info"
+                                                                          icon={DonutLargeOutlinedIcon}
+                                                                          message="Starting a Pickup Request...."
+                                                                          open={true}
+                                                                        />
+                                                                );
+                                                                ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                ReactDOM.render(element,document.getElementById('progress'));
      const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/schedulePickup/";
      axios.post(apiUrl,payload).then((response) => {
+        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
         //console.log(JSON.stringify(response.data));
         const element = (
             <Snackbar
@@ -69,8 +84,22 @@ function schedulePickup(props,history,pickupNotificationId,dropOffOrgId,enableOf
         ReactDOM.unmountComponentAtNode(document.getElementById('schedulePickup'));
         ReactDOM.render(element,document.getElementById('schedulePickup'));
       }).catch(err => {
-       //TODO
-       console.log(JSON.stringify(err));
+        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                                    var element = (
+                                                                                                                                             <Snackbar
+                                                                                                                                               place="tc"
+                                                                                                                                               color="danger"
+                                                                                                                                               icon={DonutLargeOutlinedIcon}
+                                                                                                                                               message="500: Unknown System Error...."
+                                                                                                                                               open={true}
+                                                                                                                                               close
+                                                                                                                                               closeNotification={() => {
+                                                                                                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                                                                               }}
+                                                                                                                                             />
+                                                                                                                                     );
+                                                                                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                                                                     ReactDOM.render(element,document.getElementById('unknown_error'));
       });
 }
 

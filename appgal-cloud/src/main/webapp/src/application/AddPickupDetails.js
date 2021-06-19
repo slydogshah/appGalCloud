@@ -262,8 +262,21 @@ function RenderForm({state,props})
                                                                                   });
                                                                 }).catch(err => {
                                                                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
-                                                                            //TODO
-                                                                            console.log("ERROR: "+JSON.stringify(err));
+                                                                            var element = (
+                                                                                                                                     <Snackbar
+                                                                                                                                       place="tc"
+                                                                                                                                       color="danger"
+                                                                                                                                       icon={DonutLargeOutlinedIcon}
+                                                                                                                                       message="500: Unknown System Error...."
+                                                                                                                                       open={true}
+                                                                                                                                       close
+                                                                                                                                       closeNotification={() => {
+                                                                                                                                         ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                                                                       }}
+                                                                                                                                     />
+                                                                                                                             );
+                                                                                                                             ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                                                             ReactDOM.render(element,document.getElementById('unknown_error'));
                                                                 });
                                                          }}>Update</Button>
                                                      </CardFooter>
@@ -354,6 +367,7 @@ class AddPickupDetails extends React.Component
     render() {
         return(
             <>
+                <div id="unknown_error"/>
                 <div id="progress"/>
                 <div id="parent">
                     <RenderForm state={this.state} props={this.props}/>
