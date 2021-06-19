@@ -362,6 +362,8 @@ class DropOffOptions extends React.Component
                                       <br/>
                                       <br/>
                                       <br/>
+                                      <div id="unknown_error"/>
+                                      <div id="progress"/>
                                 <div id="schedulePickup"></div>
                 <DropOffOptionsView props={this.props} dropOffOrgs={dropOffOrgs} offlineCommunityHelpers={offlineCommunityHelpers} widget={this}/>
             </>

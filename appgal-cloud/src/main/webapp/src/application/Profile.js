@@ -16,6 +16,10 @@ import CardAvatar from "../components/Card/CardAvatar.js";
 import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
 
+import {
+  CAlert
+} from '@coreui/react'
+
 import { AppContext,store} from "./AppContext"
 import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 import Snackbar from "../components/Snackbar/Snackbar.js";
@@ -52,6 +56,7 @@ function ProfileView({state, props}) {
     return (
         <>
         <br/><br/><br/>
+        <div id="validation_error"/>
         <div>
           <GridContainer>
             <GridItem xs={12} sm={12} md={8}>
@@ -128,9 +133,10 @@ function ProfileView({state, props}) {
                         //console.log("PASS2:" + state.confirmNewPassword);
                         const email = profile.email;
                         const payload = {
-                            "email":email,
-                            "password":state.newPassword
-                        };
+                                                     newPassword:state.newPassword,
+                                                     confirmNewPassword:state.confirmNewPassword,
+                                                     email:profile.email
+                                                  };
                         //show progress bar
                         var element = (
                                 <Snackbar
@@ -143,11 +149,10 @@ function ProfileView({state, props}) {
                         );
                         ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                         ReactDOM.render(element,document.getElementById('progress'));
-                        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/newPassword/";
+                        const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/resetPassword/";
                         axios.post(apiUrl,payload).then((response) => {
                             //console.log("MY_DATA: "+JSON.stringify(response.data));
-                            //TODO: unhardcode
-                            const producer = true;
+                            const producer = store.getState().sourceOrg.producer;
                             const orgId = store.getState().sourceOrg.orgId;
                             const apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
                             //console.log(apiUrl);
@@ -167,8 +172,58 @@ function ProfileView({state, props}) {
                                           state: { data: response.data }
                                         });
                                 }
+                            }).catch(err => {
+                                if(err.response != null && err.response.status == 500)
+                                   {
+                                         var element = (
+                                                             <Snackbar
+                                                               place="tc"
+                                                               color="danger"
+                                                               icon={DonutLargeOutlinedIcon}
+                                                               message="500: Unknown System Error...."
+                                                               open={true}
+                                                               close
+                                                               closeNotification={() => {
+                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                               }}
+                                                             />
+                                                     );
+                                                     ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                     ReactDOM.render(element,document.getElementById('unknown_error'));
+                                   }
                             });
-                        });
+                        }).catch(err => {
+                                     ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                     if(err.response != null && err.response.status == 400)
+                                     {
+                                            const error = (
+                                                                 <CAlert
+                                                                 color="warning"
+                                                                 >
+                                                                    400: Your Confirm password does not match the New password
+                                                                </CAlert>
+                                                             );
+                                           ReactDOM.render(error,document.getElementById('validation_error'));
+                                     }
+                                     else if(err.response != null && err.response.status == 500)
+                                       {
+                                             var element = (
+                                                                                                          <Snackbar
+                                                                                                            place="tc"
+                                                                                                            color="danger"
+                                                                                                            icon={DonutLargeOutlinedIcon}
+                                                                                                            message="500: Unknown System Error...."
+                                                                                                            open={true}
+                                                                                                            close
+                                                                                                            closeNotification={() => {
+                                                                                                              ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                                            }}
+                                                                                                          />
+                                                                                                  );
+                                                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                                  ReactDOM.render(element,document.getElementById('unknown_error'));
+                                       }
+                            });
                     }}>Update</Button>
                 </CardFooter>
               </Card>
@@ -188,6 +243,7 @@ class Profile extends React.Component {
         render() {
            return (
                 <>
+                    <div id="unknown_error"/>
                     <div id="progress"/>
                     <div id="parent">
                       <ProfileView state={this.state} props={this.props} />
