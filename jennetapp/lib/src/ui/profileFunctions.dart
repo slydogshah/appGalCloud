@@ -35,23 +35,10 @@ class ProfileFunctions
        password = null;
     }
 
-    // set up the SimpleDialog
-    SimpleDialog dialog = SimpleDialog(
-      children: [CupertinoActivityIndicator()]
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
-
     AuthCredentials credentials = new AuthCredentials();
     credentials.email = email;
     credentials.password = password;
-    login(context, dialog, loginState, loginScene, credentials, emailField, passwordField);
+    login(context,loginState, loginScene, credentials, emailField, passwordField);
   }
 
   void showAlertDialogRegister(BuildContext context, final LoginView loginState,
@@ -106,6 +93,7 @@ class ProfileFunctions
     });
   }
 
+  //TODO
   void registration (BuildContext context,SimpleDialog dialog, LoginView loginState, LoginState loginScene, AuthCredentials authCredentials) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
@@ -168,72 +156,93 @@ class ProfileFunctions
     });
   }
 
-  void login (BuildContext context, SimpleDialog dialog, LoginView loginState, LoginState loginScene, AuthCredentials authCredentials,
+  void login (BuildContext context,LoginView loginState, LoginState loginScene, AuthCredentials authCredentials,
       final TextFormField emailField, final TextFormField passwordField) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
-    ProfileRestClient profileRestClient = new ProfileRestClient();
 
-    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
-    future.then((json) {
+    Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
+    locationFuture.then((location){
+      authCredentials.latitude = location.latitude;
+      authCredentials.longitude = location.longitude;
 
-      if(json['statusCode'] != 200)
-      {
-        Navigator.of(context, rootNavigator: true).pop();
-        if(json['statusCode'] == 401)
+      print("PRE: $authCredentials");
+      print("PRE: $location");
+
+      // set up the SimpleDialog
+      SimpleDialog dialog = SimpleDialog(
+          children: [CupertinoActivityIndicator()]
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        },
+      );
+      ProfileRestClient profileRestClient = new ProfileRestClient();
+      Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+      future.then((json) {
+        print(json);
+
+        if(json['statusCode'] != 200)
         {
-          loginScene.notifyAuthFailed("Login Failed: Email or Password error");
+          Navigator.of(context, rootNavigator: true).pop();
+          if(json['statusCode'] == 401)
+          {
+            loginScene.notifyAuthFailed("Login Failed: Email or Password error");
+            return;
+          }
+          loginScene.notifySystemError("System Error: Please try again");
           return;
         }
-        loginScene.notifySystemError("System Error: Please try again");
-        return;
-      }
-      Profile foodRunner = Profile.fromJson(json);
-      ActiveSession activeSession = ActiveSession.getInstance();
-      activeSession.setProfile(foodRunner);
-      activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
+        Profile foodRunner = Profile.fromJson(json);
+        ActiveSession activeSession = ActiveSession.getInstance();
+        activeSession.setProfile(foodRunner);
+        activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
 
-      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-      Future<Map<String,List<FoodRecoveryTransaction>>> future = client
-          .getFoodRecoveryTransaction(foodRunner.email);
-      future.then((txs) {
-        Navigator.of(context, rootNavigator: true).pop();
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
+        ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+        Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+            .getFoodRecoveryTransaction(foodRunner.email);
+        future.then((txs) {
+          Navigator.of(context, rootNavigator: true).pop();
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
 
-      }).catchError((e) {
-        Navigator.of(context, rootNavigator: true).pop();
-        AlertDialog dialog = AlertDialog(
-          title: Text('System Error....'),
-          content: Text(
-            "Unknown System Error....",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+        }).catchError((e) {
+          Navigator.of(context, rootNavigator: true).pop();
+          AlertDialog dialog = AlertDialog(
+            title: Text('System Error....'),
+            content: Text(
+              "Unknown System Error....",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
             ),
-          ),
-          actions: [
-            FlatButton(
-              textColor: Color(0xFF6200EE),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
+            actions: [
+              FlatButton(
+                textColor: Color(0xFF6200EE),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
 
-        // show the dialog
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return dialog;
-          },
-        );
+          // show the dialog
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return dialog;
+            },
+          );
+        });
+        showCards(context, foodRunner);
       });
-
-      showCards(context, foodRunner);
     });
   }
 

@@ -6,6 +6,7 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 
 import io.appgal.cloud.network.services.NetworkOrchestrator;
+import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,17 +109,15 @@ public class ProfileRegistrationService {
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
             JsonObject authResponse = new JsonObject();
-
             authResponse.add("profile", profile.toJson());
-
 
             FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
             if(foodRunner == null) {
                 foodRunner = new FoodRunner();
-                foodRunner.setProfile(profile);
-                foodRunner.setLocation(location);
-                this.networkOrchestrator.enterNetwork(foodRunner);
             }
+            foodRunner.setProfile(profile);
+            foodRunner.setLocation(location);
+            this.networkOrchestrator.enterNetwork(foodRunner);
 
             authResponse.addProperty("offlineCommunitySupport",foodRunner.isOfflineCommunitySupport());
 

@@ -37,7 +37,7 @@ void main(String env)
   config.then((jsonMap) {
     UrlFunctions.getInstance().androidApiUrl = jsonMap['androidApiUrl'];
     UrlFunctions.getInstance().iosApiUrl = jsonMap['iosApiUrl'];
-    print("APP_URL: "+UrlFunctions.getInstance().iosApiUrl);
+    //print("APP_URL: "+UrlFunctions.getInstance().iosApiUrl);
     launchApp();
   });
 }
@@ -112,10 +112,10 @@ void launchApp()
     String password = credentials['password'];
     double latitude = credentials['latitude'];
     double longitude = credentials['longitude'];
-    print(email);
-    print(password);
-    print(latitude);
-    print(longitude);
+    //print(email);
+    //print(password);
+    //print(latitude);
+    //print(longitude);
     if(email == null || password == null) {
       runApp(new JenNetworkApp());
     }
@@ -126,6 +126,7 @@ void launchApp()
   });
 }
 
+//TODO
 void autoLogin(String email,String password,double latitude,double longitude) {
   AuthCredentials credentials = new AuthCredentials();
   credentials.email = email;

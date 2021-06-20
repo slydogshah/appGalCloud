@@ -124,6 +124,10 @@ public class NetworkOrchestrator {
         List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
         try {
             FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
+            if(foodRunner == null)
+            {
+                return myTransactions;
+            }
 
             List<FoodRecoveryTransaction> all = this.mongoDBJsonStore.getFoodRecoveryTransactions();
             for (FoodRecoveryTransaction tx : all) {

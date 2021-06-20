@@ -3,6 +3,7 @@ package io.appgal.cloud.model;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.model.validators.ValidProfileSourceOrg;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,8 @@ public class Profile implements Serializable {
     private String chainId;
 
     private String resetCode;
+
+    private boolean offlineCommunitySupport = false;
 
     public Profile()
     {
@@ -168,6 +171,19 @@ public class Profile implements Serializable {
         this.resetCode = resetCode;
     }
 
+    public boolean isOfflineCommunitySupport() {
+        return offlineCommunitySupport;
+    }
+
+    public void setOfflineCommunitySupport(boolean offlineCommunitySupport) {
+        logger.info("*********SET*****************");
+
+
+        this.offlineCommunitySupport = offlineCommunitySupport;
+
+        JsonUtil.print(this.getClass(),this.toJson());
+    }
+
     @Override
     public String toString()
     {
@@ -203,6 +219,7 @@ public class Profile implements Serializable {
         if(this.chainId != null) {
             jsonObject.addProperty("chainId", this.chainId);
         }
+        jsonObject.addProperty("offlineCommunitySupport",this.offlineCommunitySupport);
 
         return jsonObject;
     }
@@ -247,6 +264,11 @@ public class Profile implements Serializable {
         if(jsonObject.has("resetCode"))
         {
             profile.resetCode = jsonObject.get("resetCode").getAsString();
+        }
+
+        if(jsonObject.has("offlineCommunitySupport"))
+        {
+            profile.offlineCommunitySupport = jsonObject.get("offlineCommunitySupport").getAsBoolean();
         }
 
         return profile;

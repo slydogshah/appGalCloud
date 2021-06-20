@@ -56,19 +56,7 @@ class ProfileRestClient
     try {
       Map<String,dynamic> payload = credentials.toJson();
 
-      /*if (Platform.isIOS) {
-        payload["latitude"] = 30.2698104;
-        payload["longitude"] = -97.75115579999999;
-      }
-      else
-      {
-        payload["latitude"] = credentials.latitude;
-        payload["longitude"] = credentials.longitude;
-        //payload["latitude"] = 30.2698104;
-        //payload["longitude"] = -97.75115579999999;
-      }*/
-      payload["latitude"] = credentials.latitude;
-      payload["longitude"] = credentials.longitude;
+      //print("POST: "+jsonEncode(payload));
 
        response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
        timeout(Duration(seconds: 30),onTimeout: () {

@@ -13,7 +13,7 @@ public class FoodRunner implements Serializable {
     private Profile profile;
     private Location location;
     private SourceOrg pickUpOrg;
-    private boolean offlineCommunitySupport = false;
+
 
     public FoodRunner() {
     }
@@ -65,17 +65,17 @@ public class FoodRunner implements Serializable {
         if(this.pickUpOrg != null) {
             jsonObject.add("pickUpOrg", this.pickUpOrg.toJson());
         }
-        jsonObject.addProperty("offlineCommunitySupport",this.offlineCommunitySupport);
+
 
         return jsonObject;
     }
 
     public boolean isOfflineCommunitySupport() {
-        return offlineCommunitySupport;
+        return this.profile.isOfflineCommunitySupport();
     }
 
     public void setOfflineCommunitySupport(boolean offlineCommunitySupport) {
-        this.offlineCommunitySupport = offlineCommunitySupport;
+        this.profile.setOfflineCommunitySupport(offlineCommunitySupport);
     }
 
     @Override
@@ -97,10 +97,6 @@ public class FoodRunner implements Serializable {
         }
         if(jsonObject.has("pickUpOrg")) {
             foodRunner.setPickUpOrg(SourceOrg.parse(jsonObject.get("pickUpOrg").getAsJsonObject().toString()));
-        }
-        if(jsonObject.has("offlineCommunitySupport"))
-        {
-            foodRunner.offlineCommunitySupport = jsonObject.get("offlineCommunitySupport").getAsBoolean();
         }
         return foodRunner;
     }
