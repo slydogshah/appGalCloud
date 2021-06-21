@@ -14,3 +14,119 @@ App: Login
 * Wrong Email (one that does not exist)
 * System Error
 * Login as Org (Access should be denied)
+
+
+Test 2
+----
+
+Dash: Register
+* Success
+* Code 400: Validation Errors
+    * Email: required,invalid
+    * Password: required
+    * OrgId: required
+* Code 409: Exists
+* Code 500: System Error
+
+App: Register
+* Success
+* Code 400: Validation Errors
+    * Email: required,invalid
+    * Password: required
+* Code 409: Exists
+* Code 500: System Error
+
+
+Test 3
+----
+
+Dash: Forgot Password
+* sendResetCode
+    * Email
+        * 404: Email not found
+        * Email Invalid (?)
+        * 403: Not an Org account
+    * Mobile
+        * Mobile Invalid (TODO)
+
+* verifyResetCode
+    * 401: Invalid Reset Code
+
+* resetPassword and updateProfile
+    * 400: Passwords don't match
+    * Password Reset Success
+
+
+Test 4
+----
+
+Dash: Launch the Main Page
+
+* 500: System Error
+
+
+Test 5
+----
+
+Dash: Notify Food Picked Up
+* 500: System Error
+
+
+Test 6
+----
+
+Dash: Schedule a Pickup
+
+* Start Scheduling Process
+    * addPickupDetails
+        * 500: System Error
+    * Schedule Org or OfflineCommunity
+        * 500: System Error
+
+
+Test 7
+----
+
+Dash: DropOff Home / FoodReceived
+
+* 500: System Error
+
+Test 8
+---
+
+App: Show Requests
+
+Test 9
+----
+
+App: Show In-Progress Requests
+
+Test 10
+----
+
+App: Notify Availability for Offline Community Support
+
+* 500: System Error
+
+Test 11
+----
+
+App: Accept a Request
+
+* Cancel
+
+* Accept with or without Navigation
+    * 500: System Error
+    * Start Navigation
+
+Test 12
+----
+
+App: Start DropOff Navigation
+        * Cancel
+        * Start Navigation
+
+
+
+
+

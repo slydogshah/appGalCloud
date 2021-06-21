@@ -271,7 +271,7 @@ public class Registration {
             }
 
             String resetCode = UUID.randomUUID().toString().substring(0,6);
-            logger.info("RESET_CODE: "+resetCode);
+            //logger.info("RESET_CODE: "+resetCode);
 
             profile.setResetCode(resetCode);
             this.mongoDBJsonStore.updateProfile(profile);
