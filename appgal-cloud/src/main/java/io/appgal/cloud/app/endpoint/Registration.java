@@ -224,7 +224,15 @@ public class Registration {
             }
             else
             {
-                responseJson = this.profileRegistrationService.orgLogin(userAgent, email, password);
+                if(!appLogin) {
+                    responseJson = this.profileRegistrationService.orgLogin(userAgent, email, password);
+                }
+                else
+                {
+                    JsonObject forbidden = new JsonObject();
+                    forbidden.addProperty("message", "access_denied");
+                    return Response.status(403).entity(forbidden.toString()).build();
+                }
             }
 
             return Response.ok(responseJson.toString()).build();

@@ -96,11 +96,6 @@ public class MongoDBJsonStore {
     }
 
     //Profiles
-    public void clearAllProfiles()
-    {
-        this.profileStore.clearAllProfiles(this.mongoDatabase);
-    }
-
     public void storeProfile(Profile profile)
     {
         this.profileStore.storeProfile(this.mongoDatabase,profile);

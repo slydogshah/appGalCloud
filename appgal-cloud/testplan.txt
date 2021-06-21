@@ -1,0 +1,16 @@
+Test 1
+----
+
+Dash: Login
+* Success
+* Wrong Password
+* Wrong Email (one that does not exist)
+* System Error
+* Login as FoodRunner (Access should be denied)
+
+App: Login
+* Success
+* Wrong Password
+* Wrong Email (one that does not exist)
+* System Error
+* Login as Org (Access should be denied)

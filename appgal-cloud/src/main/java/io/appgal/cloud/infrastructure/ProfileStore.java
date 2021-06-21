@@ -82,13 +82,4 @@ public class ProfileStore {
         Document doc = Document.parse(profileJson.toString());
         collection.insertOne(doc);
     }
-
-    public void clearAllProfiles(MongoDatabase database)
-    {
-        MongoCollection<Document> collection = database.getCollection("profile");
-
-        String json = "{}";
-
-        collection.deleteMany(new Document());
-    }
 }

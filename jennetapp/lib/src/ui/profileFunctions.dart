@@ -79,6 +79,10 @@ class ProfileFunctions
             loginScene.notifyAuthFailed("Login Failed: Email or Password error");
             return;
           }
+          else if(json['statusCode'] == 403){
+            loginScene.notifyAuthFailed("403: Access Denied");
+            return;
+          }
           loginScene.notifySystemError("System Error: Please try again");
           return;
         }
