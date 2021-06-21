@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 //import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
+import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/cloudBusinessException.dart';
@@ -110,19 +112,23 @@ void launchApp()
   future.then((credentials){
     String email = credentials['email'];
     String password = credentials['password'];
-    double latitude = credentials['latitude'];
-    double longitude = credentials['longitude'];
-    //print(email);
-    //print(password);
-    //print(latitude);
-    //print(longitude);
-    if(email == null || password == null) {
-      runApp(new JenNetworkApp());
-    }
-    else
-    {
+
+    Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
+    locationFuture.then((location){
+      double latitude = credentials['latitude'];
+      double longitude = credentials['longitude'];
+      //print(email);
+      //print(password);
+      //print(latitude);
+      //print(longitude);
+      if(email == null || password == null) {
+        runApp(new JenNetworkApp());
+      }
+      else
+      {
         autoLogin(email, password,latitude,longitude);
-    }
+      }
+    });
   });
 }
 

@@ -24,8 +24,9 @@ class Registration extends StatefulWidget
 
 class RegistrationState extends State<Registration> with TickerProviderStateMixin
 {
-  bool emailIsInvalid = false;
-  bool passwordIsRequired = false;
+  String emailIsInvalidMessage;
+  String passwordIsRequiredMessage;
+
   String email = "";
   String password = "";
 
@@ -50,10 +51,10 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
     super.dispose();
   }
 
-  void notifyEmailIsInvalid(String emailValue,String passwordValue,bool emailValid,bool passwordRequired) {
+  void notifyEmailIsInvalid(String emailValue,String passwordValue,String emailValid,String passwordRequired) {
     setState(() {
-      this.emailIsInvalid = emailValid;
-      this.passwordIsRequired = passwordRequired;
+      this.emailIsInvalidMessage = emailValid;
+      this.passwordIsRequiredMessage = passwordRequired;
       this.email = emailValue;
       this.password = passwordValue;
     });
@@ -63,6 +64,43 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
+
+    TextFormField emailTextField = TextFormField(
+      controller: this.emailController,
+      autovalidateMode:AutovalidateMode.always,
+      validator: (value) {
+        return this.emailIsInvalidMessage;
+      },
+      onChanged: (String txt) {},
+      style: const TextStyle(
+        fontSize: 18,
+      ),
+      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Login...',
+      ),
+    );
+
+    TextFormField passwordTextField = TextFormField(
+      controller: this.passwordController,
+      autovalidateMode:AutovalidateMode.always,
+      validator: (value) {
+        return this.passwordIsRequiredMessage;
+      },
+      onChanged: (String txt) {},
+      obscureText: true,
+      style: const TextStyle(
+        fontSize: 18,
+      ),
+      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Password...',
+      ),
+    );
+    ProfileFunctions profileFunctions = new ProfileFunctions();
+
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
@@ -110,8 +148,8 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                                 registrationState: this,
                                 animation: animation,
                                 animationController: animationController,
-                                emailController: this.emailController,
-                                passwordController: this.passwordController,
+                                emailTextField: emailTextField,
+                                passwordTextField: passwordTextField,
                               );
                             },
                           ),
@@ -214,8 +252,8 @@ class RegisterView extends StatelessWidget {
       {Key key,
         this.registrationState,
         this.animationController,
-        this.emailController,
-        this.passwordController,
+        this.emailTextField,
+        this.passwordTextField,
         this.animation,
         this.callback})
       : super(key: key);
@@ -224,40 +262,15 @@ class RegisterView extends StatelessWidget {
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final RegistrationState registrationState;
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
+  final TextFormField emailTextField;
+  final TextFormField passwordTextField;
+
+
 
   @override
   Widget build(BuildContext context) {
-    TextField emailTextField = TextField(
-      controller: this.emailController,
-      onChanged: (String txt) {},
-      style: const TextStyle(
-        fontSize: 18,
-      ),
-      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: 'Login...',
-      ),
-    );
-    Widget email = this.getLoginUIBar(context,emailTextField);
-
-    TextField passwordTextField = TextField(
-      controller: this.passwordController,
-      onChanged: (String txt) {},
-      obscureText: true,
-      style: const TextStyle(
-        fontSize: 18,
-      ),
-      cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: 'Password...',
-      ),
-    );
-    ProfileFunctions profileFunctions = new ProfileFunctions();
-    Widget password = this.getPasswordUIBar(context,profileFunctions,emailTextField,passwordTextField);
+    Widget email = this.getLoginUIBar(context, emailTextField);
+    Widget password = this.getPasswordUIBar(context, new ProfileFunctions(), emailTextField, passwordTextField);
 
     return AnimatedBuilder(
       animation: animationController,
@@ -358,7 +371,7 @@ class RegisterView extends StatelessWidget {
   void handleAccept(BuildContext context) {
   }
 
-  Widget getLoginUIBar(BuildContext context, TextField emailTextField) {
+  Widget getLoginUIBar(BuildContext context, TextFormField emailTextField) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       child: Row(
@@ -407,8 +420,8 @@ class RegisterView extends StatelessWidget {
   }
 
   Widget getPasswordUIBar(BuildContext context,ProfileFunctions profileFunctions,
-      TextField emailTextField,
-      TextField passwordTextField) {
+      TextFormField emailTextField,
+      TextFormField passwordTextField) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       child: Row(
