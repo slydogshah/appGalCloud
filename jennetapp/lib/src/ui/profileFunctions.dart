@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
@@ -182,17 +184,21 @@ class ProfileFunctions
         String passwordIsRequired ;
         errors.forEach((element) {
           if (element.startsWith("email")) {
-            emailIsInvalid = "Email is invalid";
+            emailIsInvalid = element;
           }
           else if(element.startsWith("password"))
           {
-            passwordIsRequired = "Password is required";
+            passwordIsRequired = element;
           }
         });
-
         emailField.controller.value = new TextEditingValue(text:email);
         passwordField.controller.value = new TextEditingValue(text:password);
         registrationState.notifyEmailIsInvalid(email,password,emailIsInvalid,passwordIsRequired);
+      }
+      else if(json['statusCode'] == 409) {
+        emailField.controller.value = new TextEditingValue(text:email);
+        passwordField.controller.value = new TextEditingValue(text:password);
+        registrationState.notifyEmailIsInvalid(email,password,"Email is already registered",null);
       }
       else {
         AuthCredentials credentials = new AuthCredentials();
