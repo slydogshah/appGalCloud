@@ -1,5 +1,6 @@
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/model/profile.dart';
+import 'package:app/src/ui/app.dart';
 import 'package:app/src/ui/profileFunctions.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -220,7 +221,7 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Material(
+                  /*Material(
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: const BorderRadius.all(
@@ -235,7 +236,7 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             )
@@ -474,6 +475,32 @@ class RegisterView extends StatelessWidget {
                 FocusScope.of(context).requestFocus(FocusNode());
                 profileFunctions.showAlertDialogRegistration(context, this.registrationState, this, emailTextField,
                     passwordTextField,"FOOD_RUNNER");
+              },
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              //color: HotelAppTheme.buildLightTheme().primaryColor,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(38.0),
+              ),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.4),
+                    offset: const Offset(0, 2),
+                    blurRadius: 8.0),
+              ],
+            ),
+            child:
+            ElevatedButton(
+              child: Text('Cancel'),
+              style: ElevatedButton.styleFrom(
+                //primary: Color(0xFF383EDB)
+                  primary: Colors.pink
+              ),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => JenNetworkApp()));
               },
             ),
           ),

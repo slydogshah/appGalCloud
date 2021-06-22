@@ -542,6 +542,15 @@ function RenderLogin({state,props})
                                                       });
                                                        }}>Register</Button>
                                                     </GridItem>
+                                                    <GridItem xs={12} sm={12} md={6}>
+                                                       <Button color="primary" onClick={(e) => {
+                                                              const element = (
+                                                                   <RenderLogin state={state} props={props}/>
+                                                              );
+                                                              ReactDOM.unmountComponentAtNode(document.getElementById('parent'));
+                                                              ReactDOM.render(element,document.getElementById('parent'));
+                                                       }}>Cancel</Button>
+                                                    </GridItem>
                                                     </GridContainer>
                                                </CardFooter>
                                              </Card>
