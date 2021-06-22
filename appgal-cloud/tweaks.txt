@@ -1,4 +1,3 @@
 App: Show a Default Image if one is missing
 Dash: Validate on Add Food Details
-Ability to Cancel Register
 More data on the dashboard
