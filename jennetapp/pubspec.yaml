@@ -270,6 +270,7 @@ flutter:
     - assets/design_course/
     - assets/fitness_app/
     - assets/hotel/
+    - assets/jen/
 
   generate: true
   uses-material-design: true

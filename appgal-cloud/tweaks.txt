@@ -1,2 +1,1 @@
-App: Show a Default Image if one is missing
 More data on the dashboard

@@ -386,7 +386,19 @@ class PickUpListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/transaction/foodPic/?id="+tx.getId();
+    Widget foodImage;
+    if(tx.getPickupNotification().foodPic != null) {
+      String remoteUrl = UrlFunctions.getInstance().resolveHost() +
+          "tx/recovery/transaction/foodPic/?id=" + tx.getId();
+      foodImage = Image.network(remoteUrl);
+    }
+    else
+      {
+        foodImage = Image.asset(
+          "assets/jen/defaultFoodImage.jpeg",
+          fit: BoxFit.cover,
+        );
+      }
     Widget dropoff = null;
     if(tx.getPickupNotification().getDropOffOrg() != null)
     {
@@ -448,7 +460,7 @@ class PickUpListView extends StatelessWidget {
                             AspectRatio(
                               aspectRatio: 2,
                               child:
-                              Image.network(remoteUrl),
+                              foodImage,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
@@ -507,7 +519,7 @@ class PickUpListView extends StatelessWidget {
                                               MainAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  "Pickup: 10 minutes",
+                                                  "Pickup: "+tx.getPickupEstimate(),
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey
@@ -549,7 +561,7 @@ class PickUpListView extends StatelessWidget {
                                       children: <Widget>[
                                         dropoff,
                                         Text(
-                                          'DropOff: 15 minutes',
+                                          "DropOff: "+tx.getDropOffEstimate(),
                                           style: TextStyle(
                                               fontSize: 14,
                                               color:
