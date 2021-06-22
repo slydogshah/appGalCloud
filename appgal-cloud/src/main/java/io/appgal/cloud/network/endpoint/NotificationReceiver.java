@@ -89,7 +89,26 @@ public class NotificationReceiver {
     public Response addPickupDetails(@RequestBody String payload)
     {
         try {
+            JsonObject validationError = new JsonObject();
             JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
+
+            if(!json.has("foodType") || json.get("foodType").getAsString().trim().length()==0
+            || json.get("foodType").getAsString().trim().equals("0"))
+            {
+                validationError.addProperty("foodTypeIsRequired",true);
+            }
+            if(!json.has("time") || json.get("time").getAsString().trim().length()==0
+            || json.get("time").getAsString().trim().equals("0")
+                    || json.get("time").getAsString().trim().equals("1")
+            )
+            {
+                validationError.addProperty("timeIsRequired",true);
+            }
+            if(!validationError.keySet().isEmpty())
+            {
+                return Response.status(400).entity(validationError.toString()).build();
+            }
+
             String orgId = json.get("orgId").getAsString();
 
             String pic = null;

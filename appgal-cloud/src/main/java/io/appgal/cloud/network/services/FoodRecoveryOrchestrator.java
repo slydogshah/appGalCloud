@@ -60,7 +60,7 @@ public class FoodRecoveryOrchestrator {
                 continue;
             }
 
-            JsonUtil.print(this.getClass(),dropOffOption.toJson());
+            //JsonUtil.print(this.getClass(),dropOffOption.toJson());
 
             if(dropOffOption.getOrgId().equals(producer.getOrgId()))
             {

@@ -219,9 +219,6 @@ public class PickupRequestStore {
         MongoDatabase database = this.mongoDBJsonStore.getMongoDatabase();
         MongoCollection<Document> collection = database.getCollection("scheduledPickUpNotifications");
 
-        System.out.println("*************************************************");
-        JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
-        System.out.println("*************************************************");
 
         JsonObject stored = this.getScheduledPickUpNotification(schedulePickUpNotification.getId());
 

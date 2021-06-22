@@ -38,6 +38,7 @@ import {
     CProgress,
     CCardGroup,
     CContainer,
+    CAlert,
     CWidgetDropdown
 } from '@coreui/react'
 import { Formik } from "formik";
@@ -199,6 +200,7 @@ function RenderForm({state,props})
                                                             <option value="1:22">10:00 PM</option>
                                                             <option value="1:23">11:00 PM</option>
                                                          </CSelect>
+                                                         <div id="time_is_required"/>
                                                          </GridItem>
                                                        </GridContainer>
                                                        <GridContainer>
@@ -214,6 +216,7 @@ function RenderForm({state,props})
                                                                <option value="VEG">VEG</option>
                                                                <option value="NON_VEG">NON-VEG</option>
                                                            </CSelect>
+                                                           <div id="food_type_is_required"/>
                                                          </GridItem>
                                                        </GridContainer>
                                                        <GridContainer>
@@ -232,6 +235,8 @@ function RenderForm({state,props})
                                                      </CardBody>
                                                      <CardFooter>
                                                        <Button color="primary" onClick={(e) => {
+                                                                ReactDOM.unmountComponentAtNode(document.getElementById('time_is_required'));
+                                                                ReactDOM.unmountComponentAtNode(document.getElementById('food_type_is_required'));
                                                                 //show progress bar
                                                                 var element = (
                                                                         <Snackbar
@@ -261,22 +266,50 @@ function RenderForm({state,props})
                                                                                     state: { data: response.data }
                                                                                   });
                                                                 }).catch(err => {
-                                                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
-                                                                            var element = (
-                                                                                                                                     <Snackbar
-                                                                                                                                       place="tc"
-                                                                                                                                       color="danger"
-                                                                                                                                       icon={DonutLargeOutlinedIcon}
-                                                                                                                                       message="500: Unknown System Error...."
-                                                                                                                                       open={true}
-                                                                                                                                       close
-                                                                                                                                       closeNotification={() => {
-                                                                                                                                         ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
-                                                                                                                                       }}
-                                                                                                                                     />
-                                                                                                                             );
-                                                                                                                             ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
-                                                                                                                             ReactDOM.render(element,document.getElementById('unknown_error'));
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                    if(err.response != null && err.response.status == 400)
+                                                                    {
+                                                                        if(err.response.data.timeIsRequired)
+                                                                        {
+                                                                            const element = (
+                                                                                                  <CAlert
+                                                                                                  color="warning"
+                                                                                                  >
+                                                                                                     'Preferred Pickup Time' is required
+                                                                                                 </CAlert>
+                                                                                              );
+                                                                            ReactDOM.render(element,document.getElementById('time_is_required'));
+                                                                        }
+                                                                        if(err.response.data.foodTypeIsRequired)
+                                                                        {
+                                                                            const element = (
+                                                                                                  <CAlert
+                                                                                                  color="warning"
+                                                                                                  >
+                                                                                                     'Food Type' is required
+                                                                                                 </CAlert>
+                                                                                              );
+                                                                            ReactDOM.render(element,document.getElementById('food_type_is_required'));
+                                                                        }
+                                                                    }
+                                                                    else{
+
+                                                                        var element = (
+                                                                             <Snackbar
+                                                                               place="tc"
+                                                                               color="danger"
+                                                                               icon={DonutLargeOutlinedIcon}
+                                                                               message="500: Unknown System Error...."
+                                                                               open={true}
+                                                                               close
+                                                                               closeNotification={() => {
+                                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                               }}
+                                                                             />
+                                                                     );
+                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                     ReactDOM.render(element,document.getElementById('unknown_error'));
+                                                                    }
                                                                 });
                                                          }}>Update</Button>
                                                      </CardFooter>
