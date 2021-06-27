@@ -92,17 +92,21 @@ function HomeView({state, props}) {
     const row = [];
     const org = "";
     const orgContact = "";
+    const scheduled = "";
     if(value.pickupNotification.dropOffOrg == null)
     {
         org = "Offline Community DropOff";
         orgContact = "";
+        scheduled = value.when+" "+value.pickupNotification.scheduled;
     }
     else{
         org = value.pickupNotification.dropOffOrg.orgName;
         orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+        scheduled = value.when+" "+value.pickupNotification.scheduled;
     }
     row.push(org);
     row.push(orgContact);
+    row.push(scheduled);
     array.push(row);
   }
 
@@ -122,9 +126,11 @@ function HomeView({state, props}) {
               orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
           }
       const foodRunner = value.pickupNotification.foodRunner.profile.email;
+      const time = value.estimatedPickupTime;
       row.push(org);
       row.push(orgContact);
       row.push(foodRunner);
+      row.push(time);
       row.push(FoodPickedUpButton(props,value));
       activeArray.push(row);
     }
@@ -203,7 +209,7 @@ function HomeView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["DropOff Organization", "Contact Email"]}
+                                        tableHead={["DropOff Organization", "Contact Email", "Scheduled"]}
                                         tableData={array}
                                       />
                                     </CardBody>
@@ -220,7 +226,7 @@ function HomeView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["DropOff Organization", "Contact Email", "Food Runner","Notify"]}
+                                        tableHead={["DropOff Organization", "Contact Email", "Food Runner","Estimated Arrival","Notify"]}
                                         tableData={activeArray}
                                       />
                                     </CardBody>

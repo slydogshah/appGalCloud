@@ -18,9 +18,12 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.List;
@@ -124,25 +127,43 @@ public class NotificationReceiver {
 
             //read the time property and add the correct starttime
             OffsetDateTime start = null;
+            String scheduledPickupTime = null;
             String time = json.get("time").getAsString();
             String[] timeSplit = time.split(":");
             if(timeSplit[0].equals("0"))
             {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY,Integer.parseInt(timeSplit[1]));
+                calendar.set(Calendar.MINUTE,0);
                 LocalDateTime localDate = LocalDateTime.ofInstant(calendar.toInstant(),ZoneOffset.UTC);
                 start = OffsetDateTime.of(localDate,ZoneOffset.UTC);
+
+                //Calculate start time of the day
+                String pattern = "hh:mm a";
+                DateFormat dateFormat = new SimpleDateFormat(pattern);
+                scheduledPickupTime = dateFormat.format(calendar.getTime());
+                System.out.println("********SCHEDULED********");
+                System.out.println(scheduledPickupTime);
             }
             else
             {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY,Integer.parseInt(timeSplit[1]));
+                calendar.set(Calendar.MINUTE,0);
                 LocalDateTime localDate = LocalDateTime.ofInstant(calendar.toInstant(),ZoneOffset.UTC);
                 start = OffsetDateTime.ofInstant(localDate.plus(1, ChronoUnit.DAYS).toInstant(ZoneOffset.UTC),ZoneOffset.UTC);
+
+                //Calculate start time of the day
+                String pattern = "hh:mm a";
+                DateFormat dateFormat = new SimpleDateFormat(pattern);
+                scheduledPickupTime = dateFormat.format(calendar.getTime());
+                System.out.println("********SCHEDULED********");
+                System.out.println(scheduledPickupTime);
             }
 
             logger.info("START: "+start.toEpochSecond());
             notification.setStart(start);
+            notification.setScheduledStartTime(scheduledPickupTime);
 
             this.networkOrchestrator.startPickUpProcess(pic,notification);
 

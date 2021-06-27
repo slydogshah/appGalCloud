@@ -3,6 +3,7 @@ package io.appgal.cloud.model;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -95,6 +96,10 @@ public class SchedulePickUpNotification extends ScheduleNotification
             long startEpochSecond = jsonObject.get("start").getAsLong();
             schedulePickUpNotification.start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(startEpochSecond),ZoneOffset.UTC);
         }
+        if(jsonObject.has("scheduled"))
+        {
+            schedulePickUpNotification.scheduledStartTime = jsonObject.get("scheduled").getAsString();
+        }
         if(jsonObject.has("notificationSent"))
         {
             schedulePickUpNotification.setNotificationSent(jsonObject.get("notificationSent").getAsBoolean());
@@ -141,6 +146,15 @@ public class SchedulePickUpNotification extends ScheduleNotification
         {
             jsonObject.addProperty("start", this.start.toEpochSecond());
         }
+
+        if(this.scheduledStartTime != null){
+            jsonObject.addProperty("scheduled", this.scheduledStartTime);
+        }
+        else
+        {
+            jsonObject.addProperty("scheduled", "Not Available");
+        }
+
         if(this.pickupNotes != null) {
             jsonObject.add("pickupNotes", JsonParser.parseString(this.pickupNotes.toString()));
         }

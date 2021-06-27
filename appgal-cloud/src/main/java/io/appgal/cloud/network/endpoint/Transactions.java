@@ -150,11 +150,29 @@ public class Transactions {
 
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
-                    pending.add(cour.toJson());
+                    JsonObject txJson = cour.toJson();
+                    if(cour.getPickUpNotification().isToday())
+                    {
+                        txJson.addProperty("when","TODAY");
+                    }
+                    else
+                    {
+                        txJson.addProperty("when","TOM");
+                    }
+                    pending.add(txJson);
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
                         cour.getTransactionState() == TransactionState.ONTHEWAY) {
 
-                    inProgress.add(cour.toJson());
+                    JsonObject txJson = cour.toJson();
+                    if(cour.getPickUpNotification().isToday())
+                    {
+                        txJson.addProperty("when","TODAY");
+                    }
+                    else
+                    {
+                        txJson.addProperty("when","TOM");
+                    }
+                    inProgress.add(txJson);
                 }
             }
             result.add("pending", pending);
@@ -192,10 +210,28 @@ public class Transactions {
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryDropOffTransactions(orgId);
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
-                    pending.add(cour.toJson());
+                    JsonObject txJson = cour.toJson();
+                    if(cour.getPickUpNotification().isToday())
+                    {
+                        txJson.addProperty("when","TODAY");
+                    }
+                    else
+                    {
+                        txJson.addProperty("when","TOM");
+                    }
+                    pending.add(txJson);
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
                         cour.getTransactionState() == TransactionState.ONTHEWAY) {
-                    inProgress.add(cour.toJson());
+                    JsonObject txJson = cour.toJson();
+                    if(cour.getPickUpNotification().isToday())
+                    {
+                        txJson.addProperty("when","TODAY");
+                    }
+                    else
+                    {
+                        txJson.addProperty("when","TOM");
+                    }
+                    inProgress.add(txJson);
                 }
             }
             result.add("pending", pending);
