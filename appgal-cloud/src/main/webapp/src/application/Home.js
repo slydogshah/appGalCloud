@@ -209,7 +209,7 @@ function HomeView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["DropOff Organization", "Contact Email", "Scheduled"]}
+                                        tableHead={["DropOff Organization", "Contact Email", "Scheduled Pickup"]}
                                         tableData={array}
                                       />
                                     </CardBody>
