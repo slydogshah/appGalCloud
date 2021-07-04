@@ -197,7 +197,7 @@ class ProfileFunctions
         });
         emailField.controller.value = new TextEditingValue(text:email);
         passwordField.controller.value = new TextEditingValue(text:password);
-        registrationState.notifyEmailIsInvalid(email,password,emailIsInvalid,passwordIsRequired);
+        registrationState.notifyEmailIsInvalid(email,password,"Email is invalid",passwordIsRequired);
       }
       else if(json['statusCode'] == 409) {
         emailField.controller.value = new TextEditingValue(text:email);
