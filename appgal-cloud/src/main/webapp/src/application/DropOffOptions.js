@@ -203,7 +203,6 @@ const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) 
         orgIdArray.push(orgId);
     }
 
-    alert(offlineCommunityHelpers.length);
     for (const [index, value] of offlineCommunityHelpers.entries()) {
             const email = value.profile.email;
             const row = [email];
