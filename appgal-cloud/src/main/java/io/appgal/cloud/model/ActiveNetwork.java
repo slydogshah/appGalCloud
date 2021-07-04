@@ -49,7 +49,7 @@ public class ActiveNetwork implements Serializable {
 
     public void addActiveFoodRunner(FoodRunner foodRunner)
     {
-        this.activeFoodRunners.put(foodRunner.getProfile().getId(), foodRunner);
+        this.activeFoodRunners.put(foodRunner.getProfile().getEmail(), foodRunner);
 
         //persist the state of the network
         this.flushToStore();
@@ -57,7 +57,7 @@ public class ActiveNetwork implements Serializable {
 
     public void removeFoodRunner(FoodRunner foodRunner)
     {
-        this.activeFoodRunners.remove(foodRunner.getProfile().getId());
+        this.activeFoodRunners.remove(foodRunner.getProfile().getEmail());
     }
 
     public void clearActiveNetwork()
@@ -72,10 +72,6 @@ public class ActiveNetwork implements Serializable {
         this.mongoDBJsonStore.storeActiveNetwork(this.activeFoodRunners);
     }
 
-    public FoodRunner findFoodRunner(String foodRunnerId)
-    {
-        return this.activeFoodRunners.get(foodRunnerId);
-    }
 
     public FoodRunner findFoodRunnerByEmail(String foodRunnerEmail)
     {

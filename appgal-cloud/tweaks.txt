@@ -1,5 +1,3 @@
 App: email_invalid message
-
-App: No DropOff in Community Support
-
-Dash: No need to show the list of Community DropOff Volunteers
+App: No DropOff button in Community Support
+Dash: Pickup always says Tomorrow
