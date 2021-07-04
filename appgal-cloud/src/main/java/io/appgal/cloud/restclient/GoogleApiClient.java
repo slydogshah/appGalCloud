@@ -72,8 +72,8 @@ public class GoogleApiClient {
         try {
             JsonObject result;
 
-            double startLatitude = 30.2698104d;
-            double startLongitude = -97.75115579999999d;
+            //JsonUtil.print(this.getClass(),start.toJson());
+            //JsonUtil.print(this.getClass(),end.toJson());
 
             String origins = start.getLatitude() + "," + start.getLongitude();
             String destinations = end.getLatitude() + "," + end.getLongitude();

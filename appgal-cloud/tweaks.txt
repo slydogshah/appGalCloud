@@ -1,1 +1,5 @@
-More data on the dashboard
+App: email_invalid message
+
+App: No DropOff in Community Support
+
+Dash: No need to show the list of Community DropOff Volunteers

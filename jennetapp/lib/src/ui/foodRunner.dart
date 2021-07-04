@@ -610,10 +610,19 @@ class PickUpListView extends StatelessWidget {
 
   void handleAccept(BuildContext context,String email, FoodRecoveryTransaction tx) {
     SourceOrg dropOffOrg = tx.getPickupNotification().getDropOffOrg();
+    String orgName = null;
+    if(dropOffOrg != null){
+      orgName = dropOffOrg.orgName+": "+dropOffOrg.street+","+dropOffOrg.zip;
+    }
+    else{
+      orgName = "Community DropOff";
+    }
+
+
     AlertDialog dialog = AlertDialog(
       title: Text('Accept Food Pickup and DropOff'),
       content: Text(
-        dropOffOrg.orgName+": "+dropOffOrg.street+","+dropOffOrg.zip,
+        orgName,
         textAlign: TextAlign.left,
         style: TextStyle(
           fontWeight: FontWeight.w600,

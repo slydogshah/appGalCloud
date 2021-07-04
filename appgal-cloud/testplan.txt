@@ -79,6 +79,7 @@ Dash: Schedule a Pickup
 
 * Start Scheduling Process
     * addPickupDetails
+        * 400: Validation Errors
         * 500: System Error
     * Schedule Org or OfflineCommunity
         * 500: System Error

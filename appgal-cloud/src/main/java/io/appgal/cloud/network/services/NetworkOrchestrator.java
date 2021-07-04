@@ -165,6 +165,9 @@ public class NetworkOrchestrator {
                     }
                     else if(foodRunner.isOfflineCommunitySupport())
                     {
+                        String estimatedPickupTime = this.estimateTravelTime(foodRunnerLocation, source);
+                        tx.setEstimatedPickupTime(estimatedPickupTime);
+                        tx.setEstimatedDropOffTime("n/a");
                         myTransactions.add(tx);
                     }
                 }
