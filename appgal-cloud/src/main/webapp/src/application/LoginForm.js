@@ -129,6 +129,19 @@ function inputFieldComp(state) {
               />
            </GridItem>
          </GridContainer>
+         <GridContainer>
+                    <GridItem xs={12} sm={12} md={4}>
+                        <CSelect custom name="timeZone" onChange={(event)=>{
+                                        const target = event.target;
+                                                                                   const value = target.value;
+                                                                                   const name = target.name;
+                                                                                   state.timeZone = value;
+                                    }}>
+                                      <option value="0">--TimeZone--</option>
+                                      <option value="US/Central">US/Central</option>
+                                    </CSelect>
+                    </GridItem>
+                  </GridContainer>
          </>
       );
       ReactDOM.unmountComponentAtNode(document.getElementById('orgInput'));
@@ -470,6 +483,7 @@ function RenderLogin({state,props})
                                                         "orgContactEmail":state.email,
                                                         "street":state.street,
                                                         "zip":state.zip,
+                                                        "timeZone":state.timeZone,
                                                         "producer":state.producer};
 
                                                         var element = (
@@ -483,6 +497,7 @@ function RenderLogin({state,props})
                                                                                                                             );
                                                                                                                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                                                                             ReactDOM.render(element,document.getElementById('progress'));
+
 
                                                         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
                                                         axios.post(apiUrl,payload).then((response) => {

@@ -113,6 +113,34 @@ public class JenFlow {
     }
 
     @Test
+    public void timeZoneFlow() throws Exception
+    {
+        //Register a Pickup Org
+        SourceOrg pickup = this.registerPickupOrg();
+
+        //Register a DropOff Org
+        SourceOrg dropOff = this.registerDropOffOrg();
+
+        //Register a FoodRunner
+        FoodRunner foodRunner = this.registerFoodRunner();
+
+        //Send a PickUpRequest
+        for(int i=0; i<1; i++) {
+            String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                            getResource("encodedImage"),
+                    StandardCharsets.UTF_8);
+            String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(), FoodTypes.VEG.name(), foodPic);
+            this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
+        }
+
+        //FoodRunner accepts....this will update to notificationSent=true
+        List<FoodRecoveryTransaction> myTransactions = this.getOrgTransactions(pickup.getOrgId());
+
+        //FoodRecoveryTransaction accepted = myTransactions.get(0);
+        //JsonUtil.print(this.getClass(),accepted.toJson());
+    }
+
+    @Test
     public void fullFlow() throws Exception
     {
         //Register a Pickup Org
@@ -240,7 +268,7 @@ public class JenFlow {
         json.addProperty("orgId", orgId);
         json.addProperty("foodType", foodType);
         json.addProperty("foodPic", foodPic);
-        json.addProperty("time","0:0");
+        json.addProperty("time","0:19");
 
         Response response = given().body(json.toString()).post("/notification/addPickupDetails/");
         String jsonString = response.getBody().print();
@@ -325,5 +353,25 @@ public class JenFlow {
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
         assertEquals(200, response.getStatusCode());
+    }
+
+    private List<FoodRecoveryTransaction> getOrgTransactions(String orgId)
+    {
+        Response response = given().get("/tx/recovery/?orgId="+orgId);
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        //JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+
+        JsonArray pending = responseJson.getAsJsonObject().get("pending").getAsJsonArray();
+        List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
+        Iterator<JsonElement> itr = pending.iterator();
+        while(itr.hasNext())
+        {
+            FoodRecoveryTransaction cour = FoodRecoveryTransaction.parse(itr.next().getAsJsonObject().toString());
+            myTransactions.add(cour);
+        }
+
+        return myTransactions;
     }
 }

@@ -177,6 +177,10 @@ public class SourceOrg implements Serializable {
         {
             jsonObject.addProperty("zip",this.address.getZip());
         }
+        if(this.address != null && this.address.getTimeZone()!=null)
+        {
+            jsonObject.addProperty("timeZone",this.address.getTimeZone());
+        }
 
         if(this.location != null)
         {
@@ -232,6 +236,9 @@ public class SourceOrg implements Serializable {
         if(jsonObject.has("zip"))
         {
             address.setZip(jsonObject.get("zip").getAsString());
+        }
+        if(jsonObject.has("timeZone")) {
+            address.setTimeZone(jsonObject.get("timeZone").getAsString());
         }
         sourceOrg.address = address;
 
