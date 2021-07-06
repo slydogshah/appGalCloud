@@ -241,6 +241,9 @@ public class MongoDBJsonStoreTests extends BaseTest {
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(0.0d, 0.0d);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
+        Address address = new Address();
+        address.setTimeZone("US/Central");
+        sourceOrg.setAddress(address);
 
         SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
         schedulePickUpNotification.setSourceOrg(sourceOrg);
