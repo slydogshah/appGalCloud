@@ -43,15 +43,9 @@ public class DynamicDropOffOrchestratorTests extends BaseTest{
     public void setUp() throws Exception
     {
         this.foodRunner = MockData.mockFoodRunner();
-        this.foodRunner.getProfile().setEmail("jen@appgallabs.io");
+        this.foodRunner.getProfile().setEmail(UUID.randomUUID()+"@appgallabs.io");
         this.profileRegistrationService.register(foodRunner.getProfile());
         this.loginFoodRunner(foodRunner.getProfile().getEmail(),foodRunner.getProfile().getPassword());
-    }
-
-    @Test
-    public void notifyAvailability() throws Exception
-    {
-        this.dynamicDropOffOrchestrator.notifyAvailability(this.foodRunner.getProfile().getEmail(),true);
     }
 
     @Test
@@ -111,6 +105,7 @@ public class DynamicDropOffOrchestratorTests extends BaseTest{
         registrationJson.addProperty("producer", true);
         registrationJson.addProperty("street","506 West Ave");
         registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();

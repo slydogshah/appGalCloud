@@ -295,6 +295,7 @@ public class ActiveNetworkTests extends BaseTest {
         registrationJson.addProperty("producer", true);
         registrationJson.addProperty("street","506 West Ave");
         registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -322,6 +323,7 @@ public class ActiveNetworkTests extends BaseTest {
         registrationJson.addProperty("producer", false);
         registrationJson.addProperty("street","801 West Fifth Street");
         registrationJson.addProperty("zip","78703");
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();

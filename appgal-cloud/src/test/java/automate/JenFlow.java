@@ -10,6 +10,7 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 
 import io.appgal.cloud.util.MapUtils;
+import io.bugsbunny.test.components.BaseTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class JenFlow {
+public class JenFlow extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(JenFlow.class);
 
     @Inject
@@ -193,6 +194,7 @@ public class JenFlow {
         registrationJson.addProperty("producer", true);
         registrationJson.addProperty("street","506 West Ave");
         registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -220,6 +222,7 @@ public class JenFlow {
         registrationJson.addProperty("producer", false);
         registrationJson.addProperty("street","801 West Fifth Street");
         registrationJson.addProperty("zip","78703");
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();

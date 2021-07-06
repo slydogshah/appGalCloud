@@ -57,6 +57,9 @@ public class NotificationReceiverTest extends BaseTest {
             sourceOrg.setLocation(location);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
             FoodRunner bugsBunny = new FoodRunner(profile, location);
+            Address address = new Address();
+            address.setTimeZone("US/Central");
+            sourceOrg.setAddress(address);
 
             SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             schedulePickUpNotification.setSourceOrg(sourceOrg);

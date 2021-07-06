@@ -206,7 +206,9 @@ public class MongoDBJsonStoreTests extends BaseTest {
         Location location = new Location(0.0d, 0.0d);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
-        long epochSecond = start.toEpochSecond();
+        Address address = new Address();
+        address.setTimeZone("US/Central");
+        sourceOrg.setAddress(address);
 
         SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
         schedulePickUpNotification.setSourceOrg(sourceOrg);
@@ -217,6 +219,8 @@ public class MongoDBJsonStoreTests extends BaseTest {
         {
             schedulePickUpNotification.addPickupNote(new Note("note/"+j));
         }
+
+        JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
 
         this.mongoDBJsonStore.storeScheduledPickUpNotification(schedulePickUpNotification);
 
