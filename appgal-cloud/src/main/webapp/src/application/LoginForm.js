@@ -171,8 +171,7 @@ function dropDownComp(state,orgs) {
                    state.sourceOrgId = value;
                 }
             }}>
-              <option value="0">--Select Organization--</option>
-              {options}
+              <option value="0">--Add Organization Information--</option>
               <option value="custom">--Register New Organization--</option>
             </CSelect>
         </div>
