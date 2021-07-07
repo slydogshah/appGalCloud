@@ -48,6 +48,8 @@ public class Profile implements Serializable {
 
     private boolean offlineCommunitySupport = false;
 
+    private boolean resetPasswordActive=false;
+
     public Profile()
     {
 
@@ -184,6 +186,14 @@ public class Profile implements Serializable {
         JsonUtil.print(this.getClass(),this.toJson());
     }
 
+    public boolean isResetPasswordActive() {
+        return resetPasswordActive;
+    }
+
+    public void setResetPasswordActive(boolean resetPasswordActive) {
+        this.resetPasswordActive = resetPasswordActive;
+    }
+
     @Override
     public String toString()
     {
@@ -220,6 +230,8 @@ public class Profile implements Serializable {
             jsonObject.addProperty("chainId", this.chainId);
         }
         jsonObject.addProperty("offlineCommunitySupport",this.offlineCommunitySupport);
+
+        jsonObject.addProperty("resetPasswordActive",this.resetPasswordActive);
 
         return jsonObject;
     }
@@ -269,6 +281,11 @@ public class Profile implements Serializable {
         if(jsonObject.has("offlineCommunitySupport"))
         {
             profile.offlineCommunitySupport = jsonObject.get("offlineCommunitySupport").getAsBoolean();
+        }
+
+        if(jsonObject.has("resetPasswordActive"))
+        {
+            profile.resetPasswordActive = jsonObject.get("resetPasswordActive").getAsBoolean();
         }
 
         return profile;

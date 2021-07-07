@@ -55,6 +55,31 @@ public class ProfileRegistrationService {
         this.mongoDBJsonStore.storeProfile(profile);
     }
 
+    public void registerStaff(String orgId,Profile profile) throws ResourceExistsException
+    {
+        /*String email = profile.getEmail();
+        Profile exists = this.mongoDBJsonStore.getProfile(email);
+        if(exists != null)
+        {
+            JsonObject message = new JsonObject();
+            message.addProperty("email",email);
+            throw new ResourceExistsException(message.toString());
+        }
+
+        profile.setId(UUID.randomUUID().toString());
+        this.mongoDBJsonStore.storeProfile(profile);*/
+        this.mongoDBJsonStore.storeProfile(profile);
+
+        Profile storedProfile = this.mongoDBJsonStore.getProfile(profile.getEmail());
+        SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+        sourceOrg.addProfile(storedProfile);
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+        SourceOrg storedSourceOrg = this.mongoDBJsonStore.getSourceOrg(sourceOrg.getOrgId());
+        System.out.println(storedProfile.toJson().toString());
+        System.out.println(storedSourceOrg.toJson().toString());
+    }
+
     public void registerSourceOrg(SourceOrg sourceOrg) throws ResourceExistsException
     {
         String sourceOrgId = sourceOrg.getOrgId();

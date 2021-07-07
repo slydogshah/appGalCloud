@@ -173,6 +173,40 @@ public class Registration {
         }
     }
 
+    @Path("staff")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerStaff(@RequestBody String json){
+        try {
+            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+
+            String orgId = jsonObject.get("orgId").getAsString();
+            String email = jsonObject.get("email").getAsString();
+            String password = jsonObject.get("password").getAsString();
+            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+
+            Profile profile = new Profile();
+            profile.setId(UUID.randomUUID().toString());
+            profile.setEmail(email);
+            profile.setPassword(password);
+            profile.setMobile(123);
+            profile.setSourceOrgId(orgId);
+            profile.setLocation(sourceOrg.getLocation());
+            profile.setProfileType(ProfileType.ORG);
+            profile.setResetPasswordActive(true);
+
+            this.profileRegistrationService.registerStaff(orgId, profile);
+
+
+            return Response.ok(profile.toString()).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
     @Path("login")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
