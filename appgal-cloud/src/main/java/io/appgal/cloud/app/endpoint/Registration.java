@@ -183,10 +183,17 @@ public class Registration {
             String orgId = jsonObject.get("orgId").getAsString();
             String email = jsonObject.get("email").getAsString();
             String password = jsonObject.get("password").getAsString();
+
+
             SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            if(sourceOrg == null)
+            {
+                JsonObject error = new JsonObject();
+                error.addProperty("message", "ORG_NOT_FOUND");
+                return Response.status(404).entity(error.toString()).build();
+            }
 
             Profile profile = new Profile();
-            profile.setId(UUID.randomUUID().toString());
             profile.setEmail(email);
             profile.setPassword(password);
             profile.setMobile(123);
@@ -199,6 +206,11 @@ public class Registration {
 
 
             return Response.ok(profile.toString()).build();
+        }
+        catch(ResourceExistsException rxe)
+        {
+            logger.error(rxe.getMessage(), rxe);
+            return Response.status(409).build();
         }
         catch (Exception e)
         {

@@ -57,7 +57,7 @@ public class ProfileRegistrationService {
 
     public void registerStaff(String orgId,Profile profile) throws ResourceExistsException
     {
-        /*String email = profile.getEmail();
+        String email = profile.getEmail();
         Profile exists = this.mongoDBJsonStore.getProfile(email);
         if(exists != null)
         {
@@ -65,9 +65,7 @@ public class ProfileRegistrationService {
             message.addProperty("email",email);
             throw new ResourceExistsException(message.toString());
         }
-
         profile.setId(UUID.randomUUID().toString());
-        this.mongoDBJsonStore.storeProfile(profile);*/
         this.mongoDBJsonStore.storeProfile(profile);
 
         Profile storedProfile = this.mongoDBJsonStore.getProfile(profile.getEmail());
