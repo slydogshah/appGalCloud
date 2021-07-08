@@ -116,7 +116,7 @@ export default function Tasks(props) {
                 }
                 setChecked(newChecked);
               };
-              const { tasksIndexes, tasks, rtlActive, actions, status,orgIds,pickupNotificationId,history } = props;
+              const { tasksIndexes, tasks, rtlActive, actions, status,orgIds,pickupNotificationId,history,buttonTitle } = props;
               const tableCellClasses = classnames(classes.tableCell, {
                 [classes.tableCellRTL]: rtlActive
               });
@@ -160,7 +160,7 @@ export default function Tasks(props) {
                                                         >
                                                           <Button color="primary" onClick={(e) => {
                                                             schedulePickup(props,history,pickupNotificationId,orgIds[value],false);
-                                                          }}>Schedule</Button>
+                                                          }}>{buttonTitle}</Button>
                                                         </Tooltip>
                                                     </TableCell>
 
@@ -211,7 +211,7 @@ export default function Tasks(props) {
                                                 <GridItem xs={12} sm={12} md={6}>
                                                   <Button color="primary" onClick={(e) => {
                                                       schedulePickup(props,history,pickupNotificationId,null,true);
-                                                  }}>Schedule</Button>
+                                                  }}>{buttonTitle}</Button>
                                                 </GridItem>
                                             </GridContainer>
                                           </>

@@ -17,12 +17,20 @@ import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
 
 import {
-  CAlert
+  CAlert,
+  CRow,
+  CCol
 } from '@coreui/react'
 
 import { AppContext,store} from "./AppContext"
 import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 import Snackbar from "../components/Snackbar/Snackbar.js";
+import CustomTabs from "../components/CustomTabs/CustomTabs.js";
+import Tasks from "../components/Tasks/Tasks.js";
+import AddStaff from "../components/Tasks/AddStaff.js";
+import { bugs, website, server } from "./variables/general.js";
+import BugReport from "@material-ui/icons/BugReport";
+import Code from "@material-ui/icons/Code";
 
 const styles = {
   cardCategoryWhite: {
@@ -47,6 +55,8 @@ const useStyles = makeStyles(styles);
 
 function ProfileView({state, props}) {
     //console.log(JSON.stringify(props.history.location.state.data.pending.length));
+
+
     const classes = useStyles();
     const profile = props.history.location.state.data;
     const data = state.data;
@@ -58,6 +68,8 @@ function ProfileView({state, props}) {
         <br/><br/><br/>
         <div id="validation_error"/>
         <div>
+          <CRow>
+          <CCol>
           <GridContainer>
             <GridItem xs={12} sm={12} md={8}>
               <Card>
@@ -225,13 +237,110 @@ function ProfileView({state, props}) {
                                        }
                             });
                     }}>Update</Button>
+                    <GridItem xs={12} sm={12} md={6}>
+                                                           <Button color="primary" onClick={(e) => {
+                                                                const orgId = store.getState().sourceOrg.orgId;
+                                                                const producer = store.getState().sourceOrg.producer;
+                                                                var apiUrl;
+                                                                if(producer)
+                                                                {
+                                                                    apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+                                                                }
+                                                                else
+                                                                {
+                                                                    apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropoff/?orgId="+orgId;
+                                                                }
+                                                                axios.get(apiUrl).then((response) => {
+                                                                    //console.log(JSON.stringify(props));
+                                                                    if(producer)
+                                                                    {
+                                                                           props.history.push({
+                                                                             pathname: "/home",
+                                                                             state: { data: response.data }
+                                                                           });
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                            props.history.push({
+                                                                              pathname: "/dropOffHome",
+                                                                              state: { data: response.data }
+                                                                            });
+                                                                    }
+                                                                });
+                                                           }}>Cancel</Button>
+                       </GridItem>
                 </CardFooter>
               </Card>
             </GridItem>
           </GridContainer>
-        </div>
+          </CCol>
+          </CRow>
+          <div id="addStaff">
+            <AddStaffView state={state} props={props}/>
+          </div>
+          </div>
         </>
     );
+}
+
+function AddStaffView({state, props}) {
+   //TODO
+   const orgArray = [];
+   const orgStatus = [];
+   const orgIdArray = [];
+   const orgTaskIndex = [];
+   const org = "test@pickup.io";
+   const row = [org];
+   orgArray.push(row);
+   orgTaskIndex.push(0);
+   const widget = (<>
+   <CRow>
+                              <CCol>
+                                  <GridContainer>
+                                                          <GridItem xs={12} sm={12} md={6}>
+                                                            <CustomTabs
+                                                              headerColor="primary"
+                                                              tabs={[
+                                                                {
+                                                                  tabName: "Staff",
+                                                                  tabIcon: BugReport,
+                                                                  tabContent: (
+                                                                    <Tasks
+                                                                      checkedIndexes={[0]}
+                                                                      tasksIndexes={orgTaskIndex}
+                                                                      tasks={orgArray}
+                                                                      status={true}
+                                                                      history={props.history}
+                                                                      buttonTitle="Remove"
+                                                                    />
+                                                                  )
+                                                                },
+                                                                {
+                                                                  tabName: "Add a Staff Member",
+                                                                  tabIcon: BugReport,
+                                                                  tabContent: (
+                                                                    <AddStaff
+                                                                      checkedIndexes={[0]}
+                                                                      tasksIndexes={orgTaskIndex}
+                                                                      tasks={orgArray}
+                                                                      status={true}
+                                                                      history={props.history}
+                                                                      buttonTitle="Add"
+                                                                      state={state}
+                                                                    />
+                                                                  )
+                                                                },
+                                                              ]}
+                                                            />
+                                                          </GridItem>
+                                                        </GridContainer>
+
+                              </CCol>
+                            </CRow>
+               </>
+             );
+             return widget;
+
 }
 
 class Profile extends React.Component {
