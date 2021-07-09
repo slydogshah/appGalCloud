@@ -28,6 +28,7 @@ import Snackbar from "../components/Snackbar/Snackbar.js";
 import CustomTabs from "../components/CustomTabs/CustomTabs.js";
 import Tasks from "../components/Tasks/Tasks.js";
 import AddStaff from "../components/Tasks/AddStaff.js";
+import RemoveStaff from "../components/Tasks/RemoveStaff.js";
 import { bugs, website, server } from "./variables/general.js";
 import BugReport from "@material-ui/icons/BugReport";
 import Code from "@material-ui/icons/Code";
@@ -276,90 +277,92 @@ function ProfileView({state, props}) {
           </CCol>
           </CRow>
           <div id="addStaff">
-            <AddStaffView state={state} props={props}/>
+            <AddStaffView state={state} props={props} profile={profile}/>
           </div>
           </div>
         </>
     );
 }
 
-function AddStaffView({state, props}) {
-   //TODO
+function AddStaffView({state,props,profile}) {
+   const orgProfiles = profile.orgProfiles;
    const orgArray = [];
-   const orgStatus = [];
-   const orgIdArray = [];
    const orgTaskIndex = [];
-   const org = "test@pickup.io";
-   const row = [org];
-   orgArray.push(row);
-   orgTaskIndex.push(0);
+
+   for (const [index, value] of orgProfiles.entries()) {
+       const email = value.email;
+       const row = [email];
+       orgArray.push(row);
+       orgTaskIndex.push(index);
+   }
+
    const widget = (<>
-   <CRow>
-                              <CCol>
-                                  <GridContainer>
-                                                          <GridItem xs={12} sm={12} md={6}>
-                                                            <CustomTabs
-                                                              headerColor="primary"
-                                                              tabs={[
-                                                                {
-                                                                  tabName: "Staff",
-                                                                  tabIcon: BugReport,
-                                                                  tabContent: (
-                                                                    <Tasks
-                                                                      checkedIndexes={[0]}
-                                                                      tasksIndexes={orgTaskIndex}
-                                                                      tasks={orgArray}
-                                                                      status={true}
-                                                                      history={props.history}
-                                                                      buttonTitle="Remove"
-                                                                    />
-                                                                  )
-                                                                },
-                                                                {
-                                                                  tabName: "Add a Staff Member",
-                                                                  tabIcon: BugReport,
-                                                                  tabContent: (
-                                                                    <AddStaff
-                                                                      checkedIndexes={[0]}
-                                                                      tasksIndexes={orgTaskIndex}
-                                                                      tasks={orgArray}
-                                                                      status={true}
-                                                                      history={props.history}
-                                                                      buttonTitle="Add"
-                                                                      state={state}
-                                                                    />
-                                                                  )
-                                                                },
-                                                              ]}
-                                                            />
-                                                          </GridItem>
-                                                        </GridContainer>
+         <CRow>
+                            <CCol>
+                                <GridContainer>
+                                                        <GridItem xs={12} sm={12} md={6}>
+                                                          <CustomTabs
+                                                            headerColor="primary"
+                                                            tabs={[
+                                                              {
+                                                                tabName: "Staff",
+                                                                tabIcon: BugReport,
+                                                                tabContent: (
+                                                                  <RemoveStaff
+                                                                    checkedIndexes={[0]}
+                                                                    tasksIndexes={orgTaskIndex}
+                                                                    tasks={orgArray}
+                                                                    status={true}
+                                                                    history={props.history}
+                                                                    buttonTitle="Remove"
+                                                                    state={state}
+                                                                  />
+                                                                )
+                                                              },
+                                                              {
+                                                                tabName: "Add a Staff Member",
+                                                                tabIcon: BugReport,
+                                                                tabContent: (
+                                                                  <AddStaff
+                                                                    checkedIndexes={[0]}
+                                                                    tasksIndexes={orgTaskIndex}
+                                                                    tasks={orgArray}
+                                                                    status={true}
+                                                                    history={props.history}
+                                                                    buttonTitle="Add"
+                                                                    state={state}
+                                                                  />
+                                                                )
+                                                              },
+                                                            ]}
+                                                          />
+                                                        </GridItem>
+                                                      </GridContainer>
 
-                              </CCol>
-                            </CRow>
-               </>
-             );
-             return widget;
-
+                            </CCol>
+                          </CRow>
+             </>
+           );
+           return widget;
 }
 
 class Profile extends React.Component {
     constructor(props) {
             super(props);
             this.state = {data: null};
-        }
+    }
 
-        render() {
-           return (
-                <>
-                    <div id="unknown_error"/>
-                    <div id="progress"/>
-                    <div id="parent">
-                      <ProfileView state={this.state} props={this.props} />
-                    </div>
-                </>
-            );
-        }
+    render() {
+       return (
+            <>
+                <div id="unknown_error"/>
+                <div id="progress"/>
+                <div id="parent">
+                  <ProfileView state={this.state} props={this.props} />
+                </div>
+            </>
+        );
+    }
 }
 
 export default withRouter(Profile)

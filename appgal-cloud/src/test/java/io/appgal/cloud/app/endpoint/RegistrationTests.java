@@ -590,6 +590,11 @@ public class RegistrationTests  extends BaseTest {
         assertEquals(200, response.getStatusCode());
 
 
+        response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+
+
 
 
         JsonObject json = new JsonObject();
@@ -603,6 +608,9 @@ public class RegistrationTests  extends BaseTest {
         response = given().body(json.toString()).post("/registration/staff");
         JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
         assertEquals(200, response.getStatusCode());
+
+        response = given().get("/registration/staff/?orgId="+sourceOrg.getOrgId());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
     }
 
     @Test

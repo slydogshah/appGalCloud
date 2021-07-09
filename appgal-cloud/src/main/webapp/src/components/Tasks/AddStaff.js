@@ -30,6 +30,7 @@ import Snackbar from "../Snackbar/Snackbar.js";
 import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 import CustomTabs from "../CustomTabs/CustomTabs.js";
 import Tasks from "../Tasks/Tasks.js";
+import RemoveStaff from "../Tasks/RemoveStaff.js";
 import BugReport from "@material-ui/icons/BugReport";
 
 import ScheduleButton from '../../application/ScheduleButton'
@@ -205,8 +206,11 @@ export default function AddStaff(props) {
                                              };
                                              const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/staff";
                                              axios.post(apiUrl,payload).then((response) => {
+                                                    const profile = response.data;
+                                                    //alert(JSON.stringify(profile))
+
                                                     var element = (
-                                                         <AddStaffView state={state} props={props}/>
+                                                         <AddStaffView state={state} props={props} profile={profile}/>
                                                      );
                                                      ReactDOM.unmountComponentAtNode(document.getElementById('addStaff'));
                                                      ReactDOM.render(element,document.getElementById('addStaff'));
@@ -258,16 +262,17 @@ export default function AddStaff(props) {
 
 }
 
-function AddStaffView({state, props}) {
-   //TODO
-       const orgArray = [];
-       const orgStatus = [];
-       const orgIdArray = [];
-       const orgTaskIndex = [];
-       const org = "test1@pickup.io";
-       const row = [org];
-       orgArray.push(row);
-       orgTaskIndex.push(0);
+function AddStaffView({state, props, profile}) {
+   const orgProfiles = profile.orgProfiles;
+   const orgArray = [];
+   const orgTaskIndex = [];
+
+   for (const [index, value] of orgProfiles.entries()) {
+      const email = value.email;
+      const row = [email];
+      orgArray.push(row);
+      orgTaskIndex.push(index);
+   }
    const widget = (<>
    <CRow>
                               <CCol>
@@ -280,13 +285,14 @@ function AddStaffView({state, props}) {
                                                                   tabName: "Staff",
                                                                   tabIcon: BugReport,
                                                                   tabContent: (
-                                                                    <Tasks
+                                                                    <RemoveStaff
                                                                       checkedIndexes={[0]}
                                                                       tasksIndexes={orgTaskIndex}
                                                                       tasks={orgArray}
                                                                       status={true}
                                                                       history={props.history}
                                                                       buttonTitle="Remove"
+                                                                      state={state}
                                                                     />
                                                                   )
                                                                 },

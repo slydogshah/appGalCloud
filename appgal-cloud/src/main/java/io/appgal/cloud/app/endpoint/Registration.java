@@ -59,7 +59,17 @@ public class Registration {
                 jsonObject.addProperty("email", email);
                 return Response.status(404).entity(jsonObject.toString()).build();
             }
-            return Response.ok(profile.toString()).build();
+
+            JsonObject json = profile.toJson();
+
+            if(profile.getProfileType() == ProfileType.ORG)
+            {
+                SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(profile.getSourceOrgId());
+                json.add("orgProfiles",JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray());
+            }
+
+
+            return Response.ok(json.toString()).build();
         }
         catch(Exception e)
         {
@@ -204,8 +214,11 @@ public class Registration {
 
             this.profileRegistrationService.registerStaff(orgId, profile);
 
+            sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            JsonObject responseJson = profile.toJson();
+            responseJson.add("orgProfiles",JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray());
 
-            return Response.ok(profile.toString()).build();
+            return Response.ok(responseJson.toString()).build();
         }
         catch(ResourceExistsException rxe)
         {
@@ -215,6 +228,27 @@ public class Registration {
         catch (Exception e)
         {
             logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
+    @Path("staff")
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStaff(@QueryParam("email") String email){
+        try {
+            Profile profile = this.mongoDBJsonStore.getProfile(email);
+
+            //TODO
+
+            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(profile.getSourceOrgId());
+            JsonArray json = JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray();
+
+            return Response.ok(json.toString()).build();
+        }
+        catch (Exception e)
+        {
+            //logger.error(e.getMessage(), e);
             return Response.status(500).build();
         }
     }
