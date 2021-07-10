@@ -236,6 +236,24 @@ function ProfileView({state, props}) {
                                                                                                   ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
                                                                                                   ReactDOM.render(element,document.getElementById('unknown_error'));
                                        }
+                                       else{
+                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                                   var element = (
+                                                                                             <Snackbar
+                                                                                               place="tc"
+                                                                                               color="danger"
+                                                                                               icon={DonutLargeOutlinedIcon}
+                                                                                               message="500: Unknown System Error...."
+                                                                                               open={true}
+                                                                                               close
+                                                                                               closeNotification={() => {
+                                                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                               }}
+                                                                                             />
+                                                                                     );
+                                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                     ReactDOM.render(element,document.getElementById('unknown_error'));
+                                       }
                             });
                     }}>Update</Button>
                     <GridItem xs={12} sm={12} md={6}>
@@ -251,7 +269,20 @@ function ProfileView({state, props}) {
                                                                 {
                                                                     apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropoff/?orgId="+orgId;
                                                                 }
+                                                                //show progress bar
+                                                                var element = (
+                                                                        <Snackbar
+                                                                          place="tc"
+                                                                          color="info"
+                                                                          icon={DonutLargeOutlinedIcon}
+                                                                          message="Loading...."
+                                                                          open={true}
+                                                                        />
+                                                                );
+                                                                ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                ReactDOM.render(element,document.getElementById('progress'));
                                                                 axios.get(apiUrl).then((response) => {
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                     //console.log(JSON.stringify(props));
                                                                     if(producer)
                                                                     {
@@ -267,6 +298,23 @@ function ProfileView({state, props}) {
                                                                               state: { data: response.data }
                                                                             });
                                                                     }
+                                                                }).catch(err => {
+                                                                   ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                   var element = (
+                                                                             <Snackbar
+                                                                               place="tc"
+                                                                               color="danger"
+                                                                               icon={DonutLargeOutlinedIcon}
+                                                                               message="500: Unknown System Error...."
+                                                                               open={true}
+                                                                               close
+                                                                               closeNotification={() => {
+                                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                               }}
+                                                                             />
+                                                                     );
+                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                     ReactDOM.render(element,document.getElementById('unknown_error'));
                                                                 });
                                                            }}>Cancel</Button>
                        </GridItem>

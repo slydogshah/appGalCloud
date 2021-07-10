@@ -142,6 +142,7 @@ export default function AddStaff(props) {
               return (
                     <>
                     <div id="errorAlert" />
+                    <div id="progress"/>
                     <Table className={classes.table}>
                       <TableBody>
                           <TableRow>
@@ -213,10 +214,22 @@ export default function AddStaff(props) {
                                              ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
                                              ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
                                              ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
+                                            //show progress bar
+                                            var element = (
+                                                    <Snackbar
+                                                      place="tc"
+                                                      color="info"
+                                                      icon={DonutLargeOutlinedIcon}
+                                                      message="Loading...."
+                                                      open={true}
+                                                    />
+                                            );
+                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                            ReactDOM.render(element,document.getElementById('progress'));
 
                                              const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/staff";
                                              axios.post(apiUrl,payload).then((response) => {
-
+                                                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                     const profile = response.data;
                                                     //alert(JSON.stringify(profile))
 
@@ -226,6 +239,7 @@ export default function AddStaff(props) {
                                                      ReactDOM.unmountComponentAtNode(document.getElementById('addStaff'));
                                                      ReactDOM.render(element,document.getElementById('addStaff'));
                                              }).catch(err => {
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                             if(err.response != null && err.response.status == 409)
                                                             {
                                                                  const element = (
@@ -286,7 +300,7 @@ export default function AddStaff(props) {
                                                                     color="dark"
                                                                     closeButton
                                                                     >
-                                                                       "Unknown Error
+                                                                       500: Unknown System Error....
                                                                    </CAlert>
                                                                 );
                                                                 ReactDOM.render(element,document.getElementById('errorAlert'));
@@ -296,6 +310,7 @@ export default function AddStaff(props) {
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={6}>
                                        <Button color="primary" onClick={(e) => {
+                                            ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
                                             const orgId = store.getState().sourceOrg.orgId;
                                             const producer = store.getState().sourceOrg.producer;
                                             var apiUrl;
@@ -307,7 +322,20 @@ export default function AddStaff(props) {
                                             {
                                                 apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropoff/?orgId="+orgId;
                                             }
+                                            //show progress bar
+                                            var element = (
+                                                    <Snackbar
+                                                      place="tc"
+                                                      color="info"
+                                                      icon={DonutLargeOutlinedIcon}
+                                                      message="Loading...."
+                                                      open={true}
+                                                    />
+                                            );
+                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                            ReactDOM.render(element,document.getElementById('progress'));
                                             axios.get(apiUrl).then((response) => {
+                                                ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                 //console.log(JSON.stringify(props));
                                                 if(producer)
                                                 {
@@ -323,7 +351,18 @@ export default function AddStaff(props) {
                                                           state: { data: response.data }
                                                         });
                                                 }
-                                            });
+                                            }).catch(err => {
+                                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                             const element = (
+                                                 <CAlert
+                                                 color="dark"
+                                                 closeButton
+                                                 >
+                                                    500: Unknown System Error....
+                                                </CAlert>
+                                             );
+                                             ReactDOM.render(element,document.getElementById('errorAlert'));
+                                           });
                                        }}>Cancel</Button>
                                     </GridItem>
                                     </GridContainer>

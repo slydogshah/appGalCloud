@@ -67,6 +67,7 @@ export default function RemoveStaff(props) {
 
               return (    <>
                           <div id="errorAlert" />
+                          <div id="progress"/>
                           <Table className={classes.table}>
                             <TableBody>
                               {tasksIndexes.map(value => (
@@ -114,9 +115,21 @@ export default function RemoveStaff(props) {
                                                             console.log(email);
                                                             console.log(JSON.stringify(payload));
 
-
+                                                            //show progress bar
+                                                            var element = (
+                                                                    <Snackbar
+                                                                      place="tc"
+                                                                      color="info"
+                                                                      icon={DonutLargeOutlinedIcon}
+                                                                      message="Loading...."
+                                                                      open={true}
+                                                                    />
+                                                            );
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                            ReactDOM.render(element,document.getElementById('progress'));
                                                             const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/deleteStaff/";
                                                             axios.post(apiUrl,payload).then((response) => {
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                     const orgProfiles = response.data;
 
                                                                     var element = (
@@ -125,16 +138,17 @@ export default function RemoveStaff(props) {
                                                                      ReactDOM.unmountComponentAtNode(document.getElementById('addStaff'));
                                                                      ReactDOM.render(element,document.getElementById('addStaff'));
                                                             }).catch(err => {
+                                                               ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                const element = (
                                                                    <CAlert
                                                                    color="dark"
                                                                    closeButton
                                                                    >
-                                                                      "Unknown Error
+                                                                      500: Unknown System Error....
                                                                   </CAlert>
                                                                );
                                                                ReactDOM.render(element,document.getElementById('errorAlert'));
-                                                            });;
+                                                            });
                                                           }}>{buttonTitle}</Button>
                                                         </Tooltip>
                                                     </TableCell>
