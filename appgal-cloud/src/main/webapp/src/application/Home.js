@@ -166,7 +166,7 @@ function HomeView({state, props}) {
                                                                                     <CWidgetDropdown
                                                                                               color="gradient-primary"
                                                                                               header={deliveries}
-                                                                                              text="Deliveries In-Progress"
+                                                                                              text="Pickups In-Progress"
                                                                                               footerSlot={
                                                                                                 <ChartLineSimple
                                                                                                   pointed

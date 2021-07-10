@@ -272,7 +272,7 @@ function RenderLogin({state,props})
                                         email:login,
                                         sourceOrg: response.data.sourceOrg
                                       }));
-                                      LaunchHome(props,response.data.sourceOrg.producer);
+                                      LaunchHome(props,response.data);
                                 }).catch(err => {
                                        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                        if(err.response != null && err.response.status == 401)
@@ -508,7 +508,7 @@ function RenderLogin({state,props})
                                                                      sourceOrg: response.data
                                                                    }));
 
-                                                           LaunchHome(props,response.data.producer);
+                                                           LaunchHome(props,response.data);
                                                         }).catch(err => {
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                             if(err.response != null && err.response.status == 409)
@@ -596,9 +596,22 @@ function RenderLogin({state,props})
     );
 }
 
-function LaunchHome(props,producer)
+function LaunchHome(props,orgLogin)
 {
     const orgId = store.getState().sourceOrg.orgId;
+    const profile = orgLogin.profile;
+    const sourceOrg = orgLogin.sourceOrg;
+    const producer = sourceOrg.producer;
+    const resetPasswordActive = profile.resetPasswordActive;
+
+    if(resetPasswordActive){
+       props.history.push({
+        pathname: "/staffResetPassword",
+        state: { data: orgLogin }
+      });
+      return;
+    }
+
     var apiUrl;
     if(producer)
     {
@@ -624,6 +637,7 @@ function LaunchHome(props,producer)
 
     axios.get(apiUrl).then((response) => {
         ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+        const responseData = response.data;
         if(producer)
         {
                props.history.push({
