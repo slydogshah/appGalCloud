@@ -200,11 +200,14 @@ export default function AddStaff(props) {
                                       <GridItem xs={12} sm={12} md={6}>
                                        <Button color="primary" onClick={(e) => {
                                              const orgId = store.getState().sourceOrg.orgId;
+                                             const profile = props.history.location.state.data;
                                              const payload = {
                                                  "email":state.email,
                                                  "password":state.password,
-                                                 "orgId":orgId
+                                                 "orgId":orgId,
+                                                 "caller":profile.email
                                              };
+
 
                                              ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
                                              ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));

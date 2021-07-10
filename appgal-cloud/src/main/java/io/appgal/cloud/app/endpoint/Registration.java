@@ -65,6 +65,7 @@ public class Registration {
             if(profile.getProfileType() == ProfileType.ORG)
             {
                 SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(profile.getSourceOrgId());
+                sourceOrg.deleteProfile(email);
                 json.add("orgProfiles",JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray());
             }
 
@@ -189,6 +190,7 @@ public class Registration {
             JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
             String orgId = jsonObject.get("orgId").getAsString();
+            String caller = jsonObject.get("caller").getAsString();
             String email = null;
             if(jsonObject.has("email"))
             {
@@ -237,6 +239,7 @@ public class Registration {
             this.profileRegistrationService.registerStaff(orgId, profile);
 
             sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            sourceOrg.deleteProfile(caller);
             JsonObject responseJson = profile.toJson();
             responseJson.add("orgProfiles",JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray());
 
@@ -263,6 +266,7 @@ public class Registration {
             System.out.println(jsonBody);
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
 
+            String caller = json.get("caller").getAsString();
             String orgId = json.get("orgId").getAsString();
             String email = json.get("email").getAsString();
 
@@ -272,6 +276,8 @@ public class Registration {
             sourceOrg.deleteProfile(email);
             this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
 
+            sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            sourceOrg.deleteProfile(caller);
             JsonArray responseJson = JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray();
 
             return Response.ok(responseJson.toString()).build();

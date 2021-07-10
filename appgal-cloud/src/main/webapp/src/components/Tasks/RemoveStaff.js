@@ -105,9 +105,11 @@ export default function RemoveStaff(props) {
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
                                                             const email = tasks[value];
                                                             const orgId = store.getState().sourceOrg.orgId;
+                                                            const profile = props.history.location.state.data;
                                                             const payload = {
                                                                  "email":email[0],
-                                                                 "orgId":orgId
+                                                                 "orgId":orgId,
+                                                                 "caller":profile.email
                                                             };
                                                             console.log(email);
                                                             console.log(JSON.stringify(payload));
