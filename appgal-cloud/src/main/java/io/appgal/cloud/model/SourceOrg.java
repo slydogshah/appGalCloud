@@ -114,6 +114,19 @@ public class SourceOrg implements Serializable {
         this.profiles.add(profile);
     }
 
+    public void deleteProfile(String email)
+    {
+        Profile profile = null;
+        for(Profile cour:this.profiles)
+        {
+            if(cour.getEmail().equals(email.trim()))
+            {
+                profile = cour;
+            }
+        }
+        this.profiles.remove(profile);
+    }
+
     public boolean isProducer() {
         return isProducer;
     }

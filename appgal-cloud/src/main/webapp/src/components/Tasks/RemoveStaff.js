@@ -66,6 +66,7 @@ export default function RemoveStaff(props) {
               });
 
               return (    <>
+                          <div id="errorAlert" />
                           <Table className={classes.table}>
                             <TableBody>
                               {tasksIndexes.map(value => (
@@ -101,11 +102,19 @@ export default function RemoveStaff(props) {
                                                           classes={{ tooltip: classes.tooltip }}
                                                         >
                                                           <Button color="primary" onClick={(e) => {
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
                                                             const email = tasks[value];
+                                                            const orgId = store.getState().sourceOrg.orgId;
+                                                            const payload = {
+                                                                 "email":email[0],
+                                                                 "orgId":orgId
+                                                            };
+                                                            console.log(email);
+                                                            console.log(JSON.stringify(payload));
 
 
-                                                            const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/staff/?email="+email;
-                                                            axios.delete(apiUrl).then((response) => {
+                                                            const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/deleteStaff/";
+                                                            axios.post(apiUrl,payload).then((response) => {
                                                                     const orgProfiles = response.data;
 
                                                                     var element = (
@@ -113,7 +122,17 @@ export default function RemoveStaff(props) {
                                                                      );
                                                                      ReactDOM.unmountComponentAtNode(document.getElementById('addStaff'));
                                                                      ReactDOM.render(element,document.getElementById('addStaff'));
-                                                            });
+                                                            }).catch(err => {
+                                                               const element = (
+                                                                   <CAlert
+                                                                   color="dark"
+                                                                   closeButton
+                                                                   >
+                                                                      "Unknown Error
+                                                                  </CAlert>
+                                                               );
+                                                               ReactDOM.render(element,document.getElementById('errorAlert'));
+                                                            });;
                                                           }}>{buttonTitle}</Button>
                                                         </Tooltip>
                                                     </TableCell>

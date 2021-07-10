@@ -141,6 +141,7 @@ export default function AddStaff(props) {
 
               return (
                     <>
+                    <div id="errorAlert" />
                     <Table className={classes.table}>
                       <TableBody>
                           <TableRow>
@@ -190,7 +191,7 @@ export default function AddStaff(props) {
                                                                             }}
                                               />
                                               <div id="passwordRequired"/>
-                                              <div id="password_mismatch"/>
+
                                             </GridItem>
                                          </GridContainer>
                                 </CardBody>
@@ -204,8 +205,15 @@ export default function AddStaff(props) {
                                                  "password":state.password,
                                                  "orgId":orgId
                                              };
+
+                                             ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
+                                             ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
+                                             ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
+                                             ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
+
                                              const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/staff";
                                              axios.post(apiUrl,payload).then((response) => {
+
                                                     const profile = response.data;
                                                     //alert(JSON.stringify(profile))
 
@@ -214,7 +222,73 @@ export default function AddStaff(props) {
                                                      );
                                                      ReactDOM.unmountComponentAtNode(document.getElementById('addStaff'));
                                                      ReactDOM.render(element,document.getElementById('addStaff'));
-                                             });
+                                             }).catch(err => {
+                                                            if(err.response != null && err.response.status == 409)
+                                                            {
+                                                                 const element = (
+                                                                    <CAlert
+                                                                    color="dark"
+                                                                    closeButton
+                                                                    >
+                                                                     "This email is already registered"
+                                                                   </CAlert>
+                                                                 );
+
+                                                                 ReactDOM.render(element,document.getElementById('errorAlert'));
+                                                            }
+                                                            else if(err.response != null && err.response.status == 400)
+                                                            {
+                                                                const violations = err.response.data.violations;
+                                                                if(violations.includes("email_invalid"))
+                                                                {
+                                                                    const emailInvalid = (
+                                                                                           <CAlert
+                                                                                           color="warning"
+                                                                                           >
+                                                                                              Email is not valid
+                                                                                          </CAlert>
+                                                                                       );
+
+                                                                    ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
+                                                                }
+                                                                if(violations.includes("email_required"))
+                                                                {
+                                                                    const emailRequired = (
+                                                                                           <CAlert
+                                                                                           color="warning"
+                                                                                           >
+                                                                                              Email is required
+                                                                                          </CAlert>
+                                                                                       );
+
+                                                                    ReactDOM.render(emailRequired,document.getElementById('emailRequired'));
+                                                                }
+                                                                if(violations.includes("password_required"))
+                                                                {
+                                                                    const passwordRequired = (
+                                                                                           <CAlert
+                                                                                           color="warning"
+                                                                                           >
+                                                                                              Password is required
+                                                                                          </CAlert>
+                                                                                       );
+
+                                                                    ReactDOM.render(passwordRequired,document.getElementById('passwordRequired'));
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                 const element = (
+                                                                    <CAlert
+                                                                    color="dark"
+                                                                    closeButton
+                                                                    >
+                                                                       "Unknown Error
+                                                                   </CAlert>
+                                                                );
+                                                                ReactDOM.render(element,document.getElementById('errorAlert'));
+                                                            }
+                                             });;
                                        }}>Register</Button>
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={6}>

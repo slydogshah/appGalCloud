@@ -118,8 +118,6 @@ public class Registration {
                 }
                 responseJson.add("violations", violationsArray);
 
-                JsonUtil.print(this.getClass(),responseJson);
-
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
@@ -191,8 +189,16 @@ public class Registration {
             JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
             String orgId = jsonObject.get("orgId").getAsString();
-            String email = jsonObject.get("email").getAsString();
-            String password = jsonObject.get("password").getAsString();
+            String email = null;
+            if(jsonObject.has("email"))
+            {
+                email = jsonObject.get("email").getAsString();
+            }
+            String password = null;
+            if(jsonObject.has("password"))
+            {
+                password = jsonObject.get("password").getAsString();
+            }
 
 
             SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
@@ -211,6 +217,22 @@ public class Registration {
             profile.setLocation(sourceOrg.getLocation());
             profile.setProfileType(ProfileType.ORG);
             profile.setResetPasswordActive(true);
+
+            Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
+            if(!violations.isEmpty())
+            {
+                JsonObject responseJson = new JsonObject();
+                JsonArray violationsArray = new JsonArray();
+                for(ConstraintViolation violation:violations)
+                {
+                    violationsArray.add(violation.getMessage());
+                }
+                responseJson.add("violations", violationsArray);
+
+                JsonUtil.print(this.getClass(),responseJson);
+
+                return Response.status(400).entity(responseJson.toString()).build();
+            }
 
             this.profileRegistrationService.registerStaff(orgId, profile);
 
@@ -232,23 +254,31 @@ public class Registration {
         }
     }
 
-    @Path("staff")
-    @DELETE
+    //TODO component test
+    @Path("deleteStaff")
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getStaff(@QueryParam("email") String email){
+    public Response removeStaff(@RequestBody String jsonBody){
         try {
-            Profile profile = this.mongoDBJsonStore.getProfile(email);
+            System.out.println(jsonBody);
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
 
-            //TODO
+            String orgId = json.get("orgId").getAsString();
+            String email = json.get("email").getAsString();
 
-            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(profile.getSourceOrgId());
-            JsonArray json = JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray();
+            this.mongoDBJsonStore.deleteProfile(email);
 
-            return Response.ok(json.toString()).build();
+            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            sourceOrg.deleteProfile(email);
+            this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+            JsonArray responseJson = JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray();
+
+            return Response.ok(responseJson.toString()).build();
         }
         catch (Exception e)
         {
-            //logger.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return Response.status(500).build();
         }
     }

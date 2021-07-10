@@ -82,4 +82,20 @@ public class ProfileStore {
         Document doc = Document.parse(profileJson.toString());
         collection.insertOne(doc);
     }
+
+    public void deleteProfile(MongoDatabase database, String email)
+    {
+        MongoCollection<Document> collection = database.getCollection("profile");
+
+        String queryJson = "{\"email\":\""+email+"\"}";
+        Bson bson = Document.parse(queryJson);
+        FindIterable<Document> iterable = collection.find(bson);
+        MongoCursor<Document> cursor = iterable.cursor();
+        while(cursor.hasNext())
+        {
+            Document document = cursor.next();
+            collection.deleteOne(document);
+            break;
+        }
+    }
 }
