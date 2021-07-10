@@ -602,6 +602,7 @@ public class RegistrationTests  extends BaseTest {
         json.addProperty("email", staffEmail);
         json.addProperty("password", "c");
         json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
 
 
         response = given().body(json.toString()).post("/registration/staff");
@@ -652,6 +653,7 @@ public class RegistrationTests  extends BaseTest {
         json.addProperty("email", staffEmail);
         json.addProperty("password", "c");
         json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
 
 
         response = given().body(json.toString()).post("/registration/staff");
@@ -704,6 +706,7 @@ public class RegistrationTests  extends BaseTest {
 
         JsonObject json = new JsonObject();
         json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
         response = given().body(json.toString()).post("/registration/staff");
         response.getBody().prettyPrint();
         assertEquals(400, response.getStatusCode());
@@ -712,6 +715,7 @@ public class RegistrationTests  extends BaseTest {
         json.addProperty("email","test");
         json.addProperty("password","test");
         json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
         response = given().body(json.toString()).post("/registration/staff");
         response.getBody().prettyPrint();
         assertEquals(400, response.getStatusCode());
@@ -729,6 +733,7 @@ public class RegistrationTests  extends BaseTest {
         json.addProperty("email", staffEmail);
         json.addProperty("password", "c");
         json.addProperty("orgId",id);
+        json.addProperty("caller",email);
 
 
         Response response = given().body(json.toString()).post("/registration/staff");
