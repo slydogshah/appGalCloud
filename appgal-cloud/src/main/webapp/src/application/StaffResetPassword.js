@@ -155,7 +155,11 @@ function ResetPasswordView({state, props}) {
                             );
                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                             ReactDOM.render(element,document.getElementById('progress'));
+                            store.setState(state => ({
+                                                                            ...state,
+                                                                            auth: true,
 
+                                                                          }));
                             axios.get(apiUrl).then((response) => {
                                 ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                 const responseData = response.data;

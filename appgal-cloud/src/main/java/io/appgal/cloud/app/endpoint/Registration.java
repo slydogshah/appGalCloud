@@ -478,6 +478,7 @@ public class Registration {
 
             Profile profile = this.mongoDBJsonStore.getProfile(email);
             profile.setPassword(newPassword);
+            profile.setResetPasswordActive(false);
             this.mongoDBJsonStore.updateProfile(profile);
 
             JsonObject success = new JsonObject();

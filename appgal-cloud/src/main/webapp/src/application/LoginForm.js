@@ -265,10 +265,13 @@ function RenderLogin({state,props})
                                 };
                                 const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
                                 axios.post(apiUrl,payload).then((response) => {
+
+                                      const resetPasswordActive = response.data.profile.resetPasswordActive;
+
                                       ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                       store.setState(state => ({
                                         ...state,
-                                        auth: true,
+                                        auth: resetPasswordActive,
                                         email:login,
                                         sourceOrg: response.data.sourceOrg
                                       }));
@@ -605,6 +608,11 @@ function LaunchHome(props,orgLogin)
     const resetPasswordActive = profile.resetPasswordActive;
 
     if(resetPasswordActive){
+       store.setState(state => ({
+                                                       ...state,
+                                                       auth: false,
+
+                                                     }));
        props.history.push({
         pathname: "/staffResetPassword",
         state: { data: orgLogin }
@@ -637,6 +645,11 @@ function LaunchHome(props,orgLogin)
 
     axios.get(apiUrl).then((response) => {
         ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+        store.setState(state => ({
+                                                ...state,
+                                                auth: true,
+
+                                              }));
         const responseData = response.data;
         if(producer)
         {
