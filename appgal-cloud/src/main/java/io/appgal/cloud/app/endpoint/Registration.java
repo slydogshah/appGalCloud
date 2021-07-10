@@ -257,13 +257,11 @@ public class Registration {
         }
     }
 
-    //TODO component test
     @Path("deleteStaff")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeStaff(@RequestBody String jsonBody){
+    public Response deleteStaff(@RequestBody String jsonBody){
         try {
-            System.out.println(jsonBody);
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
 
             String caller = json.get("caller").getAsString();
