@@ -443,7 +443,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
         }
         //return repeatInterval;
-        return 1000;
+        return 600000;
     }
 
     private static void saveScheduledNotification(Context context, NotificationDetails notificationDetails) {

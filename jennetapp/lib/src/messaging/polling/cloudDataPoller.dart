@@ -130,7 +130,6 @@ class NotificationProcessor
   }
 
   Future<void> repeatNotification() async {
-    print("NOTIFICATION_TEST_SCHEDULED");
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails('repeating channel id',
         'repeating channel name', 'repeating description');
