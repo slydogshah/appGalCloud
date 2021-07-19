@@ -811,13 +811,13 @@ didReceiveLocalNotification:(UILocalNotification*)notification {
 
             emitter([NSString stringWithFormat:@"Hello Listener! %d", time]);
 
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
         }
     };
 
     // Run task
     [self->listeners setObject:callback forKey:currentListenerId];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
 }
 
 - (void) cancelListening:(id)listener {

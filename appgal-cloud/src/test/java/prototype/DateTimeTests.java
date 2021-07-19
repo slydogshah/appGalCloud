@@ -30,6 +30,7 @@ public class DateTimeTests {
         logger.info(leftUtc.toEpochSecond(ZoneOffset.UTC)+"");
         logger.info(rightUtc.toEpochSecond(ZoneOffset.UTC)+"");
 
+        logger.info(leftUtc.toEpochSecond(ZoneOffset.UTC)+"");
         if(leftUtc.toEpochSecond(ZoneOffset.UTC) == rightUtc.toEpochSecond(ZoneOffset.UTC))
         {
             logger.info("TODAY");
