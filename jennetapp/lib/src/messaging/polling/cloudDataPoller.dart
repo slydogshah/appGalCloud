@@ -25,6 +25,14 @@ class CloudDataPoller
       context = buildContext;
       notificationProcessor.configureProcessor(context);
   }
+
+  static void initializePolling() {
+    Future<int> success = notificationProcessor.startProcessor();
+    success.then((code){
+      print("************LAUNCH_STATUS*************");
+      print(code);
+    });
+  }
 }
 //-------------------------------------
 
@@ -59,6 +67,9 @@ class NotificationProcessor
 
   void checkNewPickupRequests()
   {
+    if(this.context == null){
+      return;
+    }
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
     Future<List<FoodRecoveryTransaction>> future = activeNetworkRestClient.getFoodRecoveryPush(ActiveSession.getInstance().getProfile().email);
     future.then((txs) async{
@@ -124,12 +135,60 @@ class NotificationProcessor
           ProfileFunctions.launchAppFromNotification(context);
         },notificationCallback: checkNewPickupRequests);
 
-    if(Platform.isAndroid) {
-      this.repeatNotification();
-    }
+    //if(Platform.isAndroid) {
+    //  this.repeatNotification();
+    //}
+    //this.repeatNotification();
+  }
+
+  Future<int> startProcessor() async {
+    this.requestPermissions();
+
+    final NotificationAppLaunchDetails notificationAppLaunchDetails =
+    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('app_icon');
+
+    /// Note: permissions aren't requested here just to demonstrate that can be
+    /// done later
+    final IOSInitializationSettings initializationSettingsIOS =
+    IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+        onDidReceiveLocalNotification:
+            (int id, String title, String body, String payload) async {
+          didReceiveLocalNotificationSubject.add(ReceivedNotification(
+              id: id, title: title, body: body, payload: payload));
+        });
+    const MacOSInitializationSettings initializationSettingsMacOS =
+    MacOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false);
+    final InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsIOS,
+        macOS: initializationSettingsMacOS);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (String payload) async {
+          if (payload != null) {
+            debugPrint('notification payload: $payload');
+          }
+          selectedNotificationPayload = payload;
+          selectNotificationSubject.add(payload);
+        },notificationCallback: checkNewPickupRequests);
+
+    //if(Platform.isAndroid) {
+    //  this.repeatNotification();
+    //}
+    //this.repeatNotification();
+    return 200;
   }
 
   Future<void> repeatNotification() async {
+    print("****************REPEAT********************************");
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails('repeating channel id',
         'repeating channel name', 'repeating description');

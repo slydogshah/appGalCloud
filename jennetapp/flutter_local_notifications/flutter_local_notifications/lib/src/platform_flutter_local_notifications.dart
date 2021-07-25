@@ -416,10 +416,11 @@ class IOSFlutterLocalNotificationsPlugin
     SelectNotificationCallback? onSelectNotification,
         Function notificationCallback=callback
   }) async {
-    print("********************STARTING_EVENT_LISTENER11******************");
+    print("********************STARTING_EVENT_LISTENER******************");
     _eventsFetch = _eventChannelTask.receiveBroadcastStream();
     print(_eventsFetch);
     _eventsFetch.listen((dynamic event) {
+      print(event);
       notificationCallback();
     });
 

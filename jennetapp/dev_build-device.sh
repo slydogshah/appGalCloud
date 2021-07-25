@@ -1,3 +1,2 @@
 #https://flutterigniter.com/env-specific-configuration/
-flutter run -t lib/main_dev.dart
-#flutter run
+flutter build ios -t lib/main_qa.dart

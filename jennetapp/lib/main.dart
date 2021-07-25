@@ -24,6 +24,22 @@ class MyHttpOverrides extends HttpOverrides{
   }
 }
 
+/*void main(){
+  //Launch the App
+  HttpOverrides.global = new MyHttpOverrides();
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  String env = "dev";
+  Future<Map<String,dynamic>> config = UrlFunctions.getConfig(env);
+  config.then((jsonMap) {
+    UrlFunctions.getInstance().androidApiUrl = jsonMap['androidApiUrl'];
+    UrlFunctions.getInstance().iosApiUrl = jsonMap['iosApiUrl'];
+    //print("APP_URL: "+UrlFunctions.getInstance().iosApiUrl);
+    launchApp();
+  });
+}*/
+
 
 void main(String env)
 {

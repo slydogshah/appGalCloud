@@ -1,5 +1,4 @@
 import 'package:app/src/context/activeSession.dart';
-import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/profile.dart';

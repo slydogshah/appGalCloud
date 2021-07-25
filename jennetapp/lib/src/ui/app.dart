@@ -1,7 +1,6 @@
 import 'package:app/hotel_booking/filters_screen.dart';
 import 'package:app/hotel_booking/hotel_app_theme.dart';
 import 'package:app/src/background/locationUpdater.dart';
-import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

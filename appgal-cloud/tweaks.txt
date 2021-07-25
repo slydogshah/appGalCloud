@@ -1,3 +1,14 @@
 Dash: Add TimeZones
-Dash: Add Staff Registration
-Dash: Add Asking Staff to Reset Password
+
+
+App: Refresh from backgrounding
+
+App: show launch indicator
+
+App: Test if location updates are being sent
+
+App: Push wakeup and launch app
+
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.refresh"]
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateExpirationForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]

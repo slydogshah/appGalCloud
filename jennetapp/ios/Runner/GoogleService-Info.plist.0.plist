@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<string>NO</string>
+	<key>CLIENT_ID</key>
+	<string>187207451256-s46e3dqdakqmijejsb1n4hukajhd51b5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.187207451256-s46e3dqdakqmijejsb1n4hukajhd51b5</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAqNTmhW9e6OjN7q4U1U2tk0S6Z2BdveEY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>187207451256</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>io.appgallabs.jen.push.MessagingExample</string>
+	<key>PROJECT_ID</key>
+	<string>appgallabs-271922</string>
+	<key>STORAGE_BUCKET</key>
+	<string>appgallabs-271922.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:187207451256:ios:932bb953d1f7ba4e14e38d</string>
+</dict>
+</plist>

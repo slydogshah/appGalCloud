@@ -113,6 +113,16 @@
       <artifactId>twilio</artifactId>
       <version>8.13.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.auth</groupId>
+      <artifactId>google-auth-library-oauth2-http</artifactId>
+      <version>0.26.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>8.0.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

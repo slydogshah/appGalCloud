@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
-import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
@@ -387,7 +386,6 @@ class ProfileFunctions
   void showCards(BuildContext context, Profile profile) 
   {
     //print("PROFILE: $profile");
-    CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
   }
 
