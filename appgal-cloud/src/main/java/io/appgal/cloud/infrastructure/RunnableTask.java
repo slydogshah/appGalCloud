@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import io.appgal.cloud.model.FoodRunner;
-import io.appgal.cloud.model.ScheduleNotification;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
