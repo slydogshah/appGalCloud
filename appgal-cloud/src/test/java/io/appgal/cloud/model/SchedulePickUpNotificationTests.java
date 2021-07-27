@@ -64,4 +64,10 @@ public class SchedulePickUpNotificationTests extends BaseTest {
 
         System.out.println("IS_TODAY: "+schedulePickUpNotification.isToday());
     }
+
+    @Test
+    public void getStartTimeInEpoch() throws Exception{
+        SchedulePickUpNotification schedulePickUpNotification = MockData.mockSchedulePickupNotification();
+        schedulePickUpNotification.getStartTimeInEpoch();
+    }
 }

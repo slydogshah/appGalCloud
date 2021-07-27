@@ -109,6 +109,15 @@ public abstract class ScheduleNotification implements Serializable {
         return false;
     }
 
+    public Instant getStartTimeInEpoch()
+    {
+        System.out.println("**************************");
+        System.out.println(this.start.toString());
+        OffsetDateTime utcTime = this.start.atZoneSameInstant(ZoneOffset.UTC).toOffsetDateTime();
+        System.out.println(utcTime.toString());
+        return utcTime.toInstant();
+    }
+
     public boolean isToday()
     {
         LocalDateTime startOfPickupDay = this.start.toLocalDate().atStartOfDay();

@@ -187,6 +187,50 @@ public class NetworkOrchestrator {
         }
     }
 
+    public List<FoodRunner> notifyFoodRunners(SchedulePickUpNotification pickUpNotification)
+    {
+        try {
+            List<FoodRunner> qualified = new ArrayList<>();
+            SourceOrg pickupOrg = pickUpNotification.getSourceOrg();
+            Map<String, FoodRunner> activeFoodRunners = this.activeNetwork.getActiveFoodRunners();
+            Set<Map.Entry<String,FoodRunner>> entrySet = activeFoodRunners.entrySet();
+            for (Map.Entry<String,FoodRunner> entry:entrySet) {
+                FoodRunner foodRunner = entry.getValue();
+
+                Location source = pickupOrg.getLocation();
+                if(source == null)
+                {
+                    continue;
+                }
+
+                Location foodRunnerLocation = foodRunner.getLocation();
+                if(foodRunnerLocation == null)
+                {
+                    continue;
+                }
+
+                Double distance = this.mapUtils.calculateDistance(foodRunnerLocation.getLatitude(),
+                        foodRunnerLocation.getLongitude(),
+                        source.getLatitude(), source.getLongitude());
+
+                if (distance <= 5.0d) {
+                    qualified.add(foodRunner);
+                }
+                else {
+                    System.out.println("**************DISTANCE*****************");
+                    System.out.println("ALGO_DISTANCE: "+distance);
+                    System.out.println("**************DISTANCE*****************");
+                }
+            }
+            return qualified;
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+    }
+
     private String estimateTravelTime(Location start, Location end)
     {
         return this.googleApiClient.estimateTime(start,end).get("duration").getAsString();
