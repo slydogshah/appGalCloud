@@ -3,7 +3,6 @@ import Flutter
 import UserNotifications
 
 import Firebase
-import flutter_local_notifications
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -180,12 +179,12 @@ import flutter_local_notifications
     }
     
     func subscribe() {
-        NotificationCenter.default.addObserver(
+        /*NotificationCenter.default.addObserver(
           self,
           selector: #selector(displayFCMToken(notification:)),
           name: Notification.Name("FCMToken"),
           object: nil
-        )
+        )*/
         
         let token = Messaging.messaging().fcmToken
         print("FCM token: \(token ?? "")")
@@ -198,6 +197,7 @@ import flutter_local_notifications
           } else if let token = token {
             print("Remote instance ID token: \(token)")
             print("Remote FCM registration token: \(token)")
+            self.displayFCMToken(token:token)
           }
         }
         
@@ -209,67 +209,64 @@ import flutter_local_notifications
       // [END subscribe_topic]
     }
     
-    @objc func displayFCMToken(notification: NSNotification) {
-          //TODO clean
-          guard let userInfo = notification.userInfo else { return }
-          if let fcmToken = userInfo["token"] as? String {
-            print("***********************************************")
-            print("Received FCM token: \(fcmToken)")
-            print(self.email);
-            print("***********************************************")
-            
-            if(self.email.isEmpty)
-            {
-                print("EMAIL_NOT_SET_YET")
-                return
-            }
-            
-            struct RegisterPushModel: Codable {
-                var pushToken: String
-                var email: String
-            }
-            
-            
-            //TODO
-            // Prepare URL
-            let url = URL(string: "https://appgal-cloud-do2cwgwhja-uc.a.run.app/activeNetwork/registerPush")
-            guard let requestUrl = url else { fatalError() }
+    @objc func displayFCMToken(token: String) {
+        //TODO clean
+        print("***********************************************")
+        print("Received FCM token: \(token)")
+        print(self.email);
+        print("***********************************************")
+        
+        if(self.email.isEmpty)
+        {
+            print("EMAIL_NOT_SET_YET")
+            return
+        }
+        
+        struct RegisterPushModel: Codable {
+            var pushToken: String
+            var email: String
+        }
+        
+        
+        //TODO
+        // Prepare URL
+        let url = URL(string: "https://appgal-cloud-do2cwgwhja-uc.a.run.app/activeNetwork/registerPush")
+        guard let requestUrl = url else { fatalError() }
 
-            // Prepare URL Request Object
-            var request = URLRequest(url: requestUrl)
-            request.httpMethod = "POST"
-            
-            // Set HTTP Request Header
-            request.setValue("application/json", forHTTPHeaderField: "Accept")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-             
-            
-            let json = RegisterPushModel(pushToken: fcmToken, email: self.email)
-            do{
-                let jsonData = try JSONEncoder().encode(json)
-                request.httpBody = jsonData
-            }
-            catch{
-                print("ERROR_DURING_JSON_ENCODE")
-                return
-            }
+        // Prepare URL Request Object
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "POST"
+        
+        // Set HTTP Request Header
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+         
+        
+        let json = RegisterPushModel(pushToken: token, email: self.email)
+        do{
+            let jsonData = try JSONEncoder().encode(json)
+            request.httpBody = jsonData
+        }
+        catch{
+            print("ERROR_DURING_JSON_ENCODE")
+            return
+        }
 
-            // Perform HTTP Request
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                    
-                    // Check for Error
-                    if let error = error {
-                        print("Error took place \(error)")
-                        return
-                    }
-             
-                    // Convert HTTP Response Data to a String
-                    if let data = data, let dataString = String(data: data, encoding: .utf8) {
-                        print("Token Registration data:\n \(dataString)")
-                    }
-            }
-            task.resume()
-          }
+        // Perform HTTP Request
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                
+                // Check for Error
+                if let error = error {
+                    print("Error took place \(error)")
+                    return
+                }
+         
+                // Convert HTTP Response Data to a String
+                if let data = data, let dataString = String(data: data, encoding: .utf8) {
+                    print("Token Registration data:\n \(dataString)")
+                }
+        }
+        task.resume()
       }
 }
 
