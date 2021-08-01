@@ -311,19 +311,11 @@ public class ActiveNetwork {
                 FoodRunner foodRunner = this.networkOrchestrator.getActiveNetwork().findFoodRunnerByEmail(email);
                 if(foodRunner != null)
                 {
-                    if(foodRunner.getPushTokens() != null) {
-                        foodRunner.getPushTokens().add(pushToken);
-                    }else{
-                        List<String> pushTokens = new ArrayList<>();
-                        foodRunner.setPushTokens(pushTokens);
-                        foodRunner.getPushTokens().add(pushToken);
-                    }
+                    foodRunner.addPushToken(pushToken);
                 }else{
                     Profile foodRunnerProfile = this.mongoDBJsonStore.getProfile(email);
                     foodRunner = new FoodRunner(foodRunnerProfile);
-                    List<String> pushTokens = new ArrayList<>();
-                    foodRunner.setPushTokens(pushTokens);
-                    foodRunner.getPushTokens().add(pushToken);
+                    foodRunner.addPushToken(pushToken);
                 }
 
                 this.networkOrchestrator.getActiveNetwork().addActiveFoodRunner(foodRunner);

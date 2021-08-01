@@ -8,9 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class FoodRunner implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(FoodRunner.class);
@@ -18,10 +16,10 @@ public class FoodRunner implements Serializable {
     private Profile profile;
     private Location location;
     private SourceOrg pickUpOrg;
-    private List<String> pushTokens;
+    private Set<String> pushTokens;
 
     public FoodRunner(){
-
+        this.pushTokens = new HashSet<>();
     }
 
     public FoodRunner(Profile profile) {
@@ -67,12 +65,17 @@ public class FoodRunner implements Serializable {
         this.profile.setOfflineCommunitySupport(offlineCommunitySupport);
     }
 
-    public List<String> getPushTokens() {
+    public Set<String> getPushTokens() {
         return pushTokens;
     }
 
-    public void setPushTokens(List<String> pushTokens) {
+    public void setPushTokens(Set<String> pushTokens) {
         this.pushTokens = pushTokens;
+    }
+
+    public void addPushToken(String pushToken)
+    {
+        this.pushTokens.add(pushToken);
     }
 
     @Override
@@ -96,11 +99,11 @@ public class FoodRunner implements Serializable {
             foodRunner.setPickUpOrg(SourceOrg.parse(jsonObject.get("pickUpOrg").getAsJsonObject().toString()));
         }
         if(jsonObject.has("pushTokens")) {
-            foodRunner.pushTokens = new ArrayList<>();
+            foodRunner.pushTokens = new HashSet<>();
             JsonArray array = jsonObject.getAsJsonArray("pushTokens");
             Iterator<JsonElement> itr = array.iterator();
             while(itr.hasNext()){
-                foodRunner.pushTokens.add(itr.next().getAsString());
+                foodRunner.addPushToken(itr.next().getAsString());
             }
         }
         return foodRunner;

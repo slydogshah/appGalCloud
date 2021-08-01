@@ -19,10 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class RunnableTask implements Runnable{
     private static Logger logger = LoggerFactory.getLogger(RunnableTask.class);
@@ -56,16 +53,30 @@ public class RunnableTask implements Runnable{
             logger.info(new Date() + " Runnable Task with " + messageBody
                     + " on thread " + Thread.currentThread().getName());
 
-            String topic = this.pickUpNotification.getSourceOrg().getOid();
             List<FoodRunner> qualified = this.networkOrchestrator.notifyFoodRunners(this.pickUpNotification);
             for(FoodRunner foodRunner:qualified) {
-                this.sendCommonMessage(messageBody,topic);
+                this.sendCommonMessage(messageBody,foodRunner);
             }
         }
         catch (Exception e)
         {
             logger.error(e.getMessage(),e);
         }
+
+        /*try {
+            String messageBody = "You have a new pickup request for [BLAH]";
+
+
+            logger.info(new Date() + " Runnable Task with " + messageBody
+                    + " on thread " + Thread.currentThread().getName());
+
+            String topic = "weather";
+            this.sendCommonMessage(messageBody,topic);
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(),e);
+        }*/
     }
 
     /**
@@ -73,10 +84,13 @@ public class RunnableTask implements Runnable{
      *
      * @throws IOException
      */
-    public void sendCommonMessage(String message,String topic) throws IOException {
-        JsonObject notificationMessage = buildNotificationMessage(message,topic);
-        prettyPrint(notificationMessage);
-        sendMessage(notificationMessage);
+    public void sendCommonMessage(String message,FoodRunner foodRunner) throws IOException {
+        List<JsonObject> messages = buildNotificationMessage(message,foodRunner);
+
+        for(JsonObject cour:messages) {
+            prettyPrint(cour);
+            sendMessage(cour);
+        }
     }
 
     /**
@@ -84,19 +98,26 @@ public class RunnableTask implements Runnable{
      *
      * @return JSON of notification message.
      */
-    private JsonObject buildNotificationMessage(String message,String topic) {
-        JsonObject jNotification = new JsonObject();
-        jNotification.addProperty("title", TITLE);
-        jNotification.addProperty("body", message);
+    private List<JsonObject> buildNotificationMessage(String message,FoodRunner foodRunner) {
+        List<JsonObject> messages = new ArrayList<>();
 
-        JsonObject jMessage = new JsonObject();
-        jMessage.add("notification", jNotification);
-        jMessage.addProperty("topic", topic);
+        Set<String> tokens = foodRunner.getPushTokens();
+        for(String token:tokens) {
+            JsonObject jNotification = new JsonObject();
+            jNotification.addProperty("title", TITLE);
+            jNotification.addProperty("body", message);
 
-        JsonObject jFcm = new JsonObject();
-        jFcm.add(MESSAGE_KEY, jMessage);
+            JsonObject jMessage = new JsonObject();
+            jMessage.add("notification", jNotification);
+            jMessage.addProperty("token", token);
 
-        return jFcm;
+            JsonObject jFcm = new JsonObject();
+            jFcm.add(MESSAGE_KEY, jMessage);
+
+            messages.add(jFcm);
+        }
+
+        return messages;
     }
 
     /**

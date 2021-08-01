@@ -178,19 +178,33 @@ public class NetworkOrchestratorTests extends BaseTest {
         schedulePickUpNotificationList.add(start);
         logger.info(schedulePickUpNotificationList.toString());
 
+        Profile profile = new Profile(UUID.randomUUID().toString(), "jen@app.io", 8675309l, "","", ProfileType.FOOD_RUNNER);
+        FoodRunner foodRunner = new FoodRunner(profile, location);
+        String androidToken = "fMQnirPJSwO_CNk1-CY5I9:APA91bG73zsG7iCnAthI6BMtUJxAsOLXDTL1Q5Inauwc6AmaXm6GzKgzQ7HvFcSjPowYQ4D8GXpKn452jQoejlzH5xjJ2jX5UemF7D0H_aLSN7qmMV7YicQVBNtcHz8HNVz0p6gh9b3U";
+        String iosToken = "f-WFaCWjZkCjilUmVqCTiT:APA91bHG8ChiXmeLD57_6eG5Xm_gK93UBLvLe79bv-fmIHKj1QTFCxYEhC6EuF7_UwI-5JdFXDivdbnstZ5QcO5v4OPOz_csc44CpOnq7HDzrNxnWm8c5RvqQ5PzcBwUsCiwZGFj3KZH";
+        String[] tokens = new String[]{androidToken,iosToken};
+        this.networkOrchestrator.enterNetwork(foodRunner);
+
+        for(String token:tokens){
+            FoodRunner activeFoodRunner = this.activeNetwork.findFoodRunnerByEmail("jen@app.io");
+            activeFoodRunner.addPushToken(token);
+        }
+
+
+        int index = 0;
         for (OffsetDateTime cour : schedulePickUpNotificationList) {
             SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com", true);
             sourceOrg.setProducer(true);
             sourceOrg.setLocation(location);
-            Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
-            FoodRunner bugsBunny = new FoodRunner(profile, location);
             Address address = new Address();
             address.setTimeZone("US/Central");
             sourceOrg.setAddress(address);
 
+            FoodRunner activeFoodRunner = this.activeNetwork.findFoodRunnerByEmail("jen@app.io");
+
             SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             schedulePickUpNotification.setSourceOrg(sourceOrg);
-            schedulePickUpNotification.setFoodRunner(bugsBunny);
+            schedulePickUpNotification.setFoodRunner(activeFoodRunner);
             schedulePickUpNotification.setStart(cour);
             logger.info("********************************************");
             JsonUtil.print(this.getClass(),schedulePickUpNotification.toJson());
