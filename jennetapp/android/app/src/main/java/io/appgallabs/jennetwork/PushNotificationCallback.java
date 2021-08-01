@@ -19,6 +19,7 @@ import io.dreiklang.breadcast.base.exec.Execution;
 public class PushNotificationCallback{
     private String email;
     private String token;
+    private String url;
 
     public PushNotificationCallback(Context appContext){
         Breadcaster caster = new Breadcaster(appContext)
@@ -28,6 +29,8 @@ public class PushNotificationCallback{
                         String email = intent.getStringExtra("email");
                         if(email != null){
                             PushNotificationCallback.this.email = email;
+                            String url = intent.getStringExtra("url");
+                            PushNotificationCallback.this.url = url;
                         }
                         String token = intent.getStringExtra("token");
                         if(token != null){
@@ -37,16 +40,14 @@ public class PushNotificationCallback{
                             return;
                         }
                         Thread t = new Thread(()->{
-                            URL url = null;
+                            URL urlValue = null;
                             HttpsURLConnection urlConnection = null;
                             String json = null;
                             OutputStreamWriter writer = null;
                             BufferedReader reader = null;
                             try {
-                                //TODO
-                                url = new URL("https://appgal-cloud-do2cwgwhja-uc.a.run.app/activeNetwork/registerPush");
-                                //url = new URL("https://10.0.2.2/activeNetwork/registerPush");
-                                urlConnection = (HttpsURLConnection) url.openConnection();
+                                urlValue = new URL(PushNotificationCallback.this.url);
+                                urlConnection = (HttpsURLConnection) urlValue.openConnection();
                                 urlConnection.setDoOutput(true);
 
                                 JSONObject jsonObject = new JSONObject();
@@ -71,10 +72,16 @@ public class PushNotificationCallback{
                             }catch(Exception e){
                                 throw new RuntimeException(e);
                             }finally {
-                                urlConnection.disconnect();
+                                if(urlConnection != null) {
+                                    urlConnection.disconnect();
+                                }
                                 try {
-                                    writer.close();
-                                    reader.close();
+                                    if(writer != null) {
+                                        writer.close();
+                                    }
+                                    if(reader != null) {
+                                        reader.close();
+                                    }
                                 }catch(Exception e){}
                             }
                         });

@@ -979,7 +979,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                     try {
                         NotificationDetails notificationDetails = NotificationDetails.from(arguments);
                         Intent intent = new Intent("1");
+
                         intent.putExtra("email", notificationDetails.title);
+                        intent.putExtra("url", notificationDetails.body);
                         mainActivity.getApplicationContext().sendBroadcast(intent);
                     }
                     catch(Exception e){

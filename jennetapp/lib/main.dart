@@ -24,7 +24,7 @@ class MyHttpOverrides extends HttpOverrides{
   }
 }
 
-/*void main(){
+void main(){
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
 
@@ -38,10 +38,10 @@ class MyHttpOverrides extends HttpOverrides{
     //print("APP_URL: "+UrlFunctions.getInstance().iosApiUrl);
     launchApp();
   });
-}*/
+}
 
 
-void main(String env)
+/*void main(String env)
 {
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
@@ -55,7 +55,7 @@ void main(String env)
     //print("APP_URL: "+UrlFunctions.getInstance().iosApiUrl);
     launchApp();
   });
-}
+}*/
 
 
 Future<void> _configureLocalTimeZone() async {
