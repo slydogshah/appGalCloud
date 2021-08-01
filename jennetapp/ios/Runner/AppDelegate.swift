@@ -3,10 +3,12 @@ import Flutter
 import UserNotifications
 
 import Firebase
+import flutter_local_notifications
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
     let gcmMessageIDKey = "gcm.message_id"
+    var email = ""
     
   override func application(
     _ application: UIApplication,
@@ -29,39 +31,48 @@ import Firebase
         })
 
 
+        //Initialize Firebase
+        FirebaseApp.configure()
+        let pushNotificationChannel = FlutterMethodChannel(name:"appgallabs.io/push_notifications",binaryMessenger: controller.binaryMessenger)
+        pushNotificationChannel.setMethodCallHandler({
+                    (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+                    if ("setEmail" == call.method) {
+                        self.email = call.arguments as! String
+                        print("*******DELEGATE_EMAIL********")
+                        print(self.email);
+                        
+
+                        // [START set_messaging_delegate]
+                        Messaging.messaging().delegate = self
+                        // [END set_messaging_delegate]
+                        
+                        // Register for remote notifications. This shows a permission dialog on first run, to
+                        // show the dialog at a more appropriate time move this registration accordingly.
+                        // [START register_for_notifications]
+                        if #available(iOS 10.0, *) {
+                          // For iOS 10 display notification (sent via APNS)
+                          UNUserNotificationCenter.current().delegate = self
+
+                          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+                          UNUserNotificationCenter.current().requestAuthorization(
+                            options: authOptions,
+                            completionHandler: { _, _ in }
+                          )
+                        } else {
+                          let settings: UIUserNotificationSettings =
+                            UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+                          application.registerUserNotificationSettings(settings)
+                        }
+
+                        application.registerForRemoteNotifications()
+                        
+                        self.subscribe()
+                    }
+        })
+
+
     GeneratedPluginRegistrant.register(with: self)
-
     NSLog("LAUNCH_COMPLETE");
-    
-    //Initialize Firebase
-    FirebaseApp.configure()
-
-    // [START set_messaging_delegate]
-    Messaging.messaging().delegate = self
-    // [END set_messaging_delegate]
-    
-    // Register for remote notifications. This shows a permission dialog on first run, to
-    // show the dialog at a more appropriate time move this registration accordingly.
-    // [START register_for_notifications]
-    if #available(iOS 10.0, *) {
-      // For iOS 10 display notification (sent via APNS)
-      UNUserNotificationCenter.current().delegate = self
-
-      let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-      UNUserNotificationCenter.current().requestAuthorization(
-        options: authOptions,
-        completionHandler: { _, _ in }
-      )
-    } else {
-      let settings: UIUserNotificationSettings =
-        UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-      application.registerUserNotificationSettings(settings)
-    }
-
-    application.registerForRemoteNotifications()
-    
-    subscribe()
-    
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
@@ -199,41 +210,67 @@ import Firebase
     }
     
     @objc func displayFCMToken(notification: NSNotification) {
-      guard let userInfo = notification.userInfo else { return }
-      if let fcmToken = userInfo["token"] as? String {
-        print("Received FCM token: \(fcmToken)")
-        //TODO
-        // Prepare URL
-        let url = URL(string: "https://appgal-cloud-do2cwgwhja-uc.a.run.app/microservice")
-        guard let requestUrl = url else { fatalError() }
+          //TODO clean
+          guard let userInfo = notification.userInfo else { return }
+          if let fcmToken = userInfo["token"] as? String {
+            print("***********************************************")
+            print("Received FCM token: \(fcmToken)")
+            print(self.email);
+            print("***********************************************")
+            
+            if(self.email.isEmpty)
+            {
+                print("EMAIL_NOT_SET_YET")
+                return
+            }
+            
+            struct RegisterPushModel: Codable {
+                var pushToken: String
+                var email: String
+            }
+            
+            
+            //TODO
+            // Prepare URL
+            let url = URL(string: "https://appgal-cloud-do2cwgwhja-uc.a.run.app/activeNetwork/registerPush")
+            guard let requestUrl = url else { fatalError() }
 
-        // Prepare URL Request Object
-        var request = URLRequest(url: requestUrl)
-        request.httpMethod = "POST"
-         
-        // HTTP Request Parameters which will be sent in HTTP Request Body
-        let postString = fcmToken
+            // Prepare URL Request Object
+            var request = URLRequest(url: requestUrl)
+            request.httpMethod = "POST"
+            
+            // Set HTTP Request Header
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+             
+            
+            let json = RegisterPushModel(pushToken: fcmToken, email: self.email)
+            do{
+                let jsonData = try JSONEncoder().encode(json)
+                request.httpBody = jsonData
+            }
+            catch{
+                print("ERROR_DURING_JSON_ENCODE")
+                return
+            }
 
-        // Set HTTP Request Body
-        request.httpBody = postString.data(using: String.Encoding.utf8);
-
-        // Perform HTTP Request
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                
-                // Check for Error
-                if let error = error {
-                    print("Error took place \(error)")
-                    return
-                }
-         
-                // Convert HTTP Response Data to a String
-                if let data = data, let dataString = String(data: data, encoding: .utf8) {
-                    print("Token Registration data:\n \(dataString)")
-                }
-        }
-        task.resume()
+            // Perform HTTP Request
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                    
+                    // Check for Error
+                    if let error = error {
+                        print("Error took place \(error)")
+                        return
+                    }
+             
+                    // Convert HTTP Response Data to a String
+                    if let data = data, let dataString = String(data: data, encoding: .utf8) {
+                        print("Token Registration data:\n \(dataString)")
+                    }
+            }
+            task.resume()
+          }
       }
-    }
 }
 
 // [END ios_10_message_handling]

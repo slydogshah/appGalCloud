@@ -84,7 +84,7 @@ class NotificationProcessor
   }
 
   Future<void> configureProcessor(BuildContext context,Profile profile) async {
-    print("********CONFIGURE_PROCESSOR********");
+    //print("********CONFIGURE_PROCESSOR********");
     this.context = context;
 
     this.requestPermissions();
@@ -132,8 +132,8 @@ class NotificationProcessor
   }
 
   Future<void> repeatNotification(String email) async {
-    print("****************REPEAT********************************");
-    print(email);
+    //print("****************REPEAT********************************");
+    //print(email);
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails('repeating channel id',
         'repeating channel name', 'repeating description');
@@ -143,8 +143,8 @@ class NotificationProcessor
         email, RepeatInterval.everyMinute, platformChannelSpecifics,
         androidAllowWhileIdle: true);
 
-    print("********CLOUD_POLLER********");
-    print(email);
+    //print("********CLOUD_POLLER********");
+    //print(email);
   }
 
   void requestPermissions() {
