@@ -7,6 +7,7 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -24,14 +25,26 @@ import android.view.View;
 
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
+import javax.net.ssl.HttpsURLConnection;
+
 public class MainActivity extends FlutterActivity {
 
     private static final String TAG = "MainActivity";
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine){
+        PushNotificationCallback pushNotificationCallback = new PushNotificationCallback(this.getApplicationContext());
         GeneratedPluginRegistrant.registerWith(this.getFlutterEngine());
     }
+
 
     /*@Override
     protected void onCreate(Bundle savedInstanceState) {

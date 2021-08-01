@@ -1,5 +1,5 @@
 group 'com.dexterous.flutterlocalnotifications'
-version '1.0-SNAPSHOT'
+version '1.0-SNAPSHOT-CUSTOM'
 
 buildscript {
     repositories {
@@ -29,6 +29,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
+        abortOnError false
         disable 'InvalidPackage'
     }
 }

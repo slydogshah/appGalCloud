@@ -371,6 +371,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         long notificationTriggerTime = calculateNextNotificationTrigger(notificationDetails.calledAt, repeatInterval);
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
+
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
         notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -398,9 +399,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         notificationTriggerTime = calculateNextNotificationTrigger(notificationTriggerTime, repeatInterval);
 
+        Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
-        Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
         notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = getAlarmManager(context);
@@ -972,7 +973,19 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case PERIODICALLY_SHOW_METHOD:
             case SHOW_DAILY_AT_TIME_METHOD:
             case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
-                repeat(call, result);
+                //repeat(call, result);
+                Map<String, Object> arguments = call.arguments();
+                if(arguments != null) {
+                    try {
+                        NotificationDetails notificationDetails = NotificationDetails.from(arguments);
+                        Intent intent = new Intent("1");
+                        intent.putExtra("email", notificationDetails.title);
+                        mainActivity.getApplicationContext().sendBroadcast(intent);
+                    }
+                    catch(Exception e){
+                        throw new RuntimeException(e);
+                    }
+                }
                 break;
             }
             case CANCEL_METHOD:

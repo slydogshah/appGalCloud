@@ -35,6 +35,15 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import javax.net.ssl.HttpsURLConnection;
+
 
 /**
  * NOTE: There can only be one service in each app that receives FCM messages. If multiple
@@ -112,13 +121,49 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         // Get new FCM registration token
                         String token = task.getResult();
 
-                        // Log and toast
-                        String msg = getString(R.string.msg_token_fmt, token);
-                        Log.d(TAG, msg);
+                        //throw new RuntimeException("FORCED");
+                        /*Thread t = new Thread(()->{
+                            registerFcmToken(token);
+                        });
+                        t.start();*/
+                        System.out.println(token);
+                        sendRegistrationToServer(token);
                     }
                 });
         // [END log_reg_token]
     }
+
+    /*private void registerFcmToken(String fcmToken){
+        System.out.println("***********************************");
+        System.out.println(fcmToken);
+        try {
+            URL url = new URL("https://appgal-cloud-do2cwgwhja-uc.a.run.app/activeNetwork/registerPush");
+            //URL url = new URL("https://10.0.2.2/activeNetwork/registerPush");
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            try {
+                urlConnection.setDoOutput(true);
+
+                String email = "jen@app.io";
+                String json = "{\"email\":"+email+",\"pushToken\":"+fcmToken;
+
+                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                out.write(json.getBytes(StandardCharsets.UTF_8));
+                out.flush();
+
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+
+                byte[] data = new byte[1024];
+                in.read(data);
+                System.out.println("TOKEN_REGISTRATION_SUCCESS: "+new String(data,StandardCharsets.UTF_8));
+            } finally {
+                urlConnection.disconnect();
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }*/
 
     /**
      * Called when message is received.
@@ -222,7 +267,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
+        Intent intent = new Intent("1");
+        intent.putExtra("token",token);
+        getApplicationContext().sendBroadcast(intent);
     }
 
     /**

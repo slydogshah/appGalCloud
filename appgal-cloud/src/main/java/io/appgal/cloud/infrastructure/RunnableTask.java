@@ -4,10 +4,12 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +38,6 @@ public class RunnableTask implements Runnable{
     private static final String[] SCOPES = { MESSAGING_SCOPE };
 
     private static final String TITLE = "Pickup Notification";
-    private static final String BODY = "You have 100 new pickup requests";
     public static final String MESSAGE_KEY = "message";
 
     public RunnableTask(NetworkOrchestrator networkOrchestrator,SchedulePickUpNotification pickUpNotification)
@@ -55,10 +56,10 @@ public class RunnableTask implements Runnable{
             logger.info(new Date() + " Runnable Task with " + messageBody
                     + " on thread " + Thread.currentThread().getName());
 
+            String topic = this.pickUpNotification.getSourceOrg().getOid();
             List<FoodRunner> qualified = this.networkOrchestrator.notifyFoodRunners(this.pickUpNotification);
             for(FoodRunner foodRunner:qualified) {
-                //TODO: find the correct topic
-                this.sendCommonMessage(messageBody);
+                this.sendCommonMessage(messageBody,topic);
             }
         }
         catch (Exception e)
@@ -72,8 +73,8 @@ public class RunnableTask implements Runnable{
      *
      * @throws IOException
      */
-    public void sendCommonMessage(String message) throws IOException {
-        JsonObject notificationMessage = buildNotificationMessage(message);
+    public void sendCommonMessage(String message,String topic) throws IOException {
+        JsonObject notificationMessage = buildNotificationMessage(message,topic);
         prettyPrint(notificationMessage);
         sendMessage(notificationMessage);
     }
@@ -83,14 +84,14 @@ public class RunnableTask implements Runnable{
      *
      * @return JSON of notification message.
      */
-    private JsonObject buildNotificationMessage(String message) {
+    private JsonObject buildNotificationMessage(String message,String topic) {
         JsonObject jNotification = new JsonObject();
         jNotification.addProperty("title", TITLE);
         jNotification.addProperty("body", message);
 
         JsonObject jMessage = new JsonObject();
         jMessage.add("notification", jNotification);
-        jMessage.addProperty("topic", "weather");
+        jMessage.addProperty("topic", topic);
 
         JsonObject jFcm = new JsonObject();
         jFcm.add(MESSAGE_KEY, jMessage);

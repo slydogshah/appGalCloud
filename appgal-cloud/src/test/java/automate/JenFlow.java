@@ -32,7 +32,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class JenFlow extends BaseTest {
+public class JenFlow extends BaseTest{
     private static Logger logger = LoggerFactory.getLogger(JenFlow.class);
 
     @Inject
@@ -308,6 +308,17 @@ public class JenFlow extends BaseTest {
         JsonElement responseJson = JsonParser.parseString(jsonString);
         //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
+
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email", email);
+        json.addProperty("pushToken", "blahblah");
+        response = given().body(json.toString()).when().post("/activeNetwork/registerPush/").andReturn();
+        jsonString = response.getBody().print();
+        responseJson = JsonParser.parseString(jsonString);
+        //JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+
         return responseJson.getAsJsonObject();
     }
 

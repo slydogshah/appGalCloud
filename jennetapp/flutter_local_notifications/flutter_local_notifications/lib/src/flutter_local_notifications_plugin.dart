@@ -137,7 +137,6 @@ class FlutterLocalNotificationsPlugin {
   }
 
   static void callback(){
-    print("*******GENERIC_CALLBACK_INVOKED_CLEAN*******");
   }
 
   /// Returns info on if a notification created from this plugin had been used

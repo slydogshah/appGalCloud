@@ -73,6 +73,7 @@ class ProfileRestClient
       return json;
     }
 
+    print(response.body);
     json  = jsonDecode(response.body);
 
     json = UrlFunctions.handleError(null, response);

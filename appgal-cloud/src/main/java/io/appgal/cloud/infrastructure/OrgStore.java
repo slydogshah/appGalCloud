@@ -12,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
 public class OrgStore {
@@ -31,6 +32,7 @@ public class OrgStore {
             collection.deleteOne(bson);
         }
 
+        sourceOrg.setOid(UUID.randomUUID().toString());
         String json = sourceOrg.toString();
         Document doc = Document.parse(json);
         collection.insertOne(doc);

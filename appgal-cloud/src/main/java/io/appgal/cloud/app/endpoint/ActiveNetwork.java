@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -275,6 +276,61 @@ public class ActiveNetwork {
                 responseJson.add("inProgress", inProgress);
             }
             responseJson.addProperty("success", true);
+            return Response.ok(responseJson.toString()).build();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
+        }
+    }
+
+    @Path("/registerPush")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerPush(@RequestBody String jsonBody)
+    {
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String email = null;
+            String pushToken = null;
+            if(json.has("email"))
+            {
+                email = json.get("email").getAsString();
+            }
+            if(json.has("pushToken"))
+            {
+                pushToken = json.get("pushToken").getAsString();
+            }
+
+            JsonObject responseJson = new JsonObject();
+            if(email != null) {
+                FoodRunner foodRunner = this.networkOrchestrator.getActiveNetwork().findFoodRunnerByEmail(email);
+                if(foodRunner != null)
+                {
+                    if(foodRunner.getPushTokens() != null) {
+                        foodRunner.getPushTokens().add(pushToken);
+                    }else{
+                        List<String> pushTokens = new ArrayList<>();
+                        foodRunner.setPushTokens(pushTokens);
+                        foodRunner.getPushTokens().add(pushToken);
+                    }
+                }else{
+                    Profile foodRunnerProfile = this.mongoDBJsonStore.getProfile(email);
+                    foodRunner = new FoodRunner(foodRunnerProfile);
+                    List<String> pushTokens = new ArrayList<>();
+                    foodRunner.setPushTokens(pushTokens);
+                    foodRunner.getPushTokens().add(pushToken);
+                }
+
+                this.networkOrchestrator.getActiveNetwork().addActiveFoodRunner(foodRunner);
+                this.networkOrchestrator.getActiveNetwork().flushToStore();
+                responseJson.addProperty("success", true);
+                responseJson.add("foodRunner",foodRunner.toJson());
+            }
             return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)

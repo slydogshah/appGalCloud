@@ -13,6 +13,7 @@ import java.util.*;
 public class SourceOrg implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(SourceOrg.class);
 
+    private String oid;
     private String orgId;
     private String orgName;
     private String orgContactEmail;
@@ -58,6 +59,14 @@ public class SourceOrg implements Serializable {
         this.deliveryPreference = new DeliveryPreference();
         this.isProducer = isProducer;
         this.address = address;
+    }
+
+    public String getOid() {
+        return oid;
+    }
+
+    public void setOid(String oid) {
+        this.oid = oid;
     }
 
     public String getOrgId() {
@@ -166,6 +175,9 @@ public class SourceOrg implements Serializable {
     {
         JsonObject jsonObject = new JsonObject();
 
+        if(this.oid != null) {
+            jsonObject.addProperty("oid", this.oid);
+        }
         if(this.orgId != null) {
             jsonObject.addProperty("orgId", this.orgId);
         }
@@ -217,6 +229,9 @@ public class SourceOrg implements Serializable {
         }
 
 
+        if(jsonObject.has("oid")) {
+            sourceOrg.oid = jsonObject.get("oid").getAsString();
+        }
         if(jsonObject.has("orgId")) {
             sourceOrg.orgId = jsonObject.get("orgId").getAsString();
         }
