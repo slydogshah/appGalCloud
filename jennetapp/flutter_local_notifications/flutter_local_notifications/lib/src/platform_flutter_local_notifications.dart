@@ -600,7 +600,11 @@ class IOSFlutterLocalNotificationsPlugin
     //await _channel.invokeMethod('setEmail', title);
     final channelName = 'appgallabs.io/push_notifications';
     final methodChannel = MethodChannel(channelName);
-    await methodChannel.invokeMethod("setEmail",title);
+
+    await methodChannel.invokeMethod("setEmail",<String, dynamic>{
+      "email": title,
+      'url': body,
+    });
   }
 
   Future<void> _handleMethod(MethodCall call) {

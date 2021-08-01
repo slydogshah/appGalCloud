@@ -8,6 +8,7 @@ import Firebase
 @objc class AppDelegate: FlutterAppDelegate {
     let gcmMessageIDKey = "gcm.message_id"
     var email = ""
+    var url = ""
     
   override func application(
     _ application: UIApplication,
@@ -36,9 +37,14 @@ import Firebase
         pushNotificationChannel.setMethodCallHandler({
                     (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
                     if ("setEmail" == call.method) {
-                        self.email = call.arguments as! String
+                        guard let args = (try? call.arguments) as? [String : Any] else {
+                            return
+                        }
+                        self.email = args["email"] as! String
+                        self.url = args["url"] as! String
                         print("*******DELEGATE_EMAIL********")
-                        print(self.email);
+                        print(self.email)
+                        print(self.url)
                         
 
                         // [START set_messaging_delegate]
@@ -230,7 +236,7 @@ import Firebase
         
         //TODO
         // Prepare URL
-        let url = URL(string: "https://appgal-cloud-do2cwgwhja-uc.a.run.app/activeNetwork/registerPush")
+        let url = URL(string: self.url)
         guard let requestUrl = url else { fatalError() }
 
         // Prepare URL Request Object

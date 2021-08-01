@@ -4,6 +4,7 @@ import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/rest/urlFunctions.dart';
 import 'package:app/src/ui/profileFunctions.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -128,10 +129,17 @@ class NotificationProcessor
           ProfileFunctions.launchAppFromNotification(context);
         },notificationCallback: checkNewPickupRequests);
 
-    this.repeatNotification(profile.email);
+    if(Platform.isIOS) {
+      String iosUrl = UrlFunctions.getInstance().iosApiUrl+"activeNetwork/registerPush";
+      this.repeatNotification(profile.email,iosUrl);
+    }
+    else if(Platform.isAndroid){
+      String androidUrl = UrlFunctions.getInstance().androidApiUrl+"activeNetwork/registerPush";
+      this.repeatNotification(profile.email,androidUrl);
+    }
   }
 
-  Future<void> repeatNotification(String email) async {
+  Future<void> repeatNotification(String email,String url) async {
     //print("****************REPEAT********************************");
     //print(email);
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -140,7 +148,7 @@ class NotificationProcessor
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, email,
-        email, RepeatInterval.everyMinute, platformChannelSpecifics,
+        url, RepeatInterval.everyMinute, platformChannelSpecifics,
         androidAllowWhileIdle: true);
 
     //print("********CLOUD_POLLER********");
