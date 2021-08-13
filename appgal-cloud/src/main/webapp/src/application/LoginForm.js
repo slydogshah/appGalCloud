@@ -511,7 +511,7 @@ function RenderLogin({state,props})
                                                                      sourceOrg: response.data
                                                                    }));
 
-                                                           LaunchHome(props,response.data);
+                                                           LaunchHomeAfterRegister(state,props,state.email);
                                                         }).catch(err => {
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                             if(err.response != null && err.response.status == 409)
@@ -551,7 +551,7 @@ function RenderLogin({state,props})
                                                                     color="dark"
                                                                     closeButton
                                                                     >
-                                                                       "Unknown Error. Please check your Network Connection
+                                                                       Unknown Error. Please check your Network Connection
                                                                    </CAlert>
                                                                 );
                                                                 ReactDOM.render(element,document.getElementById('errorAlert'));
@@ -597,6 +597,76 @@ function RenderLogin({state,props})
        </div>
        </>
     );
+}
+
+function LaunchHomeAfterRegister(state,props){
+const payload = {
+                                    "email":state.email,
+                                    "password":state.password
+                                };
+                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
+                                axios.post(apiUrl,payload).then((response) => {
+
+                                      const resetPasswordActive = response.data.profile.resetPasswordActive;
+
+                                      ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                      store.setState(state => ({
+                                        ...state,
+                                        auth: resetPasswordActive,
+                                        email:state.email,
+                                        sourceOrg: response.data.sourceOrg
+                                      }));
+                                      LaunchHome(props,response.data);
+                                }).catch(err => {
+                                       ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                       if(err.response != null && err.response.status == 401)
+                                       {
+                                            if(err.response.data.message == "profile_not_found")
+                                            {
+                                                const profile_not_found = (
+                                                                      <CAlert
+                                                                      color="warning"
+                                                                      >
+                                                                         The email is not registered.
+                                                                     </CAlert>
+                                                                  );
+                                                ReactDOM.render(profile_not_found,document.getElementById('profile_not_found'));
+                                            }
+                                            else if(err.response.data.message == "password_mismatch")
+                                            {
+                                                const password_mismatch = (
+                                                                                          <CAlert
+                                                                                          color="warning"
+                                                                                          >
+                                                                                             Password does not match.
+                                                                                         </CAlert>
+                                                                                      );
+                                                                    ReactDOM.render(password_mismatch,document.getElementById('password_mismatch'));
+                                            }
+                                       }
+                                       else if(err.response != null && err.response.status == 403)
+                                      {
+                                           const access_denied = (
+                                                                <CAlert
+                                                                color="warning"
+                                                                >
+                                                                   403: Access Denied.
+                                                               </CAlert>
+                                                            );
+                                          ReactDOM.render(access_denied,document.getElementById('access_denied'));
+                                      }
+                                       else
+                                       {
+                                           const system_error = (
+                                                 <CAlert
+                                                 color="warning"
+                                                 >
+                                                    Unknown Error. Please check your Network Connection
+                                                </CAlert>
+                                            );
+                                           ReactDOM.render(system_error,document.getElementById('system_error'));
+                                       }
+                                });
 }
 
 function LaunchHome(props,orgLogin)

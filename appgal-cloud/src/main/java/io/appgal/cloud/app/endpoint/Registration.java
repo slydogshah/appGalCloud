@@ -356,6 +356,11 @@ public class Registration {
             logger.error(authenticationException.getMessage(), authenticationException);
             return Response.status(401).entity(authenticationException.toString()).build();
         }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
     }
 
     @Path("sendResetCode")
