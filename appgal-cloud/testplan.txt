@@ -68,13 +68,6 @@ Dash: Launch the Main Page
 Test 5
 ----
 
-Dash: Notify Food Picked Up
-* 500: System Error
-
-
-Test 6
-----
-
 Dash: Schedule a Pickup
 
 * Start Scheduling Process
@@ -83,6 +76,12 @@ Dash: Schedule a Pickup
         * 500: System Error
     * Schedule Org or OfflineCommunity
         * 500: System Error
+
+Test 6
+----
+
+Dash: Notify Food Picked Up
+* 500: System Error
 
 
 Test 7
@@ -127,6 +126,37 @@ App: Start DropOff Navigation
         * Cancel
         * Start Navigation
 
+Test 13
+----
+Dash: Change Password
+      * Empty password (required message)
+      * Not match
+      * Success
+      * Cancel
+
+Test 14
+----
+Dash: Add Staff Member
+      * All empty
+      * One empty at a time
+      * Invalid email
+      * Add
+      * Cancel
+      * Login as the Added Member
+      Reset on first login
+      * All empty
+      * One empty at a time
+      * Not match
+      * Success
+
+Test 15
+----
+Dash: Remove Staff Member
+      * Remove when one
+      * Remove multiple
+      * Remove till all removed
+      * Remove the original
+      * Login after removal
 
 
 

@@ -1,14 +1,28 @@
 Dash: Add TimeZones
-
-
 App: Refresh from backgrounding
-
 App: show launch indicator
-
 App: Test if location updates are being sent
-
 App: Push wakeup and launch app
+Dash: Error during login right after registration
+App: Wrong Email (one that does not exist) (proper error message)
+Dash: Register > Email: required,invalid (not working)
+Dash: Register > Password: Password: required (not working)
+Dash: Register > OrgId: required: (flow is not working)
+Dash: Register > Code 409: Exists (Duplicate email is allowed)
+Dash: Forgot Password > Email Required (no check)
+Dash: Forgot Password > Mobile Invalid (TODO)
+Dash: Forgot Password > Email Invalid (TODO)
+Dash: Forgot Password > 403: Not an Org account
+Dash Forgot Password > verifyResetCode > empty (system error..should say invalid code)
+Dash Forgot Password > resetPassword > empty (system error..should say password required)
+Dash Start Schedule Process > Schedule Org > Schedule Button issue
+Dash Start Schedule Process > OfflineCommunity > Schedule Button issue
+App Start Schedule Process > No default image > Something Random
+App Start Schedule Process > No Push Notification
+App If Offline DropOff > No navigation option
+App If Offline DropOff > Accept without navihation and weird state
+Dash Change Password > Empty password (required message) > TODO
+Dash Add Staff Member > Reset on first login > All Empty > TODO
+Dash Add Staff Member > Reset on first login > Empty first-only > TODO
+Dash Add Staff Member > Reset on first login > Empty next-only > TODO
 
-e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.refresh"]
-e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]
-e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateExpirationForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]

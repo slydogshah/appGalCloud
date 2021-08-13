@@ -1,1 +1,7 @@
-https://appgal-cloud-do2cwgwhja-nn.a.run.app
+https://appgal-cloud-do2cwgwhja-uc.a.run.app
+
+mongosh "mongodb+srv://cluster1.a16oh.mongodb.net/jennetwork" --username jen
+
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.refresh"]
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateExpirationForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]
