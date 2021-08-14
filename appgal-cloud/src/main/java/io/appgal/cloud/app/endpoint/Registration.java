@@ -152,6 +152,7 @@ public class Registration {
             sourceOrg.addProfile(profile);
             profile.setSourceOrgId(sourceOrg.getOrgId());
 
+
             Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
             if(!violations.isEmpty())
             {
@@ -162,11 +163,45 @@ public class Registration {
                     logger.info("VIOLATION: "+violation.getMessage());
                     violationsArray.add(violation.getMessage());
                 }
+
+
+                //Validate the address
+                if(!jsonObject.has("zip"))
+                {
+                    violationsArray.add("zip_required");
+                }
+                if(jsonObject.has("zip")){
+                    String zip = jsonObject.get("zip").getAsString();
+                    if(zip == null || zip.trim().length()==0){
+                        violationsArray.add("zip_required");
+                    }
+                }
+                if(!jsonObject.has("street"))
+                {
+                    violationsArray.add("street_required");
+                }
+                if(jsonObject.has("street")){
+                    String zip = jsonObject.get("street").getAsString();
+                    if(zip == null || zip.trim().length()==0){
+                        violationsArray.add("street_required");
+                    }
+                }
+                if(!jsonObject.has("timeZone"))
+                {
+                    violationsArray.add("timeZone_required");
+                }
+                if(jsonObject.has("timeZone")){
+                    String zip = jsonObject.get("timeZone").getAsString();
+                    if(zip == null || zip.trim().length()==0){
+                        violationsArray.add("timeZone_required");
+                    }
+                }
+
                 responseJson.add("violations", violationsArray);
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
-            this.profileRegistrationService.registerSourceOrg(sourceOrg);
+            this.profileRegistrationService.registerSourceOrg(profile.getEmail(),sourceOrg);
 
             return Response.ok(sourceOrg.toString()).build();
         }

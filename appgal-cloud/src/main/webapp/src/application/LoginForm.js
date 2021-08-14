@@ -108,6 +108,7 @@ function inputFieldComp(state) {
                        }
                    }}
                  />
+                 <div id="streetRequired"/>
               </GridItem>
             </GridContainer>
            <GridContainer>
@@ -417,19 +418,86 @@ function RenderLogin({state,props})
                                                         <option value={true}>Pickup</option>
                                                         <option value={false}>DropOff</option>
                                                       </CSelect>
+                                                      <div id="orgTypeRequired"/>
                                                     </GridItem>
                                                  </GridContainer>
                                                  <GridContainer>
-                                                     <GridItem xs={12} sm={12} md={6}>
-                                                        <div>
-                                                              <br/>
-                                                              {state.activeElementType === "dropdown"
-                                                                ? dropDownComp(state,orgs)
-                                                                : inputFieldComp(state)}
-                                                       </div>
-                                                     </GridItem>
-                                                     <div id="organizationRequired"/>
-                                                </GridContainer>
+                                                     <GridItem xs={12} sm={12} md={4}>
+                                                                                                                                                                         <CustomInput
+                                                                                                                                                                          labelText="New Organization"
+                                                                                                                                                                          id="sourceOrgId"
+                                                                                                                                                                          formControlProps={{
+                                                                                                                                                                            fullWidth: true
+                                                                                                                                                                          }}
+                                                                                                                                                                          inputProps={{
+                                                                                                                                                                              onChange:(event) => {
+                                                                                                                                                                                  const target = event.target;
+                                                                                                                                                                                  const value = target.value;
+                                                                                                                                                                                  const name = target.name;
+                                                                                                                                                                                  state.sourceOrgId = value;
+                                                                                                                                                                              }
+                                                                                                                                                                          }}
+                                                                                                                                                                        />
+                                                                                                                                                                        <div id="organizationRequired"/>
+                                                                                                                                                                     </GridItem>
+
+                                               </GridContainer>
+                                               <GridContainer>
+
+                                                                                                               <GridItem xs={12} sm={12} md={4}>
+                                                                                                                                                                                      <CustomInput
+                                                                                                                                                                                       labelText="Street"
+                                                                                                                                                                                       id="street"
+                                                                                                                                                                                       formControlProps={{
+                                                                                                                                                                                         fullWidth: true
+                                                                                                                                                                                       }}
+                                                                                                                                                                                       inputProps={{
+                                                                                                                                                                                           onChange:(event) => {
+                                                                                                                                                                                               const target = event.target;
+                                                                                                                                                                                               const value = target.value;
+                                                                                                                                                                                               const name = target.name;
+                                                                                                                                                                                               state.street = value;
+                                                                                                                                                                                           }
+                                                                                                                                                                                       }}
+                                                                                                                                                                                     />
+                                                                                                                                                                                     <div id="streetRequired"/>
+                                                                                                                                                                                  </GridItem>
+
+                                                                                              </GridContainer>
+                                               <GridContainer>
+                                                                                                    <GridItem xs={12} sm={12} md={4}>
+                                                                                                                   <CustomInput
+                                                                                                                    labelText="Zip"
+                                                                                                                    id="zip"
+                                                                                                                    formControlProps={{
+                                                                                                                      fullWidth: true
+                                                                                                                    }}
+                                                                                                                    inputProps={{
+                                                                                                                        onChange:(event) => {
+                                                                                                                            const target = event.target;
+                                                                                                                            const value = target.value;
+                                                                                                                            const name = target.name;
+                                                                                                                            state.zip = value;
+                                                                                                                        }
+                                                                                                                    }}
+                                                                                                                  />
+                                                                                                                  <div id="zipRequired"/>
+                                                                                                               </GridItem>
+                                                                                              </GridContainer>
+                                               <GridContainer>
+                                                                                                    <GridItem xs={12} sm={12} md={4}>
+                                                                                                                            <CSelect custom name="timeZone" onChange={(event)=>{
+                                                                                                                                            const target = event.target;
+                                                                                                                                                                                       const value = target.value;
+                                                                                                                                                                                       const name = target.name;
+                                                                                                                                                                                       state.timeZone = value;
+                                                                                                                                        }}>
+                                                                                                                                          <option value="0">--TimeZone--</option>
+                                                                                                                                          <option value="US/Central">US/Central</option>
+                                                                                                                                        </CSelect>
+                                                                                                                                        <div id="timeZoneRequired"/>
+                                                                                                                        </GridItem>
+                                                                                              </GridContainer>
                                                </CardBody>
                                                <CardFooter>
                                                    <GridContainer>
@@ -437,8 +505,12 @@ function RenderLogin({state,props})
                                                        <Button color="primary" onClick={(e) => {
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('orgTypeRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('streetRequired'));
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('zipRequired'));
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('timeZoneRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
                                                             const required = (
                                                                          <CAlert
@@ -458,11 +530,34 @@ function RenderLogin({state,props})
                                                             ReactDOM.render(required,document.getElementById('passwordRequired'));
                                                             validationSuccess = false;
                                                         }
+                                                        if(state.producer == null || state.producer == "")
+                                                                                                                {
+                                                                                                                  ReactDOM.render(required,document.getElementById('orgTypeRequired'));
+                                                                                                                  validationSuccess = false;
+                                                                                                                }
                                                         if(state.sourceOrgId == null || state.sourceOrgId == "")
                                                         {
                                                           ReactDOM.render(required,document.getElementById('organizationRequired'));
                                                           validationSuccess = false;
                                                         }
+
+                                                        if(state.street == null || state.street == "")
+                                                        {
+                                                          ReactDOM.render(required,document.getElementById('streetRequired'));
+                                                          validationSuccess = false;
+                                                        }
+
+                                                        if(state.zip == null || state.zip == "")
+                                                                                                                {
+                                                                                                                  ReactDOM.render(required,document.getElementById('zipRequired'));
+                                                                                                                  validationSuccess = false;
+                                                                                                                }
+
+                                                        if(state.timeZone == null || state.timeZone == "")
+                                                                                                                {
+                                                                                                                  ReactDOM.render(required,document.getElementById('timeZoneRequired'));
+                                                                                                                  validationSuccess = false;
+                                                                                                                }
 
                                                         if(!validationSuccess)
                                                         {
@@ -481,8 +576,8 @@ function RenderLogin({state,props})
                                                         "orgId":state.sourceOrgId,
                                                         "orgName":state.sourceOrgId,
                                                         "orgType":state.orgType,
-                                                        "profileType":state.profileType,
                                                         "orgContactEmail":state.email,
+                                                        "profileType":state.profileType,
                                                         "street":state.street,
                                                         "zip":state.zip,
                                                         "timeZone":state.timeZone,

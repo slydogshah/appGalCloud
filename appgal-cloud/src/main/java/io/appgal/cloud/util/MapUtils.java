@@ -27,6 +27,11 @@ public class MapUtils {
 
     public Location calculateCoordinates(Address address)
     {
+        if(address == null || address.getStreet() == null || address.getZip() == null ||
+        address.getStreet().trim().length()==0 || address.getZip().trim().length()==0){
+            throw new IllegalStateException("INVALID_ADDRESS");
+        }
+
         Location location = new Location();
 
         JsonObject coordinates = this.googleApiClient.convertAddressToCoordinates(address);
