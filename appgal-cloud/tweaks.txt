@@ -7,12 +7,12 @@ Dash: Add TimeZones
 *Dash: Register > OrgId: required: (flow is not working)(FIXED)
 *Dash: Register > Code 409: Exists (Duplicate email is allowed)(FIXED)
 
-Dash: Forgot Password > Email Required (no check)
+*Dash: Forgot Password > Email Required (no check) (FIXED)
 Dash: Forgot Password > Mobile Invalid (TODO)
-Dash: Forgot Password > Email Invalid (TODO)
-Dash: Forgot Password > 403: Not an Org account
-Dash Forgot Password > verifyResetCode > empty (system error..should say invalid code)
+*Dash: Forgot Password > Email Invalid (TODO) (FIXED)
+*Dash: Forgot Password > 403: Not an Org account (FIXED)
 
+Dash Forgot Password > verifyResetCode > empty (system error..should say invalid code)
 *Dash Forgot Password > resetPassword > empty (system error..should say password required)(FIXED)
 
 Dash Start Schedule Process > Schedule Org > Schedule Button issue

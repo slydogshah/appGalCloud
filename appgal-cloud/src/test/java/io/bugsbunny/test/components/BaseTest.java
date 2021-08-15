@@ -24,7 +24,7 @@ public abstract class BaseTest
                 this.mongoDBJsonStore = new MongoDBJsonStore();
             }
             this.mongoDBJsonStore.start();
-            this.mongoDBJsonStore.getMongoClient().getDatabase("jennetwork").drop();
+            //this.mongoDBJsonStore.getMongoClient().getDatabase("jennetwork").drop();
         }
         catch (Exception e)
         {

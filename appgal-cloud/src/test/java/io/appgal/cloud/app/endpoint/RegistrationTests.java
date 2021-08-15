@@ -512,6 +512,38 @@ public class RegistrationTests  extends BaseTest {
     }
 
     @Test
+    public void testSendResetCodeValidationFails() throws Exception{
+        JsonObject json = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        json.addProperty("id", id);
+        json.addProperty("email", email);
+        json.addProperty("password", "c");
+        json.addProperty("mobile", 8675309l);
+        json.addProperty("photo", "photu");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        logger.info("******NEW_PROFILE******");
+        logger.info(json.toString());
+        logger.info("***********************");
+
+        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+        String jsonString = response.getBody().asString();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+
+        json = new JsonObject();
+        //json.addProperty("email",email);
+        //json.addProperty("mobileNumber","+15129151162");
+        response = given().body(json.toString()).when().post("/registration/sendResetCode").andReturn();
+        response.body().prettyPrint();
+        assertEquals(400, response.getStatusCode());
+    }
+
+    @Test
     public void testVerifyResetCodeInvalid() throws Exception{
         SourceOrg sourceOrg = new SourceOrg();
         sourceOrg.setOrgId("Microsoft");

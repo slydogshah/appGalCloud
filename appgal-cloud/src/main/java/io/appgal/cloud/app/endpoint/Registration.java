@@ -398,6 +398,7 @@ public class Registration {
         }
     }
 
+    //TODO: check the mobile format for validation
     @Path("sendResetCode")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -405,6 +406,19 @@ public class Registration {
     {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            JsonObject errors = new JsonObject();
+            if(!json.has("email") || json.get("email").getAsString()==null ||
+                    json.get("email").getAsString().trim().length()==0){
+                errors.addProperty("error1", "email_required");
+            }
+            if(!json.has("mobileNumber") || json.get("mobileNumber").getAsString()==null ||
+                    json.get("mobileNumber").getAsString().trim().length()==0){
+                errors.addProperty("error2", "mobile_number_required");
+            }
+            if(!errors.keySet().isEmpty()){
+                return Response.status(400).entity(errors.toString()).build();
+            }
 
             String email = json.get("email").getAsString();
             String mobileNumber = json.get("mobileNumber").getAsString();
@@ -451,6 +465,19 @@ public class Registration {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
 
+            JsonObject errors = new JsonObject();
+            if(!json.has("email") || json.get("email").getAsString()==null ||
+                    json.get("email").getAsString().trim().length()==0){
+                errors.addProperty("error1", "email_required");
+            }
+            if(!json.has("resetCode") || json.get("resetCode").getAsString()==null ||
+                    json.get("resetCode").getAsString().trim().length()==0){
+                errors.addProperty("error2", "reset_required");
+            }
+            if(!errors.keySet().isEmpty()){
+                return Response.status(400).entity(errors.toString()).build();
+            }
+
             String email = json.get("email").getAsString();
             String resetCode = json.get("resetCode").getAsString();
 
@@ -486,7 +513,6 @@ public class Registration {
         }
     }
 
-    //TODO: Validation Hardening
     @Path("newPassword")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
