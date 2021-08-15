@@ -7,8 +7,8 @@ Dash: Add TimeZones
 *Dash: Register > OrgId: required: (flow is not working)(FIXED)
 *Dash: Register > Code 409: Exists (Duplicate email is allowed)(FIXED)
 
-*Dash: Forgot Password > Email Required (no check) (FIXED)
 Dash: Forgot Password > Mobile Invalid (TODO)
+*Dash: Forgot Password > Email Required (no check) (FIXED)
 *Dash: Forgot Password > Email Invalid (TODO) (FIXED)
 *Dash: Forgot Password > 403: Not an Org account (FIXED)
 

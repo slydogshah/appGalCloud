@@ -115,6 +115,7 @@ function ProfileView({state, props}) {
                             }
                         }}
                       />
+                      <div id="newPasswordRequired"/>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={6}>
                       <CustomInput
@@ -137,13 +138,40 @@ function ProfileView({state, props}) {
                             }
                         }}
                       />
+                      <div id="confirmNewPasswordRequired"/>
                     </GridItem>
                   </GridContainer>
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
-                        //console.log("PASS:" + state.newPassword);
-                        //console.log("PASS2:" + state.confirmNewPassword);
+                        ReactDOM.unmountComponentAtNode(document.getElementById('newPasswordRequired'));
+                                                  ReactDOM.unmountComponentAtNode(document.getElementById('confirmNewPasswordRequired'));
+                                                  const required = (
+                                                       <CAlert
+                                                       color="warning"
+                                                       >
+                                                          Required
+                                                      </CAlert>
+                                                   );
+                                                   let validationSuccess = true;
+
+
+
+                                                  if(state.newPassword == null || state.newPassword == "")
+                                                  {
+                                                    ReactDOM.render(required,document.getElementById('newPasswordRequired'));
+                                                    validationSuccess = false;
+                                                  }
+                                                  if(state.confirmNewPassword == null || state.confirmNewPassword == "")
+                                                    {
+                                                      ReactDOM.render(required,document.getElementById('confirmNewPasswordRequired'));
+                                                      validationSuccess = false;
+                                                    }
+
+                                                    if(!validationSuccess)
+                                                    {
+                                                        return;
+                                                    }
                         const email = profile.email;
                         const payload = {
                                                      newPassword:state.newPassword,
