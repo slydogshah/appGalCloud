@@ -707,6 +707,50 @@ public class RegistrationTests  extends BaseTest {
     }
 
     @Test
+    public void testResetPasswordEmpty() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        //json.addProperty("newPassword","blah");
+        //json.addProperty("confirmNewPassword","blahb");
+        response = given().body(json.toString()).when().post("/registration/resetPassword").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(400, response.getStatusCode());
+    }
+
+    @Test
     public void registerStaff() throws Exception{
         SourceOrg sourceOrg = new SourceOrg();
         sourceOrg.setOrgId("Microsoft");

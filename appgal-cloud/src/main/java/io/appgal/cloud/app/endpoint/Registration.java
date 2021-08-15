@@ -503,9 +503,25 @@ public class Registration {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
 
+            JsonObject errors = new JsonObject();
+            if(!json.has("newPassword") || json.get("newPassword").getAsString()==null ||
+                    json.get("newPassword").getAsString().trim().length()==0){
+                errors.addProperty("error1", "new_password_required");
+            }
+            if(!json.has("confirmNewPassword") || json.get("confirmNewPassword").getAsString()==null ||
+                    json.get("confirmNewPassword").getAsString().trim().length()==0){
+                errors.addProperty("error2", "confirm_new_password_required");
+            }
+            if(!errors.keySet().isEmpty()){
+                return Response.status(400).entity(errors.toString()).build();
+            }
+
+
             String email = json.get("email").getAsString();
             String newPassword = json.get("newPassword").getAsString();
             String confirmPassword = json.get("confirmNewPassword").getAsString();
+
+
 
             if(!newPassword.equals(confirmPassword))
             {
