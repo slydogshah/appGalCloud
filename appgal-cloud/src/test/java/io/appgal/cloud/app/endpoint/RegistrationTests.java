@@ -301,7 +301,7 @@ public class RegistrationTests  extends BaseTest {
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         response.getBody().prettyPrint();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         //TODO assert
     }
 
@@ -324,6 +324,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -406,6 +409,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -446,6 +452,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -521,6 +530,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -571,6 +583,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -622,6 +637,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -663,6 +681,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
