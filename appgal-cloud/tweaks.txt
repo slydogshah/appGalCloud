@@ -15,13 +15,14 @@ Dash: Forgot Password > Mobile Invalid (TODO)
 *Dash Forgot Password > verifyResetCode > empty (system error..should say invalid code)(FIXED)
 *Dash Forgot Password > resetPassword > empty (system error..should say password required)(FIXED)
 
-Dash Start Schedule Process > Schedule Org > Schedule Button issue
-Dash Start Schedule Process > OfflineCommunity > Schedule Button issue
-Dash Change Password > Empty password (required message) > TODO
+*Dash Start Schedule Process > Schedule Org > Schedule Button issue (FIXED)
+*Dash Start Schedule Process > OfflineCommunity > Schedule Button issue (FIXED)
 
-Dash Add Staff Member > Reset on first login > All Empty > TODO
-Dash Add Staff Member > Reset on first login > Empty first-only > TODO
-Dash Add Staff Member > Reset on first login > Empty next-only > TODO
+*Dash Change Password > Empty password (required message) > TODO (FIXED)
+
+*Dash Add Staff Member > Reset on first login > All Empty > TODO
+*Dash Add Staff Member > Reset on first login > Empty first-only > TODO
+*Dash Add Staff Member > Reset on first login > Empty next-only > TODO
 
 App: Wrong Email (one that does not exist) (proper error message)
 

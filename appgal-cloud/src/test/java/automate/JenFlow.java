@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.network.services.DynamicDropOffOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
 
 import io.appgal.cloud.util.MapUtils;
@@ -40,6 +41,9 @@ public class JenFlow extends BaseTest{
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
+
+    @Inject
+    private DynamicDropOffOrchestrator dynamicDropOffOrchestrator;
 
     @BeforeEach
     public void setup() throws Exception
@@ -96,6 +100,7 @@ public class JenFlow extends BaseTest{
         //Notify a FoodRunner...does not pull my transactions
         JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
                 foodRunner.getProfile().getPassword());
+        this.dynamicDropOffOrchestrator.notifyAvailability(foodRunner.getProfile().getEmail(),true);
 
         //FoodRunner accepts....this will update to notificationSent=true
         List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());

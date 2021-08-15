@@ -235,6 +235,7 @@ const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) 
                                     orgIds={orgIdArray}
                                     pickupNotificationId={props.location.state.data.pickupNotificationId}
                                     history={props.history}
+                                    buttonTitle="Schedule"
                                   />
                                 )
                               },
@@ -250,6 +251,7 @@ const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) 
                                     status = {false}
                                     pickupNotificationId={props.location.state.data.pickupNotificationId}
                                     history={props.history}
+                                    buttonTitle="Schedule"
                                   />
                                 )
                               },
@@ -284,6 +286,7 @@ const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) 
                                             orgIds={orgIdArray}
                                             pickupNotificationId={props.location.state.data.pickupNotificationId}
                                             history={props.history}
+                                            buttonTitle="Schedule"
                                           />
                                         )
                                       },
