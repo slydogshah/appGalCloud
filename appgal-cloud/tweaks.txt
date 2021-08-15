@@ -1,4 +1,19 @@
 Dash: Add TimeZones
+Dash: Forgot Password > Mobile Invalid (TODO)
+App: Wrong Email (one that does not exist) (proper error message)
+
+App: Refresh from backgrounding
+App: show launch indicator
+App: Test if location updates are being sent
+App: Push wakeup and launch app
+
+App Start Schedule Process > No default image > Something Random
+App Start Schedule Process > No Push Notification
+
+App If Offline DropOff > No navigation option
+App If Offline DropOff > Accept without navigation and weird state
+
+
 
 *Dash: Error during login right after registration (FIXED: Debugging was a challenge)
 
@@ -7,7 +22,6 @@ Dash: Add TimeZones
 *Dash: Register > OrgId: required: (flow is not working)(FIXED)
 *Dash: Register > Code 409: Exists (Duplicate email is allowed)(FIXED)
 
-Dash: Forgot Password > Mobile Invalid (TODO)
 *Dash: Forgot Password > Email Required (no check) (FIXED)
 *Dash: Forgot Password > Email Invalid (TODO) (FIXED)
 *Dash: Forgot Password > 403: Not an Org account (FIXED)
@@ -20,20 +34,7 @@ Dash: Forgot Password > Mobile Invalid (TODO)
 
 *Dash Change Password > Empty password (required message) > TODO (FIXED)
 
-*Dash Add Staff Member > Reset on first login > All Empty > TODO
-*Dash Add Staff Member > Reset on first login > Empty first-only > TODO
-*Dash Add Staff Member > Reset on first login > Empty next-only > TODO
-
-App: Wrong Email (one that does not exist) (proper error message)
-
-App: Refresh from backgrounding
-App: show launch indicator
-App: Test if location updates are being sent
-App: Push wakeup and launch app
-
-App Start Schedule Process > No default image > Something Random
-App Start Schedule Process > No Push Notification
-
-App If Offline DropOff > No navigation option
-App If Offline DropOff > Accept without navihation and weird state
+*Dash Add Staff Member > Reset on first login > All Empty > TODO (FIXED)
+*Dash Add Staff Member > Reset on first login > Empty first-only > TODO (FIXED)
+*Dash Add Staff Member > Reset on first login > Empty next-only > TODO (FIXED)
 
