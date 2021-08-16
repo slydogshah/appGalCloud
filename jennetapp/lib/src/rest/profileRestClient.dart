@@ -73,13 +73,16 @@ class ProfileRestClient
       return json;
     }
 
-    print(response.body);
+    //print(response.body);
     json  = jsonDecode(response.body);
 
-    json = UrlFunctions.handleError(null, response);
-    if(json != null)
+    Map<String,dynamic> errorJson = UrlFunctions.handleError(null, response);
+    if(errorJson != null)
     {
-      return json;
+      if(json['message'] != null){
+        errorJson['message'] = json['message'];
+      }
+      return errorJson;
     }
 
     json  = jsonDecode(response.body);

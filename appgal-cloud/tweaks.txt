@@ -1,11 +1,6 @@
-Dash: Add TimeZones
 Dash: Forgot Password > Mobile Invalid (TODO)
-App: Wrong Email (one that does not exist) (proper error message)
 
-App: Refresh from backgrounding
-App: show launch indicator
-App: Test if location updates are being sent
-App: Push wakeup and launch app
+App: Wrong Email (one that does not exist) (proper error message)
 
 App Start Schedule Process > No default image > Something Random
 App Start Schedule Process > No Push Notification
@@ -13,6 +8,11 @@ App Start Schedule Process > No Push Notification
 App If Offline DropOff > No navigation option
 App If Offline DropOff > Accept without navigation and weird state
 
+App: Refresh from backgrounding
+App: show launch indicator
+App: Test if location updates are being sent
+App: Push wakeup and launch app
+Dash: Add TimeZones
 
 
 *Dash: Error during login right after registration (FIXED: Debugging was a challenge)

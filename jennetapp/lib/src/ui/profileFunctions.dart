@@ -51,8 +51,8 @@ class ProfileFunctions
       authCredentials.latitude = location.latitude;
       authCredentials.longitude = location.longitude;
 
-      print("PRE: $authCredentials");
-      print("PRE: $location");
+      //print("PRE: $authCredentials");
+      //print("PRE: $location");
 
       // set up the SimpleDialog
       SimpleDialog dialog = SimpleDialog(
@@ -69,14 +69,22 @@ class ProfileFunctions
       ProfileRestClient profileRestClient = new ProfileRestClient();
       Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
       future.then((json) {
-        print(json);
-
+        //print("*****************");
+        //print(json);
         if(json['statusCode'] != 200)
         {
           Navigator.of(context, rootNavigator: true).pop();
           if(json['statusCode'] == 401)
           {
-            loginScene.notifyAuthFailed("Login Failed: Email or Password error");
+            String message = json['message'];
+            if(message == "profile_not_found"){
+              loginScene.notifyAuthFailed(
+                  "The email is not registered");
+            }
+            else {
+              loginScene.notifyAuthFailed(
+                  "Login Failed: Email or Password error");
+            }
             return;
           }
           else if(json['statusCode'] == 403){
