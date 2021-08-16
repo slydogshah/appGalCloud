@@ -1,7 +1,4 @@
 Dash: Forgot Password > Mobile Invalid (TODO)
-
-App: Wrong Email (one that does not exist) (proper error message)
-
 App Start Schedule Process > No default image > Something Random
 App Start Schedule Process > No Push Notification
 
@@ -14,6 +11,7 @@ App: Test if location updates are being sent
 App: Push wakeup and launch app
 Dash: Add TimeZones
 
+*App: Wrong Email (one that does not exist) (proper error message)(FIXED)
 
 *Dash: Error during login right after registration (FIXED: Debugging was a challenge)
 
