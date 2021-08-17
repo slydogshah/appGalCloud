@@ -4,22 +4,24 @@ App Start Schedule Process > No default image > Something Random
 
 Shit Tasks
 -----
-Dash: Forgot Password > Mobile Invalid (TODO)
+Dash: Forgot Password > Mobile Invalid
 Dash: Add TimeZones
 Dash: Pick Org flow
 Dash: Filter Pickup Times
 
-* App If Offline DropOff > There should be no navigation option (FIXED)
 
 Rest
 -----
-App Start Schedule Process > No Push Notification
+App: No Push Notification in end-to-end flow
 
 App: Refresh from backgrounding
 App: show launch indicator
 
 App: Test if location updates are being sent
 App: Push wakeup and launch app
+
+
+* App If Offline DropOff > There should be no navigation option (FIXED)
 
 * App If Offline DropOff > Accept without navigation and weird state (FIXED)
 
