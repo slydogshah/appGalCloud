@@ -113,10 +113,11 @@ public class NotificationReceiver {
             String orgId = json.get("orgId").getAsString();
 
             String pic = null;
-            if(json.has("foodPic") && !json.get("foodPic").isJsonNull())
+            //next iteration
+            /*if(json.has("foodPic") && !json.get("foodPic").isJsonNull())
             {
                 pic = json.get("foodPic").getAsString();
-            }
+            }*/
             SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
             FoodDetails foodDetails = FoodDetails.parse(payload);
             SchedulePickUpNotification notification = new SchedulePickUpNotification(UUID.randomUUID().toString());

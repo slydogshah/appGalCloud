@@ -219,19 +219,7 @@ function RenderForm({state,props})
                                                            <div id="food_type_is_required"/>
                                                          </GridItem>
                                                        </GridContainer>
-                                                       <GridContainer>
-                                                         <GridItem xs={12} sm={12} md={6}>
-                                                            <div className="form-group">
-                                                              <label for="file">File upload</label>
-                                                              <input id="file" name="file" type="file" onChange={(event) => {
-                                                                const fileUpload = event.currentTarget.files[0];
-                                                                setFieldValue("file", fileUpload);
-                                                                state.upload = fileUpload;
-                                                              }} className="form-control" />
-                                                              <Thumb file={values.file}/>
-                                                            </div>
-                                                         </GridItem>
-                                                       </GridContainer>
+
                                                      </CardBody>
                                                      <CardFooter>
                                                        <Button color="primary" onClick={(e) => {

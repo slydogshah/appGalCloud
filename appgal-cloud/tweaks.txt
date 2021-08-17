@@ -1,6 +1,6 @@
 Active Task
 ----
-App Start Schedule Process > No default image > Something Random
+App: No Push Notification in end-to-end flow
 
 Shit Tasks
 -----
@@ -12,14 +12,13 @@ Dash: Filter Pickup Times
 
 Rest
 -----
-App: No Push Notification in end-to-end flow
-
-App: Refresh from backgrounding
 App: show launch indicator
-
+App: Refresh from backgrounding
 App: Test if location updates are being sent
 App: Push wakeup and launch app
 
+
+* App Start Schedule Process > No default image > Something Random (FIXED)
 
 * App If Offline DropOff > There should be no navigation option (FIXED)
 
