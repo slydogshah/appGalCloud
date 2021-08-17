@@ -210,4 +210,65 @@ class ActiveNetworkRestClient
 
     return txs;
   }
+
+  Future<Map<String,List<FoodRecoveryTransaction>>> acceptCommunityDropOff(String email, FoodRecoveryTransaction tx) async
+  {
+    Map<String,dynamic> payload = new Map();
+    payload["email"] = email;
+    payload["accepted"] = tx.getId();
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
+    var response;
+    try {
+      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
+      timeout(Duration(seconds: 30),onTimeout: () {
+        throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
+      });
+    }
+    catch (e) {
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+    }
+
+    Map<String,List<FoodRecoveryTransaction>> txs = new Map();
+    remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/foodRunner/?email="+email;
+    try {
+      response = await http.get(Uri.parse(remoteUrl));
+    }
+    catch (e) {
+      //print(e);
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+    }
+
+    print(response.body);
+
+    Map<String,dynamic> object = jsonDecode(response.body);
+
+    if(object['pending'] != null) {
+      Iterable l = object['pending'];
+      List<FoodRecoveryTransaction> pending = [];
+      for (Map<String, dynamic> tx in l) {
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+        pending.add(local);
+      }
+      txs['pending'] = pending;
+    }
+    else{
+      txs ['pending'] = [];
+    }
+
+
+    if(object['inProgress'] != null) {
+      Iterable l = object['inProgress'];
+      List<FoodRecoveryTransaction> inProgress = [];
+      for (Map<String, dynamic> tx in l) {
+        FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+        inProgress.add(local);
+      }
+      txs['inProgress'] = inProgress;
+    }
+    else{
+      txs ['inProgress'] = [];
+    }
+
+    return txs;
+  }
 }

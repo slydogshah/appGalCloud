@@ -816,12 +816,64 @@ class PickUpListView extends StatelessWidget {
     );
 
     // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
+    if(dropOffOrg != null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        },
+      );
+    }else{
+      // set up the SimpleDialog
+      SimpleDialog dialog = SimpleDialog(
+          children: [CupertinoActivityIndicator()]
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        },
+      );
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<Map<String,List<FoodRecoveryTransaction>>> future = client.acceptCommunityDropOff(email, tx);
+      future.then((txs) {
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => InProgressMainScene(txs)));
+      }).catchError((e) {
+        Navigator.of(context, rootNavigator: true).pop();
+        AlertDialog dialog = AlertDialog(
+          title: Text('System Error....'),
+          content: Text(
+            "Unknown System Error....",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          actions: [
+            FlatButton(
+              textColor: Color(0xFF6200EE),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return dialog;
+          },
+        );
+      });
+    }
   }
 }
 
