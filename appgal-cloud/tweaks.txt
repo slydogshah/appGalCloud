@@ -1,15 +1,18 @@
+Active Task
+----
+App Start Schedule Process > No default image > Something Random
+
 Shit Tasks
 -----
 Dash: Forgot Password > Mobile Invalid (TODO)
-App If Offline DropOff > There should be no navigation option
 Dash: Add TimeZones
 Dash: Pick Org flow
 Dash: Filter Pickup Times
 
+* App If Offline DropOff > There should be no navigation option (FIXED)
 
 Rest
 -----
-App Start Schedule Process > No default image > Something Random
 App Start Schedule Process > No Push Notification
 
 App: Refresh from backgrounding
