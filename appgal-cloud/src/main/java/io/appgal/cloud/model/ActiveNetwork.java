@@ -30,6 +30,13 @@ public class ActiveNetwork implements Serializable {
         this.sourceOrgs = new ArrayList<>();
     }
 
+    @PostConstruct
+    public void onStart(){
+        ActiveNetwork storedNetwork = this.mongoDBJsonStore.getActiveNetwork();
+        this.activeFoodRunners = storedNetwork.getActiveFoodRunners();
+        this.sourceOrgs = storedNetwork.getSourceOrgs();
+    }
+
     public Map<String, FoodRunner> getActiveFoodRunners() {
         return activeFoodRunners;
     }

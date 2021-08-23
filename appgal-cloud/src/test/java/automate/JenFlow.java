@@ -243,7 +243,7 @@ public class JenFlow extends BaseTest{
     {
         JsonObject json = new JsonObject();
         String id = UUID.randomUUID().toString();
-        String email = "jen@appgallabs.io";
+        String email = "jen@app.io";
         json.addProperty("id", id);
         json.addProperty("email", email);
         json.addProperty("password", "password");

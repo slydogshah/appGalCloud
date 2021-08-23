@@ -21,6 +21,9 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
@@ -47,9 +50,15 @@ public class PushNotificationDaemon {
 
     public void sendNotifications(SchedulePickUpNotification pickUpNotification){
         try {
+            Instant pickupTime = pickUpNotification.getStartTimeInEpoch();
+            Instant now = OffsetDateTime.now(ZoneOffset.UTC).toInstant();
+            Instant notificationTime = pickupTime;
+            if(pickupTime.isBefore(now)){
+                notificationTime = now;
+            }
             this.threadPoolTaskScheduler.schedule(
                     new RunnableTask(this.networkOrchestrator,pickUpNotification),
-                    Date.from(pickUpNotification.getStartTimeInEpoch())
+                    Date.from(notificationTime)
             );
         }catch(Exception e)
         {

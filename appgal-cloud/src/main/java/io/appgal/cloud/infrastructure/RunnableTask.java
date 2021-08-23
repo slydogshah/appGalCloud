@@ -10,13 +10,11 @@ import io.appgal.cloud.model.SchedulePickUpNotification;
 import io.appgal.cloud.model.SourceOrg;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -39,6 +37,7 @@ public class RunnableTask implements Runnable{
 
     public RunnableTask(NetworkOrchestrator networkOrchestrator,SchedulePickUpNotification pickUpNotification)
     {
+        System.out.println("********1************");
         this.networkOrchestrator = networkOrchestrator;
         this.pickUpNotification = pickUpNotification;
     }
@@ -46,6 +45,7 @@ public class RunnableTask implements Runnable{
     @Override
     public void run() {
         try {
+            System.out.println("************2*********");
             SourceOrg pickupOrg = this.pickUpNotification.getSourceOrg();
             String messageBody = "You have a new pickup request for ["+pickupOrg.getOrgName()+"]";
 
@@ -53,7 +53,10 @@ public class RunnableTask implements Runnable{
             logger.info(new Date() + " Runnable Task with " + messageBody
                     + " on thread " + Thread.currentThread().getName());
 
+            System.out.println("*****CALLING*******");
             List<FoodRunner> qualified = this.networkOrchestrator.notifyFoodRunners(this.pickUpNotification);
+            System.out.println(qualified);
+
             for(FoodRunner foodRunner:qualified) {
                 this.sendCommonMessage(messageBody,foodRunner);
             }
@@ -99,9 +102,12 @@ public class RunnableTask implements Runnable{
      * @return JSON of notification message.
      */
     private List<JsonObject> buildNotificationMessage(String message,FoodRunner foodRunner) {
+        System.out.println(foodRunner);
         List<JsonObject> messages = new ArrayList<>();
 
+        System.out.println("****GETTING_TOKENS*******");
         Set<String> tokens = foodRunner.getPushTokens();
+        System.out.println(tokens);
         for(String token:tokens) {
             JsonObject jNotification = new JsonObject();
             jNotification.addProperty("title", TITLE);
@@ -117,6 +123,9 @@ public class RunnableTask implements Runnable{
             messages.add(jFcm);
         }
 
+        System.out.println("******PUSH_MESSAGES*****");
+        System.out.println(messages);
+
         return messages;
     }
 
@@ -129,12 +138,20 @@ public class RunnableTask implements Runnable{
      */
     // [START retrieve_access_token]
     private String getAccessToken() throws IOException {
+        //File file = new File(Thread.currentThread().getContextClassLoader().getResource("service-account.json").getFile());
+        //System.out.println("******SERVICE_ACCOUNT*******");
+        //System.out.println(file.getAbsolutePath());
+        //InputStream inputStream = new ByteArrayInputStream(new byte[0]);
+        System.out.println("******SERVICE_ACCOUNT_TEST_0*******");
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new FileInputStream("service-account.json"))
+                .fromStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("service-account.json"))
                 .createScoped(Arrays.asList(SCOPES));
         googleCredentials.refresh();
         googleCredentials.refreshAccessToken();
-        return googleCredentials.getAccessToken().getTokenValue();
+        System.out.println("**********ACCESS_TOKEN_TEST_0******");
+        String accessToken = googleCredentials.getAccessToken().getTokenValue();
+        System.out.println(accessToken);
+        return accessToken;
     }
     // [END retrieve_access_token]
 
@@ -148,7 +165,10 @@ public class RunnableTask implements Runnable{
         // [START use_access_token]
         URL url = new URL(BASE_URL + FCM_SEND_ENDPOINT);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        httpURLConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
+        String accessToken = this.getAccessToken();
+        System.out.println("**********ACCESS_TOKEN_TEST1******");
+        System.out.println(accessToken);
+        httpURLConnection.setRequestProperty("Authorization", "Bearer " + accessToken);
         httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
         return httpURLConnection;
         // [END use_access_token]
@@ -162,6 +182,7 @@ public class RunnableTask implements Runnable{
      * @throws IOException
      */
     private void sendMessage(JsonObject fcmMessage) throws IOException {
+        JsonUtil.print(this.getClass(), fcmMessage);
         HttpURLConnection connection = getConnection();
         connection.setDoOutput(true);
         OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
@@ -169,11 +190,14 @@ public class RunnableTask implements Runnable{
         writer.flush();
         writer.close();
 
+        System.out.println("******SEND_MESSAGE_RESPONSE_0*******");
         int responseCode = connection.getResponseCode();
         if (responseCode == 200) {
             String response = inputstreamToString(connection.getInputStream());
+            System.out.print(response);
         } else {
             String response = inputstreamToString(connection.getErrorStream());
+            System.out.print(response);
         }
     }
 

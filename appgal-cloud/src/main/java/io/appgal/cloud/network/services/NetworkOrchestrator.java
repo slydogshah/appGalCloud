@@ -190,22 +190,32 @@ public class NetworkOrchestrator {
     public List<FoodRunner> notifyFoodRunners(SchedulePickUpNotification pickUpNotification)
     {
         try {
+            System.out.println("*****CALLED*******");
             List<FoodRunner> qualified = new ArrayList<>();
+            System.out.println("*****CALLED2*******");
             SourceOrg pickupOrg = pickUpNotification.getSourceOrg();
+            System.out.println("*****CALLED3*******");
             Map<String, FoodRunner> activeFoodRunners = this.activeNetwork.getActiveFoodRunners();
+            System.out.println("*****CALLED4*******");
+            System.out.println(activeFoodRunners);
+            System.out.println("*****CALLED5*******");
+
             Set<Map.Entry<String,FoodRunner>> entrySet = activeFoodRunners.entrySet();
             for (Map.Entry<String,FoodRunner> entry:entrySet) {
                 FoodRunner foodRunner = entry.getValue();
+                System.out.println(foodRunner);
 
                 Location source = pickupOrg.getLocation();
                 if(source == null)
                 {
+                    System.out.println("SOURCE_IS_NULL");
                     continue;
                 }
 
                 Location foodRunnerLocation = foodRunner.getLocation();
                 if(foodRunnerLocation == null)
                 {
+                    System.out.println("LOCATION_IS_NULL");
                     continue;
                 }
 
@@ -215,17 +225,22 @@ public class NetworkOrchestrator {
 
                 if (distance <= 5.0d) {
                     qualified.add(foodRunner);
+                    System.out.println("QUALIFIED");
                 }
                 else {
-                    System.out.println("**************DISTANCE*****************");
+                    System.out.println("**************CHOOSE_DISTANCE*****************");
                     System.out.println("ALGO_DISTANCE: "+distance);
                     System.out.println("**************DISTANCE*****************");
+                    System.out.println("UNQUALIFIED");
                 }
             }
+            System.out.println("*****CALLED6*******");
             return qualified;
         }
         catch(Exception e)
         {
+            System.out.println("*****CALLED7*******");
+            e.printStackTrace();
             logger.error(e.getMessage(),e);
             throw new RuntimeException(e);
         }

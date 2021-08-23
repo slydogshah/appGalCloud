@@ -1,22 +1,30 @@
 Active Task
 ----
-App: No Push Notification in end-to-end flow
+App: show launch indicator
+
 
 Shit Tasks
 -----
-Dash: Forgot Password > Mobile Invalid
 Dash: Add TimeZones
-Dash: Pick Org flow
 Dash: Filter Pickup Times
+Dash: Pick Org flow - (Registration)
+Dash: Forgot Password > Mobile Invalid
 
 
 Rest
 -----
-App: show launch indicator
-App: Refresh from backgrounding
 App: Test if location updates are being sent
+App: Refresh from backgrounding
 App: Push wakeup and launch app
 
+
+Cloud
+----
+Cloud: No Push Notification in end-to-end flow (More testing from Cloud)
+Cloud: PickupRequests not reflecting on Dash in Cloud-only
+
+
+* Cloud: ActiveNetwork does not load from database on startup (FIXED)
 
 * App Start Schedule Process > No default image > Something Random (FIXED)
 
