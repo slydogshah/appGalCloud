@@ -181,7 +181,9 @@ public class NetworkOrchestratorTests extends BaseTest {
         Profile profile = new Profile(UUID.randomUUID().toString(), "jen@app.io", 8675309l, "","", ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         String androidToken = "fZCLsQcdSgqFopIrzcc4vY:APA91bEGD8YUwEcD4vAxb89nmkJ6VD94cKlJsPTRVAThpgjEbslVGX4MT1WH7fv-NL0omA89Spx7eZiQL0rLt0vdQpALllu3I_SaozmQTAdb2zATHoq6QjW7Y1ZeH6U5fJdpe1yD08ws";
-        String iosToken = "cwd3n2IS40GloiHeGl4SMc:APA91bFfpUxf7lzoSHOwio2IdNgdcu9HmfL0gw1hs7BsjE3h5mxYxtBjp_ZWtyzcI6INQRSY1rPLnSu-QD6aGhXmIlrVK3vU273fJ8QRTecJUvyhREh7W0ZQ6JA_SicEGGzq94fcjRXS";
+        //String iosToken = "cwd3n2IS40GloiHeGl4SMc:APA91bFfpUxf7lzoSHOwio2IdNgdcu9HmfL0gw1hs7BsjE3h5mxYxtBjp_ZWtyzcI6INQRSY1rPLnSu-QD6aGhXmIlrVK3vU273fJ8QRTecJUvyhREh7W0ZQ6JA_SicEGGzq94fcjRXS";
+        //String iosToken = "eU2BZjzdvUcWrrc7tpD3Db:APA91bHGohM3Qp8Pm63SGmXscTHs83XJYmLCaDXSAAWyylcEFzix8pcdIYe4MwZ5FdlraJavZ_-U-VY6ciqUT3kGhBaPuf91rkJRn16Tfm-tExAGZcgnocRtCMYdCO510IrpLziyHAmz";
+        String iosToken = "dEMUQ-4Cik6Jn5wkxz-eY-:APA91bHC25P3lHUxFSjZLnM15wSlBkVzjPs4gtA484vm8Vq6lFFJAO930cBYUgVAPRiKZYWjz-v_8UEckvept-sf9Gom10jT3MZ6Hx1WRoehBvz4UQqrqodXSCIsSnSZjUVLPRx-ORMR";
         String[] tokens = new String[]{androidToken,iosToken};
         this.networkOrchestrator.enterNetwork(foodRunner);
 

@@ -1,6 +1,7 @@
 Active Task
 ----
-App: show launch indicator
+App: Refresh from backgrounding
+
 
 
 Shit Tasks
@@ -16,6 +17,7 @@ Rest
 App: Test if location updates are being sent
 App: Refresh from backgrounding
 App: Push wakeup and launch app
+App: show launch indicator > Finalize the Splash Screen
 
 
 Cloud
