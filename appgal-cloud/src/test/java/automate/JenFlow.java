@@ -275,7 +275,7 @@ public class JenFlow extends BaseTest{
         JsonObject json = new JsonObject();
         json.addProperty("orgId", orgId);
         json.addProperty("foodType", foodType);
-        json.addProperty("foodPic", foodPic);
+        //json.addProperty("foodPic", foodPic);
         json.addProperty("time","0:19");
 
         Response response = given().body(json.toString()).post("/notification/addPickupDetails/");
