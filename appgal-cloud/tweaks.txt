@@ -1,6 +1,7 @@
 Active Task
 ----
-App: Refresh from backgrounding
+App: Refresh from backgrounding > QA
+App: Push wakeup and launch app > QA
 
 
 
@@ -12,17 +13,16 @@ Dash: Pick Org flow - (Registration)
 Dash: Forgot Password > Mobile Invalid
 
 
-Rest
+App Tasks
 -----
-App: Test if location updates are being sent
-App: Refresh from backgrounding
-App: Push wakeup and launch app
+App: Test if location updates are being sent > QA
 App: show launch indicator > Finalize the Splash Screen
+App: Login fails when LocationUpdater is frozen
 
 
-Cloud
+Cloud Tasks
 ----
-Cloud: No Push Notification in end-to-end flow (More testing from Cloud)
+Cloud: No Push Notification in end-to-end flow > CloudQA
 Cloud: PickupRequests not reflecting on Dash in Cloud-only
 
 
