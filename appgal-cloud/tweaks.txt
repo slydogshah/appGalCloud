@@ -2,6 +2,7 @@ Active Task
 ----
 App: Refresh from backgrounding > QA
 App: Push wakeup and launch app > QA
+App: Test if location updates are being sent > QA
 
 
 
@@ -15,7 +16,6 @@ Dash: Forgot Password > Mobile Invalid
 
 App Tasks
 -----
-App: Test if location updates are being sent > QA
 App: show launch indicator > Finalize the Splash Screen
 
 
