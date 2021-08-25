@@ -79,7 +79,7 @@ class FoodRunnerMainScene extends StatefulWidget {
   _FoodRunnerMainState createState() => _FoodRunnerMainState(this.txs,this.recoveryTxs,this.inProgressTxs);
 }
 
-class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProviderStateMixin {
+class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProviderStateMixin,WidgetsBindingObserver {
 
   AnimationController animationController;
   List<FoodRecoveryTransaction> recoveryTxs;
@@ -102,12 +102,42 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     animationController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('*************MyApp state = $state*************');
+    if(state == AppLifecycleState.resumed){
+      FoodRunner foodRunner = FoodRunner.getActiveFoodRunner();
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<Map<String, List<FoodRecoveryTransaction>>> future = client
+          .getFoodRecoveryTransaction(foodRunner.profile.email);
+      future.then((txs) {
+        setState(() {
+          this.recoveryTxs = txs['pending'];
+          this.inProgressTxs = txs['inProgress'];
+          this.txs = txs;
+        });
+      });
+    }
+    /*if (state == AppLifecycleState.inactive) {
+      // app transitioning to other state.
+    } else if (state == AppLifecycleState.paused) {
+      // app is on the background.
+    } else if (state == AppLifecycleState.detached) {
+      // flutter engine is running but detached from views
+    } else if (state == AppLifecycleState.resumed) {
+      // app is visible and running.
+      runApp(App()); // run your App class again
+    }*/
   }
 
   /*@override
