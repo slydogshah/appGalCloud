@@ -17,7 +17,6 @@ App Tasks
 -----
 App: Test if location updates are being sent > QA
 App: show launch indicator > Finalize the Splash Screen
-App: Login fails when LocationUpdater is frozen
 
 
 Cloud Tasks
@@ -27,6 +26,7 @@ Cloud: PickupRequests not reflecting on Dash in Cloud-only
 
 
 
+*App: Login fails when LocationUpdater is frozen (FIXED)
 
 * Cloud: ActiveNetwork does not load from database on startup (FIXED)
 

@@ -45,100 +45,89 @@ class ProfileFunctions
       final TextFormField emailField, final TextFormField passwordField) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+        children: [CupertinoActivityIndicator()]
+    );
 
-    Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
-    locationFuture.then((location){
-      authCredentials.latitude = location.latitude;
-      authCredentials.longitude = location.longitude;
-
-      //print("PRE: $authCredentials");
-      //print("PRE: $location");
-
-      // set up the SimpleDialog
-      SimpleDialog dialog = SimpleDialog(
-          children: [CupertinoActivityIndicator()]
-      );
-
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        },
-      );
-      ProfileRestClient profileRestClient = new ProfileRestClient();
-      Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
-      future.then((json) {
-        //print("*****************");
-        //print(json);
-        if(json['statusCode'] != 200)
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+    future.then((json) {
+      //print("*****************");
+      //print(json);
+      if(json['statusCode'] != 200)
+      {
+        Navigator.of(context, rootNavigator: true).pop();
+        if(json['statusCode'] == 401)
         {
-          Navigator.of(context, rootNavigator: true).pop();
-          if(json['statusCode'] == 401)
-          {
-            String message = json['message'];
-            if(message == "profile_not_found"){
-              loginScene.notifyAuthFailed(
-                  "The email is not registered");
-            }
-            else {
-              loginScene.notifyAuthFailed(
-                  "Login Failed: Email or Password error");
-            }
-            return;
+          String message = json['message'];
+          if(message == "profile_not_found"){
+            loginScene.notifyAuthFailed(
+                "The email is not registered");
           }
-          else if(json['statusCode'] == 403){
-            loginScene.notifyAuthFailed("403: Access Denied");
-            return;
+          else {
+            loginScene.notifyAuthFailed(
+                "Login Failed: Email or Password error");
           }
-          loginScene.notifySystemError("System Error: Please try again");
           return;
         }
-        Profile foodRunner = Profile.fromJson(json);
-        ActiveSession activeSession = ActiveSession.getInstance();
-        activeSession.setProfile(foodRunner);
-        activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
+        else if(json['statusCode'] == 403){
+          loginScene.notifyAuthFailed("403: Access Denied");
+          return;
+        }
+        loginScene.notifySystemError("System Error: Please try again");
+        return;
+      }
+      Profile foodRunner = Profile.fromJson(json);
+      ActiveSession activeSession = ActiveSession.getInstance();
+      activeSession.setProfile(foodRunner);
+      activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
 
-        ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-        Future<Map<String,List<FoodRecoveryTransaction>>> future = client
-            .getFoodRecoveryTransaction(foodRunner.email);
-        future.then((txs) {
-          Navigator.of(context, rootNavigator: true).pop();
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+          .getFoodRecoveryTransaction(foodRunner.email);
+      future.then((txs) {
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
 
-        }).catchError((e) {
-          Navigator.of(context, rootNavigator: true).pop();
-          AlertDialog dialog = AlertDialog(
-            title: Text('System Error....'),
-            content: Text(
-              "Unknown System Error....",
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+      }).catchError((e) {
+        Navigator.of(context, rootNavigator: true).pop();
+        AlertDialog dialog = AlertDialog(
+          title: Text('System Error....'),
+          content: Text(
+            "Unknown System Error....",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
             ),
-            actions: [
-              FlatButton(
-                textColor: Color(0xFF6200EE),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
+          ),
+          actions: [
+            FlatButton(
+              textColor: Color(0xFF6200EE),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
 
-          // show the dialog
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return dialog;
-            },
-          );
-        });
-        showCards(context, foodRunner);
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return dialog;
+          },
+        );
       });
     });
   }
@@ -254,110 +243,69 @@ class ProfileFunctions
   void loginAfterRegistration (BuildContext context, AuthCredentials authCredentials) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+        children: [CupertinoActivityIndicator()]
+    );
 
-    Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
-    locationFuture.then((location){
-      authCredentials.latitude = location.latitude;
-      authCredentials.longitude = location.longitude;
-
-      print("PRE: $authCredentials");
-      print("PRE: $location");
-
-      // set up the SimpleDialog
-      SimpleDialog dialog = SimpleDialog(
-          children: [CupertinoActivityIndicator()]
-      );
-
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        },
-      );
-      ProfileRestClient profileRestClient = new ProfileRestClient();
-      Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
-      future.then((json) {
-        print(json);
-
-        if(json['statusCode'] != 200)
-        {
-          Navigator.of(context, rootNavigator: true).pop();
-          AlertDialog dialog = AlertDialog(
-            title: Text('System Error....'),
-            content: Text(
-              "Unknown System Error....",
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+    ProfileRestClient profileRestClient = new ProfileRestClient();
+    Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
+    future.then((json) {
+      //print("*****************");
+      //print(json);
+      if(json['statusCode'] != 200)
+      {
+        Navigator.of(context, rootNavigator: true).pop();
+        AlertDialog dialog = AlertDialog(
+          title: Text('System Error....'),
+          content: Text(
+            "Unknown System Error....",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
             ),
-            actions: [
-              FlatButton(
-                textColor: Color(0xFF6200EE),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-
-          // show the dialog
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return dialog;
-            },
-          );
-          return;
-        }
-        Profile foodRunner = Profile.fromJson(json);
-        ActiveSession activeSession = ActiveSession.getInstance();
-        activeSession.setProfile(foodRunner);
-        activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
-
-        ActiveNetworkRestClient client = new ActiveNetworkRestClient();
-        Future<Map<String,List<FoodRecoveryTransaction>>> future = client
-            .getFoodRecoveryTransaction(foodRunner.email);
-        future.then((txs) {
-          Navigator.of(context, rootNavigator: true).pop();
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
-
-        }).catchError((e) {
-          Navigator.of(context, rootNavigator: true).pop();
-          AlertDialog dialog = AlertDialog(
-            title: Text('System Error....'),
-            content: Text(
-              "Unknown System Error....",
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+          ),
+          actions: [
+            FlatButton(
+              textColor: Color(0xFF6200EE),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
             ),
-            actions: [
-              FlatButton(
-                textColor: Color(0xFF6200EE),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
+          ],
+        );
 
-          // show the dialog
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return dialog;
-            },
-          );
-        });
-        showCards(context, foodRunner);
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return dialog;
+          },
+        );
+        return;
+      }
+      Profile foodRunner = Profile.fromJson(json);
+      ActiveSession activeSession = ActiveSession.getInstance();
+      activeSession.setProfile(foodRunner);
+      activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
+
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<Map<String,List<FoodRecoveryTransaction>>> future = client
+          .getFoodRecoveryTransaction(foodRunner.email);
+      future.then((txs) {
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
+
       }).catchError((e) {
         Navigator.of(context, rootNavigator: true).pop();
         AlertDialog dialog = AlertDialog(
@@ -390,13 +338,6 @@ class ProfileFunctions
         );
       });
     });
-  }
-
-  void showCards(BuildContext context, Profile profile) 
-  {
-    //print("PROFILE: $profile");
-    CloudDataPoller.startPolling(context,profile);
-    LocationUpdater.startPolling(profile);
   }
 
   static void launchAppFromNotification(BuildContext context)
