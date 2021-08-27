@@ -143,9 +143,10 @@ public class Transactions {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
+            System.out.println("*****ORG_ID: "+orgId+"**********0");
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(orgId);
 
-            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            System.out.println("*****TXS: "+transactions+"**********0");
 
 
             for(FoodRecoveryTransaction cour: transactions) {
@@ -186,6 +187,9 @@ public class Transactions {
             }
             result.addProperty("historyExists",historyExists);
             result.add("history",JsonParser.parseString(history.toString()).getAsJsonArray());
+
+            System.out.println("*****RESPONSE: "+result+"**********0");
+
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)

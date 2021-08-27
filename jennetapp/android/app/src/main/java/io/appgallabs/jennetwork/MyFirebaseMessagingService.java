@@ -133,6 +133,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // [END log_reg_token]
     }
 
+    public static String pushToken;
+    private void sendRegistrationToServer(String token) {
+        /*Intent intent = new Intent("1");
+        intent.putExtra("token",token);
+        getApplicationContext().sendBroadcast(intent);*/
+        MyFirebaseMessagingService.pushToken = token;
+    }
+
     /*private void registerFcmToken(String fcmToken){
         System.out.println("***********************************");
         System.out.println(fcmToken);
@@ -266,11 +274,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token) {
-        Intent intent = new Intent("1");
-        intent.putExtra("token",token);
-        getApplicationContext().sendBroadcast(intent);
-    }
+
 
     /**
      * Create and show a simple notification containing the received FCM message.

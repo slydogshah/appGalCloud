@@ -204,10 +204,10 @@ public class NotificationReceiver {
                 enableOfflineCommunitySupport = json.get("enableOfflineCommunitySupport").getAsBoolean();
             }
 
+            System.out.println("******DROPOFF_ORG_ID: "+dropOffOrgId+"********0");
             SchedulePickUpNotification notification = SchedulePickUpNotification.parse(this.mongoDBJsonStore.
                     getScheduledPickUpNotification(pickupNotificationId).toString());
 
-            logger.info("DROPOFF_ORG_ID: "+dropOffOrgId);
             if(dropOffOrgId != null) {
                 SourceOrg dropOffOrg = this.mongoDBJsonStore.getSourceOrg(dropOffOrgId);
                 notification.setDropOffOrg(dropOffOrg);
@@ -215,11 +215,15 @@ public class NotificationReceiver {
             }
             notification.setDropOffDynamic(enableOfflineCommunitySupport);
 
+            System.out.println("******NOTIFICATION: "+notification+"********0");
             this.networkOrchestrator.schedulePickUp(notification);
 
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success", true);
+
+            System.out.println("*******RESPONSE: "+responseJson+"*******0");
+
             return Response.ok(responseJson.toString()).build();
         }
         catch(Exception e)

@@ -98,7 +98,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
     Color primaryColor = Color(0xFF383EDB);
     Color backgroundColor = Color(0xFF383EDB);
     Profile profile = ActiveSession.getInstance().getProfile();
-    //CloudDataPoller.startPolling(context,profile);
+    CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
     return Theme(
       data: HotelAppTheme.buildLightTheme(),

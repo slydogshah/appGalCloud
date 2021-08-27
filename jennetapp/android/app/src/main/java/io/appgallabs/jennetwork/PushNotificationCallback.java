@@ -18,7 +18,6 @@ import io.dreiklang.breadcast.base.exec.Execution;
 
 public class PushNotificationCallback{
     private String email;
-    private String token;
     private String url;
 
     public PushNotificationCallback(Context appContext){
@@ -32,11 +31,11 @@ public class PushNotificationCallback{
                             String url = intent.getStringExtra("url");
                             PushNotificationCallback.this.url = url;
                         }
-                        String token = intent.getStringExtra("token");
-                        if(token != null){
-                            PushNotificationCallback.this.token = token;
-                        }
-                        if(PushNotificationCallback.this.email == null || PushNotificationCallback.this.token == null){
+
+                        System.out.println("****PUSH_NOTIFICATION_CALLBACK_INVOKED*****");
+                        System.out.println(email+":"+MyFirebaseMessagingService.pushToken+":"+url);
+
+                        if(PushNotificationCallback.this.email == null || MyFirebaseMessagingService.pushToken == null){
                             return;
                         }
                         Thread t = new Thread(()->{
@@ -52,7 +51,7 @@ public class PushNotificationCallback{
 
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("email",PushNotificationCallback.this.email);
-                                jsonObject.put("pushToken",PushNotificationCallback.this.token);
+                                jsonObject.put("pushToken",MyFirebaseMessagingService.pushToken);
                                 json = jsonObject.toString();
 
                                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
