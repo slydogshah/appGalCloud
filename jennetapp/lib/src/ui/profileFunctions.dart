@@ -91,6 +91,8 @@ class ProfileFunctions
       activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
 
       CloudDataPoller.startPolling(context,foodRunner);
+      //LocationUpdater.getLocation();
+      LocationUpdater.startPolling(foodRunner);
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<Map<String,List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
@@ -300,6 +302,8 @@ class ProfileFunctions
       activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
 
       CloudDataPoller.startPolling(context,foodRunner);
+      //LocationUpdater.getLocation();
+      LocationUpdater.startPolling(foodRunner);
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<Map<String,List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);

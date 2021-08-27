@@ -5,6 +5,7 @@ import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.network.endpoint.LocationAPI;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,9 @@ public class LocationService {
     public void receiveUpdate(FoodRunner foodRunner)
     {
         //TODO: IMPLEMENT_QUEUE_BASED
-        this.mongoDBJsonStore.updateFoodRunner(foodRunner);
+        //this.mongoDBJsonStore.updateFoodRunner(foodRunner);
+        //JsonUtil.print(this.getClass(),foodRunner.toJson());
+        this.activeNetwork.addActiveFoodRunner(foodRunner);
         this.activeNetwork.flushToStore();
     }
 

@@ -84,7 +84,7 @@ public class PushNotificationCallback{
                                 }catch(Exception e){}
                             }
                         });
-                        t.start();
+                        //t.start();
                     }
                 }).register();
     }

@@ -100,15 +100,19 @@ class ActiveNetworkRestClient
     jsonMap['longitude'] = locationData.longitude;
     String jsonBody = jsonEncode(jsonMap);
 
-    print("********LOCATION_UPDATE*************");
-    print(jsonBody);
+    //print("********LOCATION_UPDATE*************");
+    //print(jsonBody);
 
     try {
       response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
     }
     catch (e) {
+      //print("********LOCATION_UPDATE*************");
+      //print("LOCATION_POST_SYSTEM_ERROR");
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
+    //print("********LOCATION_UPDATE*************");
+    //print(response.body);
     return response.body;
   }
 

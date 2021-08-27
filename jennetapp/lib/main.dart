@@ -30,7 +30,7 @@ class MyHttpOverrides extends HttpOverrides{
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  String env = "qa";
+  String env = "dev";
   Future<Map<String,dynamic>> config = UrlFunctions.getConfig(env);
   config.then((jsonMap) {
     UrlFunctions.getInstance().androidApiUrl = jsonMap['androidApiUrl'];
