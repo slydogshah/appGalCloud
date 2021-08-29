@@ -100,8 +100,7 @@ public class JenFlow extends BaseTest{
         //Notify a FoodRunner...does not pull my transactions
         JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
                 foodRunner.getProfile().getPassword());
-
-        /*this.dynamicDropOffOrchestrator.notifyAvailability(foodRunner.getProfile().getEmail(),true);
+        this.dynamicDropOffOrchestrator.notifyAvailability(foodRunner.getProfile().getEmail(),true);
 
         //FoodRunner accepts....this will update to notificationSent=true
         List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
@@ -109,7 +108,7 @@ public class JenFlow extends BaseTest{
         FoodRecoveryTransaction accepted = myTransactions.get(0);
         this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
-        accepted = myTransactions.get(1);
+        /*accepted = myTransactions.get(1);
         //this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         /*for(int i=0; i<7; i++)
@@ -307,10 +306,8 @@ public class JenFlow extends BaseTest{
         JsonObject loginJson = new JsonObject();
         loginJson.addProperty("email", email);
         loginJson.addProperty("password", "password");
-        //loginJson.addProperty("latitude", 30.2698104d);
-        //loginJson.addProperty("longitude",-97.75115579999999d);
-        loginJson.addProperty("latitude", 0d);
-        loginJson.addProperty("longitude",0d);
+        loginJson.addProperty("latitude", 30.2698104d);
+        loginJson.addProperty("longitude",-97.75115579999999d);
         Response response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
