@@ -1,5 +1,6 @@
 Active Task
 ----
+Dash: Filter Pickup Times
 Cloud: No Push Notification in end-to-end flow > CloudQA
 App: Refresh from backgrounding > QA
 App: Push wakeup and launch app > QA
@@ -10,7 +11,6 @@ App: Test if location updates are being sent > QA
 Shit Tasks
 -----
 Dash: Add TimeZones
-Dash: Filter Pickup Times
 Dash: Pick Org flow - (Registration)
 Dash: Forgot Password > Mobile Invalid
 

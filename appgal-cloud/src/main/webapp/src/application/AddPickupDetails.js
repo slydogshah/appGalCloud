@@ -125,9 +125,23 @@ class Thumb extends React.Component {
   }
 }
 
+function RenderOption(key,value){
+    return (
+        <>
+        <option value={key}>{value}</option>
+        </>
+      );
+}
+
 function RenderForm({state,props})
 {
     const classes = useStyles();
+    const timeOptions = props.history.location.state.data;
+    let timeItems = [];
+        timeOptions.forEach((value, key) => {
+              timeItems.push(<option key={key} value={value}>{value}</option>);
+        }
+    );
     const renderForm = ({ values, handleSubmit, setFieldValue }) => {
                                            return (
                                              <>
@@ -149,56 +163,8 @@ function RenderForm({state,props})
                                                                 const name = target.name;
                                                                 state.[name] = value;
                                                             }}>
-                                                              <option value="0">--Today--</option>
-                                                              <option value="0:0">12:00 AM</option>
-                                                              <option value="0:1">1:00 AM</option>
-                                                              <option value="0:2">2:00 AM</option>
-                                                              <option value="0:3">3:00 AM</option>
-                                                              <option value="0:4">4:00 AM</option>
-                                                              <option value="0:5">5:00 AM</option>
-                                                              <option value="0:6">6:00 AM</option>
-                                                              <option value="0:7">7:00 AM</option>
-                                                              <option value="0:8">8:00 AM</option>
-                                                              <option value="0:9">9:00 AM</option>
-                                                              <option value="0:10">10:00 AM</option>
-                                                              <option value="0:11">11:00 AM</option>
-                                                              <option value="0:12">12:00 PM</option>
-                                                              <option value="0:13">1:00 PM</option>
-                                                              <option value="0:14">2:00 PM</option>
-                                                              <option value="0:15">3:00 PM</option>
-                                                              <option value="0:16">4:00 PM</option>
-                                                              <option value="0:17">5:00 PM</option>
-                                                              <option value="0:18">6:00 PM</option>
-                                                              <option value="0:19">7:00 PM</option>
-                                                              <option value="0:20">8:00 PM</option>
-                                                              <option value="0:21">9:00 PM</option>
-                                                              <option value="0:22">10:00 PM</option>
-                                                              <option value="0:23">11:00 PM</option>
-                                                              <option value="1">--Tomorrow--</option>
-                                                              <option value="1:0">12:00 AM</option>
-                                                            <option value="1:1">1:00 AM</option>
-                                                            <option value="1:2">2:00 AM</option>
-                                                            <option value="1:3">3:00 AM</option>
-                                                            <option value="1:4">4:00 AM</option>
-                                                            <option value="1:5">5:00 AM</option>
-                                                            <option value="1:6">6:00 AM</option>
-                                                            <option value="1:7">7:00 AM</option>
-                                                            <option value="1:8">8:00 AM</option>
-                                                            <option value="1:9">9:00 AM</option>
-                                                            <option value="1:10">10:00 AM</option>
-                                                            <option value="1:11">11:00 AM</option>
-                                                            <option value="1:12">12:00 PM</option>
-                                                            <option value="1:13">1:00 PM</option>
-                                                            <option value="1:14">2:00 PM</option>
-                                                            <option value="1:15">3:00 PM</option>
-                                                            <option value="1:16">4:00 PM</option>
-                                                            <option value="1:17">5:00 PM</option>
-                                                            <option value="1:18">6:00 PM</option>
-                                                            <option value="1:19">7:00 PM</option>
-                                                            <option value="1:20">8:00 PM</option>
-                                                            <option value="1:21">9:00 PM</option>
-                                                            <option value="1:22">10:00 PM</option>
-                                                            <option value="1:23">11:00 PM</option>
+                                                              <option value="0">--Select--</option>
+                                                              {timeItems}
                                                          </CSelect>
                                                          <div id="time_is_required"/>
                                                          </GridItem>

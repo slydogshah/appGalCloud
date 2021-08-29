@@ -185,9 +185,44 @@ function HomeView({state, props}) {
                                                         </CDropdownToggle>
                                                         <CDropdownMenu className="pt-0" placement="bottom-end">
                                                          <CDropdownItem onClick={(e) => {
-                                                                  props.history.push({
-                                                                     pathname: "/addPickupDetails"
-                                                                  });
+                                                                  var element = (
+                                                                           <Snackbar
+                                                                             place="tc"
+                                                                             color="info"
+                                                                             icon={DonutLargeOutlinedIcon}
+                                                                             message="Loading...."
+                                                                             open={true}
+                                                                           />
+                                                                   );
+                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                  ReactDOM.render(element,document.getElementById('progress'));
+                                                                  const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/";
+                                                                  axios.get(apiUrl).then((response) => {
+                                                                      //alert(JSON.stringify(response.data));
+                                                                      ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                      const timeOptions = new Map(response.data);
+                                                                      props.history.push({
+                                                                       pathname: "/addPickupDetails",
+                                                                       state: { data: timeOptions }
+                                                                      });
+                                                                  }).catch(err => {
+                                                                      ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                      var element = (
+                                                                                          <Snackbar
+                                                                                            place="tc"
+                                                                                            color="danger"
+                                                                                            icon={DonutLargeOutlinedIcon}
+                                                                                            message="500: Unknown System Error...."
+                                                                                            open={true}
+                                                                                            close
+                                                                                            closeNotification={() => {
+                                                                                              ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                            }}
+                                                                                          />
+                                                                                  );
+                                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                  ReactDOM.render(element,document.getElementById('unknown_error'));
+                                                                    });
                                                          }}>Schedule</CDropdownItem>
                                                         </CDropdownMenu>
                                                      </CDropdown>

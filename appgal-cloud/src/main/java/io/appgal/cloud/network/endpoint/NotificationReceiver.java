@@ -1,5 +1,6 @@
 package io.appgal.cloud.network.endpoint;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
@@ -83,6 +84,42 @@ public class NotificationReceiver {
             return Response.status(500).entity(error.toString()).build();
         }
     }
+
+    @Path("/addPickupDetails")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addPickupDetails(){
+        JsonArray timeOptions = new JsonArray();
+
+
+        JsonArray today = new JsonArray();
+        today.add("0");
+        today.add("--Today--");
+        timeOptions.add(today);
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        int currentHour = now.getHour();
+        for(int i=currentHour;i<24;i++)
+        {
+            JsonArray cour = new JsonArray();
+            cour.add("0:"+i);
+            cour.add(i);
+            timeOptions.add(cour);
+        }
+
+        JsonArray tomorrow = new JsonArray();
+        tomorrow.add("1");
+        tomorrow.add("--Tomorrow--");
+        timeOptions.add(tomorrow);
+        for(int i=0; i<24; i++){
+            JsonArray cour = new JsonArray();
+            cour.add("1:"+i);
+            cour.add(i);
+            timeOptions.add(cour);
+        }
+
+        return Response.ok(timeOptions.toString()).build();
+    }
+
 
     @Path("/addPickupDetails")
     @POST
