@@ -108,4 +108,11 @@ public class NotificationReceiverTest extends BaseTest {
             assertTrue(cour.get("notificationSent").getAsBoolean());
         }
     }
+
+    @Test
+    public void addPickupDetails() throws Exception{
+        Response response = given().when().get("/notification/addPickupDetails")
+                .andReturn();
+        response.getBody().prettyPrint();
+    }
 }
