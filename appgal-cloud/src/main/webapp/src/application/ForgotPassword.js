@@ -164,6 +164,7 @@ function ForgotPasswordView({state, props}) {
                             });
                         }).catch(err => {
                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+
                            if(err.response != null && err.response.status == 404)
                            {
                                   const error = (
@@ -175,6 +176,17 @@ function ForgotPasswordView({state, props}) {
                                                    );
                                  ReactDOM.render(error,document.getElementById('validation_error'));
                            }
+                           else if(err.response != null && err.response.status == 400)
+                              {
+                                     const error = (
+                                                          <CAlert
+                                                          color="warning"
+                                                          >
+                                                             Please input a valid phone number
+                                                         </CAlert>
+                                                      );
+                                    ReactDOM.render(error,document.getElementById('validation_error'));
+                              }
                            else if(err.response != null && err.response.status == 403)
                            {
                                  const error = (

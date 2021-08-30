@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Path("registration")
 public class Registration {
@@ -451,6 +453,15 @@ public class Registration {
                     error.addProperty("message", "ACCESS_DENIED_FOR_PROFILE_TYPE");
                     return Response.status(403).entity(error.toString()).build();
                 }
+            }
+
+            Pattern pattern = Pattern.compile("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$");
+            Matcher matcher = pattern.matcher(mobileNumber);
+            boolean matches = matcher.matches();
+            if(!matches){
+                JsonObject error = new JsonObject();
+                error.addProperty("message","INVALID_NUMBER");
+                return Response.status(400).entity(error.toString()).build();
             }
 
             String resetCode = UUID.randomUUID().toString().substring(0,6);

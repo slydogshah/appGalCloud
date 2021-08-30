@@ -17,8 +17,11 @@ import static java.time.temporal.ChronoUnit.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 public class MapUtilsTests {
@@ -68,5 +71,12 @@ public class MapUtilsTests {
         System.out.println(tomorrow.toEpochSecond());
 
         assertNotEquals(dateTime.toEpochSecond(),tomorrow.toEpochSecond());
+    }
+
+    @Test
+    public void whenMatchesTenDigitsNumberPrefix_thenCorrect() {
+        Pattern pattern = Pattern.compile("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$");
+        Matcher matcher = pattern.matcher("+111 (202) 555-0125");
+        assertTrue(matcher.matches());
     }
 }

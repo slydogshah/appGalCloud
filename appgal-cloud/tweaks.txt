@@ -7,7 +7,6 @@ App: Test if location updates are being sent > QA
 
 Shit Tasks
 -----
-Dash: Forgot Password > Mobile Invalid
 Dash: Pick Org flow - (Registration)
 
 
@@ -19,7 +18,7 @@ App: show launch indicator > Finalize the Splash Screen
 Cloud Tasks
 ----
 
-
+* Dash: Forgot Password > Mobile Invalid
 
 * Dash: Add TimeZones > (FIXED)
 
