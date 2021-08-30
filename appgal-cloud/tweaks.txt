@@ -1,13 +1,14 @@
 Active Task
 ----
+Dash: Pick Org flow - (Registration)
 Cloud: No Push Notification in end-to-end flow > CloudQA
 App: Refresh from backgrounding > QA
 App: Push wakeup and launch app > QA
 App: Test if location updates are being sent > QA
 
+
 Shit Tasks
 -----
-Dash: Pick Org flow - (Registration)
 
 
 App Tasks
