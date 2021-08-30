@@ -1,12 +1,9 @@
 Active Task
 ----
-Dash: Add TimeZones
 Cloud: No Push Notification in end-to-end flow > CloudQA
 App: Refresh from backgrounding > QA
 App: Push wakeup and launch app > QA
 App: Test if location updates are being sent > QA
-
-
 
 Shit Tasks
 -----
@@ -22,6 +19,9 @@ App: show launch indicator > Finalize the Splash Screen
 Cloud Tasks
 ----
 
+
+
+* Dash: Add TimeZones > (FIXED)
 
 * Dash: Filter Pickup Times > (FIXED)
 

@@ -11,6 +11,7 @@ import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.restclient.TwilioClient;
 import io.appgal.cloud.util.JsonUtil;
+import io.appgal.cloud.util.MapUtils;
 import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -45,6 +48,9 @@ public class Registration {
 
     @Inject
     private TwilioClient twilioClient;
+
+    @Inject
+    private MapUtils mapUtils;
 
     @Path("profile")
     @GET
@@ -81,14 +87,28 @@ public class Registration {
         }
     }
 
-    @Path("orgs")
+    @Path("timezones")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response orgs()
+    public Response timezones()
     {
         try {
-            List<SourceOrg> orgs = this.mongoDBJsonStore.getSourceOrgs();
-            return Response.ok(JsonParser.parseString(orgs.toString()).getAsJsonArray().toString()).build();
+            JsonArray timezones = new JsonArray();
+
+            JsonObject timezone = new JsonObject();
+            timezone.addProperty("label","US/Central");
+            timezone.addProperty("value","US/Central");
+            timezones.add(timezone);
+
+            timezone = new JsonObject();
+            timezone.addProperty("label","US/Pacific");
+            timezone.addProperty("value","US/Pacific");
+            timezones.add(timezone);
+
+            JsonObject response = new JsonObject();
+            response.add("timezones",timezones);
+
+            return Response.ok(response.toString()).build();
         }
         catch(Exception e)
         {
@@ -186,20 +206,15 @@ public class Registration {
                         violationsArray.add("street_required");
                     }
                 }
-                if(!jsonObject.has("timeZone"))
-                {
-                    violationsArray.add("timeZone_required");
-                }
-                if(jsonObject.has("timeZone")){
-                    String zip = jsonObject.get("timeZone").getAsString();
-                    if(zip == null || zip.trim().length()==0){
-                        violationsArray.add("timeZone_required");
-                    }
-                }
 
                 responseJson.add("violations", violationsArray);
                 return Response.status(400).entity(responseJson.toString()).build();
             }
+
+            Address orgAddress = sourceOrg.getAddress();
+            Location location = this.mapUtils.calculateCoordinates(orgAddress);
+            ZoneId orgZone = mapUtils.determineTimeZone(location.getLatitude(),location.getLongitude());
+            sourceOrg.getAddress().setTimeZone(orgZone.getId());
 
             this.profileRegistrationService.registerSourceOrg(profile.getEmail(),sourceOrg);
 

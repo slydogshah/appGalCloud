@@ -92,6 +92,11 @@
       <artifactId>spatial4j</artifactId>
       <version>0.7</version>
     </dependency>
+    <dependency>
+      <groupId>net.iakovlev</groupId>
+      <artifactId>timeshape</artifactId>
+      <version>2020d.11</version>
+    </dependency>
 
 
 

@@ -5,6 +5,8 @@ import io.appgal.cloud.model.Location;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @QuarkusTest
 public class MapUtilsTests {
+    private static Logger logger = LoggerFactory.getLogger(MapUtilsTests.class);
 
     @Inject
     private MapUtils mapUtils;
@@ -32,6 +35,15 @@ public class MapUtilsTests {
         address.setZip("78703");
         Location location = this.mapUtils.calculateCoordinates(address);
         JsonUtil.print(this.getClass(),location.toJson());
+    }
+
+    @Test
+    public void determineTimeZone() throws Exception
+    {
+        double latitude = 30.2698104d;
+        double longitude = -97.75115579999999d;
+        ZoneId timezone = this.mapUtils.determineTimeZone(latitude,longitude);
+        logger.info("TIME_ZONE: "+timezone);
     }
 
     @Test

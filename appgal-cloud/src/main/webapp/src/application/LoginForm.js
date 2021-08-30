@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { withRouter } from "react-router";
 import Modal from 'react-modal';
 import OverlayMixin from 'react-overlays';
+import Select from 'react-select'
 import axios from 'axios'
 import https from 'http';
 import {
@@ -343,10 +344,11 @@ function RenderLogin({state,props})
                                                                     );
                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                     ReactDOM.render(element,document.getElementById('progress'));
-                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/orgs/";
+                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/timezones/";
                                 axios.get(apiUrl).then((response) => {
                                 ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
-                                const orgs = response.data;
+                                const timeZones = response.data.timezones;
+                                //alert(JSON.stringify(timeZones));
                                 const element = (
                                         <>
                                         <br/><br/><br/><br/><br/>
@@ -484,20 +486,7 @@ function RenderLogin({state,props})
                                                                                                                   <div id="zipRequired"/>
                                                                                                                </GridItem>
                                                                                               </GridContainer>
-                                               <GridContainer>
-                                                                                                    <GridItem xs={12} sm={12} md={4}>
-                                                                                                                            <CSelect custom name="timeZone" onChange={(event)=>{
-                                                                                                                                            const target = event.target;
-                                                                                                                                                                                       const value = target.value;
-                                                                                                                                                                                       const name = target.name;
-                                                                                                                                                                                       state.timeZone = value;
-                                                                                                                                        }}>
-                                                                                                                                          <option value="0">--TimeZone--</option>
-                                                                                                                                          <option value="US/Central">US/Central</option>
-                                                                                                                                        </CSelect>
-                                                                                                                                        <div id="timeZoneRequired"/>
-                                                                                                                        </GridItem>
-                                                                                              </GridContainer>
+
                                                </CardBody>
                                                <CardFooter>
                                                    <GridContainer>
@@ -510,7 +499,6 @@ function RenderLogin({state,props})
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('streetRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('zipRequired'));
-                                                            ReactDOM.unmountComponentAtNode(document.getElementById('timeZoneRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
                                                             const required = (
                                                                          <CAlert
@@ -553,11 +541,7 @@ function RenderLogin({state,props})
                                                                                                                   validationSuccess = false;
                                                                                                                 }
 
-                                                        if(state.timeZone == null || state.timeZone == "")
-                                                                                                                {
-                                                                                                                  ReactDOM.render(required,document.getElementById('timeZoneRequired'));
-                                                                                                                  validationSuccess = false;
-                                                                                                                }
+
 
                                                         if(!validationSuccess)
                                                         {
@@ -580,7 +564,6 @@ function RenderLogin({state,props})
                                                         "profileType":state.profileType,
                                                         "street":state.street,
                                                         "zip":state.zip,
-                                                        "timeZone":state.timeZone,
                                                         "producer":state.producer};
 
                                                         var element = (
@@ -673,6 +656,16 @@ function RenderLogin({state,props})
                                     );
                                     ReactDOM.unmountComponentAtNode(document.getElementById('parent'));
                                     ReactDOM.render(element,document.getElementById('parent'));
+                                }).catch(err => {
+                                        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                        const system_error = (
+                                                                                         <CAlert
+                                                                                         color="warning"
+                                                                                         >
+                                                                                            Unknown Error. Please check your Network Connection
+                                                                                        </CAlert>
+                                                                                    );
+                                                                                   ReactDOM.render(system_error,document.getElementById('system_error'));
                                 });
                            }}>Register</Button>
                         </GridItem>

@@ -4,7 +4,13 @@ import com.google.gson.JsonObject;
 import io.appgal.cloud.model.Address;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.restclient.GoogleApiClient;
+
 import org.locationtech.spatial4j.distance.DistanceUtils;
+import net.iakovlev.timeshape.TimeZoneEngine;
+
+import java.util.List;
+import java.util.Optional;
+import java.time.ZoneId;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -43,5 +49,12 @@ public class MapUtils {
         location.setLongitude(longitude);
 
         return location;
+    }
+
+    public ZoneId determineTimeZone(double latitude, double longitude)
+    {
+        TimeZoneEngine engine = TimeZoneEngine.initialize();
+        List<ZoneId> allZones = engine.queryAll(latitude, longitude);
+        return allZones.get(0);
     }
 }
