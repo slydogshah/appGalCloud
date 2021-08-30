@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
+import Select from 'react-select'
 import axios from 'axios'
 import { withRouter } from "react-router";
 import {
@@ -136,12 +137,9 @@ function RenderOption(key,value){
 function RenderForm({state,props})
 {
     const classes = useStyles();
-    const timeOptions = props.history.location.state.data;
-    let timeItems = [];
-        timeOptions.forEach((value, key) => {
-              timeItems.push(<option key={key} value={value}>{value}</option>);
-        }
-    );
+
+    console.log(JSON.stringify(props.history.location.state.data));
+    const options = props.history.location.state.data;
     const renderForm = ({ values, handleSubmit, setFieldValue }) => {
                                            return (
                                              <>
@@ -157,15 +155,16 @@ function RenderForm({state,props})
                                                        <GridContainer>
                                                          <GridItem xs={12} sm={12} md={4}>
                                                            <CLabel htmlFor="ccmonth">Preferred Pickup Time</CLabel>
-                                                            <CSelect custom name="time" id="ccmonth" onChange={(event) => {
-                                                                const target = event.target;
-                                                                const value = target.value;
-                                                                const name = target.name;
-                                                                state.[name] = value;
-                                                            }}>
-                                                              <option value="0">--Select--</option>
-                                                              {timeItems}
-                                                         </CSelect>
+                                                            <Select
+                                                                name="time"
+                                                                id="time"
+                                                                maxMenuHeight={220}
+                                                                menuPlacement="auto"
+                                                                options={options}
+                                                                onChange={(event) => {
+                                                                   state.['time'] = event.value;
+                                                               }}
+                                                            />
                                                          <div id="time_is_required"/>
                                                          </GridItem>
                                                        </GridContainer>

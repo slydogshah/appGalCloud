@@ -203,7 +203,7 @@ function HomeView({state, props}) {
                                                                       const timeOptions = new Map(response.data);
                                                                       props.history.push({
                                                                        pathname: "/addPickupDetails",
-                                                                       state: { data: timeOptions }
+                                                                       state: { data: response.data }
                                                                       });
                                                                   }).catch(err => {
                                                                       ReactDOM.unmountComponentAtNode(document.getElementById('progress'));

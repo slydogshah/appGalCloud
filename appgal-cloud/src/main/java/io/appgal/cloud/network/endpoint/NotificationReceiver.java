@@ -24,9 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Path("notification")
 public class NotificationReceiver {
@@ -91,29 +89,92 @@ public class NotificationReceiver {
     public Response addPickupDetails(){
         JsonArray timeOptions = new JsonArray();
 
+        Map<String,String> times = new HashMap<>();
+        times.put("0:0","12:00 AM");
+        times.put("0:1","1:00 AM");
+        times.put("0:2","2:00 AM");
+        times.put("0:3","3:00 AM");
+        times.put("0:4","4:00 AM");
+        times.put("0:5","5:00 AM");
+        times.put("0:6","6:00 AM");
+        times.put("0:7","7:00 AM");
+        times.put("0:8","8:00 AM");
+        times.put("0:9","9:00 AM");
+        times.put("0:10","10:00 AM");
+        times.put("0:11","11:00 AM");
+        times.put("0:12","12:00 PM");
+        times.put("0:13","1:00 PM");
+        times.put("0:14","2:00 PM");
+        times.put("0:15","3:00 PM");
+        times.put("0:16","4:00 PM");
+        times.put("0:17","5:00 PM");
+        times.put("0:18","6:00 PM");
+        times.put("0:19","7:00 PM");
+        times.put("0:20","8:00 PM");
+        times.put("0:21","9:00 PM");
+        times.put("0:22","10:00 PM");
+        times.put("0:23","11:00 PM");
 
-        JsonArray today = new JsonArray();
-        today.add("0");
-        today.add("--Today--");
+        Map<String,String> times2 = new HashMap<>();
+        times2.put("1:0","12:00 AM");
+        times2.put("1:1","1:00 AM");
+        times2.put("1:2","2:00 AM");
+        times2.put("1:3","3:00 AM");
+        times2.put("1:4","4:00 AM");
+        times2.put("1:5","5:00 AM");
+        times2.put("1:6","6:00 AM");
+        times2.put("1:7","7:00 AM");
+        times2.put("1:8","8:00 AM");
+        times2.put("1:9","9:00 AM");
+        times2.put("1:10","10:00 AM");
+        times2.put("1:11","11:00 AM");
+        times2.put("1:12","12:00 PM");
+        times2.put("1:13","1:00 PM");
+        times2.put("1:14","2:00 PM");
+        times2.put("1:15","3:00 PM");
+        times2.put("1:16","4:00 PM");
+        times2.put("1:17","5:00 PM");
+        times2.put("1:18","6:00 PM");
+        times2.put("1:19","7:00 PM");
+        times2.put("1:20","8:00 PM");
+        times2.put("1:21","9:00 PM");
+        times2.put("1:22","10:00 PM");
+        times2.put("1:23","11:00 PM");
+
+
+        JsonObject today = new JsonObject();
+        today.addProperty("value","0");
+        today.addProperty("label", "--Today--");
         timeOptions.add(today);
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
-        int currentHour = now.getHour();
+        //Calendar now = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC));
+        Calendar now = Calendar.getInstance();
+        int currentHour = now.get(Calendar.HOUR_OF_DAY);
+        JsonObject nowOption = new JsonObject();
+        String key = "0:"+currentHour;
+        nowOption.addProperty("value",key);
+        nowOption.addProperty("label","NOW");
+        timeOptions.add(nowOption);
+        currentHour++;
         for(int i=currentHour;i<24;i++)
         {
-            JsonArray cour = new JsonArray();
-            cour.add("0:"+i);
-            cour.add(i);
+            JsonObject cour = new JsonObject();
+            key = "0:"+i;
+            String value = times.get(key);
+            cour.addProperty("value",key);
+            cour.addProperty("label",value);
             timeOptions.add(cour);
         }
 
-        JsonArray tomorrow = new JsonArray();
-        tomorrow.add("1");
-        tomorrow.add("--Tomorrow--");
+        JsonObject tomorrow = new JsonObject();
+        tomorrow.addProperty("value","1");
+        tomorrow.addProperty("label", "--Tomorrow--");
         timeOptions.add(tomorrow);
         for(int i=0; i<24; i++){
-            JsonArray cour = new JsonArray();
-            cour.add("1:"+i);
-            cour.add(i);
+            JsonObject cour = new JsonObject();
+            key = "1:"+i;
+            String value = times2.get(key);
+            cour.addProperty("value",key);
+            cour.addProperty("label",value);
             timeOptions.add(cour);
         }
 

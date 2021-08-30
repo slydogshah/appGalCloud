@@ -1526,3 +1526,27 @@ START: 1621057147
                                                                                                                    <option value="1:21">9:00 PM</option>
                                                                                                                    <option value="1:22">10:00 PM</option>
                                                                                                                    <option value="1:23">11:00 PM</option>
+
+
+
+                                                                                                                   <CSelect custom name="time" id="ccmonth" onChange={(event) => {
+                                                                                                                                                                                   const target = event.target;
+                                                                                                                                                                                   const value = target.value;
+                                                                                                                                                                                   const name = target.name;
+                                                                                                                                                                                   state.[name] = value;
+                                                                                                                                                                               }}>
+                                                                                                                                                                                 {timeItems}
+                                                                                                                                                                            </CSelect>
+
+                                                                                                                                                                            const timeOptions = props.history.location.state.data;
+                                                                                                                                                                                let timeItems = [];
+                                                                                                                                                                                    timeOptions.forEach((value, key) => {
+                                                                                                                                                                                          timeItems.push(<option key={key} value={value}>{value}</option>);
+                                                                                                                                                                                    }
+                                                                                                                                                                                );
+
+                                                                                                                                                                                const options = [
+                                                                                                                                                                                      { value: 'chocolate', label: 'Chocolate' },
+                                                                                                                                                                                      { value: 'strawberry', label: 'Strawberry' },
+                                                                                                                                                                                      { value: 'vanilla', label: 'Vanilla' }
+                                                                                                                                                                                    ]
