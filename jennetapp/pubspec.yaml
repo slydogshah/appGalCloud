@@ -54,12 +54,15 @@ dependencies:
   smooth_star_rating: ^1.1.1
   intl: ^0.16.0
   okito: ^1.1.9
+  flutter_native_splash: ^0.3.2
+  #crypto: ^2.1.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_driver:
     sdk: flutter
+  #flutter_native_splash: ^1.2.1
   flutter_launcher_icons: "^0.8.0"
   test:
   path:
