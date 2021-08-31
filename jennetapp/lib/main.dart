@@ -50,7 +50,7 @@ Future<void> main(String env) async{
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Future.delayed(Duration(seconds: 10));
+  //await Future.delayed(Duration(seconds: 10));
 
   Future<Map<String,dynamic>> config = UrlFunctions.getConfig(env);
   config.then((jsonMap) {
