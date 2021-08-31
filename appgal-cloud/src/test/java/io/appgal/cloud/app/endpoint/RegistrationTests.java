@@ -818,7 +818,8 @@ public class RegistrationTests  extends BaseTest {
         response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
         response.getBody().prettyPrint();
         assertEquals(200, response.getStatusCode());
-
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
 
 
 
@@ -867,10 +868,10 @@ public class RegistrationTests  extends BaseTest {
         logger.info("***********************");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
-        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        response.getBody().prettyPrint();
         assertEquals(200, response.getStatusCode());
-
-
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("orgId").getAsString());
 
 
         JsonObject json = new JsonObject();
@@ -926,7 +927,8 @@ public class RegistrationTests  extends BaseTest {
         response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
         response.getBody().prettyPrint();
         assertEquals(200, response.getStatusCode());
-
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
 
 
         JsonObject json = new JsonObject();
@@ -1000,6 +1002,8 @@ public class RegistrationTests  extends BaseTest {
         response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
         response.getBody().prettyPrint();
         assertEquals(200, response.getStatusCode());
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
 
 
         JsonObject json = new JsonObject();
@@ -1011,6 +1015,8 @@ public class RegistrationTests  extends BaseTest {
         response = given().body(json.toString()).post("/registration/staff");
         JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
         assertEquals(200, response.getStatusCode());
+        resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
 
         for(int i=0; i<3; i++) {
             json = new JsonObject();
@@ -1057,6 +1063,8 @@ public class RegistrationTests  extends BaseTest {
         response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
         response.getBody().prettyPrint();
         assertEquals(200, response.getStatusCode());
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
 
 
         JsonObject json = new JsonObject();
