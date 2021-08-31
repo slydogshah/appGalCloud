@@ -1,9 +1,10 @@
-Active Task
+Active Tasks
 ----
 Dash: Pick Org flow - (Registration)
 App: show launch indicator > Finalize the Splash Screen
 
-
+QA Tasks
+----
 Cloud: No Push Notification in end-to-end flow > QA
 App: Refresh from backgrounding > QA
 App: Push wakeup and launch app > QA
@@ -16,6 +17,7 @@ App Tasks
 
 Cloud Tasks
 ----
+
 
 Dash Tasks
 ----
