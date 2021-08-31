@@ -1077,4 +1077,47 @@ public class RegistrationTests  extends BaseTest {
         response.getBody().prettyPrint();
         assertEquals(500, response.getStatusCode());
     }
+
+    @Test
+    public void testRegisterOrgAlreadyExists() {
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject first = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        String firstOrgId = first.get("orgId").getAsString();
+
+        id = UUID.randomUUID().toString();
+        email = id+"@blah.com";
+        registrationJson.addProperty("orgId", "blah");
+        registrationJson.addProperty("email",email);
+        response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        JsonObject next = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        String nextOrgId = first.get("orgId").getAsString();
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals(firstOrgId,nextOrgId);
+
+        //TODO: assert
+    }
 }

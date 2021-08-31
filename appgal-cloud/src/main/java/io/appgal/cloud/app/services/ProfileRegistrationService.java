@@ -78,7 +78,7 @@ public class ProfileRegistrationService {
         System.out.println(storedSourceOrg.toJson().toString());
     }
 
-    public void registerSourceOrg(String email,SourceOrg sourceOrg) throws ResourceExistsException
+    public SourceOrg registerSourceOrg(String email,SourceOrg sourceOrg) throws ResourceExistsException
     {
         Profile storedProfile = this.mongoDBJsonStore.getProfile(email);
         if(storedProfile != null){
@@ -87,16 +87,13 @@ public class ProfileRegistrationService {
             throw new ResourceExistsException(message.toString());
         }
 
-        String sourceOrgId = sourceOrg.getOrgId();
-        SourceOrg storedSourceOrg = this.mongoDBJsonStore.getSourceOrg(sourceOrgId);
-
         Location location = this.mapUtils.calculateCoordinates(sourceOrg.getAddress());
         sourceOrg.setLocation(location);
-
+        SourceOrg storedSourceOrg = this.findSourceOrg(sourceOrg);
         if(storedSourceOrg == null)
         {
             this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
-            return;
+            return sourceOrg;
         }
 
         Profile newProfile = sourceOrg.getProfiles().iterator().next();
@@ -106,8 +103,25 @@ public class ProfileRegistrationService {
             message.addProperty("email", newProfile.getEmail());
             throw new ResourceExistsException(message.toString());
         }
+        storedSourceOrg.addProfile(newProfile);
+        this.mongoDBJsonStore.storeSourceOrg(storedSourceOrg);
+        return storedSourceOrg;
+    }
 
-        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+    private SourceOrg findSourceOrg(SourceOrg newSourceOrg){
+        Location newOrgLocation = newSourceOrg.getLocation();
+        List<SourceOrg> all = this.mongoDBJsonStore.getSourceOrgs();
+        for(SourceOrg cour:all){
+            Location location = cour.getLocation();
+            double distance = this.mapUtils.calculateDistance(newOrgLocation.getLatitude(),
+                    newOrgLocation.getLongitude(),location.getLatitude(),location.getLongitude());
+
+            if(distance <= 0.0d){
+                return cour;
+            }
+        }
+
+        return null;
     }
 
     public JsonObject login(String userAgent, String email, String password, Location location)

@@ -1,23 +1,26 @@
 Active Task
 ----
 Dash: Pick Org flow - (Registration)
-Cloud: No Push Notification in end-to-end flow > CloudQA
+App: show launch indicator > Finalize the Splash Screen
+
+
+Cloud: No Push Notification in end-to-end flow > QA
 App: Refresh from backgrounding > QA
 App: Push wakeup and launch app > QA
 App: Test if location updates are being sent > QA
 
 
-Shit Tasks
------
-
-
 App Tasks
 -----
-App: show launch indicator > Finalize the Splash Screen
 
 
 Cloud Tasks
 ----
+
+Dash Tasks
+----
+
+
 
 * Dash: Forgot Password > Mobile Invalid
 

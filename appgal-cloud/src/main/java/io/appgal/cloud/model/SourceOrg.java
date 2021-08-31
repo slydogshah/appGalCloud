@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.*;
 
 public class SourceOrg implements Serializable {
@@ -284,5 +287,26 @@ public class SourceOrg implements Serializable {
         sourceOrg.isProducer = jsonObject.get("producer").getAsBoolean();
 
         return sourceOrg;
+    }
+
+    public static String generateOrgId(String original)
+    {
+        try{
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt);
+
+            byte[] hashedOrgId = md.digest(original.getBytes(StandardCharsets.UTF_8));
+            String orgId = Base64.getEncoder().encodeToString(hashedOrgId);
+
+            return orgId;
+        }
+        catch(Exception e){
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -171,10 +171,14 @@ public class Registration {
 
             Profile profile = Profile.parse(jsonObject.toString());
             SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
+            String generatedOrgId = SourceOrg.generateOrgId(sourceOrg.getOrgId());
+            sourceOrg.setOrgId(generatedOrgId);
             sourceOrg.addProfile(profile);
             profile.setSourceOrgId(sourceOrg.getOrgId());
 
 
+            //TODO: Make sure TimeZone is assigned
+            //TODO: Make sure OrgType is consistent
             Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
             if(!violations.isEmpty())
             {
@@ -218,9 +222,9 @@ public class Registration {
             ZoneId orgZone = mapUtils.determineTimeZone(location.getLatitude(),location.getLongitude());
             sourceOrg.getAddress().setTimeZone(orgZone.getId());
 
-            this.profileRegistrationService.registerSourceOrg(profile.getEmail(),sourceOrg);
+            SourceOrg storedSourceOrg = this.profileRegistrationService.registerSourceOrg(profile.getEmail(),sourceOrg);
 
-            return Response.ok(sourceOrg.toString()).build();
+            return Response.ok(storedSourceOrg.toString()).build();
         }
         catch(ResourceExistsException rxe)
         {
