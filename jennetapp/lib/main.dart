@@ -44,13 +44,13 @@ class MyHttpOverrides extends HttpOverrides{
 }*/
 
 
-void main(String env) {
+Future<void> main(String env) async{
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  //await Future.delayed(Duration(seconds: 2));
+  await Future.delayed(Duration(seconds: 10));
 
   Future<Map<String,dynamic>> config = UrlFunctions.getConfig(env);
   config.then((jsonMap) {
