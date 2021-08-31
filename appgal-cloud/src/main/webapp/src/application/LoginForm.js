@@ -620,6 +620,16 @@ function RenderLogin({state,props})
                                                                                    );
                                                                 ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
                                                                 }
+                                                                else if(violations.includes("org_inconsistent")){
+                                                                      const validationError = (
+                                                                                               <CAlert
+                                                                                               color="warning"
+                                                                                               >
+                                                                                                  This Organization is already registered as a different type
+                                                                                              </CAlert>
+                                                                                           );
+                                                                        ReactDOM.render(validationError,document.getElementById('validation_error'));
+                                                                }
 
                                                             }
                                                             else
@@ -855,6 +865,7 @@ class LoginForm extends React.Component {
     return (
       <>
         <br/><br/><br/><br/><br/>
+        <div id="validation_error"/>
         <div id="unknown_error"/>
         <div id="progress"/>
         <div id="parent">

@@ -169,6 +169,37 @@ public class Registration {
             JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
             jsonObject.remove("httpsAgent");
 
+            //JsonUtil.print(this.getClass(),jsonObject);
+
+            JsonObject responseJson = new JsonObject();
+            JsonArray violationsArray = new JsonArray();
+            //Validate the address
+            if(!jsonObject.has("zip"))
+            {
+                violationsArray.add("zip_required");
+            }
+            if(jsonObject.has("zip")){
+                String zip = jsonObject.get("zip").getAsString();
+                if(zip == null || zip.trim().length()==0){
+                    violationsArray.add("zip_required");
+                }
+            }
+            if(!jsonObject.has("street"))
+            {
+                violationsArray.add("street_required");
+            }
+            if(jsonObject.has("street")){
+                String zip = jsonObject.get("street").getAsString();
+                if(zip == null || zip.trim().length()==0){
+                    violationsArray.add("street_required");
+                }
+            }
+
+            if(violationsArray.size()>0) {
+                responseJson.add("violations", violationsArray);
+                return Response.status(400).entity(responseJson.toString()).build();
+            }
+
             Profile profile = Profile.parse(jsonObject.toString());
             SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
             String generatedOrgId = SourceOrg.generateOrgId(sourceOrg.getOrgId());
@@ -176,49 +207,38 @@ public class Registration {
             sourceOrg.addProfile(profile);
             profile.setSourceOrgId(sourceOrg.getOrgId());
 
+            Location location = this.mapUtils.calculateCoordinates(sourceOrg.getAddress());
+            sourceOrg.setLocation(location);
+            SourceOrg existing = this.profileRegistrationService.findSourceOrg(sourceOrg);
+            //JsonUtil.print(this.getClass(),existing.toJson());
+            //JsonUtil.print(this.getClass(),sourceOrg.toJson());
+            if(existing != null && existing.isProducer() != sourceOrg.isProducer())
+            {
+                violationsArray.add("org_inconsistent");
+            }
 
             //TODO: Make sure TimeZone is assigned
-            //TODO: Make sure OrgType is consistent
-            Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
-            if(!violations.isEmpty())
-            {
-                JsonObject responseJson = new JsonObject();
-                JsonArray violationsArray = new JsonArray();
-                for(ConstraintViolation violation:violations)
-                {
-                    logger.info("VIOLATION: "+violation.getMessage());
-                    violationsArray.add(violation.getMessage());
-                }
-
-
-                //Validate the address
-                if(!jsonObject.has("zip"))
-                {
-                    violationsArray.add("zip_required");
-                }
-                if(jsonObject.has("zip")){
-                    String zip = jsonObject.get("zip").getAsString();
-                    if(zip == null || zip.trim().length()==0){
-                        violationsArray.add("zip_required");
-                    }
-                }
-                if(!jsonObject.has("street"))
-                {
-                    violationsArray.add("street_required");
-                }
-                if(jsonObject.has("street")){
-                    String zip = jsonObject.get("street").getAsString();
-                    if(zip == null || zip.trim().length()==0){
-                        violationsArray.add("street_required");
-                    }
-                }
-
+            if(violationsArray.size()>0) {
                 responseJson.add("violations", violationsArray);
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
-            Address orgAddress = sourceOrg.getAddress();
-            Location location = this.mapUtils.calculateCoordinates(orgAddress);
+
+            Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
+            if(!violations.isEmpty())
+            {
+                JsonObject vJson = new JsonObject();
+                JsonArray vArray = new JsonArray();
+                for(ConstraintViolation violation:violations)
+                {
+                    logger.info("VIOLATION: "+violation.getMessage());
+                    vArray.add(violation.getMessage());
+                }
+
+                vJson.add("violations", vArray);
+                return Response.status(400).entity(vJson.toString()).build();
+            }
+
             ZoneId orgZone = mapUtils.determineTimeZone(location.getLatitude(),location.getLongitude());
             sourceOrg.getAddress().setTimeZone(orgZone.getId());
 

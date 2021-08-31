@@ -108,7 +108,7 @@ public class ProfileRegistrationService {
         return storedSourceOrg;
     }
 
-    private SourceOrg findSourceOrg(SourceOrg newSourceOrg){
+    public SourceOrg findSourceOrg(SourceOrg newSourceOrg){
         Location newOrgLocation = newSourceOrg.getLocation();
         List<SourceOrg> all = this.mongoDBJsonStore.getSourceOrgs();
         for(SourceOrg cour:all){
