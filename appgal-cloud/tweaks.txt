@@ -1,7 +1,7 @@
 Active Tasks
 ----
-Dash: Pick Org flow - (Registration)
 App: show launch indicator > Finalize the Splash Screen
+
 
 QA Tasks
 ----
@@ -23,8 +23,11 @@ Dash Tasks
 ----
 
 
+Fixed Tasks
+----
+* Dash: Pick Org flow - (Registration) > (FIXED)
 
-* Dash: Forgot Password > Mobile Invalid
+* Dash: Forgot Password > Mobile Invalid > (FIXED)
 
 * Dash: Add TimeZones > (FIXED)
 
