@@ -1,14 +1,13 @@
 Active Tasks
 ----
-App: show launch indicator > Finalize the Splash Screen
-
-
-QA Tasks
-----
 Cloud: No Push Notification in end-to-end flow > QA
 App: Refresh from backgrounding > QA
 App: Push wakeup and launch app > QA
 App: Test if location updates are being sent > QA
+
+
+QA Tasks
+----
 
 
 App Tasks
@@ -25,6 +24,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+* App: show launch indicator > Finalize the Splash Screen > (FIXED)
+
 * Dash: Pick Org flow - (Registration) > (FIXED)
 
 * Dash: Forgot Password > Mobile Invalid > (FIXED)
