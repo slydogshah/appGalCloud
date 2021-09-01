@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.time.ZoneId;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -20,6 +21,13 @@ import javax.inject.Inject;
 public class MapUtils {
     @Inject
     private GoogleApiClient googleApiClient;
+
+    private TimeZoneEngine engine;
+
+    @PostConstruct
+    public void onStart(){
+        this.engine = TimeZoneEngine.initialize();
+    }
 
     public double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
     {
@@ -54,9 +62,8 @@ public class MapUtils {
 
     public ZoneId determineTimeZone(double latitude, double longitude)
     {
-        /*TimeZoneEngine engine = TimeZoneEngine.initialize();
-        List<ZoneId> allZones = engine.queryAll(latitude, longitude);
-        return allZones.get(0);*/
-        return ZoneId.of("America/Chicago");
+        List<ZoneId> allZones = this.engine.queryAll(latitude, longitude);
+        return allZones.get(0);
+        //return ZoneId.of("America/Chicago");
     }
 }
