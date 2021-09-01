@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -300,7 +301,7 @@ public class SourceOrg implements Serializable {
             md.update(salt);
 
             byte[] hashedOrgId = md.digest(original.getBytes(StandardCharsets.UTF_8));
-            String orgId = Base64.getEncoder().encodeToString(hashedOrgId);
+            String orgId = Base64.getUrlEncoder().withoutPadding().encodeToString(hashedOrgId);
 
             return orgId;
         }

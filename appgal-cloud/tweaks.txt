@@ -1,8 +1,6 @@
 Active Tasks
 ----
-Cloud: No Push Notification in end-to-end flow > QA
-App: Refresh from backgrounding > QA
-App: Push wakeup and launch app > QA
+Cloud: MapUtils TimeZone calculation OOM in Cloud
 App: Test if location updates are being sent > QA
 
 
@@ -18,12 +16,22 @@ Cloud Tasks
 ----
 
 
+
 Dash Tasks
 ----
+Dash: Filter Pickup Times > Broken on QA Cluster
 
 
 Fixed Tasks
 ----
+*Cloud: PickupRequests not reflecting on Dash in Cloud-only
+
+* Cloud: No Push Notification in end-to-end flow
+
+* App: Refresh from backgrounding
+
+* App: Push wakeup and launch app
+
 * App: show launch indicator > Finalize the Splash Screen > (FIXED)
 
 * Dash: Pick Org flow - (Registration) > (FIXED)

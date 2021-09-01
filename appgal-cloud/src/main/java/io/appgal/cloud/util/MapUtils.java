@@ -8,6 +8,7 @@ import io.appgal.cloud.restclient.GoogleApiClient;
 import org.locationtech.spatial4j.distance.DistanceUtils;
 import net.iakovlev.timeshape.TimeZoneEngine;
 
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.time.ZoneId;
@@ -53,8 +54,9 @@ public class MapUtils {
 
     public ZoneId determineTimeZone(double latitude, double longitude)
     {
-        TimeZoneEngine engine = TimeZoneEngine.initialize();
+        /*TimeZoneEngine engine = TimeZoneEngine.initialize();
         List<ZoneId> allZones = engine.queryAll(latitude, longitude);
-        return allZones.get(0);
+        return allZones.get(0);*/
+        return ZoneId.of("America/Chicago");
     }
 }

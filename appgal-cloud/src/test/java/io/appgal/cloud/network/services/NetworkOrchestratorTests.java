@@ -181,7 +181,7 @@ public class NetworkOrchestratorTests extends BaseTest {
         Profile profile = new Profile(UUID.randomUUID().toString(), "jen@app.io", 8675309l, "","", ProfileType.FOOD_RUNNER);
         FoodRunner foodRunner = new FoodRunner(profile, location);
         String androidToken = "cKJHUNDuTpmb8AMP6xgWK7:APA91bHQoi7mzU9LNlEJu6mSK5pbQPEZGMMX4E7NLe22lXd-R4VuU1ULyT30GY4emWkkgBAGilHyf01-5cEfgpHhWAvo9zwJInC_JymbkRBXLO4LS5fVe285rhseZEoydp8sADRceNrz";
-        String iosToken = "dj_GHJcyv0uGntEEZkOn3x:APA91bH89l3R7HPshyMzljbOt1z9tSyCWBn_tufv_Rmkoc5fQ3yuIneotF4jo5w-JQEKqVatcbXnTMWvZ58owWlEWHNvLFUr9rtKkPwTUTo5IjUo2KRfczczmFUWrRiyooCCB1Z7ftKJ";
+        String iosToken = "f9hppGCIc0N2qVuvsyuENO:APA91bGrVKqic_4Ho45IoFObh3xYsMloh0EW3IoaiKBj8JOQix88J4P4MCv9d8L33UoU13u6CiaxvuhXpeQn9Q01pNkrvf9iUGRZKQIG4VKbFn2vZMSFoRPHco1qQ1ZmU5EPSuldjDkX";
         String[] tokens = new String[]{androidToken,iosToken};
         this.networkOrchestrator.enterNetwork(foodRunner);
 
