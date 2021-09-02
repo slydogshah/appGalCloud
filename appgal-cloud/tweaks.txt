@@ -1,6 +1,5 @@
 Active Tasks
 ----
-Dash: Filter Pickup Times > Broken on QA Cluster
 App: Test if location updates are being sent > QA
 
 
@@ -21,6 +20,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+*Dash: Filter Pickup Times > Broken on QA Cluster
+
 *Cloud: MapUtils TimeZone calculation OOM in Cloud
 
 *Cloud: PickupRequests not reflecting on Dash in Cloud-only

@@ -196,7 +196,8 @@ function HomeView({state, props}) {
                                                                    );
                                                                   ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                   ReactDOM.render(element,document.getElementById('progress'));
-                                                                  const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/";
+                                                                  const orgId = store.getState().sourceOrg.orgId;
+                                                                  const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/?orgId="+orgId;
                                                                   axios.get(apiUrl).then((response) => {
                                                                       //alert(JSON.stringify(response.data));
                                                                       ReactDOM.unmountComponentAtNode(document.getElementById('progress'));

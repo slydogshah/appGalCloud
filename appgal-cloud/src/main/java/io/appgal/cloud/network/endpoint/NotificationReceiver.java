@@ -86,99 +86,108 @@ public class NotificationReceiver {
     @Path("/addPickupDetails")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addPickupDetails(){
-        JsonArray timeOptions = new JsonArray();
+    public Response addPickupDetailsDropDown(@QueryParam("orgId") String orgId){
+        try {
+            JsonArray timeOptions = new JsonArray();
 
-        Map<String,String> times = new HashMap<>();
-        times.put("0:0","12:00 AM");
-        times.put("0:1","1:00 AM");
-        times.put("0:2","2:00 AM");
-        times.put("0:3","3:00 AM");
-        times.put("0:4","4:00 AM");
-        times.put("0:5","5:00 AM");
-        times.put("0:6","6:00 AM");
-        times.put("0:7","7:00 AM");
-        times.put("0:8","8:00 AM");
-        times.put("0:9","9:00 AM");
-        times.put("0:10","10:00 AM");
-        times.put("0:11","11:00 AM");
-        times.put("0:12","12:00 PM");
-        times.put("0:13","1:00 PM");
-        times.put("0:14","2:00 PM");
-        times.put("0:15","3:00 PM");
-        times.put("0:16","4:00 PM");
-        times.put("0:17","5:00 PM");
-        times.put("0:18","6:00 PM");
-        times.put("0:19","7:00 PM");
-        times.put("0:20","8:00 PM");
-        times.put("0:21","9:00 PM");
-        times.put("0:22","10:00 PM");
-        times.put("0:23","11:00 PM");
+            Map<String, String> times = new HashMap<>();
+            times.put("0:0", "12:00 AM");
+            times.put("0:1", "1:00 AM");
+            times.put("0:2", "2:00 AM");
+            times.put("0:3", "3:00 AM");
+            times.put("0:4", "4:00 AM");
+            times.put("0:5", "5:00 AM");
+            times.put("0:6", "6:00 AM");
+            times.put("0:7", "7:00 AM");
+            times.put("0:8", "8:00 AM");
+            times.put("0:9", "9:00 AM");
+            times.put("0:10", "10:00 AM");
+            times.put("0:11", "11:00 AM");
+            times.put("0:12", "12:00 PM");
+            times.put("0:13", "1:00 PM");
+            times.put("0:14", "2:00 PM");
+            times.put("0:15", "3:00 PM");
+            times.put("0:16", "4:00 PM");
+            times.put("0:17", "5:00 PM");
+            times.put("0:18", "6:00 PM");
+            times.put("0:19", "7:00 PM");
+            times.put("0:20", "8:00 PM");
+            times.put("0:21", "9:00 PM");
+            times.put("0:22", "10:00 PM");
+            times.put("0:23", "11:00 PM");
 
-        Map<String,String> times2 = new HashMap<>();
-        times2.put("1:0","12:00 AM");
-        times2.put("1:1","1:00 AM");
-        times2.put("1:2","2:00 AM");
-        times2.put("1:3","3:00 AM");
-        times2.put("1:4","4:00 AM");
-        times2.put("1:5","5:00 AM");
-        times2.put("1:6","6:00 AM");
-        times2.put("1:7","7:00 AM");
-        times2.put("1:8","8:00 AM");
-        times2.put("1:9","9:00 AM");
-        times2.put("1:10","10:00 AM");
-        times2.put("1:11","11:00 AM");
-        times2.put("1:12","12:00 PM");
-        times2.put("1:13","1:00 PM");
-        times2.put("1:14","2:00 PM");
-        times2.put("1:15","3:00 PM");
-        times2.put("1:16","4:00 PM");
-        times2.put("1:17","5:00 PM");
-        times2.put("1:18","6:00 PM");
-        times2.put("1:19","7:00 PM");
-        times2.put("1:20","8:00 PM");
-        times2.put("1:21","9:00 PM");
-        times2.put("1:22","10:00 PM");
-        times2.put("1:23","11:00 PM");
+            Map<String, String> times2 = new HashMap<>();
+            times2.put("1:0", "12:00 AM");
+            times2.put("1:1", "1:00 AM");
+            times2.put("1:2", "2:00 AM");
+            times2.put("1:3", "3:00 AM");
+            times2.put("1:4", "4:00 AM");
+            times2.put("1:5", "5:00 AM");
+            times2.put("1:6", "6:00 AM");
+            times2.put("1:7", "7:00 AM");
+            times2.put("1:8", "8:00 AM");
+            times2.put("1:9", "9:00 AM");
+            times2.put("1:10", "10:00 AM");
+            times2.put("1:11", "11:00 AM");
+            times2.put("1:12", "12:00 PM");
+            times2.put("1:13", "1:00 PM");
+            times2.put("1:14", "2:00 PM");
+            times2.put("1:15", "3:00 PM");
+            times2.put("1:16", "4:00 PM");
+            times2.put("1:17", "5:00 PM");
+            times2.put("1:18", "6:00 PM");
+            times2.put("1:19", "7:00 PM");
+            times2.put("1:20", "8:00 PM");
+            times2.put("1:21", "9:00 PM");
+            times2.put("1:22", "10:00 PM");
+            times2.put("1:23", "11:00 PM");
 
+            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            String timeZone = sourceOrg.getAddress().getTimeZone();
+            Calendar now = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 
-        JsonObject today = new JsonObject();
-        today.addProperty("value","0");
-        today.addProperty("label", "--Today--");
-        timeOptions.add(today);
-        //Calendar now = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC));
-        Calendar now = Calendar.getInstance();
-        int currentHour = now.get(Calendar.HOUR_OF_DAY);
-        JsonObject nowOption = new JsonObject();
-        String key = "0:"+currentHour;
-        nowOption.addProperty("value",key);
-        nowOption.addProperty("label","NOW");
-        timeOptions.add(nowOption);
-        currentHour++;
-        for(int i=currentHour;i<24;i++)
+            JsonObject today = new JsonObject();
+            today.addProperty("value", "0");
+            today.addProperty("label", "--Today--");
+            timeOptions.add(today);
+            int currentHour = now.get(Calendar.HOUR_OF_DAY);
+            JsonObject nowOption = new JsonObject();
+            String key = "0:" + currentHour;
+            nowOption.addProperty("value", key);
+            nowOption.addProperty("label", "NOW");
+            timeOptions.add(nowOption);
+            currentHour++;
+            for (int i = currentHour; i < 24; i++) {
+                JsonObject cour = new JsonObject();
+                key = "0:" + i;
+                String value = times.get(key);
+                cour.addProperty("value", key);
+                cour.addProperty("label", value);
+                timeOptions.add(cour);
+            }
+
+            JsonObject tomorrow = new JsonObject();
+            tomorrow.addProperty("value", "1");
+            tomorrow.addProperty("label", "--Tomorrow--");
+            timeOptions.add(tomorrow);
+            for (int i = 0; i < 24; i++) {
+                JsonObject cour = new JsonObject();
+                key = "1:" + i;
+                String value = times2.get(key);
+                cour.addProperty("value", key);
+                cour.addProperty("label", value);
+                timeOptions.add(cour);
+            }
+
+            return Response.ok(timeOptions.toString()).build();
+        }
+        catch(Exception e)
         {
-            JsonObject cour = new JsonObject();
-            key = "0:"+i;
-            String value = times.get(key);
-            cour.addProperty("value",key);
-            cour.addProperty("label",value);
-            timeOptions.add(cour);
+            logger.error(e.getMessage(), e);
+            JsonObject error = new JsonObject();
+            error.addProperty("exception", e.getMessage());
+            return Response.status(500).entity(error.toString()).build();
         }
-
-        JsonObject tomorrow = new JsonObject();
-        tomorrow.addProperty("value","1");
-        tomorrow.addProperty("label", "--Tomorrow--");
-        timeOptions.add(tomorrow);
-        for(int i=0; i<24; i++){
-            JsonObject cour = new JsonObject();
-            key = "1:"+i;
-            String value = times2.get(key);
-            cour.addProperty("value",key);
-            cour.addProperty("label",value);
-            timeOptions.add(cour);
-        }
-
-        return Response.ok(timeOptions.toString()).build();
     }
 
 
