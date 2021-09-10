@@ -41,9 +41,6 @@ gcloud components update --version 285.0.1
 
 
 
-
-
-
 e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.refresh"]
 e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]
 e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateExpirationForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]
