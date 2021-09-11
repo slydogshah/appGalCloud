@@ -388,11 +388,10 @@ class InProgressListView extends StatelessWidget {
         fit: BoxFit.cover,
       );
     }
-    Widget buttons = null;
+    Widget buttons = this.getButton(context, tx);;
     Text dropOffOrgName = null;
     if(tx.getPickupNotification().getDropOffOrg() != null)
     {
-      buttons = this.getButton(context, tx);
       dropOffOrgName = Text(
         tx
             .getPickupNotification()
@@ -788,7 +787,7 @@ class InProgressListView extends StatelessWidget {
           CrossAxisAlignment.end,
           children: <Widget>[
             ElevatedButton(
-              child: Text('Community DropOff'),
+              child: Text('Delivery Done'),
               style: ElevatedButton.styleFrom(
                 //primary: Color(0xFF383EDB)
                   primary: Colors.pink
