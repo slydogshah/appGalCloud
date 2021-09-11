@@ -270,7 +270,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                       ),
                     ),
                   ),
-                  Tooltip(
+                  /*Tooltip(
                     message: "Notify Availability",
                     child: Material(
                       color: offline,
@@ -284,6 +284,29 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                           }
                           else{
                             foodRunner.offlineCommunitySupport = true;
+
+                            /*AlertDialog dialog = AlertDialog(
+                              title: Text('Create an account?'),
+                              content: Text('Thank you for giving your time to Hunger. We hope the Community helps you in your time of need, like you are helping now.\n\n-#Jen Network'),
+                              actions: [
+                                FlatButton(
+                                  textColor: Color(0xFF6200EE),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('CANCEL'),
+                                ),
+                                FlatButton(
+                                  textColor: Color(0xFF6200EE),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) => Registration()));
+                                  },
+                                  child: Text('ACCEPT'),
+                                ),
+                              ],
+                            );*/
                           }
                           Profile profile = ActiveSession.getInstance().getProfile();
                           // set up the SimpleDialog
@@ -348,7 +371,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             )
