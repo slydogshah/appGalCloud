@@ -1,11 +1,5 @@
 Active Tasks
 ----
-Step 1: Schedule an Offline Dropoff
-Step2: Finish all in progress
-Step 3: Cannot go to Requests to Accept the Offline Dropoff (Bug)
-Step 4: Accept Offline DropOff but In-progress screen did not reflect till App refresh (Bug)
-Step5: Offline DropOff does not have an Org, So FoodRunner has to notify its dropped off so reflects in the PickupHistory (Bug)
-
 App: Test if location updates are being sent > QA
 
 
@@ -31,6 +25,13 @@ Dash Tasks
 
 Fixed Tasks
 ----
+Step 1: Schedule an Offline Dropoff
+Step2: Finish all in progress
+Step 3: Cannot go to Requests to Accept the Offline Dropoff (Bug)
+Step 4: Accept Offline DropOff but In-progress screen did not reflect till App refresh (Bug)
+Step5: Offline DropOff does not have an Org, So FoodRunner has to notify its dropped off so reflects in the PickupHistory (Bug)
+
+
 *Dash: Filter Pickup Times > Broken on QA Cluster
 
 *Cloud: MapUtils TimeZone calculation OOM in Cloud
