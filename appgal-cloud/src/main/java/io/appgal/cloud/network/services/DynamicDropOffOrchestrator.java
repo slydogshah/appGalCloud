@@ -29,16 +29,17 @@ public class DynamicDropOffOrchestrator {
     @Inject
     private ActiveNetwork activeNetwork;
 
+    @Inject
+    private MongoDBJsonStore mongoDBJsonStore;
+
 
     public void notifyAvailability(String foodRunnerEmail, boolean available)
     {
         FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(foodRunnerEmail);
         if(foodRunner != null) {
             foodRunner.setOfflineCommunitySupport(available);
-
-            JsonUtil.print(this.getClass(),foodRunner.toJson());
-
             this.activeNetwork.addActiveFoodRunner(foodRunner);
+            this.mongoDBJsonStore.updateProfile(foodRunner.getProfile());
         }
     }
 

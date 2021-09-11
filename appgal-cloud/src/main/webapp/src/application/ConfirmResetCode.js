@@ -79,12 +79,38 @@ function ConfirmResetCodeView({state, props}) {
                            }
                        }}
                       />
+                      <div id="resetCodeRequired"/>
                     </GridItem>
+
                   </GridContainer>
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
                         ReactDOM.unmountComponentAtNode(document.getElementById('validation_error'));
+                        ReactDOM.unmountComponentAtNode(document.getElementById('resetCodeRequired'));
+
+                        const required = (
+                                                       <CAlert
+                                                       color="warning"
+                                                       >
+                                                          Required
+                                                      </CAlert>
+                                                   );
+                                                let validationSuccess = true;
+
+
+
+                                                  if(state.resetCode == null || state.resetCode == "")
+                                                  {
+                                                    ReactDOM.render(required,document.getElementById('resetCodeRequired'));
+                                                    validationSuccess = false;
+                                                  }
+
+                                                  if(!validationSuccess)
+                                                                              {
+                                                                                  return;
+                                                                              }
+
                         const payload = {
                            email:resetEmail,
                            resetCode:state.resetCode

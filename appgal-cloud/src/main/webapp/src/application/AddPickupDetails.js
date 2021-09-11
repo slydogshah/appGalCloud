@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
+import Select from 'react-select'
 import axios from 'axios'
 import { withRouter } from "react-router";
 import {
@@ -38,6 +39,7 @@ import {
     CProgress,
     CCardGroup,
     CContainer,
+    CAlert,
     CWidgetDropdown
 } from '@coreui/react'
 import { Formik } from "formik";
@@ -124,9 +126,20 @@ class Thumb extends React.Component {
   }
 }
 
+function RenderOption(key,value){
+    return (
+        <>
+        <option value={key}>{value}</option>
+        </>
+      );
+}
+
 function RenderForm({state,props})
 {
     const classes = useStyles();
+
+    console.log(JSON.stringify(props.history.location.state.data));
+    const options = props.history.location.state.data;
     const renderForm = ({ values, handleSubmit, setFieldValue }) => {
                                            return (
                                              <>
@@ -142,63 +155,17 @@ function RenderForm({state,props})
                                                        <GridContainer>
                                                          <GridItem xs={12} sm={12} md={4}>
                                                            <CLabel htmlFor="ccmonth">Preferred Pickup Time</CLabel>
-                                                            <CSelect custom name="time" id="ccmonth" onChange={(event) => {
-                                                                const target = event.target;
-                                                                const value = target.value;
-                                                                const name = target.name;
-                                                                state.[name] = value;
-                                                            }}>
-                                                              <option value="0">--Today--</option>
-                                                              <option value="0:0">12:00 AM</option>
-                                                              <option value="0:1">1:00 AM</option>
-                                                              <option value="0:2">2:00 AM</option>
-                                                              <option value="0:3">3:00 AM</option>
-                                                              <option value="0:4">4:00 AM</option>
-                                                              <option value="0:5">5:00 AM</option>
-                                                              <option value="0:6">6:00 AM</option>
-                                                              <option value="0:7">7:00 AM</option>
-                                                              <option value="0:8">8:00 AM</option>
-                                                              <option value="0:9">9:00 AM</option>
-                                                              <option value="0:10">10:00 AM</option>
-                                                              <option value="0:11">11:00 AM</option>
-                                                              <option value="0:12">12:00 PM</option>
-                                                              <option value="0:13">1:00 PM</option>
-                                                              <option value="0:14">2:00 PM</option>
-                                                              <option value="0:15">3:00 PM</option>
-                                                              <option value="0:16">4:00 PM</option>
-                                                              <option value="0:17">5:00 PM</option>
-                                                              <option value="0:18">6:00 PM</option>
-                                                              <option value="0:19">7:00 PM</option>
-                                                              <option value="0:20">8:00 PM</option>
-                                                              <option value="0:21">9:00 PM</option>
-                                                              <option value="0:22">10:00 PM</option>
-                                                              <option value="0:23">11:00 PM</option>
-                                                              <option value="1">--Tomorrow--</option>
-                                                              <option value="1:0">12:00 AM</option>
-                                                            <option value="1:1">1:00 AM</option>
-                                                            <option value="1:2">2:00 AM</option>
-                                                            <option value="1:3">3:00 AM</option>
-                                                            <option value="1:4">4:00 AM</option>
-                                                            <option value="1:5">5:00 AM</option>
-                                                            <option value="1:6">6:00 AM</option>
-                                                            <option value="1:7">7:00 AM</option>
-                                                            <option value="1:8">8:00 AM</option>
-                                                            <option value="1:9">9:00 AM</option>
-                                                            <option value="1:10">10:00 AM</option>
-                                                            <option value="1:11">11:00 AM</option>
-                                                            <option value="1:12">12:00 PM</option>
-                                                            <option value="1:13">1:00 PM</option>
-                                                            <option value="1:14">2:00 PM</option>
-                                                            <option value="1:15">3:00 PM</option>
-                                                            <option value="1:16">4:00 PM</option>
-                                                            <option value="1:17">5:00 PM</option>
-                                                            <option value="1:18">6:00 PM</option>
-                                                            <option value="1:19">7:00 PM</option>
-                                                            <option value="1:20">8:00 PM</option>
-                                                            <option value="1:21">9:00 PM</option>
-                                                            <option value="1:22">10:00 PM</option>
-                                                            <option value="1:23">11:00 PM</option>
-                                                         </CSelect>
+                                                            <Select
+                                                                name="time"
+                                                                id="time"
+                                                                maxMenuHeight={220}
+                                                                menuPlacement="auto"
+                                                                options={options}
+                                                                onChange={(event) => {
+                                                                   state.['time'] = event.value;
+                                                               }}
+                                                            />
+                                                         <div id="time_is_required"/>
                                                          </GridItem>
                                                        </GridContainer>
                                                        <GridContainer>
@@ -214,24 +181,15 @@ function RenderForm({state,props})
                                                                <option value="VEG">VEG</option>
                                                                <option value="NON_VEG">NON-VEG</option>
                                                            </CSelect>
+                                                           <div id="food_type_is_required"/>
                                                          </GridItem>
                                                        </GridContainer>
-                                                       <GridContainer>
-                                                         <GridItem xs={12} sm={12} md={6}>
-                                                            <div className="form-group">
-                                                              <label for="file">File upload</label>
-                                                              <input id="file" name="file" type="file" onChange={(event) => {
-                                                                const fileUpload = event.currentTarget.files[0];
-                                                                setFieldValue("file", fileUpload);
-                                                                state.upload = fileUpload;
-                                                              }} className="form-control" />
-                                                              <Thumb file={values.file}/>
-                                                            </div>
-                                                         </GridItem>
-                                                       </GridContainer>
+
                                                      </CardBody>
                                                      <CardFooter>
                                                        <Button color="primary" onClick={(e) => {
+                                                                ReactDOM.unmountComponentAtNode(document.getElementById('time_is_required'));
+                                                                ReactDOM.unmountComponentAtNode(document.getElementById('food_type_is_required'));
                                                                 //show progress bar
                                                                 var element = (
                                                                         <Snackbar
@@ -261,22 +219,50 @@ function RenderForm({state,props})
                                                                                     state: { data: response.data }
                                                                                   });
                                                                 }).catch(err => {
-                                                                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
-                                                                            var element = (
-                                                                                                                                     <Snackbar
-                                                                                                                                       place="tc"
-                                                                                                                                       color="danger"
-                                                                                                                                       icon={DonutLargeOutlinedIcon}
-                                                                                                                                       message="500: Unknown System Error...."
-                                                                                                                                       open={true}
-                                                                                                                                       close
-                                                                                                                                       closeNotification={() => {
-                                                                                                                                         ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
-                                                                                                                                       }}
-                                                                                                                                     />
-                                                                                                                             );
-                                                                                                                             ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
-                                                                                                                             ReactDOM.render(element,document.getElementById('unknown_error'));
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                    if(err.response != null && err.response.status == 400)
+                                                                    {
+                                                                        if(err.response.data.timeIsRequired)
+                                                                        {
+                                                                            const element = (
+                                                                                                  <CAlert
+                                                                                                  color="warning"
+                                                                                                  >
+                                                                                                     'Preferred Pickup Time' is required
+                                                                                                 </CAlert>
+                                                                                              );
+                                                                            ReactDOM.render(element,document.getElementById('time_is_required'));
+                                                                        }
+                                                                        if(err.response.data.foodTypeIsRequired)
+                                                                        {
+                                                                            const element = (
+                                                                                                  <CAlert
+                                                                                                  color="warning"
+                                                                                                  >
+                                                                                                     'Food Type' is required
+                                                                                                 </CAlert>
+                                                                                              );
+                                                                            ReactDOM.render(element,document.getElementById('food_type_is_required'));
+                                                                        }
+                                                                    }
+                                                                    else{
+
+                                                                        var element = (
+                                                                             <Snackbar
+                                                                               place="tc"
+                                                                               color="danger"
+                                                                               icon={DonutLargeOutlinedIcon}
+                                                                               message="500: Unknown System Error...."
+                                                                               open={true}
+                                                                               close
+                                                                               closeNotification={() => {
+                                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                               }}
+                                                                             />
+                                                                     );
+                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                     ReactDOM.render(element,document.getElementById('unknown_error'));
+                                                                    }
                                                                 });
                                                          }}>Update</Button>
                                                      </CardFooter>

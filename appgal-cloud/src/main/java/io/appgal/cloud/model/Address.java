@@ -8,6 +8,7 @@ public class Address implements Serializable {
 
     private String street;
     private String zip;
+    private String timeZone;
 
     public Address() {
     }
@@ -28,11 +29,20 @@ public class Address implements Serializable {
         this.zip = zip;
     }
 
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+    }
+
     public JsonObject toJson()
     {
         JsonObject json = new JsonObject();
         json.addProperty("street", this.street);
         json.addProperty("zip", this.zip);
+        json.addProperty("timeZone", this.timeZone);
         return json;
     }
 }

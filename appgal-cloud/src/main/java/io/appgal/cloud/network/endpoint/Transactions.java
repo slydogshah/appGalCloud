@@ -143,18 +143,37 @@ public class Transactions {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
+            System.out.println("*****ORG_ID: "+orgId+"**********1");
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(orgId);
 
-            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            System.out.println("*****TXS: "+transactions+"**********1");
 
 
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
-                    pending.add(cour.toJson());
+                    JsonObject txJson = cour.toJson();
+                    if(cour.getPickUpNotification().isToday())
+                    {
+                        txJson.addProperty("when","TODAY");
+                    }
+                    else
+                    {
+                        txJson.addProperty("when","TOM");
+                    }
+                    pending.add(txJson);
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
                         cour.getTransactionState() == TransactionState.ONTHEWAY) {
 
-                    inProgress.add(cour.toJson());
+                    JsonObject txJson = cour.toJson();
+                    if(cour.getPickUpNotification().isToday())
+                    {
+                        txJson.addProperty("when","TODAY");
+                    }
+                    else
+                    {
+                        txJson.addProperty("when","TOM");
+                    }
+                    inProgress.add(txJson);
                 }
             }
             result.add("pending", pending);
@@ -168,6 +187,9 @@ public class Transactions {
             }
             result.addProperty("historyExists",historyExists);
             result.add("history",JsonParser.parseString(history.toString()).getAsJsonArray());
+
+            System.out.println("*****RESPONSE: "+result+"**********1");
+
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)
@@ -192,10 +214,28 @@ public class Transactions {
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryDropOffTransactions(orgId);
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
-                    pending.add(cour.toJson());
+                    JsonObject txJson = cour.toJson();
+                    if(cour.getPickUpNotification().isToday())
+                    {
+                        txJson.addProperty("when","TODAY");
+                    }
+                    else
+                    {
+                        txJson.addProperty("when","TOM");
+                    }
+                    pending.add(txJson);
                 } else if (cour.getTransactionState() == TransactionState.INPROGRESS ||
                         cour.getTransactionState() == TransactionState.ONTHEWAY) {
-                    inProgress.add(cour.toJson());
+                    JsonObject txJson = cour.toJson();
+                    if(cour.getPickUpNotification().isToday())
+                    {
+                        txJson.addProperty("when","TODAY");
+                    }
+                    else
+                    {
+                        txJson.addProperty("when","TOM");
+                    }
+                    inProgress.add(txJson);
                 }
             }
             result.add("pending", pending);

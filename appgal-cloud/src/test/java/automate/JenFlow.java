@@ -7,9 +7,11 @@ import com.google.gson.JsonParser;
 
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
+import io.appgal.cloud.network.services.DynamicDropOffOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
 
 import io.appgal.cloud.util.MapUtils;
+import io.bugsbunny.test.components.BaseTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -31,7 +33,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class JenFlow {
+public class JenFlow extends BaseTest{
     private static Logger logger = LoggerFactory.getLogger(JenFlow.class);
 
     @Inject
@@ -39,6 +41,9 @@ public class JenFlow {
 
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
+
+    @Inject
+    private DynamicDropOffOrchestrator dynamicDropOffOrchestrator;
 
     @BeforeEach
     public void setup() throws Exception
@@ -56,7 +61,7 @@ public class JenFlow {
         }
     }
 
-    @Test
+    //@Test
     public void testImages() throws Exception
     {
         this.halfFlow();
@@ -95,6 +100,7 @@ public class JenFlow {
         //Notify a FoodRunner...does not pull my transactions
         JsonObject loginRunner = this.loginFoodRunner(foodRunner.getProfile().getEmail(),
                 foodRunner.getProfile().getPassword());
+        this.dynamicDropOffOrchestrator.notifyAvailability(foodRunner.getProfile().getEmail(),true);
 
         //FoodRunner accepts....this will update to notificationSent=true
         List<FoodRecoveryTransaction> myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
@@ -102,7 +108,7 @@ public class JenFlow {
         FoodRecoveryTransaction accepted = myTransactions.get(0);
         this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
-        accepted = myTransactions.get(1);
+        /*accepted = myTransactions.get(1);
         //this.acceptTransaction(foodRunner.getProfile().getEmail(),dropOff.getOrgId(),accepted);
 
         /*for(int i=0; i<7; i++)
@@ -110,6 +116,34 @@ public class JenFlow {
             myTransactions = this.getMyTransactions(foodRunner.getProfile().getEmail());
             JsonUtil.print(this.getClass(),JsonParser.parseString(myTransactions.toString()).getAsJsonArray());
         }*/
+    }
+
+    @Test
+    public void timeZoneFlow() throws Exception
+    {
+        //Register a Pickup Org
+        SourceOrg pickup = this.registerPickupOrg();
+
+        //Register a DropOff Org
+        SourceOrg dropOff = this.registerDropOffOrg();
+
+        //Register a FoodRunner
+        FoodRunner foodRunner = this.registerFoodRunner();
+
+        //Send a PickUpRequest
+        for(int i=0; i<1; i++) {
+            String foodPic = IOUtils.toString(Thread.currentThread().getContextClassLoader().
+                            getResource("encodedImage"),
+                    StandardCharsets.UTF_8);
+            String pickupNotificationId = this.sendPickUpDetails(pickup.getOrgId(), FoodTypes.VEG.name(), foodPic);
+            this.schedulePickup(pickupNotificationId, dropOff.getOrgId(), pickup);
+        }
+
+        //FoodRunner accepts....this will update to notificationSent=true
+        List<FoodRecoveryTransaction> myTransactions = this.getOrgTransactions(pickup.getOrgId());
+
+        //FoodRecoveryTransaction accepted = myTransactions.get(0);
+        //JsonUtil.print(this.getClass(),accepted.toJson());
     }
 
     @Test
@@ -165,6 +199,7 @@ public class JenFlow {
         registrationJson.addProperty("producer", true);
         registrationJson.addProperty("street","506 West Ave");
         registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -192,6 +227,7 @@ public class JenFlow {
         registrationJson.addProperty("producer", false);
         registrationJson.addProperty("street","801 West Fifth Street");
         registrationJson.addProperty("zip","78703");
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -207,7 +243,7 @@ public class JenFlow {
     {
         JsonObject json = new JsonObject();
         String id = UUID.randomUUID().toString();
-        String email = "jen@appgallabs.io";
+        String email = "jen@app.io";
         json.addProperty("id", id);
         json.addProperty("email", email);
         json.addProperty("password", "password");
@@ -239,8 +275,8 @@ public class JenFlow {
         JsonObject json = new JsonObject();
         json.addProperty("orgId", orgId);
         json.addProperty("foodType", foodType);
-        json.addProperty("foodPic", foodPic);
-        json.addProperty("time","0:0");
+        //json.addProperty("foodPic", foodPic);
+        json.addProperty("time","0:19");
 
         Response response = given().body(json.toString()).post("/notification/addPickupDetails/");
         String jsonString = response.getBody().print();
@@ -271,12 +307,23 @@ public class JenFlow {
         loginJson.addProperty("email", email);
         loginJson.addProperty("password", "password");
         loginJson.addProperty("latitude", 30.2698104d);
-        loginJson.addProperty("longitude",-97.75115579999999);
+        loginJson.addProperty("longitude",-97.75115579999999d);
         Response response = given().header("User-Agent","Dart").body(loginJson.toString()).when().post("/registration/login").andReturn();
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
         //JsonUtil.print(this.getClass(), responseJson);
         assertEquals(200, response.getStatusCode());
+
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email", email);
+        json.addProperty("pushToken", "blahblah");
+        response = given().body(json.toString()).when().post("/activeNetwork/registerPush/").andReturn();
+        jsonString = response.getBody().print();
+        responseJson = JsonParser.parseString(jsonString);
+        //JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+
         return responseJson.getAsJsonObject();
     }
 
@@ -325,5 +372,25 @@ public class JenFlow {
         String jsonString = response.getBody().print();
         JsonElement responseJson = JsonParser.parseString(jsonString);
         assertEquals(200, response.getStatusCode());
+    }
+
+    private List<FoodRecoveryTransaction> getOrgTransactions(String orgId)
+    {
+        Response response = given().get("/tx/recovery/?orgId="+orgId);
+        String jsonString = response.getBody().print();
+        JsonElement responseJson = JsonParser.parseString(jsonString);
+        //JsonUtil.print(this.getClass(), responseJson);
+        assertEquals(200, response.getStatusCode());
+
+        JsonArray pending = responseJson.getAsJsonObject().get("pending").getAsJsonArray();
+        List<FoodRecoveryTransaction> myTransactions = new ArrayList<>();
+        Iterator<JsonElement> itr = pending.iterator();
+        while(itr.hasNext())
+        {
+            FoodRecoveryTransaction cour = FoodRecoveryTransaction.parse(itr.next().getAsJsonObject().toString());
+            myTransactions.add(cour);
+        }
+
+        return myTransactions;
     }
 }

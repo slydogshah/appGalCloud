@@ -1,0 +1,93 @@
+Active Tasks
+----
+App: Test if location updates are being sent > QA
+
+
+QA Tasks
+----
+
+
+App Tasks
+-----
+Step 1: Schedule an Offline Dropoff
+Step2: Finish all in progress
+Step 3: Cannot go to Requests to Accept the Offline Dropoff (Bug)
+Step 4: Accept Offline DropOff but In-progress screen did not reflect till App refresh (Bug)
+Step5: Offline DropOff does not have an Org, So FoodRunner has to notify its dropped off so reflects in the PickupHistory (Bug)
+
+
+Cloud Tasks
+----
+
+Dash Tasks
+----
+
+
+Fixed Tasks
+----
+Step 1: Schedule an Offline Dropoff
+Step2: Finish all in progress
+Step 3: Cannot go to Requests to Accept the Offline Dropoff (Bug)
+Step 4: Accept Offline DropOff but In-progress screen did not reflect till App refresh (Bug)
+Step5: Offline DropOff does not have an Org, So FoodRunner has to notify its dropped off so reflects in the PickupHistory (Bug)
+
+
+*Dash: Filter Pickup Times > Broken on QA Cluster
+
+*Cloud: MapUtils TimeZone calculation OOM in Cloud
+
+*Cloud: PickupRequests not reflecting on Dash in Cloud-only
+
+* Cloud: No Push Notification in end-to-end flow
+
+* App: Refresh from backgrounding
+
+* App: Push wakeup and launch app
+
+* App: show launch indicator > Finalize the Splash Screen > (FIXED)
+
+* Dash: Pick Org flow - (Registration) > (FIXED)
+
+* Dash: Forgot Password > Mobile Invalid > (FIXED)
+
+* Dash: Add TimeZones > (FIXED)
+
+* Dash: Filter Pickup Times > (FIXED)
+
+*Cloud: PickupRequests not reflecting on Dash in Cloud-only > (FIXED)
+
+*App: Login fails when LocationUpdater is frozen (FIXED)
+
+* Cloud: ActiveNetwork does not load from database on startup (FIXED)
+
+* App Start Schedule Process > No default image > Something Random (FIXED)
+
+* App If Offline DropOff > There should be no navigation option (FIXED)
+
+* App If Offline DropOff > Accept without navigation and weird state (FIXED)
+
+*App: Wrong Email (one that does not exist) (proper error message)(FIXED)
+
+*Dash: Error during login right after registration (FIXED: Debugging was a challenge)
+
+*Dash: Register > Email: required,invalid (not working) (FIXED)
+*Dash: Register > Password: Password: required (not working)(FIXED)
+*Dash: Register > OrgId: required: (flow is not working)(FIXED)
+*Dash: Register > Code 409: Exists (Duplicate email is allowed)(FIXED)
+
+*Dash: Forgot Password > Email Required (no check) (FIXED)
+*Dash: Forgot Password > Email Invalid (TODO) (FIXED)
+*Dash: Forgot Password > 403: Not an Org account (FIXED)
+
+*Dash Forgot Password > verifyResetCode > empty (system error..should say invalid code)(FIXED)
+*Dash Forgot Password > resetPassword > empty (system error..should say password required)(FIXED)
+
+*Dash Start Schedule Process > Schedule Org > Schedule Button issue (FIXED)
+*Dash Start Schedule Process > OfflineCommunity > Schedule Button issue (FIXED)
+
+*Dash Change Password > Empty password (required message) > TODO (FIXED)
+
+*Dash Add Staff Member > Reset on first login > All Empty > TODO (FIXED)
+*Dash Add Staff Member > Reset on first login > Empty first-only > TODO (FIXED)
+*Dash Add Staff Member > Reset on first login > Empty next-only > TODO (FIXED)
+

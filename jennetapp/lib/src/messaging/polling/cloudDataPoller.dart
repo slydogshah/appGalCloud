@@ -4,6 +4,7 @@ import 'package:app/src/context/activeSession.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
+import 'package:app/src/rest/urlFunctions.dart';
 import 'package:app/src/ui/profileFunctions.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -23,7 +24,7 @@ class CloudDataPoller
   static void startPolling(BuildContext buildContext,Profile profile) async
   {
       context = buildContext;
-      notificationProcessor.configureProcessor(context);
+      notificationProcessor.configureProcessor(context,profile);
   }
 }
 //-------------------------------------
@@ -59,6 +60,9 @@ class NotificationProcessor
 
   void checkNewPickupRequests()
   {
+    /*if(this.context == null){
+      return;
+    }
     ActiveNetworkRestClient activeNetworkRestClient = new ActiveNetworkRestClient();
     Future<List<FoodRecoveryTransaction>> future = activeNetworkRestClient.getFoodRecoveryPush(ActiveSession.getInstance().getProfile().email);
     future.then((txs) async{
@@ -77,10 +81,11 @@ class NotificationProcessor
             0, '#Jen Network', "You have ($numberOfRequests) new pickup requests", platformChannelSpecifics,
             payload: 'item x');
       }
-    }).catchError((e) {});
+    }).catchError((e) {});*/
   }
 
-  Future<void> configureProcessor(BuildContext context) async {
+  Future<void> configureProcessor(BuildContext context,Profile profile) async {
+    //print("********CONFIGURE_PROCESSOR********");
     this.context = context;
 
     this.requestPermissions();
@@ -124,21 +129,30 @@ class NotificationProcessor
           ProfileFunctions.launchAppFromNotification(context);
         },notificationCallback: checkNewPickupRequests);
 
-    if(Platform.isAndroid) {
-      this.repeatNotification();
+    if(Platform.isIOS) {
+      String iosUrl = UrlFunctions.getInstance().iosApiUrl+"activeNetwork/registerPush";
+      this.repeatNotification(profile.email,iosUrl);
+    }
+    else if(Platform.isAndroid){
+      String androidUrl = UrlFunctions.getInstance().androidApiUrl+"activeNetwork/registerPush";
+      this.repeatNotification(profile.email,androidUrl);
     }
   }
 
-  Future<void> repeatNotification() async {
-    print("NOTIFICATION_TEST_SCHEDULED");
+  Future<void> repeatNotification(String email,String url) async {
+    //print("****************REPEAT********************************");
+    //print(email);
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails('repeating channel id',
         'repeating channel name', 'repeating description');
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.periodicallyShow(0, '#Jen Network',
-        'BLAH_BLAH', RepeatInterval.everyMinute, platformChannelSpecifics,
+    await flutterLocalNotificationsPlugin.periodicallyShow(0, email,
+        url, RepeatInterval.everyMinute, platformChannelSpecifics,
         androidAllowWhileIdle: true);
+
+    //print("********CLOUD_POLLER********");
+    //print(email);
   }
 
   void requestPermissions() {

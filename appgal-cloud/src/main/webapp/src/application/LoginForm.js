@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { withRouter } from "react-router";
 import Modal from 'react-modal';
 import OverlayMixin from 'react-overlays';
+import Select from 'react-select'
 import axios from 'axios'
 import https from 'http';
 import {
@@ -108,6 +109,7 @@ function inputFieldComp(state) {
                        }
                    }}
                  />
+                 <div id="streetRequired"/>
               </GridItem>
             </GridContainer>
            <GridContainer>
@@ -129,6 +131,19 @@ function inputFieldComp(state) {
               />
            </GridItem>
          </GridContainer>
+         <GridContainer>
+                    <GridItem xs={12} sm={12} md={4}>
+                        <CSelect custom name="timeZone" onChange={(event)=>{
+                                        const target = event.target;
+                                                                                   const value = target.value;
+                                                                                   const name = target.name;
+                                                                                   state.timeZone = value;
+                                    }}>
+                                      <option value="0">--TimeZone--</option>
+                                      <option value="US/Central">US/Central</option>
+                                    </CSelect>
+                    </GridItem>
+                  </GridContainer>
          </>
       );
       ReactDOM.unmountComponentAtNode(document.getElementById('orgInput'));
@@ -158,8 +173,7 @@ function dropDownComp(state,orgs) {
                    state.sourceOrgId = value;
                 }
             }}>
-              <option value="0">--Select Organization--</option>
-              {options}
+              <option value="0">--Add Organization Information--</option>
               <option value="custom">--Register New Organization--</option>
             </CSelect>
         </div>
@@ -253,14 +267,17 @@ function RenderLogin({state,props})
                                 };
                                 const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
                                 axios.post(apiUrl,payload).then((response) => {
+
+                                      const resetPasswordActive = response.data.profile.resetPasswordActive;
+
                                       ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                       store.setState(state => ({
                                         ...state,
-                                        auth: true,
+                                        auth: resetPasswordActive,
                                         email:login,
                                         sourceOrg: response.data.sourceOrg
                                       }));
-                                      LaunchHome(props,response.data.sourceOrg.producer);
+                                      LaunchHome(props,response.data);
                                 }).catch(err => {
                                        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                        if(err.response != null && err.response.status == 401)
@@ -327,10 +344,11 @@ function RenderLogin({state,props})
                                                                     );
                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                     ReactDOM.render(element,document.getElementById('progress'));
-                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/orgs/";
+                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/timezones/";
                                 axios.get(apiUrl).then((response) => {
                                 ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
-                                const orgs = response.data;
+                                const timeZones = response.data.timezones;
+                                //alert(JSON.stringify(timeZones));
                                 const element = (
                                         <>
                                         <br/><br/><br/><br/><br/>
@@ -402,19 +420,73 @@ function RenderLogin({state,props})
                                                         <option value={true}>Pickup</option>
                                                         <option value={false}>DropOff</option>
                                                       </CSelect>
+                                                      <div id="orgTypeRequired"/>
                                                     </GridItem>
                                                  </GridContainer>
                                                  <GridContainer>
-                                                     <GridItem xs={12} sm={12} md={6}>
-                                                        <div>
-                                                              <br/>
-                                                              {state.activeElementType === "dropdown"
-                                                                ? dropDownComp(state,orgs)
-                                                                : inputFieldComp(state)}
-                                                       </div>
-                                                     </GridItem>
-                                                     <div id="organizationRequired"/>
-                                                </GridContainer>
+                                                     <GridItem xs={12} sm={12} md={4}>
+                                                                                                                                                                         <CustomInput
+                                                                                                                                                                          labelText="New Organization"
+                                                                                                                                                                          id="sourceOrgId"
+                                                                                                                                                                          formControlProps={{
+                                                                                                                                                                            fullWidth: true
+                                                                                                                                                                          }}
+                                                                                                                                                                          inputProps={{
+                                                                                                                                                                              onChange:(event) => {
+                                                                                                                                                                                  const target = event.target;
+                                                                                                                                                                                  const value = target.value;
+                                                                                                                                                                                  const name = target.name;
+                                                                                                                                                                                  state.sourceOrgId = value;
+                                                                                                                                                                              }
+                                                                                                                                                                          }}
+                                                                                                                                                                        />
+                                                                                                                                                                        <div id="organizationRequired"/>
+                                                                                                                                                                     </GridItem>
+
+                                               </GridContainer>
+                                               <GridContainer>
+
+                                                                                                               <GridItem xs={12} sm={12} md={4}>
+                                                                                                                                                                                      <CustomInput
+                                                                                                                                                                                       labelText="Street"
+                                                                                                                                                                                       id="street"
+                                                                                                                                                                                       formControlProps={{
+                                                                                                                                                                                         fullWidth: true
+                                                                                                                                                                                       }}
+                                                                                                                                                                                       inputProps={{
+                                                                                                                                                                                           onChange:(event) => {
+                                                                                                                                                                                               const target = event.target;
+                                                                                                                                                                                               const value = target.value;
+                                                                                                                                                                                               const name = target.name;
+                                                                                                                                                                                               state.street = value;
+                                                                                                                                                                                           }
+                                                                                                                                                                                       }}
+                                                                                                                                                                                     />
+                                                                                                                                                                                     <div id="streetRequired"/>
+                                                                                                                                                                                  </GridItem>
+
+                                                                                              </GridContainer>
+                                               <GridContainer>
+                                                                                                    <GridItem xs={12} sm={12} md={4}>
+                                                                                                                   <CustomInput
+                                                                                                                    labelText="Zip"
+                                                                                                                    id="zip"
+                                                                                                                    formControlProps={{
+                                                                                                                      fullWidth: true
+                                                                                                                    }}
+                                                                                                                    inputProps={{
+                                                                                                                        onChange:(event) => {
+                                                                                                                            const target = event.target;
+                                                                                                                            const value = target.value;
+                                                                                                                            const name = target.name;
+                                                                                                                            state.zip = value;
+                                                                                                                        }
+                                                                                                                    }}
+                                                                                                                  />
+                                                                                                                  <div id="zipRequired"/>
+                                                                                                               </GridItem>
+                                                                                              </GridContainer>
+
                                                </CardBody>
                                                <CardFooter>
                                                    <GridContainer>
@@ -422,8 +494,11 @@ function RenderLogin({state,props})
                                                        <Button color="primary" onClick={(e) => {
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('passwordRequired'));
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('orgTypeRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('organizationRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('emailInvalid'));
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('streetRequired'));
+                                                            ReactDOM.unmountComponentAtNode(document.getElementById('zipRequired'));
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('errorAlert'));
                                                             const required = (
                                                                          <CAlert
@@ -443,11 +518,30 @@ function RenderLogin({state,props})
                                                             ReactDOM.render(required,document.getElementById('passwordRequired'));
                                                             validationSuccess = false;
                                                         }
+                                                        if(state.producer == null || state.producer == "")
+                                                                                                                {
+                                                                                                                  ReactDOM.render(required,document.getElementById('orgTypeRequired'));
+                                                                                                                  validationSuccess = false;
+                                                                                                                }
                                                         if(state.sourceOrgId == null || state.sourceOrgId == "")
                                                         {
                                                           ReactDOM.render(required,document.getElementById('organizationRequired'));
                                                           validationSuccess = false;
                                                         }
+
+                                                        if(state.street == null || state.street == "")
+                                                        {
+                                                          ReactDOM.render(required,document.getElementById('streetRequired'));
+                                                          validationSuccess = false;
+                                                        }
+
+                                                        if(state.zip == null || state.zip == "")
+                                                                                                                {
+                                                                                                                  ReactDOM.render(required,document.getElementById('zipRequired'));
+                                                                                                                  validationSuccess = false;
+                                                                                                                }
+
+
 
                                                         if(!validationSuccess)
                                                         {
@@ -466,8 +560,8 @@ function RenderLogin({state,props})
                                                         "orgId":state.sourceOrgId,
                                                         "orgName":state.sourceOrgId,
                                                         "orgType":state.orgType,
-                                                        "profileType":state.profileType,
                                                         "orgContactEmail":state.email,
+                                                        "profileType":state.profileType,
                                                         "street":state.street,
                                                         "zip":state.zip,
                                                         "producer":state.producer};
@@ -484,6 +578,7 @@ function RenderLogin({state,props})
                                                                                                                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                                                                                             ReactDOM.render(element,document.getElementById('progress'));
 
+
                                                         const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/org/";
                                                         axios.post(apiUrl,payload).then((response) => {
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
@@ -494,7 +589,7 @@ function RenderLogin({state,props})
                                                                      sourceOrg: response.data
                                                                    }));
 
-                                                           LaunchHome(props,response.data.producer);
+                                                           LaunchHomeAfterRegister(state,props,state.email);
                                                         }).catch(err => {
                                                             ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
                                                             if(err.response != null && err.response.status == 409)
@@ -525,6 +620,16 @@ function RenderLogin({state,props})
                                                                                    );
                                                                 ReactDOM.render(emailInvalid,document.getElementById('emailInvalid'));
                                                                 }
+                                                                else if(violations.includes("org_inconsistent")){
+                                                                      const validationError = (
+                                                                                               <CAlert
+                                                                                               color="warning"
+                                                                                               >
+                                                                                                  This Organization is already registered as a different type
+                                                                                              </CAlert>
+                                                                                           );
+                                                                        ReactDOM.render(validationError,document.getElementById('validation_error'));
+                                                                }
 
                                                             }
                                                             else
@@ -534,13 +639,22 @@ function RenderLogin({state,props})
                                                                     color="dark"
                                                                     closeButton
                                                                     >
-                                                                       "Unknown Error. Please check your Network Connection
+                                                                       Unknown Error. Please check your Network Connection
                                                                    </CAlert>
                                                                 );
                                                                 ReactDOM.render(element,document.getElementById('errorAlert'));
                                                             }
                                                       });
                                                        }}>Register</Button>
+                                                    </GridItem>
+                                                    <GridItem xs={12} sm={12} md={6}>
+                                                       <Button color="primary" onClick={(e) => {
+                                                              const element = (
+                                                                   <RenderLogin state={state} props={props}/>
+                                                              );
+                                                              ReactDOM.unmountComponentAtNode(document.getElementById('parent'));
+                                                              ReactDOM.render(element,document.getElementById('parent'));
+                                                       }}>Cancel</Button>
                                                     </GridItem>
                                                     </GridContainer>
                                                </CardFooter>
@@ -552,6 +666,16 @@ function RenderLogin({state,props})
                                     );
                                     ReactDOM.unmountComponentAtNode(document.getElementById('parent'));
                                     ReactDOM.render(element,document.getElementById('parent'));
+                                }).catch(err => {
+                                        ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                        const system_error = (
+                                                                                         <CAlert
+                                                                                         color="warning"
+                                                                                         >
+                                                                                            Unknown Error. Please check your Network Connection
+                                                                                        </CAlert>
+                                                                                    );
+                                                                                   ReactDOM.render(system_error,document.getElementById('system_error'));
                                 });
                            }}>Register</Button>
                         </GridItem>
@@ -573,9 +697,97 @@ function RenderLogin({state,props})
     );
 }
 
-function LaunchHome(props,producer)
+function LaunchHomeAfterRegister(state,props){
+const payload = {
+                                    "email":state.email,
+                                    "password":state.password
+                                };
+                                const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/login/";
+                                axios.post(apiUrl,payload).then((response) => {
+
+                                      const resetPasswordActive = response.data.profile.resetPasswordActive;
+
+                                      ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                      store.setState(state => ({
+                                        ...state,
+                                        auth: resetPasswordActive,
+                                        email:state.email,
+                                        sourceOrg: response.data.sourceOrg
+                                      }));
+                                      LaunchHome(props,response.data);
+                                }).catch(err => {
+                                       ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                       if(err.response != null && err.response.status == 401)
+                                       {
+                                            if(err.response.data.message == "profile_not_found")
+                                            {
+                                                const profile_not_found = (
+                                                                      <CAlert
+                                                                      color="warning"
+                                                                      >
+                                                                         The email is not registered.
+                                                                     </CAlert>
+                                                                  );
+                                                ReactDOM.render(profile_not_found,document.getElementById('profile_not_found'));
+                                            }
+                                            else if(err.response.data.message == "password_mismatch")
+                                            {
+                                                const password_mismatch = (
+                                                                                          <CAlert
+                                                                                          color="warning"
+                                                                                          >
+                                                                                             Password does not match.
+                                                                                         </CAlert>
+                                                                                      );
+                                                                    ReactDOM.render(password_mismatch,document.getElementById('password_mismatch'));
+                                            }
+                                       }
+                                       else if(err.response != null && err.response.status == 403)
+                                      {
+                                           const access_denied = (
+                                                                <CAlert
+                                                                color="warning"
+                                                                >
+                                                                   403: Access Denied.
+                                                               </CAlert>
+                                                            );
+                                          ReactDOM.render(access_denied,document.getElementById('access_denied'));
+                                      }
+                                       else
+                                       {
+                                           const system_error = (
+                                                 <CAlert
+                                                 color="warning"
+                                                 >
+                                                    Unknown Error. Please check your Network Connection
+                                                </CAlert>
+                                            );
+                                           ReactDOM.render(system_error,document.getElementById('system_error'));
+                                       }
+                                });
+}
+
+function LaunchHome(props,orgLogin)
 {
     const orgId = store.getState().sourceOrg.orgId;
+    const profile = orgLogin.profile;
+    const sourceOrg = orgLogin.sourceOrg;
+    const producer = sourceOrg.producer;
+    const resetPasswordActive = profile.resetPasswordActive;
+
+    if(resetPasswordActive){
+       store.setState(state => ({
+                                                       ...state,
+                                                       auth: false,
+
+                                                     }));
+       props.history.push({
+        pathname: "/staffResetPassword",
+        state: { data: orgLogin }
+      });
+      return;
+    }
+
     var apiUrl;
     if(producer)
     {
@@ -601,6 +813,12 @@ function LaunchHome(props,producer)
 
     axios.get(apiUrl).then((response) => {
         ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+        store.setState(state => ({
+                                                ...state,
+                                                auth: true,
+
+                                              }));
+        const responseData = response.data;
         if(producer)
         {
                props.history.push({
@@ -647,6 +865,7 @@ class LoginForm extends React.Component {
     return (
       <>
         <br/><br/><br/><br/><br/>
+        <div id="validation_error"/>
         <div id="unknown_error"/>
         <div id="progress"/>
         <div id="parent">

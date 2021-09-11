@@ -92,8 +92,10 @@ function DropOffView({state, props}) {
     const row = [];
     const org = value.pickupNotification.sourceOrg.orgName;
     const orgContact = value.pickupNotification.sourceOrg.orgContactEmail;
+    const scheduled = value.when+" "+value.pickupNotification.scheduled;
     row.push(org);
     row.push(orgContact);
+    row.push(scheduled);
     array.push(row);
   }
 
@@ -167,7 +169,7 @@ function DropOffView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["Pickup Organization", "Contact Email"]}
+                                        tableHead={["Pickup Organization", "Contact Email", "Scheduled Pickup"]}
                                         tableData={array}
                                       />
                                     </CardBody>
@@ -184,7 +186,7 @@ function DropOffView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["Pickup Organization", "Contact Email", "Food Runner", "Estimated Time", "Notify"]}
+                                        tableHead={["Pickup Organization", "Contact Email", "Food Runner", "Estimated Arrival", "Notify"]}
                                         tableData={activeArray}
                                       />
                                     </CardBody>

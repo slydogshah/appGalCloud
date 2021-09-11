@@ -6,6 +6,7 @@ import io.appgal.cloud.model.*;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 
 import io.appgal.cloud.network.services.NetworkOrchestrator;
+import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,18 +55,45 @@ public class ProfileRegistrationService {
         this.mongoDBJsonStore.storeProfile(profile);
     }
 
-    public void registerSourceOrg(SourceOrg sourceOrg) throws ResourceExistsException
+    public void registerStaff(String orgId,Profile profile) throws ResourceExistsException
     {
-        String sourceOrgId = sourceOrg.getOrgId();
-        SourceOrg storedSourceOrg = this.mongoDBJsonStore.getSourceOrg(sourceOrgId);
+        String email = profile.getEmail();
+        Profile exists = this.mongoDBJsonStore.getProfile(email);
+        if(exists != null)
+        {
+            JsonObject message = new JsonObject();
+            message.addProperty("email",email);
+            throw new ResourceExistsException(message.toString());
+        }
+        profile.setId(UUID.randomUUID().toString());
+        this.mongoDBJsonStore.storeProfile(profile);
+
+        Profile storedProfile = this.mongoDBJsonStore.getProfile(profile.getEmail());
+        SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+        sourceOrg.addProfile(storedProfile);
+        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+        SourceOrg storedSourceOrg = this.mongoDBJsonStore.getSourceOrg(sourceOrg.getOrgId());
+        System.out.println(storedProfile.toJson().toString());
+        System.out.println(storedSourceOrg.toJson().toString());
+    }
+
+    public SourceOrg registerSourceOrg(String email,SourceOrg sourceOrg) throws ResourceExistsException
+    {
+        Profile storedProfile = this.mongoDBJsonStore.getProfile(email);
+        if(storedProfile != null){
+            JsonObject message = new JsonObject();
+            message.addProperty("email", email);
+            throw new ResourceExistsException(message.toString());
+        }
 
         Location location = this.mapUtils.calculateCoordinates(sourceOrg.getAddress());
         sourceOrg.setLocation(location);
-
+        SourceOrg storedSourceOrg = this.findSourceOrg(sourceOrg);
         if(storedSourceOrg == null)
         {
             this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
-            return;
+            return sourceOrg;
         }
 
         Profile newProfile = sourceOrg.getProfiles().iterator().next();
@@ -75,8 +103,25 @@ public class ProfileRegistrationService {
             message.addProperty("email", newProfile.getEmail());
             throw new ResourceExistsException(message.toString());
         }
+        storedSourceOrg.addProfile(newProfile);
+        this.mongoDBJsonStore.storeSourceOrg(storedSourceOrg);
+        return storedSourceOrg;
+    }
 
-        this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+    public SourceOrg findSourceOrg(SourceOrg newSourceOrg){
+        Location newOrgLocation = newSourceOrg.getLocation();
+        List<SourceOrg> all = this.mongoDBJsonStore.getSourceOrgs();
+        for(SourceOrg cour:all){
+            Location location = cour.getLocation();
+            double distance = this.mapUtils.calculateDistance(newOrgLocation.getLatitude(),
+                    newOrgLocation.getLongitude(),location.getLatitude(),location.getLongitude());
+
+            if(distance <= 0.0d){
+                return cour;
+            }
+        }
+
+        return null;
     }
 
     public JsonObject login(String userAgent, String email, String password, Location location)
@@ -108,17 +153,15 @@ public class ProfileRegistrationService {
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
             JsonObject authResponse = new JsonObject();
-
             authResponse.add("profile", profile.toJson());
-
 
             FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
             if(foodRunner == null) {
                 foodRunner = new FoodRunner();
-                foodRunner.setProfile(profile);
-                foodRunner.setLocation(location);
-                this.networkOrchestrator.enterNetwork(foodRunner);
             }
+            foodRunner.setProfile(profile);
+            foodRunner.setLocation(location);
+            this.networkOrchestrator.enterNetwork(foodRunner);
 
             authResponse.addProperty("offlineCommunitySupport",foodRunner.isOfflineCommunitySupport());
 

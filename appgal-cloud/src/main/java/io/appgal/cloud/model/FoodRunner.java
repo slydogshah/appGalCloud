@@ -1,11 +1,14 @@
 package io.appgal.cloud.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.*;
 
 public class FoodRunner implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(FoodRunner.class);
@@ -13,9 +16,10 @@ public class FoodRunner implements Serializable {
     private Profile profile;
     private Location location;
     private SourceOrg pickUpOrg;
-    private boolean offlineCommunitySupport = false;
+    private Set<String> pushTokens;
 
-    public FoodRunner() {
+    public FoodRunner(){
+        this.pushTokens = new HashSet<>();
     }
 
     public FoodRunner(Profile profile) {
@@ -52,30 +56,26 @@ public class FoodRunner implements Serializable {
         this.pickUpOrg = pickUpOrg;
     }
 
-    public JsonObject toJson()
-    {
-        JsonObject jsonObject = new JsonObject();
-
-        if(this.profile != null) {
-            jsonObject.add("profile", this.profile.toJson());
-        }
-        if(this.location != null) {
-            jsonObject.add("location", this.location.toJson());
-        }
-        if(this.pickUpOrg != null) {
-            jsonObject.add("pickUpOrg", this.pickUpOrg.toJson());
-        }
-        jsonObject.addProperty("offlineCommunitySupport",this.offlineCommunitySupport);
-
-        return jsonObject;
-    }
 
     public boolean isOfflineCommunitySupport() {
-        return offlineCommunitySupport;
+        return this.profile.isOfflineCommunitySupport();
     }
 
     public void setOfflineCommunitySupport(boolean offlineCommunitySupport) {
-        this.offlineCommunitySupport = offlineCommunitySupport;
+        this.profile.setOfflineCommunitySupport(offlineCommunitySupport);
+    }
+
+    public Set<String> getPushTokens() {
+        return pushTokens;
+    }
+
+    public void setPushTokens(Set<String> pushTokens) {
+        this.pushTokens = pushTokens;
+    }
+
+    public void addPushToken(String pushToken)
+    {
+        this.pushTokens.add(pushToken);
     }
 
     @Override
@@ -98,10 +98,39 @@ public class FoodRunner implements Serializable {
         if(jsonObject.has("pickUpOrg")) {
             foodRunner.setPickUpOrg(SourceOrg.parse(jsonObject.get("pickUpOrg").getAsJsonObject().toString()));
         }
-        if(jsonObject.has("offlineCommunitySupport"))
-        {
-            foodRunner.offlineCommunitySupport = jsonObject.get("offlineCommunitySupport").getAsBoolean();
+        if(jsonObject.has("pushTokens")) {
+            foodRunner.pushTokens = new HashSet<>();
+            JsonArray array = jsonObject.getAsJsonArray("pushTokens");
+            Iterator<JsonElement> itr = array.iterator();
+            while(itr.hasNext()){
+                foodRunner.addPushToken(itr.next().getAsString());
+            }
         }
         return foodRunner;
+    }
+
+    public JsonObject toJson()
+    {
+        JsonObject jsonObject = new JsonObject();
+
+        if(this.profile != null) {
+            jsonObject.add("profile", this.profile.toJson());
+        }
+        if(this.location != null) {
+            jsonObject.add("location", this.location.toJson());
+        }
+        if(this.pickUpOrg != null) {
+            jsonObject.add("pickUpOrg", this.pickUpOrg.toJson());
+        }
+        if(this.pushTokens != null && !this.pushTokens.isEmpty()){
+            JsonArray jsonArray = new JsonArray();
+            for(String pushToken:this.pushTokens){
+                jsonArray.add(pushToken);
+            }
+            jsonObject.add("pushTokens",jsonArray);
+        }
+
+
+        return jsonObject;
     }
 }

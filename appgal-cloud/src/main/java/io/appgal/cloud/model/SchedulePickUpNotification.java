@@ -1,8 +1,7 @@
 package io.appgal.cloud.model;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -92,8 +91,17 @@ public class SchedulePickUpNotification extends ScheduleNotification
         }
         if(jsonObject.has("start"))
         {
+            ZoneId zoneId = ZoneId.of(schedulePickUpNotification.sourceOrg.getAddress().getTimeZone());
+            LocalDateTime localDateTime = LocalDateTime.now();
+            ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
+            ZoneOffset zoneOffset = zonedDateTime.getOffset();
             long startEpochSecond = jsonObject.get("start").getAsLong();
-            schedulePickUpNotification.start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(startEpochSecond),ZoneOffset.UTC);
+            schedulePickUpNotification.start = OffsetDateTime.ofInstant(Instant.ofEpochSecond(startEpochSecond),
+                    zoneOffset);
+        }
+        if(jsonObject.has("scheduled"))
+        {
+            schedulePickUpNotification.scheduledStartTime = jsonObject.get("scheduled").getAsString();
         }
         if(jsonObject.has("notificationSent"))
         {
@@ -141,6 +149,15 @@ public class SchedulePickUpNotification extends ScheduleNotification
         {
             jsonObject.addProperty("start", this.start.toEpochSecond());
         }
+
+        if(this.scheduledStartTime != null){
+            jsonObject.addProperty("scheduled", this.scheduledStartTime);
+        }
+        else
+        {
+            jsonObject.addProperty("scheduled", "Not Available");
+        }
+
         if(this.pickupNotes != null) {
             jsonObject.add("pickupNotes", JsonParser.parseString(this.pickupNotes.toString()));
         }

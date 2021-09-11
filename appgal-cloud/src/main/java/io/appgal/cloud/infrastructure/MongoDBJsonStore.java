@@ -96,11 +96,6 @@ public class MongoDBJsonStore {
     }
 
     //Profiles
-    public void clearAllProfiles()
-    {
-        this.profileStore.clearAllProfiles(this.mongoDatabase);
-    }
-
     public void storeProfile(Profile profile)
     {
         this.profileStore.storeProfile(this.mongoDatabase,profile);
@@ -109,6 +104,11 @@ public class MongoDBJsonStore {
     public void updateProfile(Profile profile)
     {
         this.profileStore.updateProfile(this.mongoDatabase,profile);
+    }
+
+    public void deleteProfile(String email)
+    {
+        this.profileStore.deleteProfile(this.mongoDatabase,email);
     }
 
     public Profile getProfile(String email)

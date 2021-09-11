@@ -8,11 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.*;
 
 public class SourceOrg implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(SourceOrg.class);
 
+    private String oid;
     private String orgId;
     private String orgName;
     private String orgContactEmail;
@@ -58,6 +63,14 @@ public class SourceOrg implements Serializable {
         this.deliveryPreference = new DeliveryPreference();
         this.isProducer = isProducer;
         this.address = address;
+    }
+
+    public String getOid() {
+        return oid;
+    }
+
+    public void setOid(String oid) {
+        this.oid = oid;
     }
 
     public String getOrgId() {
@@ -114,6 +127,19 @@ public class SourceOrg implements Serializable {
         this.profiles.add(profile);
     }
 
+    public void deleteProfile(String email)
+    {
+        Profile profile = null;
+        for(Profile cour:this.profiles)
+        {
+            if(cour.getEmail().equals(email.trim()))
+            {
+                profile = cour;
+            }
+        }
+        this.profiles.remove(profile);
+    }
+
     public boolean isProducer() {
         return isProducer;
     }
@@ -153,6 +179,9 @@ public class SourceOrg implements Serializable {
     {
         JsonObject jsonObject = new JsonObject();
 
+        if(this.oid != null) {
+            jsonObject.addProperty("oid", this.oid);
+        }
         if(this.orgId != null) {
             jsonObject.addProperty("orgId", this.orgId);
         }
@@ -177,6 +206,10 @@ public class SourceOrg implements Serializable {
         {
             jsonObject.addProperty("zip",this.address.getZip());
         }
+        if(this.address != null && this.address.getTimeZone()!=null)
+        {
+            jsonObject.addProperty("timeZone",this.address.getTimeZone());
+        }
 
         if(this.location != null)
         {
@@ -200,6 +233,9 @@ public class SourceOrg implements Serializable {
         }
 
 
+        if(jsonObject.has("oid")) {
+            sourceOrg.oid = jsonObject.get("oid").getAsString();
+        }
         if(jsonObject.has("orgId")) {
             sourceOrg.orgId = jsonObject.get("orgId").getAsString();
         }
@@ -233,6 +269,9 @@ public class SourceOrg implements Serializable {
         {
             address.setZip(jsonObject.get("zip").getAsString());
         }
+        if(jsonObject.has("timeZone")) {
+            address.setTimeZone(jsonObject.get("timeZone").getAsString());
+        }
         sourceOrg.address = address;
 
         Location location = new Location();
@@ -249,5 +288,26 @@ public class SourceOrg implements Serializable {
         sourceOrg.isProducer = jsonObject.get("producer").getAsBoolean();
 
         return sourceOrg;
+    }
+
+    public static String generateOrgId(String original)
+    {
+        try{
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt);
+
+            byte[] hashedOrgId = md.digest(original.getBytes(StandardCharsets.UTF_8));
+            String orgId = Base64.getUrlEncoder().withoutPadding().encodeToString(hashedOrgId);
+
+            return orgId;
+        }
+        catch(Exception e){
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
     }
 }

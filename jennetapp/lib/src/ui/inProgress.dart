@@ -32,7 +32,7 @@ class InProgressMainScene extends StatefulWidget {
   _InProgressMainState createState() => _InProgressMainState(this.txs,this.recoveryTxs,this.inProgressTxs);
 }
 
-class _InProgressMainState extends State<InProgressMainScene> with TickerProviderStateMixin {
+class _InProgressMainState extends State<InProgressMainScene> with TickerProviderStateMixin,WidgetsBindingObserver {
   List<FoodRecoveryTransaction> recoveryTxs;
   List<FoodRecoveryTransaction> inProgressTxs;
   Map<String,List<FoodRecoveryTransaction>> txs;
@@ -55,12 +55,42 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     animationController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('*************MyApp state = $state*************');
+    if(state == AppLifecycleState.resumed){
+      FoodRunner foodRunner = FoodRunner.getActiveFoodRunner();
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<Map<String, List<FoodRecoveryTransaction>>> future = client
+          .getFoodRecoveryTransaction(foodRunner.profile.email);
+      future.then((txs) {
+        setState(() {
+          this.recoveryTxs = txs['pending'];
+          this.inProgressTxs = txs['inProgress'];
+          this.txs = txs;
+        });
+      });
+    }
+    /*if (state == AppLifecycleState.inactive) {
+      // app transitioning to other state.
+    } else if (state == AppLifecycleState.paused) {
+      // app is on the background.
+    } else if (state == AppLifecycleState.detached) {
+      // flutter engine is running but detached from views
+    } else if (state == AppLifecycleState.resumed) {
+      // app is visible and running.
+      runApp(App()); // run your App class again
+    }*/
   }
 
   @override
@@ -345,13 +375,23 @@ class InProgressListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String remoteUrl = UrlFunctions.getInstance().resolveHost() +
-        "tx/recovery/transaction/foodPic/?id=" + tx.getId();
-    Widget buttons = null;
+    Widget foodImage;
+    if(tx.getPickupNotification().foodPic != null) {
+      String remoteUrl = UrlFunctions.getInstance().resolveHost() +
+          "tx/recovery/transaction/foodPic/?id=" + tx.getId();
+      foodImage = Image.network(remoteUrl);
+    }
+    else
+    {
+      foodImage = Image.asset(
+        "assets/jen/defaultFoodImage.jpeg",
+        fit: BoxFit.cover,
+      );
+    }
+    Widget buttons = this.getButton(context, tx);;
     Text dropOffOrgName = null;
     if(tx.getPickupNotification().getDropOffOrg() != null)
     {
-      buttons = this.getButton(context, tx);
       dropOffOrgName = Text(
         tx
             .getPickupNotification()
@@ -366,7 +406,6 @@ class InProgressListView extends StatelessWidget {
     }
     else
     {
-      buttons = this.getButton(context, tx);
       dropOffOrgName = Text(
         "Community",
         textAlign: TextAlign.left,
@@ -377,168 +416,333 @@ class InProgressListView extends StatelessWidget {
       );
     }
 
-    return AnimatedBuilder(
-      animation: animationController,
-      builder: (BuildContext context, Widget child) {
-        return FadeTransition(
-          opacity: animation,
-          child: Transform(
-            transform: Matrix4.translationValues(
-                0.0, 50 * (1.0 - animation.value), 0.0),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 24, right: 24, top: 8, bottom: 16),
-              child: InkWell(
-                splashColor: Colors.transparent,
-                onTap: () {},
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.6),
-                        offset: const Offset(4, 4),
-                        blurRadius: 16,
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                    child: Stack(
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            AspectRatio(
-                              aspectRatio: 2,
-                              child:
-                              Image.network(remoteUrl),
-                            ),
-                            buttons,
-                            Container(
-                              color: HotelAppTheme
-                                  .buildLightTheme()
-                                  .backgroundColor,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16, top: 8, bottom: 8),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              tx
-                                                  .getPickupNotification()
-                                                  .getSourceOrg()
-                                                  .orgName,
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 22,
+    if(buttons != null) {
+      return AnimatedBuilder(
+        animation: animationController,
+        builder: (BuildContext context, Widget child) {
+          return FadeTransition(
+            opacity: animation,
+            child: Transform(
+              transform: Matrix4.translationValues(
+                  0.0, 50 * (1.0 - animation.value), 0.0),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 24, right: 24, top: 8, bottom: 16),
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () {},
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.6),
+                          offset: const Offset(4, 4),
+                          blurRadius: 16,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                      child: Stack(
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              AspectRatio(
+                                aspectRatio: 2,
+                                child:
+                                foodImage,
+                              ),
+                              buttons,
+                              Container(
+                                color: HotelAppTheme
+                                    .buildLightTheme()
+                                    .backgroundColor,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16, top: 8, bottom: 8),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                tx
+                                                    .getPickupNotification()
+                                                    .getSourceOrg()
+                                                    .orgName,
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 22,
+                                                ),
                                               ),
-                                            ),
-                                            Row(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  "Pickup: 10 minutes",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey
-                                                          .withOpacity(0.8)),
-                                                ),
-                                                const SizedBox(
-                                                  width: 4,
-                                                ),
-                                                Icon(
-                                                  FontAwesomeIcons.mapMarkerAlt,
-                                                  size: 12,
-                                                  color: HotelAppTheme
-                                                      .buildLightTheme()
-                                                      .primaryColor,
-                                                ),
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding:
-                                              const EdgeInsets.only(top: 4),
-                                              child: Row(
+                                              Row(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.start,
                                                 children: <Widget>[
+                                                  Text(
+                                                    "Pickup: "+tx.getPickupEstimate(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey
+                                                            .withOpacity(0.8)),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  Icon(
+                                                    FontAwesomeIcons.mapMarkerAlt,
+                                                    size: 12,
+                                                    color: HotelAppTheme
+                                                        .buildLightTheme()
+                                                        .primaryColor,
+                                                  ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.only(top: 4),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        right: 16, top: 8),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.end,
-                                      children: <Widget>[
-                                        dropOffOrgName,
-                                        Text(
-                                          'DropOff: 15 minutes',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color:
-                                              Colors.grey.withOpacity(0.8)),
-                                        ),
-                                      ],
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 16, top: 8),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.end,
+                                        children: <Widget>[
+                                          dropOffOrgName,
+                                          Text(
+                                            "DropOff: "+tx.getDropOffEstimate(),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color:
+                                                Colors.grey.withOpacity(0.8)),
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(32.0),
+                                ),
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.favorite_border,
+                                    color: HotelAppTheme
+                                        .buildLightTheme()
+                                        .primaryColor,
                                   ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(32.0),
-                              ),
-                              onTap: () {},
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.favorite_border,
-                                  color: HotelAppTheme
-                                      .buildLightTheme()
-                                      .primaryColor,
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    }
+    else{
+      return AnimatedBuilder(
+        animation: animationController,
+        builder: (BuildContext context, Widget child) {
+          return FadeTransition(
+            opacity: animation,
+            child: Transform(
+              transform: Matrix4.translationValues(
+                  0.0, 50 * (1.0 - animation.value), 0.0),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 24, right: 24, top: 8, bottom: 16),
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () {},
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.6),
+                          offset: const Offset(4, 4),
+                          blurRadius: 16,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                      child: Stack(
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              AspectRatio(
+                                aspectRatio: 2,
+                                child:
+                                foodImage,
+                              ),
+                              Container(
+                                color: HotelAppTheme
+                                    .buildLightTheme()
+                                    .backgroundColor,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16, top: 8, bottom: 8),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                tx
+                                                    .getPickupNotification()
+                                                    .getSourceOrg()
+                                                    .orgName,
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 22,
+                                                ),
+                                              ),
+                                              Row(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    "Pickup: "+tx.getPickupEstimate(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey
+                                                            .withOpacity(0.8)),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  Icon(
+                                                    FontAwesomeIcons.mapMarkerAlt,
+                                                    size: 12,
+                                                    color: HotelAppTheme
+                                                        .buildLightTheme()
+                                                        .primaryColor,
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.only(top: 4),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 16, top: 8),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.end,
+                                        children: <Widget>[
+                                          dropOffOrgName,
+                                          Text(
+                                            "DropOff: "+tx.getDropOffEstimate(),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color:
+                                                Colors.grey.withOpacity(0.8)),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(32.0),
+                                ),
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.favorite_border,
+                                    color: HotelAppTheme
+                                        .buildLightTheme()
+                                        .primaryColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
   }
 
   Widget getButton(BuildContext context,FoodRecoveryTransaction tx)
@@ -583,7 +787,7 @@ class InProgressListView extends StatelessWidget {
           CrossAxisAlignment.end,
           children: <Widget>[
             ElevatedButton(
-              child: Text('Community DropOff'),
+              child: Text('Delivery Done'),
               style: ElevatedButton.styleFrom(
                 //primary: Color(0xFF383EDB)
                   primary: Colors.pink

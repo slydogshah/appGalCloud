@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,5 +54,20 @@ public class SchedulePickUpNotificationTests extends BaseTest {
 
         schedulePickUpNotification.setStart(OffsetDateTime.now(ZoneOffset.UTC).plusMinutes(60));
         assertFalse(schedulePickUpNotification.activateNotification());
+    }
+
+    @Test
+    public void isToday() throws Exception{
+        SchedulePickUpNotification schedulePickUpNotification = MockData.mockSchedulePickupNotification();
+
+        System.out.println(schedulePickUpNotification.getStart().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+        System.out.println("IS_TODAY: "+schedulePickUpNotification.isToday());
+    }
+
+    @Test
+    public void getStartTimeInEpoch() throws Exception{
+        SchedulePickUpNotification schedulePickUpNotification = MockData.mockSchedulePickupNotification();
+        schedulePickUpNotification.getStartTimeInEpoch();
     }
 }

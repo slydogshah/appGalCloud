@@ -52,9 +52,9 @@ public class FoodDetails implements Serializable {
     {
         FoodDetails foodDetails = new FoodDetails();
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        if(jsonObject.has("type"))
+        if(jsonObject.has("foodType"))
         {
-            foodDetails.foodTypes = FoodTypes.valueOf(jsonObject.get("type").getAsString());
+            foodDetails.foodTypes = FoodTypes.valueOf(jsonObject.get("foodType").getAsString());
         }
         if(jsonObject.has("foodPic"))
         {
@@ -72,7 +72,7 @@ public class FoodDetails implements Serializable {
         JsonObject jsonObject = new JsonObject();
         if(this.foodTypes != null)
         {
-            jsonObject.addProperty("type",this.foodTypes.name());
+            jsonObject.addProperty("foodType",this.foodTypes.name());
         }
         if(this.foodPic != null)
         {

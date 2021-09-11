@@ -87,7 +87,6 @@ class AndroidFlutterLocalNotificationsPlugin
     SelectNotificationCallback? onSelectNotification,
         Function notificationCallback=callback
   }) async {
-    print("********************STARTING_EVENT_LISTENER11******************");
     _eventsFetch = _eventChannelTask.receiveBroadcastStream();
     print(_eventsFetch);
     _eventsFetch.listen((dynamic event) {
@@ -388,7 +387,7 @@ class IOSFlutterLocalNotificationsPlugin
 
   DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
-  static const _EVENT_CHANNEL_NAME = "dexterous.com/flutter/local_notifications/events";
+  static const _EVENT_CHANNEL_NAME = "appgallabs.io/push_notifications";
   static const EventChannel _eventChannelTask = EventChannel(_EVENT_CHANNEL_NAME);
   Stream<dynamic> _eventsFetch = _eventChannelTask.receiveBroadcastStream();
 
@@ -416,10 +415,10 @@ class IOSFlutterLocalNotificationsPlugin
     SelectNotificationCallback? onSelectNotification,
         Function notificationCallback=callback
   }) async {
-    print("********************STARTING_EVENT_LISTENER11******************");
     _eventsFetch = _eventChannelTask.receiveBroadcastStream();
     print(_eventsFetch);
     _eventsFetch.listen((dynamic event) {
+      print(event);
       notificationCallback();
     });
 
@@ -597,15 +596,14 @@ class IOSFlutterLocalNotificationsPlugin
     IOSNotificationDetails? notificationDetails,
     String? payload,
   }) async {
-    validateId(id);
-    await _channel.invokeMethod('periodicallyShow', <String, Object?>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
-      'repeatInterval': repeatInterval.index,
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
+    //validateId(id);
+    //await _channel.invokeMethod('setEmail', title);
+    final channelName = 'appgallabs.io/push_notifications';
+    final methodChannel = MethodChannel(channelName);
+
+    await methodChannel.invokeMethod("setEmail",<String, dynamic>{
+      "email": title,
+      'url': body,
     });
   }
 

@@ -78,6 +78,7 @@ function ForgotPasswordView({state, props}) {
                              }
                          }}
                       />
+                      <div id="emailRequired"/>
                     </GridItem>
                   </GridContainer>
                   <GridContainer>
@@ -97,12 +98,43 @@ function ForgotPasswordView({state, props}) {
                                }
                            }}
                         />
+                        <div id="mobileNumberRequired"/>
                       </GridItem>
                     </GridContainer>
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
                         ReactDOM.unmountComponentAtNode(document.getElementById('validation_error'));
+
+                        ReactDOM.unmountComponentAtNode(document.getElementById('emailRequired'));
+                        ReactDOM.unmountComponentAtNode(document.getElementById('mobileNumberRequired'));
+                        const required = (
+                               <CAlert
+                               color="warning"
+                               >
+                                  Required
+                              </CAlert>
+                           );
+                        let validationSuccess = true;
+
+
+
+                          if(state.email == null || state.email == "")
+                          {
+                            ReactDOM.render(required,document.getElementById('emailRequired'));
+                            validationSuccess = false;
+                          }
+                          if(state.mobileNumber == null || state.mobileNumber == "")
+                            {
+                              ReactDOM.render(required,document.getElementById('mobileNumberRequired'));
+                              validationSuccess = false;
+                            }
+
+                            if(!validationSuccess)
+                            {
+                                return;
+                            }
+
                         const payload = {
                            email:state.email,
                            mobileNumber:state.mobileNumber
@@ -132,6 +164,7 @@ function ForgotPasswordView({state, props}) {
                             });
                         }).catch(err => {
                            ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+
                            if(err.response != null && err.response.status == 404)
                            {
                                   const error = (
@@ -143,6 +176,17 @@ function ForgotPasswordView({state, props}) {
                                                    );
                                  ReactDOM.render(error,document.getElementById('validation_error'));
                            }
+                           else if(err.response != null && err.response.status == 400)
+                              {
+                                     const error = (
+                                                          <CAlert
+                                                          color="warning"
+                                                          >
+                                                             Please input a valid phone number
+                                                         </CAlert>
+                                                      );
+                                    ReactDOM.render(error,document.getElementById('validation_error'));
+                              }
                            else if(err.response != null && err.response.status == 403)
                            {
                                  const error = (

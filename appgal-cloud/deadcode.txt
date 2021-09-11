@@ -1460,3 +1460,122 @@ START: 1621057147
 
 
 
+<GridContainer>
+                                                         <GridItem xs={12} sm={12} md={6}>
+                                                            <div className="form-group">
+                                                              <label for="file">File upload</label>
+                                                              <input id="file" name="file" type="file" onChange={(event) => {
+                                                                const fileUpload = event.currentTarget.files[0];
+                                                                setFieldValue("file", fileUpload);
+                                                                state.upload = fileUpload;
+                                                              }} className="form-control" />
+                                                              <Thumb file={values.file}/>
+                                                            </div>
+                                                         </GridItem>
+                                                       </GridContainer>
+
+
+
+                                                       <option value="0">--Today--</option>
+                                                                                                                     <option value="0:0">12:00 AM</option>
+                                                                                                                     <option value="0:1">1:00 AM</option>
+                                                                                                                     <option value="0:2">2:00 AM</option>
+                                                                                                                     <option value="0:3">3:00 AM</option>
+                                                                                                                     <option value="0:4">4:00 AM</option>
+                                                                                                                     <option value="0:5">5:00 AM</option>
+                                                                                                                     <option value="0:6">6:00 AM</option>
+                                                                                                                     <option value="0:7">7:00 AM</option>
+                                                                                                                     <option value="0:8">8:00 AM</option>
+                                                                                                                     <option value="0:9">9:00 AM</option>
+                                                                                                                     <option value="0:10">10:00 AM</option>
+                                                                                                                     <option value="0:11">11:00 AM</option>
+                                                                                                                     <option value="0:12">12:00 PM</option>
+                                                                                                                     <option value="0:13">1:00 PM</option>
+                                                                                                                     <option value="0:14">2:00 PM</option>
+                                                                                                                     <option value="0:15">3:00 PM</option>
+                                                                                                                     <option value="0:16">4:00 PM</option>
+                                                                                                                     <option value="0:17">5:00 PM</option>
+                                                                                                                     <option value="0:18">6:00 PM</option>
+                                                                                                                     <option value="0:19">7:00 PM</option>
+                                                                                                                     <option value="0:20">8:00 PM</option>
+                                                                                                                     <option value="0:21">9:00 PM</option>
+                                                                                                                     <option value="0:22">10:00 PM</option>
+                                                                                                                     <option value="0:23">11:00 PM</option>
+                                                                                                                     <option value="1">--Tomorrow--</option>
+                                                                                                                     <option value="1:0">12:00 AM</option>
+                                                                                                                   <option value="1:1">1:00 AM</option>
+                                                                                                                   <option value="1:2">2:00 AM</option>
+                                                                                                                   <option value="1:3">3:00 AM</option>
+                                                                                                                   <option value="1:4">4:00 AM</option>
+                                                                                                                   <option value="1:5">5:00 AM</option>
+                                                                                                                   <option value="1:6">6:00 AM</option>
+                                                                                                                   <option value="1:7">7:00 AM</option>
+                                                                                                                   <option value="1:8">8:00 AM</option>
+                                                                                                                   <option value="1:9">9:00 AM</option>
+                                                                                                                   <option value="1:10">10:00 AM</option>
+                                                                                                                   <option value="1:11">11:00 AM</option>
+                                                                                                                   <option value="1:12">12:00 PM</option>
+                                                                                                                   <option value="1:13">1:00 PM</option>
+                                                                                                                   <option value="1:14">2:00 PM</option>
+                                                                                                                   <option value="1:15">3:00 PM</option>
+                                                                                                                   <option value="1:16">4:00 PM</option>
+                                                                                                                   <option value="1:17">5:00 PM</option>
+                                                                                                                   <option value="1:18">6:00 PM</option>
+                                                                                                                   <option value="1:19">7:00 PM</option>
+                                                                                                                   <option value="1:20">8:00 PM</option>
+                                                                                                                   <option value="1:21">9:00 PM</option>
+                                                                                                                   <option value="1:22">10:00 PM</option>
+                                                                                                                   <option value="1:23">11:00 PM</option>
+
+
+
+                                                                                                                   <CSelect custom name="time" id="ccmonth" onChange={(event) => {
+                                                                                                                                                                                   const target = event.target;
+                                                                                                                                                                                   const value = target.value;
+                                                                                                                                                                                   const name = target.name;
+                                                                                                                                                                                   state.[name] = value;
+                                                                                                                                                                               }}>
+                                                                                                                                                                                 {timeItems}
+                                                                                                                                                                            </CSelect>
+
+                                                                                                                                                                            const timeOptions = props.history.location.state.data;
+                                                                                                                                                                                let timeItems = [];
+                                                                                                                                                                                    timeOptions.forEach((value, key) => {
+                                                                                                                                                                                          timeItems.push(<option key={key} value={value}>{value}</option>);
+                                                                                                                                                                                    }
+                                                                                                                                                                                );
+
+                                                                                                                                                                                const options = [
+                                                                                                                                                                                      { value: 'chocolate', label: 'Chocolate' },
+                                                                                                                                                                                      { value: 'strawberry', label: 'Strawberry' },
+                                                                                                                                                                                      { value: 'vanilla', label: 'Vanilla' }
+                                                                                                                                                                                    ]
+
+                                                                                                                                                                                    <CSelect custom name="timeZone" onChange={(event)=>{
+                                                                                                                                                                                                                                                                                                                                const target = event.target;
+                                                                                                                                                                                                                                                                                                                                                                           const value = target.value;
+                                                                                                                                                                                                                                                                                                                                                                           const name = target.name;
+                                                                                                                                                                                                                                                                                                                                                                           state.timeZone = value;
+                                                                                                                                                                                                                                                                                                                            }}>
+                                                                                                                                                                                                                                                                                                                              <option value="0">--TimeZone--</option>
+
+                                                                                                                                                                                                                                                                                                                            </CSelect>
+
+
+                                                                                                                                                                                                                                                                                                                            <GridContainer>
+                                                                                                                                                                                                                                                                                                                                                                                                                                <GridItem xs={12} sm={12} md={4}>
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    <Select
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        defaultValue={{ label: "Select TimeZone", value: 0 }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        name="timeZone"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        id="timeZone"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        maxMenuHeight={220}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        menuPlacement="auto"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        options={timeZones}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        onChange={(event) => {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                           state.['timeZone'] = event.value;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                       }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    />
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div id="timeZoneRequired"/>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    </GridItem>
+                                                                                                                                                                                                                                                                                                                                                                                                                          </GridContainer>

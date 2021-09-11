@@ -5,6 +5,8 @@ import io.appgal.cloud.model.Location;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
@@ -15,11 +17,15 @@ import static java.time.temporal.ChronoUnit.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 public class MapUtilsTests {
+    private static Logger logger = LoggerFactory.getLogger(MapUtilsTests.class);
 
     @Inject
     private MapUtils mapUtils;
@@ -32,6 +38,15 @@ public class MapUtilsTests {
         address.setZip("78703");
         Location location = this.mapUtils.calculateCoordinates(address);
         JsonUtil.print(this.getClass(),location.toJson());
+    }
+
+    @Test
+    public void determineTimeZone() throws Exception
+    {
+        double latitude = 30.2698104d;
+        double longitude = -97.75115579999999d;
+        ZoneId timezone = this.mapUtils.determineTimeZone(latitude,longitude);
+        logger.info("TIME_ZONE: "+timezone);
     }
 
     @Test
@@ -56,5 +71,12 @@ public class MapUtilsTests {
         System.out.println(tomorrow.toEpochSecond());
 
         assertNotEquals(dateTime.toEpochSecond(),tomorrow.toEpochSecond());
+    }
+
+    @Test
+    public void whenMatchesTenDigitsNumberPrefix_thenCorrect() {
+        Pattern pattern = Pattern.compile("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$");
+        Matcher matcher = pattern.matcher("+111 (202) 555-0125");
+        assertTrue(matcher.matches());
     }
 }

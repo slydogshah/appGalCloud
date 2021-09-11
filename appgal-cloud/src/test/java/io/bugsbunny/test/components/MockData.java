@@ -4,8 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.appgal.cloud.model.*;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.UUID;
 
 public class MockData {
@@ -18,6 +17,9 @@ public class MockData {
         schedulePickUpNotification.setSourceOrg(sourceOrg);
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
         schedulePickUpNotification.setStart(start);
+        Address address = new Address();
+        address.setTimeZone("US/Central");
+        sourceOrg.setAddress(address);
 
         //dropoff
         SourceOrg church = new SourceOrg("church", "Church", "mrchrist@church.com",false);
@@ -42,7 +44,19 @@ public class MockData {
         Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "","", ProfileType.FOOD_RUNNER);
         Location location = new Location(0.0d, 0.0d);
         FoodRunner bugsBunny = new FoodRunner(profile, location);
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC);
+        Address address = new Address();
+        address.setTimeZone("US/Central");
+        sourceOrg.setAddress(address);
+
+        ZoneId id = ZoneId.of("US/Pacific-New");
+        // LocalDateTime -> ZonedDateTime
+        LocalDateTime localDateTime = LocalDateTime.now();
+        ZonedDateTime zonedDateTime = localDateTime.atZone(id);
+        ZoneOffset zoneOffset = zonedDateTime.getOffset();
+        //ZoneOffset zoneOffset = ZoneOffset.UTC;
+
+        // ZonedDateTime -> ZoneOffset
+        OffsetDateTime start = OffsetDateTime.now(zoneOffset);
 
         SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
         schedulePickUpNotification.setSourceOrg(sourceOrg);

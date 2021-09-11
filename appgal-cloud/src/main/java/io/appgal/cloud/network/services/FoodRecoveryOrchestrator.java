@@ -1,6 +1,7 @@
 package io.appgal.cloud.network.services;
 
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.infrastructure.PushNotificationDaemon;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.network.geospatial.DistanceCalculator;
 import io.appgal.cloud.util.JsonUtil;
@@ -20,6 +21,9 @@ public class FoodRecoveryOrchestrator {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    @Inject
+    private PushNotificationDaemon pushNotificationDaemon;
+
     public void notifyForPickUp(SchedulePickUpNotification schedulePickUpNotification)
     {
         FoodRecoveryTransaction recoveryTx = new FoodRecoveryTransaction();
@@ -29,6 +33,8 @@ public class FoodRecoveryOrchestrator {
 
         //start the transaction
         this.mongoDBJsonStore.storeFoodRecoveryTransaction(recoveryTx);
+
+        pushNotificationDaemon.sendNotifications(recoveryTx.getPickUpNotification());
     }
 
     public void notifyDropOff(FoodRecoveryTransaction foodRecoveryTransaction)
@@ -60,7 +66,7 @@ public class FoodRecoveryOrchestrator {
                 continue;
             }
 
-            JsonUtil.print(this.getClass(),dropOffOption.toJson());
+            //JsonUtil.print(this.getClass(),dropOffOption.toJson());
 
             if(dropOffOption.getOrgId().equals(producer.getOrgId()))
             {

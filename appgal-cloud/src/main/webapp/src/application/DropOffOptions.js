@@ -202,6 +202,7 @@ const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) 
         const orgId = value.orgId;
         orgIdArray.push(orgId);
     }
+
     for (const [index, value] of offlineCommunityHelpers.entries()) {
             const email = value.profile.email;
             const row = [email];
@@ -234,6 +235,7 @@ const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) 
                                     orgIds={orgIdArray}
                                     pickupNotificationId={props.location.state.data.pickupNotificationId}
                                     history={props.history}
+                                    buttonTitle="Schedule"
                                   />
                                 )
                               },
@@ -249,6 +251,7 @@ const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) 
                                     status = {false}
                                     pickupNotificationId={props.location.state.data.pickupNotificationId}
                                     history={props.history}
+                                    buttonTitle="Schedule"
                                   />
                                 )
                               },
@@ -283,6 +286,7 @@ const DropOffOptionsView = ({props,dropOffOrgs,offlineCommunityHelpers,widget}) 
                                             orgIds={orgIdArray}
                                             pickupNotificationId={props.location.state.data.pickupNotificationId}
                                             history={props.history}
+                                            buttonTitle="Schedule"
                                           />
                                         )
                                       },

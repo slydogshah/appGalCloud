@@ -17,12 +17,21 @@ import CardBody from "../components/Card/CardBody.js";
 import CardFooter from "../components/Card/CardFooter.js";
 
 import {
-  CAlert
+  CAlert,
+  CRow,
+  CCol
 } from '@coreui/react'
 
 import { AppContext,store} from "./AppContext"
 import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 import Snackbar from "../components/Snackbar/Snackbar.js";
+import CustomTabs from "../components/CustomTabs/CustomTabs.js";
+import Tasks from "../components/Tasks/Tasks.js";
+import AddStaff from "../components/Tasks/AddStaff.js";
+import RemoveStaff from "../components/Tasks/RemoveStaff.js";
+import { bugs, website, server } from "./variables/general.js";
+import BugReport from "@material-ui/icons/BugReport";
+import Code from "@material-ui/icons/Code";
 
 const styles = {
   cardCategoryWhite: {
@@ -47,6 +56,8 @@ const useStyles = makeStyles(styles);
 
 function ProfileView({state, props}) {
     //console.log(JSON.stringify(props.history.location.state.data.pending.length));
+
+
     const classes = useStyles();
     const profile = props.history.location.state.data;
     const data = state.data;
@@ -58,6 +69,8 @@ function ProfileView({state, props}) {
         <br/><br/><br/>
         <div id="validation_error"/>
         <div>
+          <CRow>
+          <CCol>
           <GridContainer>
             <GridItem xs={12} sm={12} md={8}>
               <Card>
@@ -102,6 +115,7 @@ function ProfileView({state, props}) {
                             }
                         }}
                       />
+                      <div id="newPasswordRequired"/>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={6}>
                       <CustomInput
@@ -124,13 +138,40 @@ function ProfileView({state, props}) {
                             }
                         }}
                       />
+                      <div id="confirmNewPasswordRequired"/>
                     </GridItem>
                   </GridContainer>
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
-                        //console.log("PASS:" + state.newPassword);
-                        //console.log("PASS2:" + state.confirmNewPassword);
+                        ReactDOM.unmountComponentAtNode(document.getElementById('newPasswordRequired'));
+                                                  ReactDOM.unmountComponentAtNode(document.getElementById('confirmNewPasswordRequired'));
+                                                  const required = (
+                                                       <CAlert
+                                                       color="warning"
+                                                       >
+                                                          Required
+                                                      </CAlert>
+                                                   );
+                                                   let validationSuccess = true;
+
+
+
+                                                  if(state.newPassword == null || state.newPassword == "")
+                                                  {
+                                                    ReactDOM.render(required,document.getElementById('newPasswordRequired'));
+                                                    validationSuccess = false;
+                                                  }
+                                                  if(state.confirmNewPassword == null || state.confirmNewPassword == "")
+                                                    {
+                                                      ReactDOM.render(required,document.getElementById('confirmNewPasswordRequired'));
+                                                      validationSuccess = false;
+                                                    }
+
+                                                    if(!validationSuccess)
+                                                    {
+                                                        return;
+                                                    }
                         const email = profile.email;
                         const payload = {
                                                      newPassword:state.newPassword,
@@ -223,34 +264,181 @@ function ProfileView({state, props}) {
                                                                                                   ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
                                                                                                   ReactDOM.render(element,document.getElementById('unknown_error'));
                                        }
+                                       else{
+                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                                   var element = (
+                                                                                             <Snackbar
+                                                                                               place="tc"
+                                                                                               color="danger"
+                                                                                               icon={DonutLargeOutlinedIcon}
+                                                                                               message="500: Unknown System Error...."
+                                                                                               open={true}
+                                                                                               close
+                                                                                               closeNotification={() => {
+                                                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                               }}
+                                                                                             />
+                                                                                     );
+                                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                     ReactDOM.render(element,document.getElementById('unknown_error'));
+                                       }
                             });
                     }}>Update</Button>
+                    <GridItem xs={12} sm={12} md={6}>
+                                                           <Button color="primary" onClick={(e) => {
+                                                                const orgId = store.getState().sourceOrg.orgId;
+                                                                const producer = store.getState().sourceOrg.producer;
+                                                                var apiUrl;
+                                                                if(producer)
+                                                                {
+                                                                    apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/recovery/?orgId="+orgId;
+                                                                }
+                                                                else
+                                                                {
+                                                                    apiUrl = window.location.protocol +"//"+window.location.hostname+"/tx/dropoff/?orgId="+orgId;
+                                                                }
+                                                                //show progress bar
+                                                                var element = (
+                                                                        <Snackbar
+                                                                          place="tc"
+                                                                          color="info"
+                                                                          icon={DonutLargeOutlinedIcon}
+                                                                          message="Loading...."
+                                                                          open={true}
+                                                                        />
+                                                                );
+                                                                ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                ReactDOM.render(element,document.getElementById('progress'));
+                                                                axios.get(apiUrl).then((response) => {
+                                                                    ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                    //console.log(JSON.stringify(props));
+                                                                    if(producer)
+                                                                    {
+                                                                           props.history.push({
+                                                                             pathname: "/home",
+                                                                             state: { data: response.data }
+                                                                           });
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                            props.history.push({
+                                                                              pathname: "/dropOffHome",
+                                                                              state: { data: response.data }
+                                                                            });
+                                                                    }
+                                                                }).catch(err => {
+                                                                   ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                   var element = (
+                                                                             <Snackbar
+                                                                               place="tc"
+                                                                               color="danger"
+                                                                               icon={DonutLargeOutlinedIcon}
+                                                                               message="500: Unknown System Error...."
+                                                                               open={true}
+                                                                               close
+                                                                               closeNotification={() => {
+                                                                                 ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                               }}
+                                                                             />
+                                                                     );
+                                                                     ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                     ReactDOM.render(element,document.getElementById('unknown_error'));
+                                                                });
+                                                           }}>Cancel</Button>
+                       </GridItem>
                 </CardFooter>
               </Card>
             </GridItem>
           </GridContainer>
-        </div>
+          </CCol>
+          </CRow>
+          <div id="addStaff">
+            <AddStaffView state={state} props={props} profile={profile}/>
+          </div>
+          </div>
         </>
     );
+}
+
+function AddStaffView({state,props,profile}) {
+   const orgProfiles = profile.orgProfiles;
+   const orgArray = [];
+   const orgTaskIndex = [];
+
+   for (const [index, value] of orgProfiles.entries()) {
+       const email = value.email;
+       const row = [email];
+       orgArray.push(row);
+       orgTaskIndex.push(index);
+   }
+
+   const widget = (<>
+         <CRow>
+                            <CCol>
+                                <GridContainer>
+                                                        <GridItem xs={12} sm={12} md={6}>
+                                                          <CustomTabs
+                                                            headerColor="primary"
+                                                            tabs={[
+                                                              {
+                                                                tabName: "Staff",
+                                                                tabIcon: BugReport,
+                                                                tabContent: (
+                                                                  <RemoveStaff
+                                                                    checkedIndexes={[0]}
+                                                                    tasksIndexes={orgTaskIndex}
+                                                                    tasks={orgArray}
+                                                                    status={true}
+                                                                    history={props.history}
+                                                                    buttonTitle="Remove"
+                                                                    state={state}
+                                                                  />
+                                                                )
+                                                              },
+                                                              {
+                                                                tabName: "Add a Staff Member",
+                                                                tabIcon: BugReport,
+                                                                tabContent: (
+                                                                  <AddStaff
+                                                                    checkedIndexes={[0]}
+                                                                    tasksIndexes={orgTaskIndex}
+                                                                    tasks={orgArray}
+                                                                    status={true}
+                                                                    history={props.history}
+                                                                    buttonTitle="Add"
+                                                                    state={state}
+                                                                  />
+                                                                )
+                                                              },
+                                                            ]}
+                                                          />
+                                                        </GridItem>
+                                                      </GridContainer>
+
+                            </CCol>
+                          </CRow>
+             </>
+           );
+           return widget;
 }
 
 class Profile extends React.Component {
     constructor(props) {
             super(props);
             this.state = {data: null};
-        }
+    }
 
-        render() {
-           return (
-                <>
-                    <div id="unknown_error"/>
-                    <div id="progress"/>
-                    <div id="parent">
-                      <ProfileView state={this.state} props={this.props} />
-                    </div>
-                </>
-            );
-        }
+    render() {
+       return (
+            <>
+                <div id="unknown_error"/>
+                <div id="progress"/>
+                <div id="parent">
+                  <ProfileView state={this.state} props={this.props} />
+                </div>
+            </>
+        );
+    }
 }
 
 export default withRouter(Profile)

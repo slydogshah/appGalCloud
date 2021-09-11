@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:app/hotel_booking/hotel_app_theme.dart';
-import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
@@ -79,7 +79,7 @@ class FoodRunnerMainScene extends StatefulWidget {
   _FoodRunnerMainState createState() => _FoodRunnerMainState(this.txs,this.recoveryTxs,this.inProgressTxs);
 }
 
-class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProviderStateMixin {
+class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProviderStateMixin,WidgetsBindingObserver {
 
   AnimationController animationController;
   List<FoodRecoveryTransaction> recoveryTxs;
@@ -102,12 +102,42 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     animationController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('*************MyApp state = $state*************');
+    if(state == AppLifecycleState.resumed){
+      FoodRunner foodRunner = FoodRunner.getActiveFoodRunner();
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<Map<String, List<FoodRecoveryTransaction>>> future = client
+          .getFoodRecoveryTransaction(foodRunner.profile.email);
+      future.then((txs) {
+        setState(() {
+          this.recoveryTxs = txs['pending'];
+          this.inProgressTxs = txs['inProgress'];
+          this.txs = txs;
+        });
+      });
+    }
+    /*if (state == AppLifecycleState.inactive) {
+      // app transitioning to other state.
+    } else if (state == AppLifecycleState.paused) {
+      // app is on the background.
+    } else if (state == AppLifecycleState.detached) {
+      // flutter engine is running but detached from views
+    } else if (state == AppLifecycleState.resumed) {
+      // app is visible and running.
+      runApp(App()); // run your App class again
+    }*/
   }
 
   /*@override
@@ -386,7 +416,19 @@ class PickUpListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"tx/recovery/transaction/foodPic/?id="+tx.getId();
+    Widget foodImage;
+    if(tx.getPickupNotification().foodPic != null) {
+      String remoteUrl = UrlFunctions.getInstance().resolveHost() +
+          "tx/recovery/transaction/foodPic/?id=" + tx.getId();
+      foodImage = Image.network(remoteUrl);
+    }
+    else
+      {
+        foodImage = Image.asset(
+          "assets/jen/defaultFoodImage.jpeg",
+          fit: BoxFit.cover,
+        );
+      }
     Widget dropoff = null;
     if(tx.getPickupNotification().getDropOffOrg() != null)
     {
@@ -448,7 +490,7 @@ class PickUpListView extends StatelessWidget {
                             AspectRatio(
                               aspectRatio: 2,
                               child:
-                              Image.network(remoteUrl),
+                              foodImage,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
@@ -507,7 +549,7 @@ class PickUpListView extends StatelessWidget {
                                               MainAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  "Pickup: 10 minutes",
+                                                  "Pickup: "+tx.getPickupEstimate(),
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey
@@ -549,7 +591,7 @@ class PickUpListView extends StatelessWidget {
                                       children: <Widget>[
                                         dropoff,
                                         Text(
-                                          'DropOff: 15 minutes',
+                                          "DropOff: "+tx.getDropOffEstimate(),
                                           style: TextStyle(
                                               fontSize: 14,
                                               color:
@@ -598,10 +640,19 @@ class PickUpListView extends StatelessWidget {
 
   void handleAccept(BuildContext context,String email, FoodRecoveryTransaction tx) {
     SourceOrg dropOffOrg = tx.getPickupNotification().getDropOffOrg();
+    String orgName = null;
+    if(dropOffOrg != null){
+      orgName = dropOffOrg.orgName+": "+dropOffOrg.street+","+dropOffOrg.zip;
+    }
+    else{
+      orgName = "Community DropOff";
+    }
+
+
     AlertDialog dialog = AlertDialog(
       title: Text('Accept Food Pickup and DropOff'),
       content: Text(
-        dropOffOrg.orgName+": "+dropOffOrg.street+","+dropOffOrg.zip,
+        orgName,
         textAlign: TextAlign.left,
         style: TextStyle(
           fontWeight: FontWeight.w600,
@@ -795,12 +846,64 @@ class PickUpListView extends StatelessWidget {
     );
 
     // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
+    if(dropOffOrg != null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        },
+      );
+    }else{
+      // set up the SimpleDialog
+      SimpleDialog dialog = SimpleDialog(
+          children: [CupertinoActivityIndicator()]
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        },
+      );
+      ActiveNetworkRestClient client = new ActiveNetworkRestClient();
+      Future<Map<String,List<FoodRecoveryTransaction>>> future = client.acceptCommunityDropOff(email, tx);
+      future.then((txs) {
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => InProgressMainScene(txs)));
+      }).catchError((e) {
+        Navigator.of(context, rootNavigator: true).pop();
+        AlertDialog dialog = AlertDialog(
+          title: Text('System Error....'),
+          content: Text(
+            "Unknown System Error....",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          actions: [
+            FlatButton(
+              textColor: Color(0xFF6200EE),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return dialog;
+          },
+        );
+      });
+    }
   }
 }
 

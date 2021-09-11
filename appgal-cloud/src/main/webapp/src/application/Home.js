@@ -92,17 +92,21 @@ function HomeView({state, props}) {
     const row = [];
     const org = "";
     const orgContact = "";
+    const scheduled = "";
     if(value.pickupNotification.dropOffOrg == null)
     {
         org = "Offline Community DropOff";
         orgContact = "";
+        scheduled = value.when+" "+value.pickupNotification.scheduled;
     }
     else{
         org = value.pickupNotification.dropOffOrg.orgName;
         orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
+        scheduled = value.when+" "+value.pickupNotification.scheduled;
     }
     row.push(org);
     row.push(orgContact);
+    row.push(scheduled);
     array.push(row);
   }
 
@@ -122,9 +126,11 @@ function HomeView({state, props}) {
               orgContact = value.pickupNotification.dropOffOrg.orgContactEmail;
           }
       const foodRunner = value.pickupNotification.foodRunner.profile.email;
+      const time = value.estimatedPickupTime;
       row.push(org);
       row.push(orgContact);
       row.push(foodRunner);
+      row.push(time);
       row.push(FoodPickedUpButton(props,value));
       activeArray.push(row);
     }
@@ -160,7 +166,7 @@ function HomeView({state, props}) {
                                                                                     <CWidgetDropdown
                                                                                               color="gradient-primary"
                                                                                               header={deliveries}
-                                                                                              text="Deliveries In-Progress"
+                                                                                              text="Pickups In-Progress"
                                                                                               footerSlot={
                                                                                                 <ChartLineSimple
                                                                                                   pointed
@@ -179,9 +185,45 @@ function HomeView({state, props}) {
                                                         </CDropdownToggle>
                                                         <CDropdownMenu className="pt-0" placement="bottom-end">
                                                          <CDropdownItem onClick={(e) => {
-                                                                  props.history.push({
-                                                                     pathname: "/addPickupDetails"
-                                                                  });
+                                                                  var element = (
+                                                                           <Snackbar
+                                                                             place="tc"
+                                                                             color="info"
+                                                                             icon={DonutLargeOutlinedIcon}
+                                                                             message="Loading...."
+                                                                             open={true}
+                                                                           />
+                                                                   );
+                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                  ReactDOM.render(element,document.getElementById('progress'));
+                                                                  const orgId = store.getState().sourceOrg.orgId;
+                                                                  const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/?orgId="+orgId;
+                                                                  axios.get(apiUrl).then((response) => {
+                                                                      //alert(JSON.stringify(response.data));
+                                                                      ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                      const timeOptions = new Map(response.data);
+                                                                      props.history.push({
+                                                                       pathname: "/addPickupDetails",
+                                                                       state: { data: response.data }
+                                                                      });
+                                                                  }).catch(err => {
+                                                                      ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
+                                                                      var element = (
+                                                                                          <Snackbar
+                                                                                            place="tc"
+                                                                                            color="danger"
+                                                                                            icon={DonutLargeOutlinedIcon}
+                                                                                            message="500: Unknown System Error...."
+                                                                                            open={true}
+                                                                                            close
+                                                                                            closeNotification={() => {
+                                                                                              ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                            }}
+                                                                                          />
+                                                                                  );
+                                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
+                                                                                  ReactDOM.render(element,document.getElementById('unknown_error'));
+                                                                    });
                                                          }}>Schedule</CDropdownItem>
                                                         </CDropdownMenu>
                                                      </CDropdown>
@@ -203,7 +245,7 @@ function HomeView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["DropOff Organization", "Contact Email"]}
+                                        tableHead={["DropOff Organization", "Contact Email", "Scheduled Pickup"]}
                                         tableData={array}
                                       />
                                     </CardBody>
@@ -220,7 +262,7 @@ function HomeView({state, props}) {
                                     <CardBody>
                                       <Table
                                         tableHeaderColor="warning"
-                                        tableHead={["DropOff Organization", "Contact Email", "Food Runner","Notify"]}
+                                        tableHead={["DropOff Organization", "Contact Email", "Food Runner","Estimated Arrival","Notify"]}
                                         tableData={activeArray}
                                       />
                                     </CardBody>

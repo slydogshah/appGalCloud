@@ -178,6 +178,134 @@ public class RegistrationTests  extends BaseTest {
     }
 
     @Test
+    public void testRegisterOrgSuccess() {
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        assertEquals(200, response.getStatusCode());
+        response.getBody().prettyPrint();
+
+        //TODO: assert
+    }
+
+    @Test
+    public void testRegisterOrgDuplicate() {
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        //TODO: assert
+
+        response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(409, response.getStatusCode());
+        //TODO: assert
+    }
+
+    @Test
+    public void testRegisterOrgDuplicateDifferentOrg() {
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+
+        registrationJson.addProperty("orgId", "blah");
+        response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(409, response.getStatusCode());
+
+        //TODO: assert
+    }
+
+    @Test
+    public void testRegisterOrgValidationFails() {
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        //registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        //registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","  ");
+        registrationJson.addProperty("street","  ");
+        registrationJson.addProperty("zip","      ");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(400, response.getStatusCode());
+        //TODO assert
+    }
+
+    @Test
     public void testLoginSuccessOrg() {
         SourceOrg sourceOrg = new SourceOrg();
         sourceOrg.setOrgId("Microsoft");
@@ -196,6 +324,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -278,6 +409,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -318,6 +452,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -375,6 +512,38 @@ public class RegistrationTests  extends BaseTest {
     }
 
     @Test
+    public void testSendResetCodeValidationFails() throws Exception{
+        JsonObject json = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@blah.com";
+        json.addProperty("id", id);
+        json.addProperty("email", email);
+        json.addProperty("password", "c");
+        json.addProperty("mobile", 8675309l);
+        json.addProperty("photo", "photu");
+        json.addProperty("profileType", ProfileType.FOOD_RUNNER.name());
+
+        logger.info("******NEW_PROFILE******");
+        logger.info(json.toString());
+        logger.info("***********************");
+
+        Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+        String jsonString = response.getBody().asString();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(jsonString);
+        logger.info("****");
+        assertEquals(200, response.getStatusCode());
+
+        json = new JsonObject();
+        //json.addProperty("email",email);
+        //json.addProperty("mobileNumber","+15129151162");
+        response = given().body(json.toString()).when().post("/registration/sendResetCode").andReturn();
+        response.body().prettyPrint();
+        assertEquals(400, response.getStatusCode());
+    }
+
+    @Test
     public void testVerifyResetCodeInvalid() throws Exception{
         SourceOrg sourceOrg = new SourceOrg();
         sourceOrg.setOrgId("Microsoft");
@@ -393,6 +562,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -443,6 +615,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -494,6 +669,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -535,6 +713,9 @@ public class RegistrationTests  extends BaseTest {
         registrationJson.addProperty("orgId",sourceOrg.getOrgName());
         registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
         registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
 
 
         logger.info("******NEW_ORG******");
@@ -555,5 +736,437 @@ public class RegistrationTests  extends BaseTest {
         logger.info(response.body().prettyPrint());
         logger.info("****");
         assertEquals(400, response.getStatusCode());
+    }
+
+    @Test
+    public void testResetPasswordEmpty() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("timeZone","US/Central");
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+        JsonObject json = new JsonObject();
+        json.addProperty("email",email);
+        //json.addProperty("newPassword","blah");
+        //json.addProperty("confirmNewPassword","blahb");
+        response = given().body(json.toString()).when().post("/registration/resetPassword").andReturn();
+        logger.info("****");
+        logger.info(response.getStatusLine());
+        logger.info(response.body().prettyPrint());
+        logger.info("****");
+        assertEquals(400, response.getStatusCode());
+    }
+
+    @Test
+    public void registerStaff() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street","506 West Ave");
+        registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+
+        response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
+
+
+
+        JsonObject json = new JsonObject();
+        String staffEmail = id+".staff@microsoft.com";
+        json.addProperty("email", staffEmail);
+        json.addProperty("password", "c");
+        json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
+
+
+        response = given().body(json.toString()).post("/registration/staff");
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
+        assertEquals(200, response.getStatusCode());
+
+        response = given().get("/registration/staff/?orgId="+sourceOrg.getOrgId());
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
+    }
+
+    @Test
+    public void registerStaffResourceExists() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street","506 West Ave");
+        registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("orgId").getAsString());
+
+
+        JsonObject json = new JsonObject();
+        String staffEmail = id+".staff@microsoft.com";
+        json.addProperty("email", staffEmail);
+        json.addProperty("password", "c");
+        json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
+
+
+        response = given().body(json.toString()).post("/registration/staff");
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
+        assertEquals(200, response.getStatusCode());
+
+        response = given().body(json.toString()).post("/registration/staff");
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
+        assertEquals(409, response.getStatusCode());
+    }
+
+    @Test
+    public void registerStaffValidationError() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street","506 West Ave");
+        registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+
+
+        response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
+
+
+        JsonObject json = new JsonObject();
+        json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
+        response = given().body(json.toString()).post("/registration/staff");
+        response.getBody().prettyPrint();
+        assertEquals(400, response.getStatusCode());
+
+        json = new JsonObject();
+        json.addProperty("email","test");
+        json.addProperty("password","test");
+        json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
+        response = given().body(json.toString()).post("/registration/staff");
+        response.getBody().prettyPrint();
+        assertEquals(400, response.getStatusCode());
+    }
+
+    @Test
+    public void registerStaffOrgNotFound() throws Exception{
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+
+
+        JsonObject json = new JsonObject();
+        String staffEmail = id+".staff@microsoft.com";
+        json.addProperty("email", staffEmail);
+        json.addProperty("password", "c");
+        json.addProperty("orgId",id);
+        json.addProperty("caller",email);
+
+
+        Response response = given().body(json.toString()).post("/registration/staff");
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
+        assertEquals(404, response.getStatusCode());
+    }
+
+    @Test
+    public void deleteStaff() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street","506 West Ave");
+        registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+        response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
+
+
+        JsonObject json = new JsonObject();
+        String staffEmail = id+".staff@microsoft.com";
+        json.addProperty("email", staffEmail);
+        json.addProperty("password", "c");
+        json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
+        response = given().body(json.toString()).post("/registration/staff");
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
+        assertEquals(200, response.getStatusCode());
+        resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
+
+        for(int i=0; i<3; i++) {
+            json = new JsonObject();
+            json.addProperty("email", staffEmail);
+            json.addProperty("orgId", sourceOrg.getOrgId());
+            json.addProperty("caller", email);
+            response = given().body(json.toString()).post("/registration/deleteStaff");
+            response.getBody().prettyPrint();
+            assertEquals(200, response.getStatusCode());
+        }
+    }
+
+    @Test
+    public void deleteStaffOrgNotFound() throws Exception{
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street","506 West Ave");
+        registrationJson.addProperty("zip","78701");
+        registrationJson.addProperty("timeZone","US/Central");
+
+
+        logger.info("******NEW_ORG******");
+        logger.info(registrationJson.toString());
+        logger.info("***********************");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        JsonUtil.print(this.getClass(),sourceOrg.toJson());
+        assertEquals(200, response.getStatusCode());
+        response = given().body(registrationJson.toString()).get("/registration/profile/?email="+email);
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject resp = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        sourceOrg.setOrgId(resp.get("sourceOrgId").getAsString());
+
+
+        JsonObject json = new JsonObject();
+        String staffEmail = id+".staff@microsoft.com";
+        json.addProperty("email", staffEmail);
+        json.addProperty("password", "c");
+        json.addProperty("orgId",sourceOrg.getOrgId());
+        json.addProperty("caller",email);
+        response = given().body(json.toString()).post("/registration/staff");
+        JsonUtil.print(this.getClass(),JsonParser.parseString(response.getBody().print()));
+        assertEquals(200, response.getStatusCode());
+
+        json = new JsonObject();
+        json.addProperty("email", staffEmail);
+        json.addProperty("orgId", "blah");
+        json.addProperty("caller", email);
+        response = given().body(json.toString()).post("/registration/deleteStaff");
+        response.getBody().prettyPrint();
+        assertEquals(500, response.getStatusCode());
+    }
+
+    @Test
+    public void testRegisterOrgAlreadyExists() {
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject first = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        String firstOrgId = first.get("orgId").getAsString();
+
+        id = UUID.randomUUID().toString();
+        email = id+"@blah.com";
+        registrationJson.addProperty("orgId", "blah");
+        registrationJson.addProperty("email",email);
+        response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        JsonObject next = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        String nextOrgId = next.get("orgId").getAsString();
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals(firstOrgId,nextOrgId);
+    }
+
+    @Test
+    public void testRegisterOrgInconsistent() {
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street","801 West 5th Street");
+        registrationJson.addProperty("zip","78703");
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject first = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        String firstOrgId = first.get("orgId").getAsString();
+
+        id = UUID.randomUUID().toString();
+        email = id+"@blah.com";
+        registrationJson.addProperty("orgId", "blah");
+        registrationJson.addProperty("email",email);
+        registrationJson.addProperty("producer",false);
+        response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        JsonObject next = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        JsonArray violations = next.get("violations").getAsJsonArray();
+        String violation = violations.get(0).getAsString();
+
+        assertEquals(400, response.getStatusCode());
+        assertEquals("org_inconsistent",violation);
     }
 }

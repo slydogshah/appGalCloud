@@ -25,10 +25,13 @@ import {
 } from './index'
 import { useLocation } from 'react-router-dom'
 
+import { AppContext,store} from "../application/AppContext"
+
 const TheHeader = (props) => {
   const location = useLocation();
+  const auth = store.getState().auth;
 
-  //console.log("LOCATION: "+location.pathname);
+
 
 
   if(location.pathname == "/")
@@ -44,7 +47,7 @@ const TheHeader = (props) => {
         </>
     );
   }
-  else
+  else if(auth === true)
   {
       return (
             <CHeader withSubheader>
@@ -63,6 +66,16 @@ const TheHeader = (props) => {
               </CHeaderNav>
            </CHeader>
       );
+  }
+  else{
+   return (
+               <CHeader withSubheader>
+                 <div class="logo-header">
+                     <img src="images/jen-logo.PNG" alt=""
+                     />
+                 </div>
+              </CHeader>
+         );
   }
 }
 

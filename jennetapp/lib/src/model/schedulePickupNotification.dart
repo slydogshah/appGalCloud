@@ -9,6 +9,7 @@ class SchedulePickupNotification
   FoodRunner foodRunner;
   int  start;
   SourceOrg dropOffOrg;
+  String foodPic;
   
   SchedulePickupNotification(SourceOrg sourceOrg, FoodRunner foodRunner, int start)
   {
@@ -70,6 +71,14 @@ class SchedulePickupNotification
     {
       this.dropOffOrg = SourceOrg.fromJson(json["dropOffOrg"]);
     }
+    if(json['foodDetails'] != null)
+      {
+        Map<String,dynamic> foodDetails = json['foodDetails'];
+        if(foodDetails['foodPic'] != null)
+        {
+          this.foodPic = foodDetails['foodPic'];
+        }
+      }
   }
 
   Map<String, dynamic> toJson()

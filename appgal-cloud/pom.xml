@@ -92,6 +92,11 @@
       <artifactId>spatial4j</artifactId>
       <version>0.7</version>
     </dependency>
+    <dependency>
+      <groupId>net.iakovlev</groupId>
+      <artifactId>timeshape</artifactId>
+      <version>2020d.11</version>
+    </dependency>
 
 
 
@@ -112,6 +117,21 @@
       <groupId>com.twilio.sdk</groupId>
       <artifactId>twilio</artifactId>
       <version>8.13.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.auth</groupId>
+      <artifactId>google-auth-library-oauth2-http</artifactId>
+      <version>0.26.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>8.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.spring.task</groupId>
+      <artifactId>task-events</artifactId>
+      <version>1.0.0.RELEASE</version>
     </dependency>
   </dependencies>
   <build>

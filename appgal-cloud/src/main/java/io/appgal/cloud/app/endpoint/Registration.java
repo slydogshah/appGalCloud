@@ -11,6 +11,7 @@ import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.restclient.TwilioClient;
 import io.appgal.cloud.util.JsonUtil;
+import io.appgal.cloud.util.MapUtils;
 import io.vertx.core.http.HttpServerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +24,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Path("registration")
 public class Registration {
@@ -46,6 +51,9 @@ public class Registration {
     @Inject
     private TwilioClient twilioClient;
 
+    @Inject
+    private MapUtils mapUtils;
+
     @Path("profile")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,7 +67,18 @@ public class Registration {
                 jsonObject.addProperty("email", email);
                 return Response.status(404).entity(jsonObject.toString()).build();
             }
-            return Response.ok(profile.toString()).build();
+
+            JsonObject json = profile.toJson();
+
+            if(profile.getProfileType() == ProfileType.ORG)
+            {
+                SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(profile.getSourceOrgId());
+                sourceOrg.deleteProfile(email);
+                json.add("orgProfiles",JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray());
+            }
+
+
+            return Response.ok(json.toString()).build();
         }
         catch(Exception e)
         {
@@ -70,14 +89,28 @@ public class Registration {
         }
     }
 
-    @Path("orgs")
+    @Path("timezones")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response orgs()
+    public Response timezones()
     {
         try {
-            List<SourceOrg> orgs = this.mongoDBJsonStore.getSourceOrgs();
-            return Response.ok(JsonParser.parseString(orgs.toString()).getAsJsonArray().toString()).build();
+            JsonArray timezones = new JsonArray();
+
+            JsonObject timezone = new JsonObject();
+            timezone.addProperty("label","US/Central");
+            timezone.addProperty("value","US/Central");
+            timezones.add(timezone);
+
+            timezone = new JsonObject();
+            timezone.addProperty("label","US/Pacific");
+            timezone.addProperty("value","US/Pacific");
+            timezones.add(timezone);
+
+            JsonObject response = new JsonObject();
+            response.add("timezones",timezones);
+
+            return Response.ok(response.toString()).build();
         }
         catch(Exception e)
         {
@@ -108,8 +141,6 @@ public class Registration {
                 }
                 responseJson.add("violations", violationsArray);
 
-                JsonUtil.print(this.getClass(),responseJson);
-
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
@@ -138,10 +169,132 @@ public class Registration {
             JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
             jsonObject.remove("httpsAgent");
 
+            //JsonUtil.print(this.getClass(),jsonObject);
+
+            JsonObject responseJson = new JsonObject();
+            JsonArray violationsArray = new JsonArray();
+            //Validate the address
+            if(!jsonObject.has("zip"))
+            {
+                violationsArray.add("zip_required");
+            }
+            if(jsonObject.has("zip")){
+                String zip = jsonObject.get("zip").getAsString();
+                if(zip == null || zip.trim().length()==0){
+                    violationsArray.add("zip_required");
+                }
+            }
+            if(!jsonObject.has("street"))
+            {
+                violationsArray.add("street_required");
+            }
+            if(jsonObject.has("street")){
+                String zip = jsonObject.get("street").getAsString();
+                if(zip == null || zip.trim().length()==0){
+                    violationsArray.add("street_required");
+                }
+            }
+
+            if(violationsArray.size()>0) {
+                responseJson.add("violations", violationsArray);
+                return Response.status(400).entity(responseJson.toString()).build();
+            }
+
             Profile profile = Profile.parse(jsonObject.toString());
             SourceOrg sourceOrg = SourceOrg.parse(jsonObject.toString());
+            String generatedOrgId = SourceOrg.generateOrgId(sourceOrg.getOrgId());
+            sourceOrg.setOrgId(generatedOrgId);
             sourceOrg.addProfile(profile);
             profile.setSourceOrgId(sourceOrg.getOrgId());
+
+            Location location = this.mapUtils.calculateCoordinates(sourceOrg.getAddress());
+            sourceOrg.setLocation(location);
+            SourceOrg existing = this.profileRegistrationService.findSourceOrg(sourceOrg);
+            //JsonUtil.print(this.getClass(),existing.toJson());
+            //JsonUtil.print(this.getClass(),sourceOrg.toJson());
+            if(existing != null && existing.isProducer() != sourceOrg.isProducer())
+            {
+                violationsArray.add("org_inconsistent");
+            }
+
+            //TODO: Make sure TimeZone is assigned
+            if(violationsArray.size()>0) {
+                responseJson.add("violations", violationsArray);
+                return Response.status(400).entity(responseJson.toString()).build();
+            }
+
+
+            Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
+            if(!violations.isEmpty())
+            {
+                JsonObject vJson = new JsonObject();
+                JsonArray vArray = new JsonArray();
+                for(ConstraintViolation violation:violations)
+                {
+                    logger.info("VIOLATION: "+violation.getMessage());
+                    vArray.add(violation.getMessage());
+                }
+
+                vJson.add("violations", vArray);
+                return Response.status(400).entity(vJson.toString()).build();
+            }
+
+            ZoneId orgZone = mapUtils.determineTimeZone(location.getLatitude(),location.getLongitude());
+            sourceOrg.getAddress().setTimeZone(orgZone.getId());
+
+            SourceOrg storedSourceOrg = this.profileRegistrationService.registerSourceOrg(profile.getEmail(),sourceOrg);
+
+            return Response.ok(storedSourceOrg.toString()).build();
+        }
+        catch(ResourceExistsException rxe)
+        {
+            logger.error(rxe.getMessage(), rxe);
+            return Response.status(409).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
+    @Path("staff")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerStaff(@RequestBody String json){
+        try {
+            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+
+            String orgId = jsonObject.get("orgId").getAsString();
+            String caller = jsonObject.get("caller").getAsString();
+            String email = null;
+            if(jsonObject.has("email"))
+            {
+                email = jsonObject.get("email").getAsString();
+            }
+            String password = null;
+            if(jsonObject.has("password"))
+            {
+                password = jsonObject.get("password").getAsString();
+            }
+
+
+            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            if(sourceOrg == null)
+            {
+                JsonObject error = new JsonObject();
+                error.addProperty("message", "ORG_NOT_FOUND");
+                return Response.status(404).entity(error.toString()).build();
+            }
+
+            Profile profile = new Profile();
+            profile.setEmail(email);
+            profile.setPassword(password);
+            profile.setMobile(123);
+            profile.setSourceOrgId(orgId);
+            profile.setLocation(sourceOrg.getLocation());
+            profile.setProfileType(ProfileType.ORG);
+            profile.setResetPasswordActive(true);
 
             Set<ConstraintViolation<Profile>> violations = validator.validate(profile);
             if(!violations.isEmpty())
@@ -150,21 +303,58 @@ public class Registration {
                 JsonArray violationsArray = new JsonArray();
                 for(ConstraintViolation violation:violations)
                 {
-                    logger.info("VIOLATION: "+violation.getMessage());
                     violationsArray.add(violation.getMessage());
                 }
                 responseJson.add("violations", violationsArray);
+
+                JsonUtil.print(this.getClass(),responseJson);
+
                 return Response.status(400).entity(responseJson.toString()).build();
             }
 
-            this.profileRegistrationService.registerSourceOrg(sourceOrg);
+            this.profileRegistrationService.registerStaff(orgId, profile);
 
-            return Response.ok(sourceOrg.toString()).build();
+            sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            sourceOrg.deleteProfile(caller);
+            JsonObject responseJson = profile.toJson();
+            responseJson.add("orgProfiles",JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray());
+
+            return Response.ok(responseJson.toString()).build();
         }
         catch(ResourceExistsException rxe)
         {
             logger.error(rxe.getMessage(), rxe);
             return Response.status(409).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
+    }
+
+    @Path("deleteStaff")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteStaff(@RequestBody String jsonBody){
+        try {
+            JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            String caller = json.get("caller").getAsString();
+            String orgId = json.get("orgId").getAsString();
+            String email = json.get("email").getAsString();
+
+            this.mongoDBJsonStore.deleteProfile(email);
+
+            SourceOrg sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            sourceOrg.deleteProfile(email);
+            this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+            sourceOrg = this.mongoDBJsonStore.getSourceOrg(orgId);
+            sourceOrg.deleteProfile(caller);
+            JsonArray responseJson = JsonParser.parseString(sourceOrg.getProfiles().toString()).getAsJsonArray();
+
+            return Response.ok(responseJson.toString()).build();
         }
         catch (Exception e)
         {
@@ -224,7 +414,15 @@ public class Registration {
             }
             else
             {
-                responseJson = this.profileRegistrationService.orgLogin(userAgent, email, password);
+                if(!appLogin) {
+                    responseJson = this.profileRegistrationService.orgLogin(userAgent, email, password);
+                }
+                else
+                {
+                    JsonObject forbidden = new JsonObject();
+                    forbidden.addProperty("message", "access_denied");
+                    return Response.status(403).entity(forbidden.toString()).build();
+                }
             }
 
             return Response.ok(responseJson.toString()).build();
@@ -234,8 +432,14 @@ public class Registration {
             logger.error(authenticationException.getMessage(), authenticationException);
             return Response.status(401).entity(authenticationException.toString()).build();
         }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(500).build();
+        }
     }
 
+    //TODO: check the mobile format for validation
     @Path("sendResetCode")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -243,6 +447,19 @@ public class Registration {
     {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            JsonObject errors = new JsonObject();
+            if(!json.has("email") || json.get("email").getAsString()==null ||
+                    json.get("email").getAsString().trim().length()==0){
+                errors.addProperty("error1", "email_required");
+            }
+            if(!json.has("mobileNumber") || json.get("mobileNumber").getAsString()==null ||
+                    json.get("mobileNumber").getAsString().trim().length()==0){
+                errors.addProperty("error2", "mobile_number_required");
+            }
+            if(!errors.keySet().isEmpty()){
+                return Response.status(400).entity(errors.toString()).build();
+            }
 
             String email = json.get("email").getAsString();
             String mobileNumber = json.get("mobileNumber").getAsString();
@@ -262,8 +479,17 @@ public class Registration {
                 }
             }
 
+            Pattern pattern = Pattern.compile("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$");
+            Matcher matcher = pattern.matcher(mobileNumber);
+            boolean matches = matcher.matches();
+            if(!matches){
+                JsonObject error = new JsonObject();
+                error.addProperty("message","INVALID_NUMBER");
+                return Response.status(400).entity(error.toString()).build();
+            }
+
             String resetCode = UUID.randomUUID().toString().substring(0,6);
-            logger.info("RESET_CODE: "+resetCode);
+            //logger.info("RESET_CODE: "+resetCode);
 
             profile.setResetCode(resetCode);
             this.mongoDBJsonStore.updateProfile(profile);
@@ -288,6 +514,19 @@ public class Registration {
     {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
+
+            JsonObject errors = new JsonObject();
+            if(!json.has("email") || json.get("email").getAsString()==null ||
+                    json.get("email").getAsString().trim().length()==0){
+                errors.addProperty("error1", "email_required");
+            }
+            if(!json.has("resetCode") || json.get("resetCode").getAsString()==null ||
+                    json.get("resetCode").getAsString().trim().length()==0){
+                errors.addProperty("error2", "reset_required");
+            }
+            if(!errors.keySet().isEmpty()){
+                return Response.status(400).entity(errors.toString()).build();
+            }
 
             String email = json.get("email").getAsString();
             String resetCode = json.get("resetCode").getAsString();
@@ -324,7 +563,6 @@ public class Registration {
         }
     }
 
-    //TODO: Validation Hardening
     @Path("newPassword")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -341,9 +579,25 @@ public class Registration {
         try {
             JsonObject json = JsonParser.parseString(jsonBody).getAsJsonObject();
 
+            JsonObject errors = new JsonObject();
+            if(!json.has("newPassword") || json.get("newPassword").getAsString()==null ||
+                    json.get("newPassword").getAsString().trim().length()==0){
+                errors.addProperty("error1", "new_password_required");
+            }
+            if(!json.has("confirmNewPassword") || json.get("confirmNewPassword").getAsString()==null ||
+                    json.get("confirmNewPassword").getAsString().trim().length()==0){
+                errors.addProperty("error2", "confirm_new_password_required");
+            }
+            if(!errors.keySet().isEmpty()){
+                return Response.status(400).entity(errors.toString()).build();
+            }
+
+
             String email = json.get("email").getAsString();
             String newPassword = json.get("newPassword").getAsString();
             String confirmPassword = json.get("confirmNewPassword").getAsString();
+
+
 
             if(!newPassword.equals(confirmPassword))
             {
@@ -354,6 +608,7 @@ public class Registration {
 
             Profile profile = this.mongoDBJsonStore.getProfile(email);
             profile.setPassword(newPassword);
+            profile.setResetPasswordActive(false);
             this.mongoDBJsonStore.updateProfile(profile);
 
             JsonObject success = new JsonObject();

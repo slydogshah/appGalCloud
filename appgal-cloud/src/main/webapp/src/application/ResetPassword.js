@@ -79,6 +79,7 @@ function ResetPasswordView({state, props}) {
                            }
                        }}
                       />
+                      <div id="newPasswordRequired"/>
                     </GridItem>
                   </GridContainer>
                   <GridContainer>
@@ -99,12 +100,42 @@ function ResetPasswordView({state, props}) {
                          }
                      }}
                     />
+                    <div id="confirmNewPasswordRequired"/>
                   </GridItem>
                 </GridContainer>
                 </CardBody>
                 <CardFooter>
                   <Button color="primary" onClick={(e) => {
                           ReactDOM.unmountComponentAtNode(document.getElementById('validation_error'));
+                          ReactDOM.unmountComponentAtNode(document.getElementById('newPasswordRequired'));
+                          ReactDOM.unmountComponentAtNode(document.getElementById('confirmNewPasswordRequired'));
+                          const required = (
+                               <CAlert
+                               color="warning"
+                               >
+                                  Required
+                              </CAlert>
+                           );
+                           let validationSuccess = true;
+
+
+
+                          if(state.newPassword == null || state.newPassword == "")
+                          {
+                            ReactDOM.render(required,document.getElementById('newPasswordRequired'));
+                            validationSuccess = false;
+                          }
+                          if(state.confirmNewPassword == null || state.confirmNewPassword == "")
+                            {
+                              ReactDOM.render(required,document.getElementById('confirmNewPasswordRequired'));
+                              validationSuccess = false;
+                            }
+
+                            if(!validationSuccess)
+                            {
+                                return;
+                            }
+
                           const payload = {
                              newPassword:state.newPassword,
                              confirmNewPassword:state.confirmNewPassword,

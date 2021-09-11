@@ -1,4 +1,6 @@
 #import "FlutterLocalNotificationsPlugin.h"
+#import "BackgroundTasks/BackgroundTasks.h"
+@import UserNotifications;
 
 @implementation FlutterLocalNotificationsPlugin{
     FlutterEventSink eventSink;
@@ -796,29 +798,72 @@ didReceiveLocalNotification:(UILocalNotification*)notification {
 */
 
 - (void) startListening:(id)listener emitter:(FlutterEventSink)emitter {
-    // Prepare callback dictionary
-    if (self->listeners == nil) self->listeners = [NSMutableDictionary new];
-
-    // Get callback id
-    NSString* currentListenerId =
-        [[NSNumber numberWithUnsignedInteger:[((NSObject*) listener) hash]] stringValue];
-
     // Prepare a timer like self calling task
-    void (^callback)(void) = ^() {
+    /*void (^callback)(void) = ^() {
         void (^callback)(void) = [self->listeners valueForKey:currentListenerId];
         if ([self->listeners valueForKey:currentListenerId] != nil) {
             int time = (int) CFAbsoluteTimeGetCurrent();
 
-            emitter([NSString stringWithFormat:@"Hello Listener! %d", time]);
+            //emitter([NSString stringWithFormat:@"Hello Listener! %d", time]);
 
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+            //NSLog(@"********HELLO1**********************************");
+            //dispatch_get_main_queue().async(callback);
         }
-    };
+    };*/
+
 
     // Run task
-    [self->listeners setObject:callback forKey:currentListenerId];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+    //[self->listeners setObject:callback forKey:currentListenerId];
+    //NSLog(@"********HELLO2**********************************");
+    //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), callback);
+
+    //emitter([NSString stringWithFormat:@"STARTING_REGISTRATION...."]);
+    //emitter([NSString stringWithFormat:@"CLEANUP_REGISTRATION...."]);
+    /*[[BGTaskScheduler sharedScheduler] registerForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.refresh" usingQueue:nil
+      launchHandler:^(BGTask *task) {
+        [self handleAppRefresh:emitter];
+      }
+    ];*/
+    //emitter([NSString stringWithFormat:@"REGISTER_SUCCESS...."]);
+    //[self scheduleAppRefresh];
+
+
+
+
 }
+
+-(void) scheduleAppRefresh{
+    BGAppRefreshTaskRequest* request = [[BGAppRefreshTaskRequest alloc] initWithIdentifier:@"com.example.apple-samplecode.ColorFeed.refresh"];
+    // Fetch no earlier than 15 minutes from now
+    request.earliestBeginDate = [NSDate dateWithTimeIntervalSinceNow:2];
+
+   [[BGTaskScheduler sharedScheduler] submitTaskRequest:request error:nil];
+}
+
+//-(void) handleAppRefresh:(BGAppRefreshTask *) task emitter:(FlutterEventSink)emitter{
+-(void) handleAppRefresh:(FlutterEventSink)emitter{
+   emitter([NSString stringWithFormat:@"Hello Listener"]);
+   /*// Schedule a new refresh task
+   scheduleAppRefresh()
+
+   // Create an operation that performs the main part of the background task
+   let operation = RefreshAppContentsOperation()
+
+   // Provide an expiration handler for the background task
+   // that cancels the operation
+   task.expirationHandler = {
+      operation.cancel()
+   }
+
+   // Inform the system that the background task is complete
+   // when the operation completes
+   operation.completionBlock = {
+      task.setTaskCompleted(success: !operation.isCancelled)
+   }
+
+   // Start the operation
+   operationQueue.addOperation(operation)*/
+ }
 
 - (void) cancelListening:(id)listener {
     // Get callback id

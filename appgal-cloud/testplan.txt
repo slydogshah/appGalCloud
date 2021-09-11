@@ -1,0 +1,170 @@
+Test 1
+----
+
+Dash: Login
+* Success
+* Wrong Password
+* Wrong Email (one that does not exist)
+* System Error
+* Login as FoodRunner (Access should be denied)
+* Login unregistered
+
+App: Login
+* Success
+* Wrong Password
+* Wrong Email (one that does not exist)
+* System Error
+* Login as Org (Access should be denied)
+
+
+Test 2
+----
+
+Pickup
+----
+801 West 5th Street
+78703
+
+DropOff
+----
+214 Barton Springs Rd
+78704
+
+Dash: Register
+* Success
+* Code 400: Validation Errors
+    * Email: required,invalid
+    * Password: required
+    * OrgId: required
+* Code 409: Exists
+* Code 500: System Error
+
+App: Register
+* Success
+* Code 400: Validation Errors
+    * Email: required,invalid
+    * Password: required
+* Code 409: Exists
+* Code 500: System Error
+
+Test 3
+----
+
+Dash: Schedule a Pickup
+Schedule 2 requests (one to test with navigation, another without navigation)
+
+* Start Scheduling Process
+    * addPickupDetails
+        * 400: Validation Errors
+        * 500: System Error
+    * Schedule Org or OfflineCommunity
+        * 500: System Error
+
+Test 4
+---
+
+App: Show Requests
+
+Test 5
+----
+
+App: Show In-Progress Requests
+
+Test 6
+----
+
+App: Notify Availability for Offline Community Support
+
+* 500: System Error
+
+Test 7
+----
+
+App: Accept a Request
+
+* Cancel
+
+* Accept with or without Navigation
+    * 500: System Error
+    * Start Navigation
+
+Test 8
+----
+
+App: Start DropOff Navigation
+        * Cancel
+        * Start Navigation
+
+Test 9
+----
+
+Dash: Launch the Main Page
+
+* 500: System Error
+
+Test 10
+----
+
+Dash: Notify Food Picked Up
+* 500: System Error
+
+Test 11
+----
+
+Dash: DropOff Home / FoodReceived
+* 500: System Error
+
+Test 12
+----
+
+Dash: Forgot Password
+* sendResetCode
+    * Email
+        * 404: Email not found
+        * Email Invalid (?)
+        * 403: Not an Org account
+    * Mobile
+        * Mobile Invalid (TODO)
+
+* verifyResetCode
+    * 401: Invalid Reset Code
+
+* resetPassword and updateProfile
+    * 400: Passwords don't match
+    * Password Reset Success
+
+Test 13
+----
+Dash: Change Password
+      * Empty password (required message)
+      * Not match
+      * Success
+      * Cancel
+
+Test 14
+----
+Dash: Add Staff Member
+      * All empty
+      * One empty at a time
+      * Invalid email
+      * Cancel
+      * Add
+      * Login as the Added Member
+      Reset on first login
+      * All empty
+      * One empty at a time
+      * Not match
+      * Success
+
+Test 15
+----
+Dash: Remove Staff Member
+      * Remove when one
+      * Remove multiple
+      * Remove till all removed
+      * Remove the original
+      * Login after removal
+
+
+
+

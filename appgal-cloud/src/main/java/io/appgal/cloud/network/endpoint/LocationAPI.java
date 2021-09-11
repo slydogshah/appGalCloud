@@ -6,6 +6,7 @@ import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.network.services.LocationService;
+import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,8 +34,13 @@ public class LocationAPI {
     {
         try {
             JsonObject inputJson = JsonParser.parseString(jsonBody).getAsJsonObject();
+            //System.out.println(inputJson);
             String email = inputJson.get("email").getAsString();
+            double latitude = inputJson.get("latitude").getAsDouble();
+            double longitude = inputJson.get("longitude").getAsDouble();
             FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
+            Location location = new Location(latitude,longitude);
+            foodRunner.setLocation(location);
             this.locationService.receiveUpdate(foodRunner);
 
             JsonObject responseJson = new JsonObject();

@@ -8,6 +8,7 @@ import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
 import io.appgal.cloud.util.MapUtils;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
-public class NetworkFlow {
+public class NetworkFlow extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(NetworkFlow.class);
 
     @Inject
@@ -53,7 +54,7 @@ public class NetworkFlow {
         }
     }
 
-    @Test
+    //@Test
     public void flowExclusiveAccept() throws Exception
     {
         String pickupOrg = "pickup@pickup.io";
@@ -196,6 +197,7 @@ public class NetworkFlow {
         registrationJson.addProperty("producer", true);
         registrationJson.addProperty("street",street);
         registrationJson.addProperty("zip",zip);
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();
@@ -221,6 +223,7 @@ public class NetworkFlow {
         registrationJson.addProperty("producer", false);
         registrationJson.addProperty("street",street);
         registrationJson.addProperty("zip",zip);
+        registrationJson.addProperty("timeZone","US/Central");
 
         Response response = given().body(registrationJson.toString()).post("/registration/org");
         String jsonString = response.getBody().print();

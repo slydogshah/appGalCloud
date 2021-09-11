@@ -57,6 +57,9 @@ public class NotificationReceiverTest extends BaseTest {
             sourceOrg.setLocation(location);
             Profile profile = new Profile(UUID.randomUUID().toString(), "bugs.bunny.shah@gmail.com", 8675309l, "", "", ProfileType.FOOD_RUNNER);
             FoodRunner bugsBunny = new FoodRunner(profile, location);
+            Address address = new Address();
+            address.setTimeZone("US/Central");
+            sourceOrg.setAddress(address);
 
             SchedulePickUpNotification schedulePickUpNotification = new SchedulePickUpNotification(UUID.randomUUID().toString());
             schedulePickUpNotification.setSourceOrg(sourceOrg);
@@ -104,5 +107,44 @@ public class NotificationReceiverTest extends BaseTest {
             assertFalse(excluded.contains(id));
             assertTrue(cour.get("notificationSent").getAsBoolean());
         }
+    }
+
+    @Test
+    public void addPickupDetails() throws Exception{
+        this.basedOnAddress("801 West 5th Street","78703");
+        this.basedOnAddress("128 King Henry's Road","London, NW3 3ST United Kingdom");
+    }
+
+    private void basedOnAddress(String street,String zip){
+        SourceOrg sourceOrg = new SourceOrg();
+        sourceOrg.setOrgId("Microsoft");
+        sourceOrg.setOrgName("Microsoft");
+        sourceOrg.setOrgContactEmail("sly.dog.shah@gmail.com");
+        sourceOrg.setProducer(true);
+
+        JsonObject registrationJson = new JsonObject();
+        String id = UUID.randomUUID().toString();
+        String email = id+"@microsoft.com";
+        registrationJson.addProperty("email", email);
+        registrationJson.addProperty("mobile", 8675309l);
+        registrationJson.addProperty("password", "c");
+        registrationJson.addProperty("profileType", ProfileType.ORG.name());
+        registrationJson.addProperty("orgName",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgId",sourceOrg.getOrgName());
+        registrationJson.addProperty("orgContactEmail",sourceOrg.getOrgContactEmail());
+        registrationJson.addProperty("producer",sourceOrg.isProducer());
+        registrationJson.addProperty("street",street);
+        registrationJson.addProperty("zip",zip);
+
+        Response response = given().body(registrationJson.toString()).post("/registration/org");
+        response.getBody().prettyPrint();
+        assertEquals(200, response.getStatusCode());
+        JsonObject first = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
+        String firstOrgId = first.get("orgId").getAsString();
+
+        response = given().when().get("/notification/addPickupDetails/?orgId="+firstOrgId)
+                .andReturn();
+        response.getBody().prettyPrint();
+        assertEquals(200,response.getStatusCode());
     }
 }

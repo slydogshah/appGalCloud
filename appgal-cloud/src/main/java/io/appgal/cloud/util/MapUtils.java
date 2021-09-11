@@ -4,8 +4,16 @@ import com.google.gson.JsonObject;
 import io.appgal.cloud.model.Address;
 import io.appgal.cloud.model.Location;
 import io.appgal.cloud.restclient.GoogleApiClient;
-import org.locationtech.spatial4j.distance.DistanceUtils;
 
+import org.locationtech.spatial4j.distance.DistanceUtils;
+import net.iakovlev.timeshape.TimeZoneEngine;
+
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
+import java.time.ZoneId;
+
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -13,6 +21,13 @@ import javax.inject.Inject;
 public class MapUtils {
     @Inject
     private GoogleApiClient googleApiClient;
+
+    private TimeZoneEngine engine;
+
+    @PostConstruct
+    public void onStart(){
+        this.engine = TimeZoneEngine.initialize();
+    }
 
     public double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
     {
@@ -27,6 +42,11 @@ public class MapUtils {
 
     public Location calculateCoordinates(Address address)
     {
+        if(address == null || address.getStreet() == null || address.getZip() == null ||
+        address.getStreet().trim().length()==0 || address.getZip().trim().length()==0){
+            throw new IllegalStateException("INVALID_ADDRESS");
+        }
+
         Location location = new Location();
 
         JsonObject coordinates = this.googleApiClient.convertAddressToCoordinates(address);
@@ -38,5 +58,12 @@ public class MapUtils {
         location.setLongitude(longitude);
 
         return location;
+    }
+
+    public ZoneId determineTimeZone(double latitude, double longitude)
+    {
+        List<ZoneId> allZones = this.engine.queryAll(latitude, longitude);
+        return allZones.get(0);
+        //return ZoneId.of("America/Chicago");
     }
 }

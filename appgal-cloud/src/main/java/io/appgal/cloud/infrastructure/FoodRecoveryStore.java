@@ -79,7 +79,7 @@ public class FoodRecoveryStore {
 
         String queryJson = "{\"pickupNotification.sourceOrg.orgId\":\""+orgId+"\"}";
         //String queryJson = "{}";
-        //logger.info(queryJson);
+        //System.out.println(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -89,6 +89,8 @@ public class FoodRecoveryStore {
             String documentJson = document.toJson();
             list.add(FoodRecoveryTransaction.parse(documentJson));
         }
+
+        //System.out.println(list);
         return list;
     }
 
@@ -117,7 +119,7 @@ public class FoodRecoveryStore {
 
         ///({$and:[{"pickupNotification.dropOffOrg.orgId":"dropoff.io"},{"transactionState":{$not:{ $regex: "CLOSED" }}}]}
         String queryJson = "{$and:[{\"pickupNotification.dropOffOrg.orgId\":\""+orgId+"\"},{\"transactionState\":{$not:{$regex:\""+TransactionState.CLOSED+"\"}}}]}";
-        logger.info(queryJson);
+        //logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
@@ -177,7 +179,7 @@ public class FoodRecoveryStore {
 
         ///({$and:[{"pickupNotification.dropOffOrg.orgId":"dropoff.io"},{"transactionState":{$not:{ $regex: "CLOSED" }}}]}
         String queryJson = "{$and:[{\"pickupNotification.foodRunner.profile.email\":\""+email+"\"},{\"transactionState\":\""+TransactionState.ONTHEWAY+"\"}]}";
-        logger.info(queryJson);
+        //logger.info(queryJson);
         Bson bson = Document.parse(queryJson);
         FindIterable<Document> iterable = collection.find(bson);
         MongoCursor<Document> cursor = iterable.cursor();
