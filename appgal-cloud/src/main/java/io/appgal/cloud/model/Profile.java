@@ -50,6 +50,8 @@ public class Profile implements Serializable {
 
     private boolean resetPasswordActive=false;
 
+    private String bearerToken;
+
     public Profile()
     {
 
@@ -192,6 +194,14 @@ public class Profile implements Serializable {
 
     public void setResetPasswordActive(boolean resetPasswordActive) {
         this.resetPasswordActive = resetPasswordActive;
+    }
+
+    public String getBearerToken() {
+        return bearerToken;
+    }
+
+    public void setBearerToken(String bearerToken) {
+        this.bearerToken = bearerToken;
     }
 
     @Override

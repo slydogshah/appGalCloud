@@ -5,7 +5,6 @@ import { withRouter } from "react-router";
 import Modal from 'react-modal';
 import OverlayMixin from 'react-overlays';
 import Select from 'react-select'
-import axios from 'axios'
 import https from 'http';
 import {
   CButton,
@@ -48,6 +47,7 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import DonutLargeOutlinedIcon from '@material-ui/icons/DonutLargeOutlined';
 import Snackbar from "../components/Snackbar/Snackbar.js";
+import { axios} from "../App"
 
 const styles = {
   cardCategoryWhite: {
@@ -275,6 +275,7 @@ function RenderLogin({state,props})
                                         ...state,
                                         auth: resetPasswordActive,
                                         email:login,
+                                        bearer:response.data.bearerToken,
                                         sourceOrg: response.data.sourceOrg
                                       }));
                                       LaunchHome(props,response.data);
@@ -586,6 +587,7 @@ function RenderLogin({state,props})
                                                                      ...state,
                                                                      auth: true,
                                                                      email:login,
+                                                                     bearer:response.data.bearerToken,
                                                                      sourceOrg: response.data
                                                                    }));
 
@@ -712,6 +714,7 @@ const payload = {
                                         ...state,
                                         auth: resetPasswordActive,
                                         email:state.email,
+                                        bearer:response.data.bearerToken,
                                         sourceOrg: response.data.sourceOrg
                                       }));
                                       LaunchHome(props,response.data);

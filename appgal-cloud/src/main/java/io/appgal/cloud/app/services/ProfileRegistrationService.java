@@ -165,6 +165,9 @@ public class ProfileRegistrationService {
 
             authResponse.addProperty("offlineCommunitySupport",foodRunner.isOfflineCommunitySupport());
 
+            String bearerToken = UUID.randomUUID().toString();
+            authResponse.addProperty("bearerToken",bearerToken);
+
             //logger.info("AUTHENTICATION_SUCCESS: "+email);
             return authResponse;
         }
@@ -200,6 +203,10 @@ public class ProfileRegistrationService {
             profileJson.remove("password");
             jsonObject.add("profile", profileJson);
             jsonObject.add("sourceOrg", sourceOrg.toJson());
+
+            String bearerToken = UUID.randomUUID().toString();
+            jsonObject.addProperty("bearerToken",bearerToken);
+
             return jsonObject;
         }
 
