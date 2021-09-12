@@ -243,6 +243,10 @@ public class Profile implements Serializable {
 
         jsonObject.addProperty("resetPasswordActive",this.resetPasswordActive);
 
+        if(this.bearerToken != null){
+            jsonObject.addProperty("bearerToken",this.bearerToken);
+        }
+
         return jsonObject;
     }
 
@@ -296,6 +300,10 @@ public class Profile implements Serializable {
         if(jsonObject.has("resetPasswordActive"))
         {
             profile.resetPasswordActive = jsonObject.get("resetPasswordActive").getAsBoolean();
+        }
+
+        if(jsonObject.has("bearerToken")){
+            profile.bearerToken = jsonObject.get("bearerToken").getAsString();
         }
 
         return profile;

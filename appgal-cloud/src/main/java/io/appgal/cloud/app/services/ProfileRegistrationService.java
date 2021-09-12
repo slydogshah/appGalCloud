@@ -166,6 +166,8 @@ public class ProfileRegistrationService {
             authResponse.addProperty("offlineCommunitySupport",foodRunner.isOfflineCommunitySupport());
 
             String bearerToken = UUID.randomUUID().toString();
+            profile.setBearerToken(bearerToken);
+            this.mongoDBJsonStore.updateProfile(profile);
             authResponse.addProperty("bearerToken",bearerToken);
 
             //logger.info("AUTHENTICATION_SUCCESS: "+email);
@@ -205,6 +207,8 @@ public class ProfileRegistrationService {
             jsonObject.add("sourceOrg", sourceOrg.toJson());
 
             String bearerToken = UUID.randomUUID().toString();
+            profile.setBearerToken(bearerToken);
+            this.mongoDBJsonStore.updateProfile(profile);
             jsonObject.addProperty("bearerToken",bearerToken);
 
             return jsonObject;

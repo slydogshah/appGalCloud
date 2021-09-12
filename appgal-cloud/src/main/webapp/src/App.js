@@ -29,7 +29,7 @@ export const axios = axiosLib.create({
        if(bearerToken != null){
            headers.Bearer = store.getState().bearer;
            headers.Principal = store.getState().email;
-           alert(JSON.stringify(headers));
+           //alert(JSON.stringify(headers));
        }
 
         return data;
