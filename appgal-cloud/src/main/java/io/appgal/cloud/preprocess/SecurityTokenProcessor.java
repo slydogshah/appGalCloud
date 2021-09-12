@@ -34,8 +34,11 @@ public class SecurityTokenProcessor implements ContainerResponseFilter
 
     private List<String> whiteList = new ArrayList<>();
 
+    private boolean active;
+
     @PostConstruct
     public void onStart(){
+        this.active = true;
         whiteList.add("/registration/login");
         whiteList.add("/registration/timezones");
         whiteList.add("/registration/org");
@@ -44,10 +47,23 @@ public class SecurityTokenProcessor implements ContainerResponseFilter
         whiteList.add("/registration/resetPassword");
     }
 
+    public void deactivate(){
+        this.active = false;
+    }
+
+    private boolean isDeactivated()
+    {
+        return !this.active;
+    }
+
 
     @Override
     public void filter(ContainerRequestContext context, ContainerResponseContext containerResponseContext) throws IOException
     {
+        if(this.isDeactivated()){
+            return;
+        }
+
         String bearerToken = context.getHeaderString("Bearer");
         if(bearerToken != null)
         {
@@ -113,6 +129,7 @@ public class SecurityTokenProcessor implements ContainerResponseFilter
         System.out.println("Principal: "+principal);
         JsonUtil.print(this.getClass(),profile.toJson());
         if(profile.getBearerToken() != null && profile.getBearerToken().equals(bearerToken)){
+            System.out.println("ACCESS_GRANTED");
             return true;
         }
         return false;
