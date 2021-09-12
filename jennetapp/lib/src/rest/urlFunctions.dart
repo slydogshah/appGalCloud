@@ -41,11 +41,11 @@ class UrlFunctions
       return json;
     }
 
-    if(response.statusCode == 401)
+    if(response.statusCode == 401 || response.statusCode == 403)
     {
       Map<String,dynamic> json = new Map();
       json["exception"] = "AUTH_FAILURE";
-      json["statusCode"] = 401;
+      json["statusCode"] = response.statusCode;
       return json;
     }
     else if(response.statusCode != 200)

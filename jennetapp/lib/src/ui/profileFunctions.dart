@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/context/securityToken.dart';
 import 'package:app/src/messaging/polling/cloudDataPoller.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
@@ -85,10 +86,13 @@ class ProfileFunctions
         loginScene.notifySystemError("System Error: Please try again");
         return;
       }
+
       Profile foodRunner = Profile.fromJson(json);
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
       activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
+
+      ActiveSession.getInstance().securityToken = new SecurityToken(foodRunner.email, foodRunner.bearerToken);
 
       CloudDataPoller.startPolling(context,foodRunner);
       //LocationUpdater.getLocation();
@@ -261,7 +265,7 @@ class ProfileFunctions
     ProfileRestClient profileRestClient = new ProfileRestClient();
     Future<Map<String,dynamic>> future = profileRestClient.login(authCredentials);
     future.then((json) {
-      //print("*****************");
+      //print("********REGISTER*********");
       //print(json);
       if(json['statusCode'] != 200)
       {
@@ -300,6 +304,8 @@ class ProfileFunctions
       ActiveSession activeSession = ActiveSession.getInstance();
       activeSession.setProfile(foodRunner);
       activeSession.foodRunner.offlineCommunitySupport = json["offlineCommunitySupport"];
+
+      ActiveSession.getInstance().securityToken = new SecurityToken(foodRunner.email, foodRunner.bearerToken);
 
       CloudDataPoller.startPolling(context,foodRunner);
       //LocationUpdater.getLocation();

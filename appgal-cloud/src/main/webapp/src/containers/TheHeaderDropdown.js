@@ -34,7 +34,7 @@ import CustomInput from "../components/CustomInput/CustomInput.js";
 import Button from "../components/CustomButtons/Button.js";
 
 import styles from "../assets/jss/material-dashboard-react/components/headerLinksStyle.js";
-import axios from 'axios';
+import { axios} from "../App"
 import { AppContext,store} from "../application/AppContext"
 
 const useStyles = makeStyles(styles);

@@ -4,6 +4,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
+  #sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.20.0 <2.0.0"
 
 dependencies:
@@ -32,7 +33,6 @@ dependencies:
   animations: ^1.1.2
   provider: ^4.3.2
   adaptive_breakpoints: ^0.0.2
-  http: ^0.13.0
   external_app_launcher: ^0.0.1
   uuid: ^2.2.2
   location: ^4.0.0
@@ -55,6 +55,7 @@ dependencies:
   intl: ^0.16.0
   okito: ^1.1.9
   flutter_native_splash: ^0.3.2
+  http: ^0.13.0
   #crypto: ^2.1.5
 
 dev_dependencies:

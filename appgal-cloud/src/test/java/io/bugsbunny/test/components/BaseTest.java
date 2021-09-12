@@ -18,7 +18,7 @@ public abstract class BaseTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        this.securityTokenProcessor.deactivate();
+        //this.securityTokenProcessor.deactivate();
     }
 
     @AfterEach

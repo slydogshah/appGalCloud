@@ -133,7 +133,7 @@ public class ActiveNetwork {
         }
     }
 
-    @Path("/accept")
+    @Path("accept")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response accept(@RequestBody String jsonBody)

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
-import axios from 'axios'
+import { axios} from "../App"
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // core components

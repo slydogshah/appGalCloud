@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext,Component } from 'react'
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
-import axios from 'axios'
+import { axios} from "../App"
 
 import {
   CAlert

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createRef, lazy } from 'react'
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
-import axios from 'axios'
+import { axios} from "../App"
 import {
   CCardGroup,
   CCardFooter,

@@ -1,3 +1,5 @@
+import 'package:app/src/context/securityToken.dart';
+import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
@@ -14,6 +16,8 @@ class ActiveSession
   FoodRunnerLocation location;
   FoodRecoveryTransaction current;
   FoodRunner foodRunner;
+
+  SecurityToken securityToken;
 
   ActiveSession();
 
@@ -52,6 +56,7 @@ class ActiveSession
 
       box.write('email', profile.email);
       box.write('password', profile.password);
+      box.write('bearerToken', profile.bearerToken);
   }
 
   void storeLocation(FoodRunnerLocation location) async
@@ -73,11 +78,13 @@ class ActiveSession
 
 
     final String email = box.read<String>('email');
+    final String bearerToken = box.read<String>('bearerToken');
     final String password = box.read<String>('password');
     final double latitude = box.read<double>('latitude');
     final double longitude = box.read<double>('longitude');
 
     storedCredentials['email'] = email;
+    storedCredentials['bearerToken'] = bearerToken;
     storedCredentials['password'] = password;
     storedCredentials['latitude'] = latitude;
     storedCredentials['longitude'] = longitude;

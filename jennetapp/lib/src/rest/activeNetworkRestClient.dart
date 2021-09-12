@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/profile.dart';
@@ -22,7 +25,17 @@ class ActiveNetworkRestClient
 
 
     try {
-      response = await http.get(Uri.parse(remoteUrl));
+      response = await http.get(Uri.parse(remoteUrl),headers: {
+        "Principal":ActiveSession.getInstance().securityToken.email,
+        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
+      },);
+
+      //print(response.body);
+
+      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+      if(error != null){
+        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+      }
     }
     catch (e) {
       //print(e);
@@ -63,32 +76,6 @@ class ActiveNetworkRestClient
     return txs;
   }
 
-  Future<List<FoodRecoveryTransaction>> getFoodRecoveryPush(String email) async
-  {
-    List<FoodRecoveryTransaction> txs = [];
-    var response;
-
-    String host = UrlFunctions.getInstance().resolveHost();
-
-    String remoteUrl = host+"tx/push/recovery/?email="+email;
-    try {
-      response = await http.get(Uri.parse(remoteUrl));
-    }
-    catch (e) {
-      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
-    }
-
-    Map<String,dynamic> object = jsonDecode(response.body);
-    Iterable l = object['pending'];
-    for(Map<String, dynamic> tx in l)
-    {
-      FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
-      txs.add(local);
-    }
-
-    return txs;
-  }
-
   Future<String> sendLocationUpdate(LocationData locationData) async
   {
     var response;
@@ -104,7 +91,14 @@ class ActiveNetworkRestClient
     //print(jsonBody);
 
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
+      response = await http.post(Uri.parse(remoteUrl),headers: {
+        "Principal":ActiveSession.getInstance().securityToken.email,
+        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
+      }, body: jsonBody);
+      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+      if(error != null){
+        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+      }
     }
     catch (e) {
       //print("********LOCATION_UPDATE*************");
@@ -128,7 +122,14 @@ class ActiveNetworkRestClient
     json['available'] = foodRunner.offlineCommunitySupport;
     String jsonBody = jsonEncode(json);
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: jsonBody);
+      response = await http.post(Uri.parse(remoteUrl),headers: {
+        "Principal":ActiveSession.getInstance().securityToken.email,
+        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
+      }, body: jsonBody);
+      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+      if(error != null){
+        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+      }
     }
     catch (e) {
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
@@ -144,10 +145,18 @@ class ActiveNetworkRestClient
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
     var response;
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
+      response = await http.post(Uri.parse(remoteUrl),headers: {
+        "Principal":ActiveSession.getInstance().securityToken.email,
+        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
+      }, body: jsonEncode(payload)).
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });
+
+      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+      if(error != null){
+        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+      }
     }
     catch (e) {
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
@@ -170,10 +179,17 @@ class ActiveNetworkRestClient
     String jsonBody = jsonEncode(payload);
     var response;
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: jsonBody).
+      response = await http.post(Uri.parse(remoteUrl),headers: {
+        "Principal":ActiveSession.getInstance().securityToken.email,
+        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
+      }, body: jsonBody).
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });
+      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+      if(error != null){
+        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+      }
     }
     catch (e) {
       json = UrlFunctions.handleError(e, response);
@@ -226,10 +242,17 @@ class ActiveNetworkRestClient
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/accept/";
     var response;
     try {
-      response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
+      response = await http.post(Uri.parse(remoteUrl),headers: {
+        "Principal":ActiveSession.getInstance().securityToken.email,
+        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
+      }, body: jsonEncode(payload)).
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });
+      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+      if(error != null){
+        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+      }
     }
     catch (e) {
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
@@ -279,3 +302,37 @@ class ActiveNetworkRestClient
     return txs;
   }
 }
+
+
+
+
+
+
+/*Future<List<FoodRecoveryTransaction>> getFoodRecoveryPush(String email) async
+  {
+    List<FoodRecoveryTransaction> txs = [];
+    var response;
+
+    String host = UrlFunctions.getInstance().resolveHost();
+
+    String remoteUrl = host+"tx/push/recovery/?email="+email;
+    try {
+      response = await http.get(Uri.parse(remoteUrl),headers: {
+        "Principal":ActiveSession.getInstance().securityToken.email,
+        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
+      },);
+    }
+    catch (e) {
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+    }
+
+    Map<String,dynamic> object = jsonDecode(response.body);
+    Iterable l = object['pending'];
+    for(Map<String, dynamic> tx in l)
+    {
+      FoodRecoveryTransaction local = FoodRecoveryTransaction.fromJson(tx);
+      txs.add(local);
+    }
+
+    return txs;
+  }*/

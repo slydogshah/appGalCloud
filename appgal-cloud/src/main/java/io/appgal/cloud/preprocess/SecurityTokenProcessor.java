@@ -1,7 +1,6 @@
 package io.appgal.cloud.preprocess;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.util.JsonUtil;
@@ -9,20 +8,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Priority(0)
 @Provider
-public class SecurityTokenProcessor implements ContainerResponseFilter
+public class SecurityTokenProcessor implements ContainerRequestFilter
 {
     private static Logger logger = LoggerFactory.getLogger(SecurityTokenProcessor.class);
 
@@ -56,15 +52,24 @@ public class SecurityTokenProcessor implements ContainerResponseFilter
         return !this.active;
     }
 
-
     @Override
-    public void filter(ContainerRequestContext context, ContainerResponseContext containerResponseContext) throws IOException
-    {
+    public void filter(ContainerRequestContext context) throws IOException {
+        String path = context.getUriInfo().getRequestUri().getPath();
+        String method = context.getMethod();
+
         if(this.isDeactivated()){
             return;
         }
 
+        System.out.println("******INVOKED********");
+        String principal = context.getHeaderString("Principal");
         String bearerToken = context.getHeaderString("Bearer");
+        System.out.println("******FILTER*********: "+Thread.currentThread());
+        System.out.println("Path: "+context.getUriInfo().getRequestUri().getPath());
+        System.out.println("Method: "+context.getMethod());
+        System.out.println("Principal: "+principal);
+        System.out.println("BearerToken: "+bearerToken);
+
         if(bearerToken != null)
         {
             //logger.info("*****************************************************************");
@@ -76,37 +81,35 @@ public class SecurityTokenProcessor implements ContainerResponseFilter
             SecurityToken securityToken = SecurityToken.fromJson(json.toString());
             this.securityTokenContainer.setSecurityToken(securityToken);
 
-            String path = context.getUriInfo().getRequestUri().getPath();
             if(!path.startsWith("/registration/login") && !path.startsWith("/registration/org"))
             {
                 boolean verification = this.verifyBearerToken(context,bearerToken);
                 if(!verification){
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("message", "403: Access Denied");
-                    containerResponseContext.setEntity(jsonObject.toString());
-                    containerResponseContext.setStatus(403);
+                    Response response = Response.status(403).entity(jsonObject.toString()).build();
+                    context.abortWith(response);
                     return;
                 }
             }
         }
         else {
-            //System.out.println("PATH: "+path);
-            //System.out.println("METHOD: "+method);
-            //System.out.println(this.whiteList);
-
-            String path = context.getUriInfo().getRequestUri().getPath();
-            String method = context.getMethod();
+            System.out.println("PATH: "+path);
+            System.out.println("METHOD: "+method);
+            System.out.println(this.whiteList);
 
             if(path.startsWith("/registration/profile") && method.equalsIgnoreCase("post")){
                 //This is FoodRunner registration
                 this.whiteList.add("/registration/profile");
             }
 
-            if(!this.isPathWhiteListed(path)) {
+            boolean isPathWhiteListed = this.isPathWhiteListed(path);
+            System.out.println("IS_PATH_WHITE_LISTED: "+isPathWhiteListed);
+            if(!isPathWhiteListed) {
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("message", "403: Access Denied");
-                containerResponseContext.setEntity(jsonObject.toString());
-                containerResponseContext.setStatus(403);
+                Response response = Response.status(403).entity(jsonObject.toString()).build();
+                context.abortWith(response);
                 return;
             }
         }
@@ -124,9 +127,11 @@ public class SecurityTokenProcessor implements ContainerResponseFilter
     private boolean verifyBearerToken(ContainerRequestContext context,String bearerToken){
         String principal = context.getHeaderString("Principal");
         Profile profile = this.mongoDBJsonStore.getProfile(principal);
-        System.out.println("***************");
+        System.out.println("******VERIFY*********");
         System.out.println("Path: "+context.getUriInfo().getRequestUri().getPath());
+        System.out.println("Method: "+context.getMethod());
         System.out.println("Principal: "+principal);
+        System.out.println("BearerToken: "+bearerToken);
         JsonUtil.print(this.getClass(),profile.toJson());
         if(profile.getBearerToken() != null && profile.getBearerToken().equals(bearerToken)){
             System.out.println("ACCESS_GRANTED");

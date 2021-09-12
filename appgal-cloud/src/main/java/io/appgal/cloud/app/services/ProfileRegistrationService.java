@@ -153,7 +153,6 @@ public class ProfileRegistrationService {
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
             JsonObject authResponse = new JsonObject();
-            authResponse.add("profile", profile.toJson());
 
             FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
             if(foodRunner == null) {
@@ -168,7 +167,8 @@ public class ProfileRegistrationService {
             String bearerToken = UUID.randomUUID().toString();
             profile.setBearerToken(bearerToken);
             this.mongoDBJsonStore.updateProfile(profile);
-            authResponse.addProperty("bearerToken",bearerToken);
+            authResponse.add("profile", profile.toJson());
+            authResponse.addProperty("bearerToken",profile.getBearerToken());
 
             //logger.info("AUTHENTICATION_SUCCESS: "+email);
             return authResponse;
