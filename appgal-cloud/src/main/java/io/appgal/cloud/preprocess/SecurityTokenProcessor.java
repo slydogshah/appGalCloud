@@ -41,6 +41,7 @@ public class SecurityTokenProcessor implements ContainerRequestFilter
         whiteList.add("/registration/sendResetCode");
         whiteList.add("/registration/verifyResetCode");
         whiteList.add("/registration/resetPassword");
+        whiteList.add("/activeNetwork/registerPush");
     }
 
     public void deactivate(){
@@ -88,6 +89,7 @@ public class SecurityTokenProcessor implements ContainerRequestFilter
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("message", "403: Access Denied");
                     Response response = Response.status(403).entity(jsonObject.toString()).build();
+                    System.out.println("ACCESS_NOT_GRANTED");
                     context.abortWith(response);
                     return;
                 }
@@ -109,6 +111,7 @@ public class SecurityTokenProcessor implements ContainerRequestFilter
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("message", "403: Access Denied");
                 Response response = Response.status(403).entity(jsonObject.toString()).build();
+                System.out.println("ACCESS_NOT_GRANTED");
                 context.abortWith(response);
                 return;
             }
