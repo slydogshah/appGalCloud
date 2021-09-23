@@ -14,6 +14,7 @@ import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:app/src/ui/app.dart';
+import 'package:app/src/ui/tasksNotFound.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -102,8 +103,13 @@ class ProfileFunctions
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
         Navigator.of(context, rootNavigator: true).pop();
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
+        if(!txs['pending'].isEmpty || !txs['inProgress'].isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }else{
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => TasksNotFound()));
+        }
 
       }).catchError((e) {
         Navigator.of(context, rootNavigator: true).pop();
@@ -315,8 +321,13 @@ class ProfileFunctions
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
         Navigator.of(context, rootNavigator: true).pop();
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerMainScene(txs)));
+        if(!txs['pending'].isEmpty || !txs['inProgress'].isEmpty) {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerMainScene(txs)));
+        }else{
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => TasksNotFound()));
+        }
 
       }).catchError((e) {
         Navigator.of(context, rootNavigator: true).pop();
@@ -362,8 +373,13 @@ class ProfileFunctions
         .getFoodRecoveryTransaction(foodRunner.email);
     future.then((txs) {
       Navigator.of(context, rootNavigator: true).pop();
-      Navigator.push(context, MaterialPageRoute(
-          builder: (context) => FoodRunnerMainScene(txs)));
+      if(!txs['pending'].isEmpty || !txs['inProgress'].isEmpty) {
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerMainScene(txs)));
+      }else{
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => TasksNotFound()));
+      }
     }).catchError((e) {
       Navigator.of(context, rootNavigator: true).pop();
       AlertDialog dialog = AlertDialog(

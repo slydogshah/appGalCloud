@@ -9,11 +9,8 @@ QA Tasks
 
 App Tasks
 -----
-Step 1: Schedule an Offline Dropoff
-Step2: Finish all in progress
-Step 3: Cannot go to Requests to Accept the Offline Dropoff (Bug)
-Step 4: Accept Offline DropOff but In-progress screen did not reflect till App refresh (Bug)
-Step5: Offline DropOff does not have an Org, So FoodRunner has to notify its dropped off so reflects in the PickupHistory (Bug)
+FoodRunner Login fails
+
 
 
 Cloud Tasks
@@ -25,6 +22,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+App: When no requests or in-progress show a card instead of empty screen
+
 Step 1: Schedule an Offline Dropoff
 Step2: Finish all in progress
 Step 3: Cannot go to Requests to Accept the Offline Dropoff (Bug)

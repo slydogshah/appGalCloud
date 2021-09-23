@@ -11,6 +11,7 @@ import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:app/src/ui/app.dart';
 import 'package:app/src/ui/foodRunner.dart';
+import 'package:app/src/ui/tasksNotFound.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -47,7 +48,7 @@ class MyHttpOverrides extends HttpOverrides{
 }*/
 
 
-Future<void> main(String env) async{
+void main(String env) {
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
 
@@ -130,7 +131,11 @@ void autoLogin(String email,String password,double latitude,double longitude) {
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
+        if(!txs['pending'].isEmpty || !txs['inProgress'].isEmpty) {
           runApp(new FoodRunnerApp(txs));
+        }else{
+          runApp(TasksNotFound());
+        }
       }).catchError((e) {
         runApp(new JenNetworkApp());
       });
