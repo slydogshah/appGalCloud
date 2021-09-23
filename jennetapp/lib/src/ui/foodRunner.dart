@@ -418,7 +418,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
           FlatButton(
             textColor: Color(0xFF6200EE),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context,rootNavigator: true).pop();
             },
             child: Text('OK'),
           ),
@@ -701,14 +701,14 @@ class PickUpListView extends StatelessWidget {
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context,rootNavigator: true).pop();
           },
           child: Text('CANCEL'),
         ),
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context,rootNavigator: true).pop();
             FocusScope.of(context).requestFocus(FocusNode());
 
             // set up the SimpleDialog
@@ -765,7 +765,7 @@ class PickUpListView extends StatelessWidget {
                     FlatButton(
                       textColor: Color(0xFF6200EE),
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.of(context,rootNavigator: true).pop();
                       },
                       child: Text('OK'),
                     ),
@@ -796,7 +796,7 @@ class PickUpListView extends StatelessWidget {
                   FlatButton(
                     textColor: Color(0xFF6200EE),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.of(context,rootNavigator: true).pop();
                     },
                     child: Text('OK'),
                   ),
@@ -817,7 +817,7 @@ class PickUpListView extends StatelessWidget {
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context, rootNavigator: true).pop();
             FocusScope.of(context).requestFocus(FocusNode());
             // set up the SimpleDialog
             SimpleDialog dialog = SimpleDialog(
@@ -862,7 +862,7 @@ class PickUpListView extends StatelessWidget {
                   FlatButton(
                     textColor: Color(0xFF6200EE),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.of(context,rootNavigator: true).pop();
                     },
                     child: Text('OK'),
                   ),
@@ -926,7 +926,7 @@ class PickUpListView extends StatelessWidget {
             FlatButton(
               textColor: Color(0xFF6200EE),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(context,rootNavigator: true).pop();
               },
               child: Text('OK'),
             ),

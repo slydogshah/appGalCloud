@@ -856,14 +856,14 @@ class InProgressListView extends StatelessWidget {
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context,rootNavigator: true).pop();
           },
           child: Text('CANCEL'),
         ),
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context,rootNavigator: true).pop();
             FocusScope.of(context).requestFocus(FocusNode());
 
             Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
