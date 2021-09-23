@@ -5,6 +5,7 @@ App: Test if location updates are being sent > QA
 
 QA Tasks
 ----
+Step 1:
 
 
 App Tasks
@@ -15,6 +16,9 @@ FoodRunner Login fails
 
 Cloud Tasks
 ----
+Request only goes to one FoodRunner
+
+
 
 Dash Tasks
 ----

@@ -136,7 +136,7 @@ class NotFoundState extends State<NotFound> with TickerProviderStateMixin,Widget
       future.then((txs) {
         if(!txs['pending'].isEmpty || !txs['inProgress'].isEmpty) {
           print("******LAUNCH****MainScene");
-          Navigator.of(context, rootNavigator: true).pop();
+          Navigator.of(context).pop();
           Navigator.push(context, MaterialPageRoute(
               builder: (context) => FoodRunnerMainScene(txs)));
         }
