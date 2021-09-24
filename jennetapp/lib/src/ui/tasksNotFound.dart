@@ -127,8 +127,9 @@ class NotFoundState extends State<NotFound> with TickerProviderStateMixin,Widget
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print('*************MyApp state = $state*************');
+    print('*************MyApp_TASKS_FOUND state = $state*************');
     if(state == AppLifecycleState.resumed){
+      ProfileFunctions.launchAppFromNotification(context);
       FoodRunner foodRunner = FoodRunner.getActiveFoodRunner();
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
