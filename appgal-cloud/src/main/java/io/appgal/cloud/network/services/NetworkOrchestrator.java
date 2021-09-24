@@ -134,14 +134,14 @@ public class NetworkOrchestrator {
                 //logger.info("TX:ID>"+tx.getId()+", TX_STATE: "+tx.getTransactionState());
 
                 Location source = tx.getPickUpNotification().getSourceOrg().getLocation();
-                if(source == null)
+                if(source == null || source.getLatitude() == 0.0d)
                 {
                     logger.info("SOURCE_LOCATION_NOT_FOUND");
                     continue;
                 }
 
                 Location foodRunnerLocation = foodRunner.getLocation();
-                if(foodRunnerLocation == null)
+                if(foodRunnerLocation == null || foodRunnerLocation.getLatitude()==0.0d)
                 {
                     logger.info("FOODRUNNER_LOCATION_NOT_FOUND");
                     continue;

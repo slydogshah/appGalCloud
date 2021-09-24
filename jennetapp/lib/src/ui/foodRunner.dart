@@ -122,11 +122,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.profile.email);
       future.then((txs) {
-        print(txs['pending']);
-        print(txs['inProgress']);
         if(txs['pending'].isNotEmpty) {
           print("****************LAUNCHING_Request_Screen************");
-          print(txs['pending']);
           setState(() {
             this.recoveryTxs = txs['pending'];
             this.inProgressTxs = txs['inProgress'];

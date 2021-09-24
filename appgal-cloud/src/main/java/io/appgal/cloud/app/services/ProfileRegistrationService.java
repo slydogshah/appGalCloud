@@ -159,7 +159,9 @@ public class ProfileRegistrationService {
                 foodRunner = new FoodRunner();
             }
             foodRunner.setProfile(profile);
-            foodRunner.setLocation(location);
+            if(location != null && location.getLatitude() != 0.0d) {
+                foodRunner.setLocation(location);
+            }
             this.networkOrchestrator.enterNetwork(foodRunner);
 
             authResponse.addProperty("offlineCommunitySupport",foodRunner.isOfflineCommunitySupport());
