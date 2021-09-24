@@ -147,6 +147,13 @@ public class ActiveNetwork {
             FoodRunner foodRunner = this.networkOrchestrator.getActiveNetwork().findFoodRunnerByEmail(email);
 
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(accepted);
+            if(tx.getTransactionState().equals(TransactionState.INPROGRESS)){
+                JsonObject inProgress = new JsonObject();
+                inProgress.addProperty("message", "TRANSACTION_ALREADY_ACCEPTED");
+                return Response.status(401, inProgress.toString()).build();
+            }
+
+
             tx.setFoodRunner(foodRunner);
             tx.setTransactionState(TransactionState.INPROGRESS);
 

@@ -790,9 +790,9 @@ class PickUpListView extends StatelessWidget {
             }).catchError((error){
               Navigator.of(context, rootNavigator: true).pop();
               AlertDialog dialog = AlertDialog(
-                title: Text('System Error....'),
+                title: Text('Transaction Is Already Accepted'),
                 content: Text(
-                  "Unknown System Error....",
+                  "A FoodRunner has already accepted this respect. We appreciate your help to serve the Hungry. #JenNetwork",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -856,9 +856,9 @@ class PickUpListView extends StatelessWidget {
             }).catchError((error){
               Navigator.of(context, rootNavigator: true).pop();
               AlertDialog dialog = AlertDialog(
-                title: Text('System Error....'),
+                title: Text('Transaction Is Already Accepted'),
                 content: Text(
-                  "Unknown System Error....",
+                  "A FoodRunner has already accepted this respect. We appreciate your help to serve the Hungry. #JenNetwork",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,

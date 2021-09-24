@@ -155,7 +155,7 @@ class ActiveNetworkRestClient
 
       Map<String,dynamic> error = UrlFunctions.handleError(null, response);
       if(error != null){
-        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+        throw new CloudBusinessException(error["statusCode"], error["exception"]);
       }
     }
     catch (e) {
