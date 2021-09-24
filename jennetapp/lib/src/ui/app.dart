@@ -691,14 +691,14 @@ class LoginView extends StatelessWidget {
                                                             FlatButton(
                                                               textColor: Color(0xFF6200EE),
                                                               onPressed: () {
-                                                                Navigator.pop(context);
+                                                                Navigator.of(context,rootNavigator: true).pop();
                                                               },
                                                               child: Text('CANCEL'),
                                                             ),
                                                             FlatButton(
                                                               textColor: Color(0xFF6200EE),
                                                               onPressed: () {
-                                                                Navigator.pop(context);
+                                                                Navigator.of(context,rootNavigator: true).pop();
                                                                 Navigator.push(context, MaterialPageRoute(
                                                                     builder: (context) => Registration()));
                                                               },

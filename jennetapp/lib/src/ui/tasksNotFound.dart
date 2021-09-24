@@ -134,11 +134,11 @@ class NotFoundState extends State<NotFound> with TickerProviderStateMixin,Widget
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.profile.email);
       future.then((txs) {
-        if(!txs['pending'].isEmpty || !txs['inProgress'].isEmpty) {
+        if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
           print("******LAUNCH****MainScene");
           Navigator.of(context).pop();
           Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
+              builder: (context) => FoodRunnerApp(txs)));
         }
       });
     }

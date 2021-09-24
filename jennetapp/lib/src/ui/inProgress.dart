@@ -75,7 +75,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.profile.email);
       future.then((txs) {
-        if(!txs['pending'].isEmpty || !txs['inProgress'].isEmpty) {
+        if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
           setState(() {
             this.recoveryTxs = txs['pending'];
             this.inProgressTxs = txs['inProgress'];
@@ -266,7 +266,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                           if(this.recoveryTxs.length > 0) {
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context) =>
-                                    FoodRunnerMainScene(this.txs)));
+                                    FoodRunnerApp(this.txs)));
                           }
                         },
                         child: Padding(

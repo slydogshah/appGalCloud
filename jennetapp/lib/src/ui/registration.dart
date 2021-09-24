@@ -61,6 +61,14 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
     });
   }
 
+  void notifySystemError(String emailValue,String passwordValue) {
+    setState(() {
+      this.emailIsInvalidMessage = "500: Unknown System Error. Please try again";
+      this.email = emailValue;
+      this.password = passwordValue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);
@@ -194,7 +202,7 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                     Radius.circular(32.0),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
                   },
                   /*child: Padding(
                     padding: const EdgeInsets.all(8.0),

@@ -58,7 +58,7 @@ public class Transactions {
             JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
-            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED)
@@ -102,7 +102,7 @@ public class Transactions {
             JsonArray pending = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
 
-            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
 
             for(FoodRecoveryTransaction cour: transactions) {
