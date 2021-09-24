@@ -135,6 +135,7 @@ class ProfileFunctions
       final TextFormField emailField, final TextFormField passwordField) {
     FoodRunnerLoginData foodRunnerLoginData = new FoodRunnerLoginData();
     foodRunnerLoginData.setAuthCredentials(authCredentials);
+
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
         children: [CupertinoActivityIndicator()]
@@ -184,8 +185,8 @@ class ProfileFunctions
       ActiveSession.getInstance().securityToken = new SecurityToken(foodRunner.email, foodRunner.bearerToken);
 
       CloudDataPoller.startPolling(context,foodRunner);
-      //LocationUpdater.getLocation();
       LocationUpdater.startPolling(foodRunner);
+
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<Map<String,List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
@@ -200,36 +201,10 @@ class ProfileFunctions
         }
 
       }).catchError((e) {
-        Navigator.of(context, rootNavigator: true).pop();
-        AlertDialog dialog = AlertDialog(
-          title: Text('System Error....'),
-          content: Text(
-            "Unknown System Error....",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-          ),
-          actions: [
-            FlatButton(
-              textColor: Color(0xFF6200EE),
-              onPressed: () {
-                Navigator.of(context,rootNavigator: true).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-
-        // show the dialog
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return dialog;
-          },
-        );
+        loginScene.notifySystemError("System Error: Please try again");
       });
+    }).catchError((e) {
+      loginScene.notifySystemError("System Error: Please try again");
     });
   }
 
@@ -296,7 +271,6 @@ class ProfileFunctions
       ActiveSession.getInstance().securityToken = new SecurityToken(foodRunner.email, foodRunner.bearerToken);
 
       CloudDataPoller.startPolling(context,foodRunner);
-      //LocationUpdater.getLocation();
       LocationUpdater.startPolling(foodRunner);
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<Map<String,List<FoodRecoveryTransaction>>> future = client
@@ -330,6 +304,7 @@ class ProfileFunctions
         .getFoodRecoveryTransaction(foodRunner.email);
     future.then((txs) {
       Navigator.of(context, rootNavigator: true).pop();
+
       if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => FoodRunnerApp(txs)));
@@ -338,35 +313,8 @@ class ProfileFunctions
             builder: (context) => TasksNotFound()));
       }
     }).catchError((e) {
-      Navigator.of(context, rootNavigator: true).pop();
-      AlertDialog dialog = AlertDialog(
-        title: Text('System Error....'),
-        content: Text(
-          "Unknown System Error....",
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
-        actions: [
-          FlatButton(
-            textColor: Color(0xFF6200EE),
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
-            },
-            child: Text('OK'),
-          ),
-        ],
-      );
-
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        },
-      );
+      Navigator.push(context, MaterialPageRoute(
+          builder: (context) => JenNetworkApp()));
     });
   }
 

@@ -3,9 +3,12 @@ package io.appgal.cloud.network.endpoint;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.model.ActiveNetwork;
 import io.appgal.cloud.model.FoodRunner;
 import io.appgal.cloud.model.Location;
+import io.appgal.cloud.model.Profile;
 import io.appgal.cloud.network.services.LocationService;
+import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,12 @@ public class LocationAPI {
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    @Inject
+    private ActiveNetwork activeNetwork;
+
+    @Inject
+    private NetworkOrchestrator networkOrchestrator;
+
     //TODO
     @Path("update")
     @POST
@@ -38,9 +47,20 @@ public class LocationAPI {
             String email = inputJson.get("email").getAsString();
             double latitude = inputJson.get("latitude").getAsDouble();
             double longitude = inputJson.get("longitude").getAsDouble();
-            FoodRunner foodRunner = this.mongoDBJsonStore.getFoodRunner(email);
-            Location location = new Location(latitude,longitude);
-            foodRunner.setLocation(location);
+            Location location = new Location(latitude, longitude);
+            FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
+            if(foodRunner != null) {
+                foodRunner.setLocation(location);
+            }
+            else
+            {
+                foodRunner = new FoodRunner();
+                Profile profile = this.mongoDBJsonStore.getProfile(email);
+                foodRunner.setProfile(profile);
+                foodRunner.setLocation(location);
+                this.networkOrchestrator.enterNetwork(foodRunner);
+                foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
+            }
             this.locationService.receiveUpdate(foodRunner);
 
             JsonObject responseJson = new JsonObject();

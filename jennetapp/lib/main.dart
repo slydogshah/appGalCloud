@@ -131,7 +131,7 @@ void autoLogin(String email,String password,double latitude,double longitude) {
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-        if(!txs['pending'].isEmpty || !txs['inProgress'].isEmpty) {
+        if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
           runApp(new FoodRunnerApp(txs));
         }else{
           runApp(TasksNotFound());
