@@ -11,7 +11,6 @@ import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/rest/urlFunctions.dart';
-import 'package:app/src/ui/tasksNotFound.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -122,23 +121,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.profile.email);
       future.then((txs) {
-        if(txs['pending'].isNotEmpty) {
-          print("****************LAUNCHING_Request_Screen************");
-          setState(() {
-            this.recoveryTxs = txs['pending'];
-            this.inProgressTxs = txs['inProgress'];
-            this.txs = txs;
-          });
-        }else if(txs['inProgress'].isNotEmpty){
-          print("****************LAUNCHING_Inprogress_Screen************");
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => InProgressMainScene(txs)));
-        }
-        else{
-          print("****************LAUNCHING_TASK_NOT_FOUND_Screen************");
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => TasksNotFound()));
-        }
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerApp(txs)));
       });
     }
     /*if (state == AppLifecycleState.inactive) {
@@ -165,6 +149,13 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     Profile profile = ActiveSession.getInstance().getProfile();
     CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
+
+    Widget widget;
+    if(this.recoveryTxs.isNotEmpty){
+      widget = this.getPickUpList();
+    }else{
+      widget = this.getTasksNotFound(context);
+    }
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
@@ -193,7 +184,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         body: Container(
                           color: primaryColor,
                           //color: Colors.pink,
-                          child: getPickUpList(),
+                          child: widget,
                         ),
                       ),
                     )
@@ -233,6 +224,46 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       },
     ).build(context);
     return widget;
+  }
+
+  Widget getTasksNotFound(BuildContext context){
+    return Padding(
+      padding: const EdgeInsets.only(
+          left: 16, right: 16, bottom: 16, top: 8),
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.pink,
+          borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.6),
+              blurRadius: 8,
+              offset: const Offset(4, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+            highlightColor: Colors.transparent,
+            onTap: () {
+              //done
+            },
+            child: Center(
+              child: Text(
+                'You have (0) Active Requests',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget getAppBarUI(BuildContext context) {

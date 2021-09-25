@@ -15,7 +15,6 @@ import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/ui/foodRunner.dart';
 import 'package:app/src/ui/registration.dart';
 import 'package:app/src/ui/app.dart';
-import 'package:app/src/ui/tasksNotFound.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -192,14 +191,8 @@ class ProfileFunctions
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
         Navigator.of(context, rootNavigator: true).pop();
-        if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerApp(txs)));
-        }else{
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => TasksNotFound()));
-        }
-
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerApp(txs)));
       }).catchError((e) {
         loginScene.notifySystemError("System Error: Please try again");
       });
@@ -277,13 +270,15 @@ class ProfileFunctions
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
         Navigator.of(context, rootNavigator: true).pop();
-        if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
+        /*if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
           Navigator.push(context, MaterialPageRoute(
               builder: (context) => FoodRunnerApp(txs)));
         }else{
           Navigator.push(context, MaterialPageRoute(
               builder: (context) => TasksNotFound()));
-        }
+        }*/
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerApp(txs)));
       }).catchError((e) {
         Navigator.of(context, rootNavigator: true).pop();
         this.notifyRegistrationSystemError(context,registrationState,emailField,passwordField,email,password);
@@ -305,13 +300,8 @@ class ProfileFunctions
     future.then((txs) {
       Navigator.of(context, rootNavigator: true).pop();
 
-      if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FoodRunnerApp(txs)));
-      }else{
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => TasksNotFound()));
-      }
+      Navigator.push(context, MaterialPageRoute(
+          builder: (context) => FoodRunnerApp(txs)));
     }).catchError((e) {
       Navigator.push(context, MaterialPageRoute(
           builder: (context) => JenNetworkApp()));

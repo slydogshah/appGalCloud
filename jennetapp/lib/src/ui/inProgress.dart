@@ -10,7 +10,6 @@ import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
-import 'package:app/src/ui/tasksNotFound.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -81,12 +80,9 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
             this.inProgressTxs = txs['inProgress'];
             this.txs = txs;
           });
-        }else if(txs['pending'].isNotEmpty){
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FoodRunnerMainScene(txs)));
         }else{
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => TasksNotFound()));
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerApp(txs)));
         }
       });
     }

@@ -11,7 +11,6 @@ import 'package:app/src/rest/profileRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:app/src/ui/app.dart';
 import 'package:app/src/ui/foodRunner.dart';
-import 'package:app/src/ui/tasksNotFound.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -131,11 +130,7 @@ void autoLogin(String email,String password,double latitude,double longitude) {
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-        if(txs['pending'].isNotEmpty || txs['inProgress'].isNotEmpty) {
-          runApp(new FoodRunnerApp(txs));
-        }else{
-          runApp(TasksNotFound());
-        }
+        runApp(new FoodRunnerApp(txs));
       }).catchError((e) {
         runApp(new JenNetworkApp());
       });
