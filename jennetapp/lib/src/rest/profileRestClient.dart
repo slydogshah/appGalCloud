@@ -22,14 +22,16 @@ class ProfileRestClient
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"registration/profile/";
     try {
       response = await http.post(Uri.parse(remoteUrl), body: profile.toString());
-      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
-      if(error != null){
-        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
-      }
     }
     catch (e) {
       print(e);
       json = UrlFunctions.handleError(e, response);
+      return json;
+    }
+
+    json = UrlFunctions.handleError(null, response);
+    if(json != null)
+    {
       return json;
     }
 
@@ -40,12 +42,7 @@ class ProfileRestClient
       return json;
     }
 
-    json = UrlFunctions.handleError(null, response);
-    if(json != null)
-    {
-      return json;
-    }
-
+    //success
     json  = jsonDecode(response.body);
     json['statusCode'] = 200;
     return json;
@@ -70,10 +67,6 @@ class ProfileRestClient
          //json["statusCode"] = 500;
          throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
        });
-      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
-      if(error != null){
-        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
-      }
     }
     catch (e) {
       print(e);
@@ -81,15 +74,10 @@ class ProfileRestClient
       return json;
     }
 
-    print(response.body);
-    json  = jsonDecode(response.body);
 
     Map<String,dynamic> errorJson = UrlFunctions.handleError(null, response);
     if(errorJson != null)
     {
-      if(json['message'] != null){
-        errorJson['message'] = json['message'];
-      }
       return errorJson;
     }
 

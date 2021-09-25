@@ -48,10 +48,11 @@ class UrlFunctions
       json["statusCode"] = response.statusCode;
       return json;
     }
-    else if(response.statusCode != 200)
+
+    if(response.statusCode == 409)
     {
       Map<String,dynamic> json = new Map();
-      json["exception"] = "UNKNOWN_ERROR";
+      json["exception"] = "RESOURCE_ALREADY_EXISTS";
       json["statusCode"] = response.statusCode;
       return json;
     }

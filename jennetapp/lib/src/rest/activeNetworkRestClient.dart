@@ -31,14 +31,14 @@ class ActiveNetworkRestClient
       },);
 
       //print(response.body);
-
-      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
-      if(error != null){
-        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
-      }
     }
     catch (e) {
       //print(e);
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+    }
+
+    Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+    if(error != null){
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
@@ -95,45 +95,20 @@ class ActiveNetworkRestClient
         "Principal":ActiveSession.getInstance().securityToken.email,
         "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
       }, body: jsonBody);
-      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
-      if(error != null){
-        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
-      }
     }
     catch (e) {
       //print("********LOCATION_UPDATE*************");
       //print("LOCATION_POST_SYSTEM_ERROR");
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
-    //print("********LOCATION_UPDATE*************");
-    //print(response.body);
-    return response.body;
-  }
 
-  Future<String> notifyOfflineAvailability(String foodRunnerEmail) async
-  {
-    var response;
-
-    FoodRunner foodRunner = ActiveSession.getInstance().foodRunner;
-    
-    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"offline/notification/";
-    Map<String, dynamic> json = new Map();
-    json['foodRunnerEmail'] = foodRunnerEmail;
-    json['available'] = foodRunner.offlineCommunitySupport;
-    String jsonBody = jsonEncode(json);
-    try {
-      response = await http.post(Uri.parse(remoteUrl),headers: {
-        "Principal":ActiveSession.getInstance().securityToken.email,
-        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
-      }, body: jsonBody);
-      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
-      if(error != null){
-        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
-      }
-    }
-    catch (e) {
+    Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+    if(error != null){
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
+
+    //print("********LOCATION_UPDATE*************");
+    //print(response.body);
     return response.body;
   }
 
@@ -152,18 +127,46 @@ class ActiveNetworkRestClient
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });
-
-      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
-      if(error != null){
-        throw new CloudBusinessException(error["statusCode"], error["exception"]);
-      }
     }
     catch (e) {
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
+    Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+    if(error != null){
+      throw new CloudBusinessException(error["statusCode"], error["exception"]);
+    }
+
     //print("ACCEPT: "+response.body);
 
+    return response.body;
+  }
+  //---------------NOT_IN_USE_YET---------------------------------------------------------------------------------------------
+  Future<String> notifyOfflineAvailability(String foodRunnerEmail) async
+  {
+    var response;
+
+    FoodRunner foodRunner = ActiveSession.getInstance().foodRunner;
+    
+    String remoteUrl = UrlFunctions.getInstance().resolveHost()+"offline/notification/";
+    Map<String, dynamic> json = new Map();
+    json['foodRunnerEmail'] = foodRunnerEmail;
+    json['available'] = foodRunner.offlineCommunitySupport;
+    String jsonBody = jsonEncode(json);
+    try {
+      response = await http.post(Uri.parse(remoteUrl),headers: {
+        "Principal":ActiveSession.getInstance().securityToken.email,
+        "Bearer": ActiveSession.getInstance().securityToken.bearerToken,
+      }, body: jsonBody);
+    }
+    catch (e) {
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+    }
+
+    Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+    if(error != null){
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+    }
     return response.body;
   }
 
@@ -171,7 +174,6 @@ class ActiveNetworkRestClient
   {
     Map<String,List<FoodRecoveryTransaction>> txs = new Map();
 
-    var json;
     String remoteUrl = UrlFunctions.getInstance().resolveHost()+"activeNetwork/notifyDelivery/";
     Map<String,String> payload = new Map();
     payload["email"] = ActiveSession.getInstance().profile.email;
@@ -186,20 +188,14 @@ class ActiveNetworkRestClient
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });
-      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
-      if(error != null){
-        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
-      }
     }
     catch (e) {
-      json = UrlFunctions.handleError(e, response);
-      throw new CloudBusinessException(json["statusCode"], "SYSTEM_ERROR");
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
-    json = UrlFunctions.handleError(null, response);
-    if(json != null)
-    {
-      throw new CloudBusinessException(json["statusCode"], "SYSTEM_ERROR");
+    Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+    if(error != null){
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
     Map<String,dynamic> object = jsonDecode(response.body);
@@ -249,12 +245,13 @@ class ActiveNetworkRestClient
       timeout(Duration(seconds: 30),onTimeout: () {
         throw new CloudBusinessException(500, "NETWORK_TIME_OUT");
       });
-      Map<String,dynamic> error = UrlFunctions.handleError(null, response);
-      if(error != null){
-        throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
-      }
     }
     catch (e) {
+      throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
+    }
+
+    Map<String,dynamic> error = UrlFunctions.handleError(null, response);
+    if(error != null){
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 

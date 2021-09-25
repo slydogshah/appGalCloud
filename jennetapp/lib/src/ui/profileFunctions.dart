@@ -92,20 +92,18 @@ class ProfileFunctions
       if(json['violations'] != null)
       {
         List<dynamic> errors = json['violations'];
-        String emailIsInvalid;
-        String passwordIsRequired ;
+        bool isEmailInvalid = false;
         errors.forEach((element) {
           if (element.startsWith("email")) {
-            emailIsInvalid = element;
-          }
-          else if(element.startsWith("password"))
-          {
-            passwordIsRequired = element;
+            isEmailInvalid = true;
           }
         });
-        emailField.controller.value = new TextEditingValue(text:email);
-        passwordField.controller.value = new TextEditingValue(text:password);
-        registrationState.notifyEmailIsInvalid(email,password,"Email is invalid",passwordIsRequired);
+        if(isEmailInvalid) {
+          emailField.controller.value = new TextEditingValue(text: email);
+          passwordField.controller.value = new TextEditingValue(text: password);
+          registrationState.notifyEmailIsInvalid(
+              email, password, "Email is invalid", null);
+        }
       }
       else if(json['statusCode'] == 409) {
         emailField.controller.value = new TextEditingValue(text:email);
