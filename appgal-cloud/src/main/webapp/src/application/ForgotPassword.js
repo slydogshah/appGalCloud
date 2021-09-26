@@ -103,6 +103,8 @@ function ForgotPasswordView({state, props}) {
                     </GridContainer>
                 </CardBody>
                 <CardFooter>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
                   <Button color="primary" onClick={(e) => {
                         ReactDOM.unmountComponentAtNode(document.getElementById('validation_error'));
 
@@ -211,6 +213,20 @@ function ForgotPasswordView({state, props}) {
                               }
                         });
                     }}>Send Reset Code</Button>
+                    <div class="row mx-md-n5">
+                      <div class="col px-md-5"><div>&nbsp;</div></div>
+                      <div class="col px-md-5"><div>&nbsp;</div></div>
+                      <div class="col px-md-5"><div>&nbsp;</div></div>
+                    </div>
+                    </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                            <Button color="primary" onClick={(e) => {
+                                                          props.history.push({
+                                                                                            pathname: "/",
+                                                                                        });
+                                                   }}>Cancel</Button>
+                        </GridItem>
+                    </GridContainer>
                 </CardFooter>
               </Card>
             </GridItem>

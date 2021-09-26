@@ -649,6 +649,7 @@ function RenderLogin({state,props})
                                                       });
                                                        }}>Register</Button>
                                                     </GridItem>
+
                                                     <GridItem xs={12} sm={12} md={6}>
                                                        <Button color="primary" onClick={(e) => {
                                                               const element = (
