@@ -210,8 +210,10 @@ public class ActiveNetwork {
             String txId = json.get("txId").getAsString();
 
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
-            tx.setTransactionState(TransactionState.ONTHEWAY);
-            this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
+            if(tx.getTransactionState() != TransactionState.CLOSED) {
+                tx.setTransactionState(TransactionState.ONTHEWAY);
+                this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
+            }
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success",true);

@@ -1,6 +1,6 @@
 Active Tasks
 ----
-Food Pickup Pullout from history
+
 
 
 QA Tasks
@@ -29,6 +29,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+Food Pickup Pullout from history
+
 Forgot Password: Add Cancel Button
 
 Clear local data on logout
