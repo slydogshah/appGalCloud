@@ -1,6 +1,5 @@
 Active Tasks
 ----
-Clear local data on logout
 
 
 QA Tasks
@@ -31,6 +30,8 @@ Food Pickup Pullout from history
 
 Fixed Tasks
 ----
+Clear local data on logout
+
 Register: Email and Password Required messages not showing
 
 FoodRunner Login fails

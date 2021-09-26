@@ -67,6 +67,7 @@ export default function AdminNavbarLinks(props) {
           }
         };
         const handleCloseProfile = () => {
+          store.getState().auth = false;
           setOpenProfile(null);
         };
       return (
