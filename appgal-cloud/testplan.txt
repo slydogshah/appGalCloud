@@ -124,7 +124,7 @@ Dash: Forgot Password
         * Email Invalid (?)
         * 403: Not an Org account
     * Mobile
-        * Mobile Invalid (TODO)
+        * Mobile Invalid (TODO) (fafaf,5129151162,512-915-1162,512/915/1162,512-915-1162-1162)
 
 * verifyResetCode
     * 401: Invalid Reset Code
@@ -149,6 +149,7 @@ Dash: Add Staff Member
       * Invalid email
       * Cancel
       * Add
+      * Already registered email
       * Login as the Added Member
       Reset on first login
       * All empty

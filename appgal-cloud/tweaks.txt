@@ -1,16 +1,19 @@
 Active Tasks
 ----
-App: Test if location updates are being sent > QA
+Clear local data on logout
 
 
 QA Tasks
 ----
-Step 1:
 
 
 App Tasks
 -----
-FoodRunner Login fails
+Push token not registered when fresh registered login
+Push notification callback does not show requests
+Show Navigation Address
+Inaccurate Navigation distance
+Integrate other Navigation Apps
 
 
 
@@ -22,10 +25,16 @@ Request only goes to one FoodRunner
 
 Dash Tasks
 ----
+Forgot Password: Add Cancel Button
+Food Pickup Pullout from history
 
 
 Fixed Tasks
 ----
+Register: Email and Password Required messages not showing
+
+FoodRunner Login fails
+
 App: When no requests or in-progress show a card instead of empty screen
 
 Step 1: Schedule an Offline Dropoff
