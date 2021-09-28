@@ -8,6 +8,7 @@ import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
+import 'package:app/src/navigation/navigationLauncher.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
@@ -869,9 +870,11 @@ class InProgressListView extends StatelessWidget {
             locationFuture.then((foodRunnerLocation){
               //print("**********");
               //print(foodRunnerLocation);
-              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+              /*EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
                   tx.getPickupNotification().getSourceOrg(),foodRunnerLocation);
-              embeddedNavigation.start(tx);
+              embeddedNavigation.start(tx);*/
+              //NavigationLauncher.launchMaps();
+              NavigationLauncher.launchNavigation(dropOffOrg, foodRunnerLocation);
             });
           },
           child: Text('START NAVIGATION'),

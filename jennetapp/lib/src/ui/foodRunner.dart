@@ -10,6 +10,7 @@ import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/navigation/navigationLauncher.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -880,9 +881,11 @@ class PickUpListView extends StatelessWidget {
               locationFuture.then((foodRunnerLocation){
                 //print("**********");
                 //print(foodRunnerLocation);
-                EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+                /*EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
                     tx.getPickupNotification().getSourceOrg(),foodRunnerLocation);
-                embeddedNavigation.start(tx);
+                embeddedNavigation.start(tx);*/
+                //NavigationLauncher.launchMaps();
+                NavigationLauncher.launchNavigation(tx.getPickupNotification().getSourceOrg(), foodRunnerLocation);
               });
             }).catchError((error){
               Navigator.of(context, rootNavigator: true).pop();

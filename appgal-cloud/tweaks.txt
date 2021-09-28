@@ -1,6 +1,5 @@
 Active Tasks
 ----
-Push token not registered when fresh registered login
 
 
 
@@ -10,9 +9,6 @@ QA Tasks
 
 App Tasks
 -----
-Show Navigation Address
-Inaccurate Navigation distance
-Integrate other Navigation Apps
 
 
 
@@ -28,6 +24,10 @@ Dash Tasks
 
 Fixed Tasks
 ----
+Replace MapBox with Google Maps
+
+Push token not registered when fresh registered login
+
 Push notification callback does not show requests
 
 Food Pickup Pullout from history

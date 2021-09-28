@@ -56,6 +56,8 @@ dependencies:
   okito: ^1.1.9
   flutter_native_splash: ^0.3.2
   http: ^0.13.0
+  device_apps: ^2.1.1
+  maps_launcher: ^1.2.1
   #crypto: ^2.1.5
 
 dev_dependencies:
