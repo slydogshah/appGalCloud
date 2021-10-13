@@ -12,13 +12,13 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_mapbox_navigation/library.dart';
+//import 'package:flutter_mapbox_navigation/library.dart';
 
 import 'dart:io' show Platform;
 
 class EmbeddedNavigation
 {
-  String _platformVersion = 'Unknown';
+  /*String _platformVersion = 'Unknown';
   String _instruction = "";
   FoodRunnerLocation foodRunnerLocation;
   WayPoint _origin;
@@ -213,5 +213,5 @@ class EmbeddedNavigation
     FoodRecoveryTransaction tx = ActiveSession.getInstance().current;
     Navigator.push(context, MaterialPageRoute(
         builder: (context) => InProgressMainScene(txs)));
-  }
+  }*/
 }
