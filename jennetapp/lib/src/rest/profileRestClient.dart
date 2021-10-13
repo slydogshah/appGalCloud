@@ -29,6 +29,12 @@ class ProfileRestClient
       return json;
     }
 
+    json = UrlFunctions.handleError(null, response);
+    if(json != null)
+    {
+      return json;
+    }
+
     if(response.statusCode == 400)
     {
       //validation error
@@ -36,12 +42,7 @@ class ProfileRestClient
       return json;
     }
 
-    json = UrlFunctions.handleError(null, response);
-    if(json != null)
-    {
-      return json;
-    }
-
+    //success
     json  = jsonDecode(response.body);
     json['statusCode'] = 200;
     return json;
@@ -73,15 +74,10 @@ class ProfileRestClient
       return json;
     }
 
-    //print(response.body);
-    json  = jsonDecode(response.body);
 
     Map<String,dynamic> errorJson = UrlFunctions.handleError(null, response);
     if(errorJson != null)
     {
-      if(json['message'] != null){
-        errorJson['message'] = json['message'];
-      }
       return errorJson;
     }
 

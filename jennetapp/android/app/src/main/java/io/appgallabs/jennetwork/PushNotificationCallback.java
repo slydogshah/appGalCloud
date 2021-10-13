@@ -69,7 +69,7 @@ public class PushNotificationCallback{
                                 }
                                 System.out.println("TOKEN_REGISTRATION_SUCCESS: "+sb);
                             }catch(Exception e){
-                                //throw new RuntimeException(e);
+                                //e.printStackTrace();
                             }finally {
                                 if(urlConnection != null) {
                                     urlConnection.disconnect();

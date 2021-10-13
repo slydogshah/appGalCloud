@@ -49,6 +49,7 @@ public class RegistrationTests  extends BaseTest {
         logger.info("***********************");
 
         Response response = given().body(json.toString()).when().post("/registration/profile").andReturn();
+        response.getBody().prettyPrint();
         String jsonString = response.getBody().asString();
         logger.info("****");
         logger.info(response.getStatusLine());

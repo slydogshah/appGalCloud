@@ -160,7 +160,7 @@ import Firebase
       print(userInfo)
 
       // Change this to your preferred presentation option
-      completionHandler([[.alert, .sound]])
+      completionHandler([[.banner, .sound]])
     }
 
       override func userNotificationCenter(_ center: UNUserNotificationCenter,

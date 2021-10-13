@@ -1,6 +1,7 @@
 package io.bugsbunny.test.components;
 
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
+import io.appgal.cloud.preprocess.SecurityTokenProcessor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -11,9 +12,13 @@ public abstract class BaseTest
     @Inject
     private MongoDBJsonStore mongoDBJsonStore;
 
+    @Inject
+    SecurityTokenProcessor securityTokenProcessor;
+
     @BeforeEach
     public void setUp() throws Exception
     {
+        this.securityTokenProcessor.deactivate();
     }
 
     @AfterEach

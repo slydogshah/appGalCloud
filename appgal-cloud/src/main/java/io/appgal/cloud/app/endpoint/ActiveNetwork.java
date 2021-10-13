@@ -133,7 +133,7 @@ public class ActiveNetwork {
         }
     }
 
-    @Path("/accept")
+    @Path("accept")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response accept(@RequestBody String jsonBody)
@@ -147,6 +147,13 @@ public class ActiveNetwork {
             FoodRunner foodRunner = this.networkOrchestrator.getActiveNetwork().findFoodRunnerByEmail(email);
 
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(accepted);
+            if(tx.getTransactionState().equals(TransactionState.INPROGRESS)){
+                JsonObject inProgress = new JsonObject();
+                inProgress.addProperty("message", "TRANSACTION_ALREADY_ACCEPTED");
+                return Response.status(401, inProgress.toString()).build();
+            }
+
+
             tx.setFoodRunner(foodRunner);
             tx.setTransactionState(TransactionState.INPROGRESS);
 
@@ -203,8 +210,10 @@ public class ActiveNetwork {
             String txId = json.get("txId").getAsString();
 
             FoodRecoveryTransaction tx = this.mongoDBJsonStore.getFoodRecoveryTransaction(txId);
-            tx.setTransactionState(TransactionState.ONTHEWAY);
-            this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
+            if(tx.getTransactionState() != TransactionState.CLOSED) {
+                tx.setTransactionState(TransactionState.ONTHEWAY);
+                this.mongoDBJsonStore.storeFoodRecoveryTransaction(tx);
+            }
 
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("success",true);

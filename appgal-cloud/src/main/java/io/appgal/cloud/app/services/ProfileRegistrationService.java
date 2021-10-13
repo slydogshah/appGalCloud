@@ -153,17 +153,24 @@ public class ProfileRegistrationService {
         if(registeredEmail.equals(email) && registeredPassword.equals(password))
         {
             JsonObject authResponse = new JsonObject();
-            authResponse.add("profile", profile.toJson());
 
             FoodRunner foodRunner = this.activeNetwork.findFoodRunnerByEmail(email);
             if(foodRunner == null) {
                 foodRunner = new FoodRunner();
             }
             foodRunner.setProfile(profile);
-            foodRunner.setLocation(location);
+            if(location != null && location.getLatitude() != 0.0d) {
+                foodRunner.setLocation(location);
+            }
             this.networkOrchestrator.enterNetwork(foodRunner);
 
             authResponse.addProperty("offlineCommunitySupport",foodRunner.isOfflineCommunitySupport());
+
+            String bearerToken = UUID.randomUUID().toString();
+            profile.setBearerToken(bearerToken);
+            this.mongoDBJsonStore.updateProfile(profile);
+            authResponse.add("profile", profile.toJson());
+            authResponse.addProperty("bearerToken",profile.getBearerToken());
 
             //logger.info("AUTHENTICATION_SUCCESS: "+email);
             return authResponse;
@@ -200,6 +207,12 @@ public class ProfileRegistrationService {
             profileJson.remove("password");
             jsonObject.add("profile", profileJson);
             jsonObject.add("sourceOrg", sourceOrg.toJson());
+
+            String bearerToken = UUID.randomUUID().toString();
+            profile.setBearerToken(bearerToken);
+            this.mongoDBJsonStore.updateProfile(profile);
+            jsonObject.addProperty("bearerToken",bearerToken);
+
             return jsonObject;
         }
 

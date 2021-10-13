@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 import { withRouter } from "react-router";
-import axios from 'axios'
+import { axios} from "../App"
 // react plugin for creating charts
 //import ChartistGraph from "react-chartist";
 // @material-ui/core

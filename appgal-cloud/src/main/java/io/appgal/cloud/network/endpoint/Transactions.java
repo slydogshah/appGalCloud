@@ -5,9 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
-import io.appgal.cloud.model.FoodRecoveryTransaction;
-import io.appgal.cloud.model.SchedulePickUpNotification;
-import io.appgal.cloud.model.TransactionState;
+import io.appgal.cloud.model.*;
 import io.appgal.cloud.network.services.NetworkOrchestrator;
 import io.appgal.cloud.util.JsonUtil;
 import io.smallrye.mutiny.Uni;
@@ -47,6 +45,9 @@ public class Transactions {
     @Inject
     private NetworkOrchestrator networkOrchestrator;
 
+    @Inject
+    private ActiveNetwork activeNetwork;
+
     @Path("/recovery/foodRunner")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,7 +59,8 @@ public class Transactions {
             JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
-            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            FoodRunner foodRunner = activeNetwork.findFoodRunnerByEmail(email);
 
             for(FoodRecoveryTransaction cour: transactions) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED)
@@ -73,7 +75,9 @@ public class Transactions {
                 }
                 else if(cour.getTransactionState() == TransactionState.INPROGRESS || cour.getTransactionState() == TransactionState.ONTHEWAY)
                 {
-                   inProgress.add(cour.toJson());
+                    if(cour.getFoodRunner().getProfile().getEmail().equals(foodRunner.getProfile().getEmail())) {
+                        inProgress.add(cour.toJson());
+                    }
                 }
             }
             result.add("pending", pending);
@@ -102,7 +106,7 @@ public class Transactions {
             JsonArray pending = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.networkOrchestrator.findMyTransactions(email);
 
-            //JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
+            JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
 
             for(FoodRecoveryTransaction cour: transactions) {

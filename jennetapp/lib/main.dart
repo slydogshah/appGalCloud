@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:app/src/background/locationUpdater.dart';
 import 'package:app/src/context/activeSession.dart';
+import 'package:app/src/context/securityToken.dart';
 import 'package:app/src/model/authCredentials.dart';
 import 'package:app/src/model/foodRecoveryTransaction.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
@@ -19,8 +20,10 @@ import 'notifications.dart';
 class MyHttpOverrides extends HttpOverrides{
   @override
   HttpClient createHttpClient(SecurityContext context){
-    return super.createHttpClient(context)
+    HttpClient client = super.createHttpClient(context)
       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+
+    return client;
   }
 }
 
@@ -44,7 +47,7 @@ class MyHttpOverrides extends HttpOverrides{
 }*/
 
 
-Future<void> main(String env) async{
+void main(String env) {
   //Launch the App
   HttpOverrides.global = new MyHttpOverrides();
 
@@ -94,7 +97,7 @@ void launchApp()
       }
       else
       {
-        autoLogin(email, password,latitude,longitude);
+        autoLogin(email,password,latitude,longitude);
       }
     });
   });
@@ -121,12 +124,13 @@ void autoLogin(String email,String password,double latitude,double longitude) {
       activeSession.setProfile(foodRunner);
       activeSession.foodRunner.offlineCommunitySupport =
       json["offlineCommunitySupport"];
+      ActiveSession.getInstance().securityToken = new SecurityToken(foodRunner.email, foodRunner.bearerToken);
 
       ActiveNetworkRestClient client = new ActiveNetworkRestClient();
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.email);
       future.then((txs) {
-          runApp(new FoodRunnerApp(txs));
+        runApp(new FoodRunnerApp(txs));
       }).catchError((e) {
         runApp(new JenNetworkApp());
       });
@@ -251,6 +255,50 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}*/
+
+
+/*import 'package:flutter/material.dart';
+import 'package:maps_launcher/maps_launcher.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Maps Launcher Demo',
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              ElevatedButton(
+                onPressed: () => MapsLauncher.launchQuery(
+                    '1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA'),
+                child: Text('LAUNCH QUERY'),
+              ),
+              SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: () => MapsLauncher.launchCoordinates(
+                    37.4220041, -122.0862462, 'Google Headquarters are here'),
+                child: Text('LAUNCH COORDINATES'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }*/

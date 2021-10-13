@@ -8,6 +8,7 @@ import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
 import 'package:app/src/navigation/embeddedNavigation.dart';
+import 'package:app/src/navigation/navigationLauncher.dart';
 import 'package:app/src/rest/activeNetworkRestClient.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
@@ -74,11 +75,16 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.profile.email);
       future.then((txs) {
-        setState(() {
-          this.recoveryTxs = txs['pending'];
-          this.inProgressTxs = txs['inProgress'];
-          this.txs = txs;
-        });
+        if(txs['inProgress'].isNotEmpty) {
+          setState(() {
+            this.recoveryTxs = txs['pending'];
+            this.inProgressTxs = txs['inProgress'];
+            this.txs = txs;
+          });
+        }else{
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FoodRunnerApp(txs)));
+        }
       });
     }
     /*if (state == AppLifecycleState.inactive) {
@@ -270,7 +276,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                       ),
                     ),
                   ),
-                  Tooltip(
+                  /*Tooltip(
                     message: "Notify Availability",
                     child: Material(
                       color: offline,
@@ -284,6 +290,29 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                           }
                           else{
                             foodRunner.offlineCommunitySupport = true;
+
+                            /*AlertDialog dialog = AlertDialog(
+                              title: Text('Create an account?'),
+                              content: Text('Thank you for giving your time to Hunger. We hope the Community helps you in your time of need, like you are helping now.\n\n-#Jen Network'),
+                              actions: [
+                                FlatButton(
+                                  textColor: Color(0xFF6200EE),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('CANCEL'),
+                                ),
+                                FlatButton(
+                                  textColor: Color(0xFF6200EE),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) => Registration()));
+                                  },
+                                  child: Text('ACCEPT'),
+                                ),
+                              ],
+                            );*/
                           }
                           Profile profile = ActiveSession.getInstance().getProfile();
                           // set up the SimpleDialog
@@ -348,7 +377,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             )
@@ -827,23 +856,25 @@ class InProgressListView extends StatelessWidget {
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context,rootNavigator: true).pop();
           },
           child: Text('CANCEL'),
         ),
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context,rootNavigator: true).pop();
             FocusScope.of(context).requestFocus(FocusNode());
 
             Future<FoodRunnerLocation> locationFuture = LocationUpdater.getLocation();
             locationFuture.then((foodRunnerLocation){
               //print("**********");
               //print(foodRunnerLocation);
-              EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+              /*EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
                   tx.getPickupNotification().getSourceOrg(),foodRunnerLocation);
-              embeddedNavigation.start(tx);
+              embeddedNavigation.start(tx);*/
+              //NavigationLauncher.launchMaps();
+              NavigationLauncher.launchNavigation(dropOffOrg, foodRunnerLocation);
             });
           },
           child: Text('START NAVIGATION'),

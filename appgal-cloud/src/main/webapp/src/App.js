@@ -2,6 +2,7 @@ import React, { Component, Suspense, useContext, ReactReduxContext } from 'react
 import { BrowserRouter, Router, Route, Switch, Redirect} from 'react-router-dom'
 import './scss/style.scss'
 import { AppContext,store} from "./application/AppContext"
+import axiosLib  from 'axios';
 
 const loading = (
   <div className="pt-3 text-center">
@@ -18,6 +19,22 @@ const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 const Home = React.lazy(() => import('./application/Home'))
 const PickupHistory = React.lazy(() => import('./application/PickupHistory'))
+
+//Configure Axios
+export const axios = axiosLib.create({
+    transformRequest: [axiosLib.defaults.transformRequest[0], (data, headers) => {
+
+       // mutate headers logic
+       const bearerToken = store.getState().bearer;
+       if(bearerToken != null){
+           headers.Bearer = store.getState().bearer;
+           headers.Principal = store.getState().email;
+           //alert(JSON.stringify(headers));
+       }
+
+        return data;
+    }],
+});
 
 
 //https://ui.dev/react-router-v5-protected-routes-authentication/

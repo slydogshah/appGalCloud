@@ -9,6 +9,7 @@ class Profile {
   String photo;
   String password;
   String profileType;
+  String bearerToken;
   FoodRunnerLocation location;
 
 
@@ -42,6 +43,7 @@ class Profile {
       id = json['id'];
     }
     email = json['email'];
+    bearerToken = json['bearerToken'];
     mobile = json['mobile'].toString();
     photo = json['photo'];
     if(json['location'] != null)
@@ -61,6 +63,9 @@ class Profile {
     }
     if(this.email != null) {
       json['email'] = this.email;
+    }
+    if(this.bearerToken != null) {
+      json['bearerToken'] = this.bearerToken;
     }
     if(this.mobile != null) {
       json['mobile'] = this.mobile;

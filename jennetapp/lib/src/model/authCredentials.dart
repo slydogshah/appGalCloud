@@ -40,7 +40,7 @@ class AuthCredentials
     password = this.profile.password;
     statusCode = profileJson['statusCode'];
     latitude = profileJson['latitude'];
-    longitude = profileJson[longitude];
+    longitude = profileJson['longitude'];
   }
 
   Map<String, dynamic> toJson() =>

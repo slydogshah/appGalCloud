@@ -10,6 +10,7 @@ import 'package:app/src/model/foodRunner.dart';
 import 'package:app/src/model/foodRunnerLocation.dart';
 import 'package:app/src/model/profile.dart';
 import 'package:app/src/model/sourceOrg.dart';
+import 'package:app/src/navigation/navigationLauncher.dart';
 import 'package:app/src/rest/urlFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -121,11 +122,8 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       Future<Map<String, List<FoodRecoveryTransaction>>> future = client
           .getFoodRecoveryTransaction(foodRunner.profile.email);
       future.then((txs) {
-        setState(() {
-          this.recoveryTxs = txs['pending'];
-          this.inProgressTxs = txs['inProgress'];
-          this.txs = txs;
-        });
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FoodRunnerApp(txs)));
       });
     }
     /*if (state == AppLifecycleState.inactive) {
@@ -152,6 +150,13 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     Profile profile = ActiveSession.getInstance().getProfile();
     CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
+
+    Widget widget;
+    if(this.recoveryTxs.isNotEmpty){
+      widget = this.getPickUpList();
+    }else{
+      widget = this.getTasksNotFound(context);
+    }
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
@@ -180,7 +185,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         body: Container(
                           color: primaryColor,
                           //color: Colors.pink,
-                          child: getPickUpList(),
+                          child: widget,
                         ),
                       ),
                     )
@@ -220,6 +225,46 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       },
     ).build(context);
     return widget;
+  }
+
+  Widget getTasksNotFound(BuildContext context){
+    return Padding(
+      padding: const EdgeInsets.only(
+          left: 16, right: 16, bottom: 16, top: 8),
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.pink,
+          borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.6),
+              blurRadius: 8,
+              offset: const Offset(4, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+            highlightColor: Colors.transparent,
+            onTap: () {
+              //done
+            },
+            child: Center(
+              child: Text(
+                'You have (0) Active Requests',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget getAppBarUI(BuildContext context) {
@@ -304,7 +349,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                       ),
                     ),
                   ),
-                  Tooltip(
+                  /*Tooltip(
                     message: "Notify Availability",
                     child: Material(
                       color: offline,
@@ -318,55 +363,28 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                           }
                           else{
                             foodRunner.offlineCommunitySupport = true;
-                          }
-                          Profile profile = ActiveSession.getInstance().getProfile();
-                          // set up the SimpleDialog
-                          SimpleDialog dialog = SimpleDialog(
-                              children: [CupertinoActivityIndicator()]
-                          );
 
-                          // show the dialog
-                          showDialog(
-                            context: this.context,
-                            builder: (BuildContext context) {
-                              return dialog;
-                            },
-                          );
-                          ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
-                          Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email);
-                          response.then((response){
-                            Navigator.of(context, rootNavigator: true).pop();
-                            setState(() {
-                              if(foodRunner.offlineCommunitySupport){
-                                offline = Colors.green;
-                              }
-                              else{
-                                offline = Colors.white;
-                              }
-                            });
-                          }).catchError((error){
-                            Navigator.of(context, rootNavigator: true).pop();
                             AlertDialog dialog = AlertDialog(
-                              title: Text('System Error....'),
-                              content: Text(
-                                "Unknown System Error....",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
+                              title: Text('Create an account?'),
+                              content: Text('Thank you for giving your time to Hunger. We hope the Community helps you in your time of need, like you are helping now.\n\n-#Jen Network'),
                               actions: [
                                 FlatButton(
                                   textColor: Color(0xFF6200EE),
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text('OK'),
+                                  child: Text('CANCEL'),
+                                ),
+                                FlatButton(
+                                  textColor: Color(0xFF6200EE),
+                                  onPressed: () {
+                                    notifyCommunityAvail(Colors.white,foodRunner);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('ACCEPT'),
                                 ),
                               ],
                             );
-
                             // show the dialog
                             showDialog(
                               context: context,
@@ -374,7 +392,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                                 return dialog;
                               },
                             );
-                          });
+                          }
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -382,7 +400,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             )
@@ -395,6 +413,65 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 200));
     return true;
+  }
+
+  void notifyCommunityAvail(Color offline,FoodRunner foodRunner){
+    Profile profile = ActiveSession.getInstance().getProfile();
+    // set up the SimpleDialog
+    SimpleDialog dialog = SimpleDialog(
+        children: [CupertinoActivityIndicator()]
+    );
+
+    // show the dialog
+    showDialog(
+      context: this.context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+    ActiveNetworkRestClient activeNetworkClient = new ActiveNetworkRestClient();
+    Future<String> response = activeNetworkClient.notifyOfflineAvailability(profile.email);
+    response.then((response){
+      Navigator.of(context, rootNavigator: true).pop();
+      setState(() {
+        if(foodRunner.offlineCommunitySupport){
+          offline = Colors.green;
+        }
+        else{
+          offline = Colors.white;
+        }
+      });
+    }).catchError((error){
+      Navigator.of(context, rootNavigator: true).pop();
+      AlertDialog dialog = AlertDialog(
+        title: Text('System Error....'),
+        content: Text(
+          "Unknown System Error....",
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+        ),
+        actions: [
+          FlatButton(
+            textColor: Color(0xFF6200EE),
+            onPressed: () {
+              Navigator.of(context,rootNavigator: true).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        },
+      );
+    });
   }
 }
 
@@ -663,14 +740,14 @@ class PickUpListView extends StatelessWidget {
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context,rootNavigator: true).pop();
           },
           child: Text('CANCEL'),
         ),
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context,rootNavigator: true).pop();
             FocusScope.of(context).requestFocus(FocusNode());
 
             // set up the SimpleDialog
@@ -727,7 +804,7 @@ class PickUpListView extends StatelessWidget {
                     FlatButton(
                       textColor: Color(0xFF6200EE),
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.of(context,rootNavigator: true).pop();
                       },
                       child: Text('OK'),
                     ),
@@ -745,9 +822,9 @@ class PickUpListView extends StatelessWidget {
             }).catchError((error){
               Navigator.of(context, rootNavigator: true).pop();
               AlertDialog dialog = AlertDialog(
-                title: Text('System Error....'),
+                title: Text('Transaction Is Already Accepted'),
                 content: Text(
-                  "Unknown System Error....",
+                  "A FoodRunner has already accepted this respect. We appreciate your help to serve the Hungry. #JenNetwork",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -758,7 +835,7 @@ class PickUpListView extends StatelessWidget {
                   FlatButton(
                     textColor: Color(0xFF6200EE),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.of(context,rootNavigator: true).pop();
                     },
                     child: Text('OK'),
                   ),
@@ -779,7 +856,7 @@ class PickUpListView extends StatelessWidget {
         FlatButton(
           textColor: Color(0xFF6200EE),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context, rootNavigator: true).pop();
             FocusScope.of(context).requestFocus(FocusNode());
             // set up the SimpleDialog
             SimpleDialog dialog = SimpleDialog(
@@ -804,16 +881,18 @@ class PickUpListView extends StatelessWidget {
               locationFuture.then((foodRunnerLocation){
                 //print("**********");
                 //print(foodRunnerLocation);
-                EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
+                /*EmbeddedNavigation embeddedNavigation = new EmbeddedNavigation(context,
                     tx.getPickupNotification().getSourceOrg(),foodRunnerLocation);
-                embeddedNavigation.start(tx);
+                embeddedNavigation.start(tx);*/
+                //NavigationLauncher.launchMaps();
+                NavigationLauncher.launchNavigation(tx.getPickupNotification().getSourceOrg(), foodRunnerLocation);
               });
             }).catchError((error){
               Navigator.of(context, rootNavigator: true).pop();
               AlertDialog dialog = AlertDialog(
-                title: Text('System Error....'),
+                title: Text('Transaction Is Already Accepted'),
                 content: Text(
-                  "Unknown System Error....",
+                  "A FoodRunner has already accepted this respect. We appreciate your help to serve the Hungry. #JenNetwork",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -824,7 +903,7 @@ class PickUpListView extends StatelessWidget {
                   FlatButton(
                     textColor: Color(0xFF6200EE),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.of(context,rootNavigator: true).pop();
                     },
                     child: Text('OK'),
                   ),
@@ -888,7 +967,7 @@ class PickUpListView extends StatelessWidget {
             FlatButton(
               textColor: Color(0xFF6200EE),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(context,rootNavigator: true).pop();
               },
               child: Text('OK'),
             ),

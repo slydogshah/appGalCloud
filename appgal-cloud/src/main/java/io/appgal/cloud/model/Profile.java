@@ -50,6 +50,8 @@ public class Profile implements Serializable {
 
     private boolean resetPasswordActive=false;
 
+    private String bearerToken;
+
     public Profile()
     {
 
@@ -194,6 +196,14 @@ public class Profile implements Serializable {
         this.resetPasswordActive = resetPasswordActive;
     }
 
+    public String getBearerToken() {
+        return bearerToken;
+    }
+
+    public void setBearerToken(String bearerToken) {
+        this.bearerToken = bearerToken;
+    }
+
     @Override
     public String toString()
     {
@@ -232,6 +242,10 @@ public class Profile implements Serializable {
         jsonObject.addProperty("offlineCommunitySupport",this.offlineCommunitySupport);
 
         jsonObject.addProperty("resetPasswordActive",this.resetPasswordActive);
+
+        if(this.bearerToken != null){
+            jsonObject.addProperty("bearerToken",this.bearerToken);
+        }
 
         return jsonObject;
     }
@@ -286,6 +300,10 @@ public class Profile implements Serializable {
         if(jsonObject.has("resetPasswordActive"))
         {
             profile.resetPasswordActive = jsonObject.get("resetPasswordActive").getAsBoolean();
+        }
+
+        if(jsonObject.has("bearerToken")){
+            profile.bearerToken = jsonObject.get("bearerToken").getAsString();
         }
 
         return profile;

@@ -1,6 +1,6 @@
 Active Tasks
 ----
-App: Test if location updates are being sent > QA
+
 
 
 QA Tasks
@@ -9,15 +9,14 @@ QA Tasks
 
 App Tasks
 -----
-Step 1: Schedule an Offline Dropoff
-Step2: Finish all in progress
-Step 3: Cannot go to Requests to Accept the Offline Dropoff (Bug)
-Step 4: Accept Offline DropOff but In-progress screen did not reflect till App refresh (Bug)
-Step5: Offline DropOff does not have an Org, So FoodRunner has to notify its dropped off so reflects in the PickupHistory (Bug)
+
 
 
 Cloud Tasks
 ----
+Request only goes to one FoodRunner
+
+
 
 Dash Tasks
 ----
@@ -25,6 +24,24 @@ Dash Tasks
 
 Fixed Tasks
 ----
+Replace MapBox with Google Maps
+
+Push token not registered when fresh registered login
+
+Push notification callback does not show requests
+
+Food Pickup Pullout from history
+
+Forgot Password: Add Cancel Button
+
+Clear local data on logout
+
+Register: Email and Password Required messages not showing
+
+FoodRunner Login fails
+
+App: When no requests or in-progress show a card instead of empty screen
+
 Step 1: Schedule an Offline Dropoff
 Step2: Finish all in progress
 Step 3: Cannot go to Requests to Accept the Offline Dropoff (Bug)

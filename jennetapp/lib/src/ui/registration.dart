@@ -61,6 +61,14 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
     });
   }
 
+  void notifySystemError(String emailValue,String passwordValue) {
+    setState(() {
+      this.emailIsInvalidMessage = "500: Unknown System Error. Please try again";
+      this.email = emailValue;
+      this.password = passwordValue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Color primaryColor = Color(0xFF383EDB);
@@ -79,7 +87,7 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
       cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
       decoration: InputDecoration(
         border: InputBorder.none,
-        hintText: 'Login...',
+        hintText: 'Email...',
       ),
     );
 
@@ -131,11 +139,11 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                           color: primaryColor,
                           //color: Colors.pink,
                           child: ListView.builder(
-                            itemCount: 1,
+                            itemCount: 3,
                             padding: const EdgeInsets.only(top: 8),
                             scrollDirection: Axis.vertical,
                             itemBuilder: (BuildContext context, int index) {
-                              final int count = 1;
+                              final int count = 3;
                               final Animation<double> animation =
                               Tween<double>(begin: 0.0, end: 1.0).animate(
                                   CurvedAnimation(
@@ -146,6 +154,7 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                               animationController.forward();
                               return RegisterView(
                                 callback: () {},
+                                index: index,
                                 registrationState: this,
                                 animation: animation,
                                 animationController: animationController,
@@ -194,7 +203,7 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
                     Radius.circular(32.0),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
                   },
                   /*child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -251,6 +260,7 @@ class RegistrationState extends State<Registration> with TickerProviderStateMixi
 class RegisterView extends StatelessWidget {
   const RegisterView(
       {Key key,
+        this.index,
         this.registrationState,
         this.animationController,
         this.emailTextField,
@@ -259,6 +269,7 @@ class RegisterView extends StatelessWidget {
         this.callback})
       : super(key: key);
 
+  final index;
   final VoidCallback callback;
   final AnimationController animationController;
   final Animation<dynamic> animation;
@@ -270,6 +281,19 @@ class RegisterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget widget;
+
+    if(index == 0){
+      widget = getInputWidget(context);
+    }else if(index == 1){
+      widget = getRegisterWidget(context);
+    }else{
+      widget = getCancelWidget(context);
+    }
+    return widget;
+  }
+
+  Widget getInputWidget(BuildContext context){
     Widget email = this.getLoginUIBar(context, emailTextField);
     Widget password = this.getPasswordUIBar(context, new ProfileFunctions(), emailTextField, passwordTextField);
 
@@ -369,7 +393,291 @@ class RegisterView extends StatelessWidget {
     );
   }
 
+  Widget getRegisterWidget(BuildContext context){
+    Widget registerButton = getRegisterButton(context,this.emailTextField,this.passwordTextField);
+    return AnimatedBuilder(
+      animation: animationController,
+      builder: (BuildContext context, Widget child) {
+        return FadeTransition(
+          opacity: animation,
+          child: Transform(
+            transform: Matrix4.translationValues(
+                0.0, 50 * (1.0 - animation.value), 0.0),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 24, right: 24, top: 8, bottom: 16),
+              child: InkWell(
+                splashColor: Colors.transparent,
+                onTap: () {
+                  callback();
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.6),
+                        offset: const Offset(4, 4),
+                        blurRadius: 16,
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                    child: Stack(
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              color: HotelAppTheme.buildLightTheme()
+                                  .backgroundColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, top: 8, bottom: 8),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                              registerButton,
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(32.0),
+                              ),
+                              onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                /*child: Icon(
+                                  Icons.favorite_border,
+                                  color: HotelAppTheme.buildLightTheme()
+                                      .primaryColor,
+                                ),*/
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget getCancelWidget(BuildContext context){
+    Widget cancelButton = getCancelButton(context);
+    return AnimatedBuilder(
+      animation: animationController,
+      builder: (BuildContext context, Widget child) {
+        return FadeTransition(
+          opacity: animation,
+          child: Transform(
+            transform: Matrix4.translationValues(
+                0.0, 50 * (1.0 - animation.value), 0.0),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 24, right: 24, top: 8, bottom: 16),
+              child: InkWell(
+                splashColor: Colors.transparent,
+                onTap: () {
+                  callback();
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.6),
+                        offset: const Offset(4, 4),
+                        blurRadius: 16,
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                    child: Stack(
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              color: HotelAppTheme.buildLightTheme()
+                                  .backgroundColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, top: 8, bottom: 8),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            cancelButton,
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(32.0),
+                              ),
+                              onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                /*child: Icon(
+                                  Icons.favorite_border,
+                                  color: HotelAppTheme.buildLightTheme()
+                                      .primaryColor,
+                                ),*/
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void handleAccept(BuildContext context) {
+  }
+
+  Widget getRegisterButton(BuildContext context,TextFormField emailTextField,
+      TextFormField passwordTextField){
+    ProfileFunctions profileFunctions = new ProfileFunctions();
+    Widget widget = Padding(
+      padding: const EdgeInsets.only(
+          left: 16, right: 16, bottom: 16, top: 8),
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.pink,
+          borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.6),
+              blurRadius: 8,
+              offset: const Offset(4, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+            highlightColor: Colors.transparent,
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+              profileFunctions.showAlertDialogRegistration(context,
+                  this.registrationState, this,
+                  emailTextField,
+                  passwordTextField,
+                  "FOOD_RUNNER");
+            },
+            child: Center(
+              child: Text(
+                'Register',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    return widget;
+  }
+
+  Widget getCancelButton(BuildContext context){
+    Widget widget = Padding(
+      padding: const EdgeInsets.only(
+          left: 16, right: 16, bottom: 16, top: 8),
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.pink,
+          borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.6),
+              blurRadius: 8,
+              offset: const Offset(4, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+            highlightColor: Colors.transparent,
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => JenNetworkApp()));
+            },
+            child: Center(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    return widget;
   }
 
   Widget getLoginUIBar(BuildContext context, TextFormField emailTextField) {
@@ -451,7 +759,7 @@ class RegisterView extends StatelessWidget {
               ),
             ),
           ),
-          Container(
+          /*Container(
             decoration: BoxDecoration(
               //color: HotelAppTheme.buildLightTheme().primaryColor,
               borderRadius: const BorderRadius.all(
@@ -477,8 +785,8 @@ class RegisterView extends StatelessWidget {
                     passwordTextField,"FOOD_RUNNER");
               },
             ),
-          ),
-          Container(
+          ),*/
+          /*Container(
             decoration: BoxDecoration(
               //color: HotelAppTheme.buildLightTheme().primaryColor,
               borderRadius: const BorderRadius.all(
@@ -503,7 +811,7 @@ class RegisterView extends StatelessWidget {
                     builder: (context) => JenNetworkApp()));
               },
             ),
-          ),
+          ),*/
         ],
       ),
     );
