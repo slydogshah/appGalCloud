@@ -1,5 +1,6 @@
 Active Tasks
 ----
+* App: Change Accept Dialog
 
 
 
@@ -24,6 +25,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+Dash: Change Logo
+
 Scheduling dropoff needs a location filter
 
 Top Icon disappers after clicking Home

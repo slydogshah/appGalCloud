@@ -40,7 +40,7 @@ const TheHeader = (props) => {
         <>
             <CHeader withSubheader>
                           <div class="logo-header">
-                              <img src="images/jen-logo.PNG" alt=""
+                              <img src="images/networkLogo.png" alt=""
                                                             />
                           </div>
                        </CHeader>
@@ -52,7 +52,7 @@ const TheHeader = (props) => {
       return (
             <CHeader withSubheader>
               <div class="logo-header">
-                  <img src="images/jen-logo.PNG" alt=""
+                  <img src="images/networkLogo.png" alt=""
                   />
               </div>
 
@@ -71,7 +71,7 @@ const TheHeader = (props) => {
    return (
                <CHeader withSubheader>
                  <div class="logo-header">
-                     <img src="images/jen-logo.PNG" alt=""
+                     <img src="images/networkLogo.png" alt=""
                      />
                  </div>
               </CHeader>
