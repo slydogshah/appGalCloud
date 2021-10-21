@@ -1,6 +1,6 @@
 Active Tasks
 ----
-* App: Make Requests Screen unique txs
+* App: Test and make sure location updates are received as the location changes
 
 
 
@@ -25,6 +25,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+App: Make Requests Screen unique txs
+
 App: Change Accept Dialog
 
 Dash: Change Logo

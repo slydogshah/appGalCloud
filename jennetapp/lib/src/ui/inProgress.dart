@@ -106,6 +106,17 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
     Profile profile = ActiveSession.getInstance().getProfile();
     CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
+
+    //Create a unique list of recovery txs
+    Map<String,FoodRecoveryTransaction> filter = new Map();
+    int length = this.inProgressTxs.length;
+    for(int i=0; i<length; i++){
+      FoodRecoveryTransaction local = this.inProgressTxs[i];
+      filter[local.getId()] = local;
+    }
+    this.inProgressTxs.clear();
+    filter.forEach((k,v) => this.inProgressTxs.add(v));
+
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(

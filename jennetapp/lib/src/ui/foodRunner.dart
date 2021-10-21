@@ -151,6 +151,16 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
 
+    //Create a unique list of recovery txs
+    Map<String,FoodRecoveryTransaction> filter = new Map();
+    int length = this.recoveryTxs.length;
+    for(int i=0; i<length; i++){
+      FoodRecoveryTransaction local = this.recoveryTxs[i];
+      filter[local.getId()] = local;
+    }
+    this.recoveryTxs.clear();
+    filter.forEach((k,v) => this.recoveryTxs.add(v));
+
     Widget widget;
     if(this.recoveryTxs.isNotEmpty){
       widget = this.getPickUpList();
