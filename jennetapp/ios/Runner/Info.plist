@@ -62,5 +62,7 @@
 		<string>NO</string>
 		<key>UIStatusBarHidden</key>
 		<true/>
+		<key>App Uses Non-Exempt Encryption</key>
+        <false/>
 	</dict>
 </plist>
