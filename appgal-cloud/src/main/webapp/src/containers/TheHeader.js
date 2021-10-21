@@ -47,7 +47,7 @@ const TheHeader = (props) => {
         </>
     );
   }
-  else if(auth === true)
+  else if(auth)
   {
       return (
             <CHeader withSubheader>

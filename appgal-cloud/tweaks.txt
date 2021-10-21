@@ -1,5 +1,6 @@
 Active Tasks
 ----
+* Scheduling dropoff needs a location filter
 
 
 
@@ -24,6 +25,10 @@ Dash Tasks
 
 Fixed Tasks
 ----
+Top Icon disappers after clicking Home
+
+Scheduling same location pickup/dropoff at the same time results in inconsistent pickup requests
+
 Replace MapBox with Google Maps
 
 Push token not registered when fresh registered login

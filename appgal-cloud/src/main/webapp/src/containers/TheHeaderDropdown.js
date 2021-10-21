@@ -127,6 +127,7 @@ export default function AdminNavbarLinks(props) {
                                             }
                                             axios.get(apiUrl).then((response) => {
                                                 //console.log(JSON.stringify(props));
+                                                store.getState().auth = true;
                                                 if(producer)
                                                 {
                                                        props.props.props.history.push({
@@ -152,6 +153,7 @@ export default function AdminNavbarLinks(props) {
                                     const email = store.getState().email;
                                     const apiUrl = window.location.protocol +"//"+window.location.hostname+"/registration/profile/?email="+email;
                                     axios.get(apiUrl).then((response) => {
+                                        store.getState().auth = true;
                                         props.props.props.history.push({
                                          pathname: "/profile",
                                          state: { data: response.data }
