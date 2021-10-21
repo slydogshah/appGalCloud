@@ -206,8 +206,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       padding: const EdgeInsets.only(top: 8),
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
-        final int count =
-        recoveryTxs.length > 4 ? 4 : recoveryTxs.length;
+        final int count = recoveryTxs.length;
         final Animation<double> animation =
         Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
@@ -220,7 +219,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
           animation: animation,
           animationController: animationController,
           tx: this.recoveryTxs[index],
-          txs: this.recoveryTxs,
         );
       },
     ).build(context);
@@ -481,14 +479,12 @@ class PickUpListView extends StatelessWidget {
         this.animationController,
         this.animation,
         this.tx,
-        this.txs,
       })
       : super(key: key);
 
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final FoodRecoveryTransaction tx;
-  final List<FoodRecoveryTransaction> txs;
 
 
   @override
