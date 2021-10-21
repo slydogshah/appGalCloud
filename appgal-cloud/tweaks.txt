@@ -1,6 +1,6 @@
 Active Tasks
 ----
-* App: Change Accept Dialog
+* App: Make Requests Screen unique txs
 
 
 
@@ -25,6 +25,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+App: Change Accept Dialog
+
 Dash: Change Logo
 
 Scheduling dropoff needs a location filter
