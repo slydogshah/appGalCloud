@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 import io.appgal.cloud.infrastructure.MongoDBJsonStore;
 import io.appgal.cloud.model.*;
 import io.appgal.cloud.util.JsonUtil;
+import io.bugsbunny.test.components.BaseTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -16,8 +17,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @QuarkusTest
-public class FoodRecoveryOrchestratorTests {
+public class FoodRecoveryOrchestratorTests extends BaseTest {
     private static Logger logger = LoggerFactory.getLogger(FoodRecoveryOrchestrator.class);
 
     @Inject
@@ -32,11 +35,25 @@ public class FoodRecoveryOrchestratorTests {
     @Test
     public void testFindDropOffOrganizations() {
         SourceOrg sourceOrg = new SourceOrg("microsoft", "Microsoft", "melinda_gates@microsoft.com",true);
-        sourceOrg.setLocation(new Location(9.0d, 10.0d));
+        sourceOrg.setLocation(new Location(30.269090d, -97.751830d));
         this.mongoDBJsonStore.storeSourceOrg(sourceOrg);
+
+        for(int i=0; i<2; i++){
+            SourceOrg dropOrg = new SourceOrg("church"+i, "Church", UUID.randomUUID().toString()+"@church.com",
+                    false);
+            if(i==0) {
+                dropOrg.setLocation(new Location(30.259590d, -97.747800d));
+            }
+            else{
+                dropOrg.setLocation(new Location(39.253770d, -76.789370d));
+            }
+            this.mongoDBJsonStore.storeSourceOrg(dropOrg);
+        }
 
         List<SourceOrg> sourceOrgList = this.foodRecoveryOrchestrator.findDropOffOrganizations("microsoft");
         JsonUtil.print(this.getClass(),JsonParser.parseString(sourceOrgList.toString()));
+        assertEquals(1,sourceOrgList.size());
+        assertEquals("church0",sourceOrgList.get(0).getOrgId());
     }
 
     @Test

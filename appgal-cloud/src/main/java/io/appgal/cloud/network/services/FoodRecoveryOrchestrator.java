@@ -77,6 +77,9 @@ public class FoodRecoveryOrchestrator {
             if(location != null) {
                 Double distance = distanceCalculator.calculateDistance(producer.getLocation(), location);
                 logger.info("DISTANCE: " + distance);
+                if(distance > 20.0d){
+                    continue;
+                }
             }
             dropOffOptions.add(dropOffOption);
         }
