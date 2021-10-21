@@ -14,7 +14,7 @@ class JenNetworkApp extends StatelessWidget {
 
   JenNetworkApp()
   {
-    LocationUpdater.getLocation();
+    //LocationUpdater.getLocation();
   }
 
   @override

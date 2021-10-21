@@ -54,6 +54,7 @@ void main(String env) {
   WidgetsFlutterBinding.ensureInitialized();
 
   //await Future.delayed(Duration(seconds: 10));
+  LocationUpdater.start();
 
   Future<Map<String,dynamic>> config = UrlFunctions.getConfig(env);
   config.then((jsonMap) {

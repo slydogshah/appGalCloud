@@ -28,7 +28,7 @@ class FoodRunnerApp extends StatelessWidget {
   Map<String,List<FoodRecoveryTransaction>> txs;
   FoodRunnerApp(Map<String,List<FoodRecoveryTransaction>> txs)
   {
-    LocationUpdater.getLocation();
+    //LocationUpdater.getLocation();
     this.txs = txs;
   }
 
