@@ -1,6 +1,5 @@
 Active Tasks
 ----
-* App: Test and make sure location updates are received as the location changes
 * Cloud: Transactioon uniqueness on read
 
 
@@ -26,6 +25,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+App: Test and make sure location updates are received as the location changes
+
 App: Make Requests Screen unique txs
 
 App: Change Accept Dialog
