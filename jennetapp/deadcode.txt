@@ -1702,3 +1702,29 @@ class PickUpListView extends StatelessWidget {
             future.then((result){}).catchError((error){});
           });*/
         }
+
+        /*_serviceEnabled = await location.serviceEnabled();
+            if (!_serviceEnabled) {
+              _serviceEnabled = await location.requestService();
+            }
+
+            _permissionGranted = await location.requestPermission();
+            print("*********LOCATION_PERMISSION_GET_LOCATION************");
+            print(_permissionGranted);*/
+
+            /*_serviceEnabled = await location.serviceEnabled();
+                if (!_serviceEnabled) {
+                  _serviceEnabled = await location.requestService();
+                  if (!_serviceEnabled) {
+                    print("******************");
+                    print("SERVICE_DISABLED");
+                    return;
+                  }
+                }
+
+                _permissionGranted = await location.requestPermission();
+                print("*********LOCATION_PERMISSION_DURING_POLLING************");
+                print(_permissionGranted);
+
+                isBackgroundModeEnabled =
+                await location.enableBackgroundMode(enable: true);*/

@@ -27,7 +27,8 @@
 		<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
 		<string>YES</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>NSLocationAlwaysUsageDescription</string>
+		<!--<string>NSLocationAlwaysUsageDescription</string>-->
+		<string>NSLocationAlwaysAndWhenInUseUsageDescription</string>
 		<key>Permitted background task scheduler identifiers</key>
 		<array>
 			<string>com.example.apple-samplecode.ColorFeed.refresh</string>
