@@ -135,23 +135,7 @@ function DropOffView({state, props}) {
                                 <CRow>
                                                                                                                                                      <CCol>
                                    <CCardGroup className="mb-4">
-                                                                                    <CWidgetDropdown
-                                                                                              color="gradient-primary"
-                                                                                              header={deliveries}
-                                                                                              text="DropOffs In-Progress"
-                                                                                              footerSlot={
-                                                                                                <ChartLineSimple
-                                                                                                  pointed
-                                                                                                  className="c-chart-wrapper mt-3 mx-3"
-                                                           style={{height: '70px'}}
-                                                           dataPoints={[65, 59, 84, 84, 51, 55, 40]}
-                                                           pointHoverBackgroundColor="primary"
-                                                           label="Members"
-                                                           labels="months"
-                                                         />
-                                                       }
-                                                     >
-                                                 </CWidgetDropdown>
+
                                       </CCardGroup>
                                    </CCol>
                                </CRow>

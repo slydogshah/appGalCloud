@@ -163,71 +163,7 @@ function HomeView({state, props}) {
                                 <CRow>
                                                                                                                                                      <CCol>
                                    <CCardGroup className="mb-4">
-                                                                                    <CWidgetDropdown
-                                                                                              color="gradient-primary"
-                                                                                              header={deliveries}
-                                                                                              text="Pickups In-Progress"
-                                                                                              footerSlot={
-                                                                                                <ChartLineSimple
-                                                                                                  pointed
-                                                                                                  className="c-chart-wrapper mt-3 mx-3"
-                                                           style={{height: '70px'}}
-                                                           dataPoints={[65, 59, 84, 84, 51, 55, 40]}
-                                                           pointHoverBackgroundColor="primary"
-                                                           label="Members"
-                                                           labels="months"
-                                                         />
-                                                       }
-                                                     >
-                                                     <CDropdown>
-                                                        <CDropdownToggle color="transparent">
-                                                          <CIcon name="cil-settings"/>
-                                                        </CDropdownToggle>
-                                                        <CDropdownMenu className="pt-0" placement="bottom-end">
-                                                         <CDropdownItem onClick={(e) => {
-                                                                  var element = (
-                                                                           <Snackbar
-                                                                             place="tc"
-                                                                             color="info"
-                                                                             icon={DonutLargeOutlinedIcon}
-                                                                             message="Loading...."
-                                                                             open={true}
-                                                                           />
-                                                                   );
-                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
-                                                                  ReactDOM.render(element,document.getElementById('progress'));
-                                                                  const orgId = store.getState().sourceOrg.orgId;
-                                                                  const apiUrl = window.location.protocol +"//"+window.location.hostname+"/notification/addPickupDetails/?orgId="+orgId;
-                                                                  axios.get(apiUrl).then((response) => {
-                                                                      //alert(JSON.stringify(response.data));
-                                                                      ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
-                                                                      const timeOptions = new Map(response.data);
-                                                                      props.history.push({
-                                                                       pathname: "/addPickupDetails",
-                                                                       state: { data: response.data }
-                                                                      });
-                                                                  }).catch(err => {
-                                                                      ReactDOM.unmountComponentAtNode(document.getElementById('progress'));
-                                                                      var element = (
-                                                                                          <Snackbar
-                                                                                            place="tc"
-                                                                                            color="danger"
-                                                                                            icon={DonutLargeOutlinedIcon}
-                                                                                            message="500: Unknown System Error...."
-                                                                                            open={true}
-                                                                                            close
-                                                                                            closeNotification={() => {
-                                                                                              ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
-                                                                                            }}
-                                                                                          />
-                                                                                  );
-                                                                                  ReactDOM.unmountComponentAtNode(document.getElementById('unknown_error'));
-                                                                                  ReactDOM.render(element,document.getElementById('unknown_error'));
-                                                                    });
-                                                         }}>Schedule</CDropdownItem>
-                                                        </CDropdownMenu>
-                                                     </CDropdown>
-                                                 </CWidgetDropdown>
+
                                       </CCardGroup>
                                    </CCol>
                                </CRow>
