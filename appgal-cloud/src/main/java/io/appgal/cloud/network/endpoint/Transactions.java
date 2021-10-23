@@ -31,9 +31,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Path("tx")
 public class Transactions {
@@ -62,7 +60,9 @@ public class Transactions {
             JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
             FoodRunner foodRunner = activeNetwork.findFoodRunnerByEmail(email);
 
-            for(FoodRecoveryTransaction cour: transactions) {
+            Set<FoodRecoveryTransaction> resultSet = new LinkedHashSet<>();
+            resultSet.addAll(transactions);
+            for(FoodRecoveryTransaction cour: resultSet) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED)
                 {
                     cour.getPickUpNotification().setNotificationSent(true);
@@ -109,7 +109,9 @@ public class Transactions {
             JsonUtil.print(this.getClass(),JsonParser.parseString(transactions.toString()));
 
 
-            for(FoodRecoveryTransaction cour: transactions) {
+            Set<FoodRecoveryTransaction> resultSet = new LinkedHashSet<>();
+            resultSet.addAll(transactions);
+            for(FoodRecoveryTransaction cour: resultSet) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED)
                 {
                     if(!cour.getPickUpNotification().isNotificationSent()) {
@@ -147,13 +149,11 @@ public class Transactions {
             JsonObject result = new JsonObject();
             JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
-            System.out.println("*****ORG_ID: "+orgId+"**********1");
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryTransactions(orgId);
 
-            System.out.println("*****TXS: "+transactions+"**********1");
-
-
-            for(FoodRecoveryTransaction cour: transactions) {
+            Set<FoodRecoveryTransaction> resultSet = new LinkedHashSet<>();
+            resultSet.addAll(transactions);
+            for(FoodRecoveryTransaction cour: resultSet) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
                     JsonObject txJson = cour.toJson();
                     if(cour.getPickUpNotification().isToday())
@@ -184,15 +184,15 @@ public class Transactions {
             result.add("inProgress", inProgress);
 
             List<FoodRecoveryTransaction> history = this.mongoDBJsonStore.getFoodRecoveryTransactionHistory(orgId);
+            resultSet.clear();
+            resultSet.addAll(history);
             boolean historyExists = false;
             if(!history.isEmpty())
             {
                 historyExists = true;
             }
             result.addProperty("historyExists",historyExists);
-            result.add("history",JsonParser.parseString(history.toString()).getAsJsonArray());
-
-            System.out.println("*****RESPONSE: "+result+"**********1");
+            result.add("history",JsonParser.parseString(resultSet.toString()).getAsJsonArray());
 
             return Response.ok(result.toString()).build();
         }
@@ -216,7 +216,10 @@ public class Transactions {
             JsonArray pending = new JsonArray();
             JsonArray inProgress = new JsonArray();
             List<FoodRecoveryTransaction> transactions = this.mongoDBJsonStore.getFoodRecoveryDropOffTransactions(orgId);
-            for(FoodRecoveryTransaction cour: transactions) {
+
+            Set<FoodRecoveryTransaction> resultSet = new LinkedHashSet<>();
+            resultSet.addAll(transactions);
+            for(FoodRecoveryTransaction cour: resultSet) {
                 if (cour.getTransactionState() == TransactionState.SUBMITTED) {
                     JsonObject txJson = cour.toJson();
                     if(cour.getPickUpNotification().isToday())
@@ -246,13 +249,15 @@ public class Transactions {
             result.add("inProgress", inProgress);
 
             List<FoodRecoveryTransaction> history = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(orgId);
+            resultSet.clear();
+            resultSet.addAll(history);
             boolean historyExists = false;
             if(!history.isEmpty())
             {
                 historyExists = true;
             }
             result.addProperty("historyExists",historyExists);
-            result.add("history",JsonParser.parseString(history.toString()).getAsJsonArray());
+            result.add("history",JsonParser.parseString(resultSet.toString()).getAsJsonArray());
             return Response.ok(result.toString()).build();
         }
         catch(Exception e)
@@ -271,7 +276,9 @@ public class Transactions {
     {
         try {
             List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryTransactionHistory(orgId);
-            return Response.ok(txs.toString()).build();
+            Set<FoodRecoveryTransaction> resultSet = new LinkedHashSet<>();
+            resultSet.addAll(txs);
+            return Response.ok(resultSet.toString()).build();
         }
         catch(Exception e)
         {
@@ -289,7 +296,9 @@ public class Transactions {
     {
         try {
             List<FoodRecoveryTransaction> txs = this.mongoDBJsonStore.getFoodRecoveryDropOffHistory(orgId);
-            return Response.ok(txs.toString()).build();
+            Set<FoodRecoveryTransaction> resultSet = new LinkedHashSet<>();
+            resultSet.addAll(txs);
+            return Response.ok(resultSet.toString()).build();
         }
         catch(Exception e)
         {

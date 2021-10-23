@@ -1,6 +1,5 @@
 Active Tasks
 ----
-* Cloud: Transactioon uniqueness on read
 
 
 
@@ -25,6 +24,8 @@ Dash Tasks
 
 Fixed Tasks
 ----
+Cloud: Transaction uniqueness on read
+
 Dash: Add the bottom section of main site to the App
 
 App: Test and make sure location updates are received as the location changes

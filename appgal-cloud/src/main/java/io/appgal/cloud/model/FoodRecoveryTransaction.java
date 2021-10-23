@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 public class FoodRecoveryTransaction implements Serializable {
@@ -191,5 +192,18 @@ public class FoodRecoveryTransaction implements Serializable {
     @Override
     public String toString() {
         return this.toJson().toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FoodRecoveryTransaction that = (FoodRecoveryTransaction) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
