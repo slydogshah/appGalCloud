@@ -106,6 +106,17 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
     Profile profile = ActiveSession.getInstance().getProfile();
     CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
+
+    //Create a unique list of recovery txs
+    Map<String,FoodRecoveryTransaction> filter = new Map();
+    int length = this.inProgressTxs.length;
+    for(int i=0; i<length; i++){
+      FoodRecoveryTransaction local = this.inProgressTxs[i];
+      filter[local.getId()] = local;
+    }
+    this.inProgressTxs.clear();
+    filter.forEach((k,v) => this.inProgressTxs.add(v));
+
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
@@ -155,8 +166,7 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
       padding: const EdgeInsets.only(top: 8),
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
-        final int count =
-        inProgressTxs.length > 4 ? 4 : inProgressTxs.length;
+        final int count = inProgressTxs.length;
         final Animation<double> animation =
         Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
@@ -169,7 +179,6 @@ class _InProgressMainState extends State<InProgressMainScene> with TickerProvide
           animation: animation,
           animationController: animationController,
           tx: this.inProgressTxs[index],
-          txs: this.inProgressTxs,
         );
       },
     ).build(context);
@@ -393,14 +402,12 @@ class InProgressListView extends StatelessWidget {
     this.animationController,
     this.animation,
     this.tx,
-    this.txs,
   })
       : super(key: key);
 
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final FoodRecoveryTransaction tx;
-  final List<FoodRecoveryTransaction> txs;
 
   @override
   Widget build(BuildContext context) {

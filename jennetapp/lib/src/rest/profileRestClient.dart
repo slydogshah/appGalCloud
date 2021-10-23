@@ -24,7 +24,7 @@ class ProfileRestClient
       response = await http.post(Uri.parse(remoteUrl), body: profile.toString());
     }
     catch (e) {
-      print(e);
+      //print(e);
       json = UrlFunctions.handleError(e, response);
       return json;
     }
@@ -61,7 +61,7 @@ class ProfileRestClient
 
        response = await http.post(Uri.parse(remoteUrl), body: jsonEncode(payload)).
        timeout(Duration(seconds: 30),onTimeout: () {
-         print("NETWORK_TIMEOUT");
+         //print("NETWORK_TIMEOUT");
          //json = new Map();
          //json["exception"] = "NETWORK_TIME_OUT";
          //json["statusCode"] = 500;
@@ -69,7 +69,7 @@ class ProfileRestClient
        });
     }
     catch (e) {
-      print(e);
+      //print(e);
       json = UrlFunctions.handleError(e, response);
       return json;
     }

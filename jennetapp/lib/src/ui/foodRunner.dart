@@ -28,7 +28,7 @@ class FoodRunnerApp extends StatelessWidget {
   Map<String,List<FoodRecoveryTransaction>> txs;
   FoodRunnerApp(Map<String,List<FoodRecoveryTransaction>> txs)
   {
-    LocationUpdater.getLocation();
+    //LocationUpdater.getLocation();
     this.txs = txs;
   }
 
@@ -151,6 +151,16 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
     CloudDataPoller.startPolling(context,profile);
     LocationUpdater.startPolling(profile);
 
+    //Create a unique list of recovery txs
+    Map<String,FoodRecoveryTransaction> filter = new Map();
+    int length = this.recoveryTxs.length;
+    for(int i=0; i<length; i++){
+      FoodRecoveryTransaction local = this.recoveryTxs[i];
+      filter[local.getId()] = local;
+    }
+    this.recoveryTxs.clear();
+    filter.forEach((k,v) => this.recoveryTxs.add(v));
+
     Widget widget;
     if(this.recoveryTxs.isNotEmpty){
       widget = this.getPickUpList();
@@ -206,8 +216,7 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
       padding: const EdgeInsets.only(top: 8),
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
-        final int count =
-        recoveryTxs.length > 4 ? 4 : recoveryTxs.length;
+        final int count = recoveryTxs.length;
         final Animation<double> animation =
         Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
@@ -220,7 +229,6 @@ class _FoodRunnerMainState extends State<FoodRunnerMainScene> with TickerProvide
           animation: animation,
           animationController: animationController,
           tx: this.recoveryTxs[index],
-          txs: this.recoveryTxs,
         );
       },
     ).build(context);
@@ -481,14 +489,12 @@ class PickUpListView extends StatelessWidget {
         this.animationController,
         this.animation,
         this.tx,
-        this.txs,
       })
       : super(key: key);
 
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final FoodRecoveryTransaction tx;
-  final List<FoodRecoveryTransaction> txs;
 
 
   @override
@@ -717,19 +723,24 @@ class PickUpListView extends StatelessWidget {
 
   void handleAccept(BuildContext context,String email, FoodRecoveryTransaction tx) {
     SourceOrg dropOffOrg = tx.getPickupNotification().getDropOffOrg();
+    SourceOrg pickupOrg = tx.getPickupNotification().getSourceOrg();
     String orgName = null;
+    String pickupOrgName = null;
+    String message = "";
     if(dropOffOrg != null){
-      orgName = dropOffOrg.orgName+": "+dropOffOrg.street+","+dropOffOrg.zip;
+      orgName = dropOffOrg.orgName+", "+dropOffOrg.street+","+dropOffOrg.zip;
+      pickupOrgName = pickupOrg.orgName+", "+pickupOrg.street+","+pickupOrg.zip;
+      message = "Pickup: "+pickupOrgName+"\n\n"+"Dropoff: "+orgName;
     }
     else{
-      orgName = "Community DropOff";
+      message = "Community DropOff";
     }
 
 
     AlertDialog dialog = AlertDialog(
       title: Text('Accept Food Pickup and DropOff'),
       content: Text(
-        orgName,
+        message,
         textAlign: TextAlign.left,
         style: TextStyle(
           fontWeight: FontWeight.w600,

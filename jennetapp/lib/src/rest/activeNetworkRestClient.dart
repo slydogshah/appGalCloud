@@ -42,7 +42,7 @@ class ActiveNetworkRestClient
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
-    print(response.body);
+    //print(response.body);
 
     Map<String,dynamic> object = jsonDecode(response.body);
 
@@ -265,7 +265,7 @@ class ActiveNetworkRestClient
       throw new CloudBusinessException(500, "UNKNOWN_SYSTEM_ERROR");
     }
 
-    print(response.body);
+    //print(response.body);
 
     Map<String,dynamic> object = jsonDecode(response.body);
 

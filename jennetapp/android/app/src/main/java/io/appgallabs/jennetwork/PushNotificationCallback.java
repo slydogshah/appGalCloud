@@ -32,8 +32,8 @@ public class PushNotificationCallback{
                             PushNotificationCallback.this.url = url;
                         }
 
-                        System.out.println("****PUSH_NOTIFICATION_CALLBACK_INVOKED*****");
-                        System.out.println(email+":"+MyFirebaseMessagingService.pushToken+":"+url);
+                        //System.out.println("****PUSH_NOTIFICATION_CALLBACK_INVOKED*****");
+                        //System.out.println(email+":"+MyFirebaseMessagingService.pushToken+":"+url);
 
                         if(PushNotificationCallback.this.email == null || MyFirebaseMessagingService.pushToken == null){
                             return;

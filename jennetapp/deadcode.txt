@@ -1632,3 +1632,99 @@ class PickUpListView extends StatelessWidget {
           return theme;
         }
       }
+
+
+      //--------ios--------------------------------------------
+        static void startIOSPolling(Profile profile) async
+        {
+          _serviceEnabled = await location.serviceEnabled();
+          if (!_serviceEnabled) {
+            _serviceEnabled = await location.requestService();
+            if (!_serviceEnabled) {
+              print("******************");
+              print("SERVICE_DISABLED");
+              return;
+            }
+          }
+
+          isBackgroundModeEnabled = await location.isBackgroundModeEnabled();
+          if(!isBackgroundModeEnabled) {
+            location.enableBackgroundMode(enable: true);
+
+            //Start receiving location updates
+          }
+          isBackgroundModeEnabled = await location.isBackgroundModeEnabled();
+          print("**********IS_LOCATION_BACKGROUND_MODE_ENABLED************");
+          print(isBackgroundModeEnabled);
+
+          /*Future<LocationData> locationData = location.getLocation();
+          locationData.then((data){
+            Map<String,double> map = new Map();
+
+            map['latitude'] = data.latitude;
+            map['longitude'] = data.longitude;
+            LocationData location = LocationData.fromMap(map);
+            Future<String> future = activeNetworkClient.sendLocationUpdate(location);
+            future.then((result){}).catchError((error){});
+          });*/
+        }
+        //--------android----------------------------------------
+        static void startAndroidPolling(Profile profile) async
+        {
+          _serviceEnabled = await location.serviceEnabled();
+          if (!_serviceEnabled) {
+            _serviceEnabled = await location.requestService();
+            if (!_serviceEnabled) {
+              print("******************");
+              print("SERVICE_DISABLED");
+              return;
+            }
+          }
+
+          isBackgroundModeEnabled = await location.isBackgroundModeEnabled();
+          if(!isBackgroundModeEnabled) {
+            location.enableBackgroundMode(enable: true);
+
+            //Start receiving location updates
+          }
+          isBackgroundModeEnabled = await location.isBackgroundModeEnabled();
+          print("**********IS_LOCATION_BACKGROUND_MODE_ENABLED************");
+          print(isBackgroundModeEnabled);
+
+          /*Future<LocationData> locationData = location.getLocation();
+          locationData.then((data){
+            Map<String,double> map = new Map();
+
+            map['latitude'] = data.latitude;
+            map['longitude'] = data.longitude;
+            LocationData location = LocationData.fromMap(map);
+            Future<String> future = activeNetworkClient.sendLocationUpdate(location);
+            future.then((result){}).catchError((error){});
+          });*/
+        }
+
+        /*_serviceEnabled = await location.serviceEnabled();
+            if (!_serviceEnabled) {
+              _serviceEnabled = await location.requestService();
+            }
+
+            _permissionGranted = await location.requestPermission();
+            print("*********LOCATION_PERMISSION_GET_LOCATION************");
+            print(_permissionGranted);*/
+
+            /*_serviceEnabled = await location.serviceEnabled();
+                if (!_serviceEnabled) {
+                  _serviceEnabled = await location.requestService();
+                  if (!_serviceEnabled) {
+                    print("******************");
+                    print("SERVICE_DISABLED");
+                    return;
+                  }
+                }
+
+                _permissionGranted = await location.requestPermission();
+                print("*********LOCATION_PERMISSION_DURING_POLLING************");
+                print(_permissionGranted);
+
+                isBackgroundModeEnabled =
+                await location.enableBackgroundMode(enable: true);*/

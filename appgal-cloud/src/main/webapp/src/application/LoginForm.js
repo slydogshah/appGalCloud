@@ -872,9 +872,88 @@ class LoginForm extends React.Component {
         <div id="validation_error"/>
         <div id="unknown_error"/>
         <div id="progress"/>
-        <div id="parent">
-            <RenderLogin state={this.state} props={this.props}/>
-        </div>
+
+
+        <div class="page-content bg-white">
+                <div
+                  class="banner-three bg-primary"
+                >
+                  <div class="container">
+                    <div class="banner-inner">
+                      <div class="row align-items-center">
+                        <div class="col-md-6">
+                          <div class="banner-content text-white">
+                            <h6
+                              data-wow-delay="0.5s"
+                              data-wow-duration="3s"
+                              class="wow fadeInUp sub-title text-primary"
+                            >
+                            </h6>
+                            <h1
+                              data-wow-delay="1s"
+                              data-wow-duration="3s"
+                              class="wow fadeInUp m-b20"
+                            >
+                              #Jen Network
+                            </h1>
+                            <p
+                              data-wow-delay="1.5s"
+                              data-wow-duration="3s"
+                              class="wow fadeInUp m-b30"
+                            >
+                              It is an Uber-like Network for Volunteer FoodRunners<br/>
+                            </p>
+                            <p
+                                    data-wow-delay="1.5s"
+                                    data-wow-duration="3s"
+                                    class="wow fadeInUp m-b30"
+                            >
+                              FoodRunners are volunteers with an IOS or Android App
+                            </p>
+                            <p
+                                    data-wow-delay="1.5s"
+                                    data-wow-duration="3s"
+                                    class="wow fadeInUp m-b30"
+                            >
+                              FoodRunners pick up surplus food from restaurants, cafeterias, parties, etc
+                            </p>
+                            <p
+                                    data-wow-delay="1.5s"
+                                    data-wow-duration="3s"
+                                    class="wow fadeInUp m-b30"
+                            >
+                              They deliver it to a participating Organization such as a Church, a Food Pantry, etc.
+                            </p>
+                            <p
+                                    data-wow-delay="1.5s"
+                                    data-wow-duration="3s"
+                                    class="wow fadeInUp m-b30"
+                            >
+                              The Network is designed to assist those that are Hungry.
+                            </p>
+                            <div id="parent">
+                                        <RenderLogin state={this.state} props={this.props}/>
+                                    </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div
+                            class="dz-media wow fadeIn"
+                            data-wow-delay="1s"
+                            data-wow-duration="3s"
+                          >
+                            <img
+                              src="images/main-slider/slider3/pic1.png"
+                              class="move-1"
+                              alt=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+             </div>
       </>
     );
   }

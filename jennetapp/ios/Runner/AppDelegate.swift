@@ -42,9 +42,9 @@ import Firebase
                         }
                         self.email = args["email"] as! String
                         self.url = args["url"] as! String
-                        print("*******DELEGATE_EMAIL********")
-                        print(self.email)
-                        print(self.url)
+                        //print("*******DELEGATE_EMAIL********")
+                        //print(self.email)
+                        //print(self.url)
                         
 
                         // [START set_messaging_delegate]
@@ -118,7 +118,7 @@ import Firebase
       }
 
       // Print full message.
-      print(userInfo)
+      //print(userInfo)
 
       completionHandler(UIBackgroundFetchResult.newData)
     }
@@ -193,7 +193,7 @@ import Firebase
         )*/
         
         let token = Messaging.messaging().fcmToken
-        print("FCM token: \(token ?? "")")
+        //print("FCM token: \(token ?? "")")
         // [END log_fcm_reg_token
 
         // [START log_iid_reg_token]
@@ -217,10 +217,10 @@ import Firebase
     
     @objc func displayFCMToken(token: String) {
         //TODO clean
-        print("***********************************************")
-        print("Received FCM token: \(token)")
-        print(self.email);
-        print("***********************************************")
+        //print("***********************************************")
+        //print("Received FCM token: \(token)")
+        //print(self.email);
+        //print("***********************************************")
         
         if(self.email.isEmpty)
         {
@@ -269,7 +269,7 @@ import Firebase
          
                 // Convert HTTP Response Data to a String
                 if let data = data, let dataString = String(data: data, encoding: .utf8) {
-                    print("Token Registration data:\n \(dataString)")
+                    //print("Token Registration data:\n \(dataString)")
                 }
         }
         task.resume()

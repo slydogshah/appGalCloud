@@ -1537,7 +1537,124 @@ START: 1621057147
                                                                                                                                                                                }}>
                                                                                                                                                                                  {timeItems}
                                                                                                                                                                             </CSelect>
+<section class="content-inner bg-white">
+                  <div class="container">
+                    <div class="section-head style-3 text-center">
+                      <h2 class="title m-t10">#Jen Network Flow</h2>
+                      <div class="dlab-separator style-2 bg-primary"/>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 m-b30">
+                      <div class="dz-media">
+                        <img src="images/flow/5.png" class="move-2" alt="" />
+                      </div>
+                      <div class="icon-content" style="margin-top: 10%">
+                        <p>Restaurants report surplus food to the Network, and send a request for pickup</p>
+                      </div>
+                      <div class="col-lg-4 m-b30">
+                          <div class="dz-media">
+                            <img src="images/flow/6.png" class="move-2" alt="" />
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+</section>
 
+
+
+<div class="page-wraper">
+            <section class="content-inner bg-white">
+              <div class="container">
+                <div class="section-head style-3 text-center">
+                  <h2 class="title m-t10">#Jen Network Flow</h2>
+                  <div class="dlab-separator style-2 bg-primary"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 m-b30">
+                    <div class="dz-media">
+                      <img src="images/flow/5.png" class="move-2" alt="" />
+                    </div>
+                    <div class="icon-content">
+                      <p>Restaurants report surplus food to the Network, and send a request for pickup</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 m-b30">
+                    <div class="dz-media">
+                      <img src="images/flow/6.png" class="move-2" alt="" />
+                    </div>
+                  </div>
+                  <div class="col-lg-4 m-b30">
+                    <div class="dz-media">
+                      <img src="images/flow/4.png" class="move-2" alt="" />
+                    </div>
+                    <div class="icon-content">
+                      <p>
+                        Volunteer FoodRunners confirm availability to pickup the food via an IOS or Android App
+                      </p>
+                    </div>
+                    <div class="col-lg-4 m-b30">
+                        <div class="dz-media">
+                          <img src="images/flow/7.png" class="move-2" alt="" />
+                        </div>
+                        <div class="icon-content">
+                          <p>
+                            Food is received by participating organizations such as Churches, Food Pantries, etc
+                          </p>
+                        </div>
+                        <div class="col-lg-4 m-b30">
+                                        <div class="dz-media">
+                                          <img src="images/flow/9.png" class="move-2" alt="" />
+                                        </div>
+                        </div>
+                        <div class="col-lg-4 m-b30">
+                            <div class="dz-media text-center">
+                              <img
+                                      src="images/flow/10.png"
+                                      class="move-2"
+                                      alt=""
+
+                              />
+                              <img src="images/flow/8.png" class="move-2" alt="" />
+                            </div>
+                            <div class="icon-content text-center">
+                              <p>Drop off to destination</p>
+                            </div>
+                        </div>
+                     </div>
+                  </div>
+              </div>
+            </section>
+        </div>
+
+        style="
+                            background-image: url('images/background/bg5.png'),
+                              url('images/background/bg6.png'), var(--gradient-sec);
+                          "
+
+
+
+
+
+
+                          <CWidgetDropdown
+                                                                                                                        color="gradient-primary"
+                                                                                                                        header={deliveries}
+                                                                                                                        text="DropOffs In-Progress"
+                                                                                                                        footerSlot={
+                                                                                                                          <ChartLineSimple
+                                                                                                                            pointed
+                                                                                                                            className="c-chart-wrapper mt-3 mx-3"
+                                                                                     style={{height: '70px'}}
+                                                                                     dataPoints={[65, 59, 84, 84, 51, 55, 40]}
+                                                                                     pointHoverBackgroundColor="primary"
+                                                                                     label="Members"
+                                                                                     labels="months"
+                                                                                   />
+                                                                                 }
+                                                                               >
+                                                                           </CWidgetDropdown>
                                                                                                                                                                             const timeOptions = props.history.location.state.data;
                                                                                                                                                                                 let timeItems = [];
                                                                                                                                                                                     timeOptions.forEach((value, key) => {
