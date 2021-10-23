@@ -24,6 +24,10 @@ Dash Tasks
 
 Fixed Tasks
 ----
+Add a friendly message when Dash used by Runner and App used by Org
+
+Change the icon
+
 Cloud: Transaction uniqueness on read
 
 Dash: Add the bottom section of main site to the App

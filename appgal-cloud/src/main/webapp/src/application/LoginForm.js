@@ -312,7 +312,9 @@ function RenderLogin({state,props})
                                                                 <CAlert
                                                                 color="warning"
                                                                 >
-                                                                   403: Access Denied.
+                                                                   FoodRunners use the IOS or Android App to receive Food Pickup Requests<br/>
+                                                                   The Dashboard is used by participating Organizations
+
                                                                </CAlert>
                                                             );
                                           ReactDOM.render(access_denied,document.getElementById('access_denied'));

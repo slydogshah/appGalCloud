@@ -67,7 +67,7 @@ public class PushNotificationCallback{
                                     // Append server response in string
                                     sb.append(line + "\n");
                                 }
-                                System.out.println("TOKEN_REGISTRATION_SUCCESS: "+sb);
+                                //System.out.println("TOKEN_REGISTRATION_SUCCESS: "+sb);
                             }catch(Exception e){
                                 //e.printStackTrace();
                             }finally {
