@@ -167,7 +167,7 @@ class ProfileFunctions
           return;
         }
         else if(json['statusCode'] == 403){
-          loginScene.notifyAuthFailed("403: Access Denied");
+          loginScene.notifyAuthFailed("The App is used by only by FoodRunners");
           return;
         }
         loginScene.notifySystemError("System Error: Please try again");
