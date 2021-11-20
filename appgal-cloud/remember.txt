@@ -1,0 +1,46 @@
+https://appgal-cloud-do2cwgwhja-uc.a.run.app
+
+mongosh "mongodb+srv://cluster1.a16oh.mongodb.net/jennetwork" --username jen
+gcloud components update --version 285.0.1
+
+
+{
+  "textPayload": "2021-09-01 02:01:41,346 INFO  [io.app.clo.inf.FoodRecoveryStore] (executor-thread-1) {$and:[{\"pickupNotification.dropOffOrg.orgId\":\"vaFpqiRm5AxdhN5RSrA0o81FcCBVenrleMetz9OA1okr9I/rzSJvR7NOjS7lr3JICCtnVMhoIE5iHDay1qTGEg==\"},{\"transactionState\":{$not:{$regex:\"CLOSED\"}}}]}",
+  "insertId": "612edf050005499ff9dde3c5",
+  "resource": {
+    "type": "cloud_run_revision",
+    "labels": {
+      "project_id": "appgallabs-271922",
+      "service_name": "appgal-cloud",
+      "location": "us-central1",
+      "configuration_name": "appgal-cloud",
+      "revision_name": "appgal-cloud-00034-hoj"
+    }
+  },
+  "timestamp": "2021-09-01T02:01:41.346527Z",
+  "labels": {
+    "instanceId": "00bf4bf02d275d1d0f7a1d78ef0f2a2b2c63d412aa80f5d076e9b0e67ff155ba9080232a3244af0295dfa5eb6fda086e27c7ff41a91748460e41949cf6"
+  },
+  "logName": "projects/appgallabs-271922/logs/run.googleapis.com%2Fstdout",
+  "receiveTimestamp": "2021-09-01T02:01:41.613762905Z"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.refresh"]
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler]  _simulateLaunchForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]
+e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateExpirationForTaskWithIdentifier:@"com.example.apple-samplecode.ColorFeed.db_cleaning"]
