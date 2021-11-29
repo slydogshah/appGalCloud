@@ -23,6 +23,7 @@ class JenNetworkApp extends StatelessWidget {
     Color backgroundColor = Color(0xFF383EDB);
     MaterialApp materialApp = new MaterialApp(
         home: new Login(),
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primaryColor: primaryColor,
             backgroundColor: backgroundColor,

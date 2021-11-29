@@ -39,6 +39,7 @@ class FoodRunnerApp extends StatelessWidget {
     if(txs["inProgress"].length > 0) {
       MaterialApp materialApp = new MaterialApp(
           home: InProgressMainScene(txs),
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
               primaryColor: primaryColor,
               backgroundColor: backgroundColor,
