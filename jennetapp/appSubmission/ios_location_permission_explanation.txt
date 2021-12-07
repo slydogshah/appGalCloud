@@ -1,0 +1,27 @@
+Thanks for the feedback. Here is the information you requested
+
+- Please clarify the use of background audio and location
+Here is the detailed process: https://jen.appgallabs.io/how_it_works.html
+Location is used to send a notification to the "closet" FoodRunner to the restaurant making a food pickup request.
+
+- Please provide a demo video for the use of background audio that shows the functionality.
+Please see the attached locationPermission.mov file
+
+- Please also provide a demo account that shows an “active request”
+Email: austin@app.io
+Password: austin
+
+Android Reference
+I did a quick search for that and the only reference I see is in
+flutter_icons:
+  image_path: "icon/logo.png"
+  android: true
+  ios: true
+
+If you could point me to any that you may have found, I will gladly rectify it.
+
+Here is the modification that was made to the Info.plist file:
+
+<key>NSLocationWhenInUseUsageDescription</key>
+<!--<string>NSLocationAlwaysUsageDescription</string>-->
+<string>#Jen Network collects location data to enable locating the closest FoodRunners even when the app is closed or not in use.</string>

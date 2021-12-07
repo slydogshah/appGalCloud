@@ -1,6 +1,6 @@
 name: app
 description: AppGal Labs, Food Recovery Optimization Network
-version: 2.0.0+8
+version: 2.0.0+9
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
