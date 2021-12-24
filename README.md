@@ -1,46 +1,82 @@
-#Jen: Food Recovery Optimization Repository, by AppGal Labs
-----
-<div class="LI-profile-badge"  data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="sohil-shah-28052659"><a class="LI-simple-link" href='https://www.linkedin.com/in/sohil-shah-28052659' target="_blank">Sohil Shah</a></div>
+#Jen Network: Open Source Food Recovery Network, by AppGal Labs
 
-# appGalCloud
-The Cloud App for the AppGal Food Recovery Optimization Network
+![This is an image](https://jen.appgallabs.io/images/networkLogo.png)
 
 
-Getting Started
-----
+## Introduction
+Jen Network is an Open Source Software Community and a socially aware Community focused on assistance with food insecurity.
 
-> git clone https://github.com/slydogshah/appGalCloud.git
->
->cd appGalCloud/appgal-cloud
->
->mvn clean package && java -jar target/*-runner.jar
->
->curl http://localhost:8080/microservice/
->
->Server Output
->----
->2020-02-01 12:51:39,713 WARN  [io.qua.net.run.NettyRecorder] (Thread-1) Localhost lookup took more than one second, you need to add a /etc/hosts entry to improve Quarkus startup time. See https://thoeni.io/post/macos-sierra-java/ for details.
- 2020-02-01 12:51:39,750 INFO  [io.quarkus] (main) appgal-cloud 1.0.0-SNAPSHOT (running on Quarkus 1.1.1.Final) started in 15.415s. Listening on: http://0.0.0.0:8080
- 2020-02-01 12:51:39,753 INFO  [io.quarkus] (main) Profile prod activated. 
- 2020-02-01 12:51:39,753 INFO  [io.quarkus] (main) Installed features: [cdi, resteasy]
+## Solution
+Jen Network is an Uber-like Network for volunteer FoodRunners with an IOS or Android App
 
->
->Microservice Response
->----
->babyboy@Babys-MacBook-Pro appgal-cloud % curl http://localhost:8080/microservice/
- {"oid":"93692874-268f-49ad-aaf3-c8f3884bce61","message":"HELLO_TO_HUMANITY"}%                                                                                                                                                                          babyboy@Babys-MacBook-Pro appgal-cloud %
->
+FoodRunners pick up surplus food from restaurants, cafeterias, parties, etc.
+They deliver it to a participating Organization such as a Church, a Food Pantry, etc.
 
-Getting Started with Food Runner App based on Dart/Flutter
-----
+The Network is designed to assist those with food insecurity.
 
-> cd appGalCloud/appgal-foodrunner-app
->
->Run the App
->----
-> dart microserviceClient.dart
->
->Output
->----
-> babyboy@Babys-MBP appgal-foodrunner-app % dart microserviceClient.dart 
-  {"oid":"89b9b5b4-4be0-42c1-848a-47282dc1fbfe","message":"HELLO_TO_HUMANITY"}
+## Cloud - located under the directory 'appgal-cloud'
+The project uses Quarkus,the Supersonic Subatomic Java Framework.
+If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+
+## Running the application in dev mode
+
+You can run your application in dev mode that enables live coding using:
+```
+./mvnw quarkus:dev
+```
+
+## Packaging and running the application
+
+The application can be packaged using 
+````
+./mvnw package -DskipTests
+````
+
+It produces the `appgal-cloud-v1-runner.jar` file in the `/target` directory.
+
+The application is now runnable using
+
+````
+java -jar target/appgal-cloud-v1-runner.jar
+````
+
+Application will be available at
+````
+http://localhost:8080
+````
+
+## Mobile App - located under the directory 'jennetapp'
+
+The mobile app is a Flutter application that runs natively both
+on Android and IOS. To build this app use the following command
+
+IOS
+```
+flutter clean && flutter build ios -t lib/main_dev.dart
+```
+
+Android
+```
+flutter clean && flutter build apk -t lib/main_dev.dart
+```
+
+To run the app
+```
+flutter clean && flutter run
+```
+
+## Web App - located under the directory 'appgal-cloud/src/main/webapp'
+
+This is a React App 
+
+To run the web application
+
+```
+npm install && npm start
+```
+
+Application will be available at
+
+```
+http://localhost:3000/
+```
