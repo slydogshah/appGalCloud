@@ -1,0 +1,1 @@
+xcrun simctl io booted recordVideo acceptRequest.mov

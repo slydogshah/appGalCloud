@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
+import 'dart:io' show Platform;
 
 import 'profileFunctions.dart';
 
@@ -23,6 +24,7 @@ class JenNetworkApp extends StatelessWidget {
     Color backgroundColor = Color(0xFF383EDB);
     MaterialApp materialApp = new MaterialApp(
         home: new Login(),
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primaryColor: primaryColor,
             backgroundColor: backgroundColor,
@@ -64,6 +66,35 @@ class LoginState extends State<Login> with TickerProviderStateMixin{
     this.emailController = new TextEditingController();
     this.passwordController = new TextEditingController();
     super.initState();
+    if (Platform.isAndroid) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await showDialog<String>(
+          context: context,
+          builder: (BuildContext context) =>
+          new AlertDialog(
+            title: Text('#Jen Network'),
+            content: Text(
+              "#Jen Network collects location data to enable locating the closest FoodRunners even when the app is closed or not in use.",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+            actions: [
+              FlatButton(
+                textColor: Color(0xFF6200EE),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                  LocationUpdater.start();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
+    }
   }
 
   @override

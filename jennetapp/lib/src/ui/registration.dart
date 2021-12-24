@@ -17,7 +17,7 @@ class Registration extends StatefulWidget
 
   @override
   Widget build(BuildContext context) {
-   MaterialApp materialApp = new MaterialApp(home: new Registration());
+   MaterialApp materialApp = new MaterialApp(home: new Registration(),debugShowCheckedModeBanner: false,);
    return materialApp;
   }
   

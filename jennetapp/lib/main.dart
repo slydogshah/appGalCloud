@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'notifications.dart';
+import 'dart:io' show Platform;
 
 class MyHttpOverrides extends HttpOverrides{
   @override
@@ -54,7 +55,9 @@ void main(String env) {
   WidgetsFlutterBinding.ensureInitialized();
 
   //await Future.delayed(Duration(seconds: 10));
-  LocationUpdater.start();
+  if (Platform.isIOS) {
+    LocationUpdater.start();
+  }
 
   Future<Map<String,dynamic>> config = UrlFunctions.getConfig(env);
   config.then((jsonMap) {
