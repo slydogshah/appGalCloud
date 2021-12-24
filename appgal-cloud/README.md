@@ -1,7 +1,21 @@
-#Jen: Food Recovery Optimization Repository, by AppGal Labs
+#Jen Network: Open Source Food Recovery Network, by AppGal Labs
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+![This is an image](https://jen.appgallabs.io/images/networkLogo.png)
 
+
+## Introduction
+Jen Network is an Open Source Software Community and a socially aware Community focused on assistance with food insecurity.
+
+## Solution
+Jen Network is an Uber-like Network for volunteer FoodRunners with an IOS or Android App
+
+FoodRunners pick up surplus food from restaurants, cafeterias, parties, etc.
+They deliver it to a participating Organization such as a Church, a Food Pantry, etc.
+
+The Network is designed to assist those with food insecurity.
+
+## Cloud - located under the directory 'appgal-cloud'
+The project uses Quarkus,the Supersonic Subatomic Java Framework.
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
 ## Running the application in dev mode
@@ -13,18 +27,56 @@ You can run your application in dev mode that enables live coding using:
 
 ## Packaging and running the application
 
-The application can be packaged using `./mvnw package`.
-It produces the `appgal-cloud-1.0.0-SNAPSHOT-runner.jar` file in the `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
+The application can be packaged using 
+````
+./mvnw package -DskipTests
+````
 
-The application is now runnable using `java -jar target/appgal-cloud-1.0.0-SNAPSHOT-runner.jar`.
+It produces the `appgal-cloud-v1-runner.jar` file in the `/target` directory.
 
-## Creating a native executable
+The application is now runnable using
 
-You can create a native executable using: `./mvnw package -Pnative`.
+````
+java -jar target/appgal-cloud-v1-runner.jar
+````
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
+Application will be available at
+````
+http://localhost:8080
+````
 
-You can then execute your native executable with: `./target/appgal-cloud-1.0.0-SNAPSHOT-runner`
+## Mobile App - located under the directory 'jennetapp'
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image.
+The mobile app is a Flutter application that runs natively both
+on Android and IOS. To build this app use the following command
+
+IOS
+```
+flutter clean && flutter build ios -t lib/main_dev.dart
+```
+
+Android
+```
+flutter clean && flutter build apk -t lib/main_dev.dart
+```
+
+To run the app
+```
+flutter clean && flutter run
+```
+
+## Web App - located under the directory 'appgal-cloud/src/main/webapp'
+
+This is a React App 
+
+To run the web application
+
+```
+npm install && npm start
+```
+
+Application will be available at
+
+```
+http://localhost:3000/
+```
