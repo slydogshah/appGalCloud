@@ -1,0 +1,1 @@
+mongosh "mongodb+srv://cluster1.a16oh.mongodb.net/jennetwork" --username jen
